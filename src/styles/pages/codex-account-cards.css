@@ -1,11 +1,15 @@
 /* Codex 样式分片：账号卡片、配额、布局密度与状态展示。按原顺序由 codex.css 聚合。 */
 /* Codex 账号卡片（默认密度；总览网格可再被 accounts.css 收紧） */
 .codex-account-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 16px 14px;
-  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(21,148,155,.07) 1px, transparent 1px) 0 0 / 38px 100%,
+    color-mix(in srgb, var(--bg-card) 96%, #e8fff5);
+  border: 1px solid rgba(31, 91, 81, .16);
+  border-radius: 4px 18px 4px 18px;
+  padding: 18px 16px 14px;
+  box-shadow: 0 14px 35px rgba(15, 54, 47, .08), inset 3px 0 #28a87b;
   backdrop-filter: blur(10px);
   transition: all 0.25s ease;
   display: flex;
@@ -15,8 +19,8 @@
 }
 
 .codex-account-card:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
+  box-shadow: 0 20px 44px rgba(15, 54, 47, .13), inset 3px 0 #28a87b;
+  transform: translateY(-3px) translateX(1px);
 }
 
 .codex-account-card.current {
@@ -1554,9 +1558,11 @@
   grid-column: 1 / -1;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  justify-content: flex-start;
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
+  gap: 10px;
+  flex-wrap: wrap;
   padding-top: 12px;
   border-top: 1px solid var(--border-light);
 }
@@ -1574,11 +1580,17 @@
 }
 
 .codex-account-card .card-actions {
+  position: static;
   display: flex;
+  flex: 1 1 auto;
+  flex-direction: row;
+  justify-content: flex-end;
   gap: 6px;
   max-width: 100%;
   min-width: 0;
   overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 0;
   scrollbar-width: none;
 }
 
@@ -1593,7 +1605,8 @@
   border: none;
   background: var(--bg-tertiary);
   color: var(--text-secondary);
-  border-radius: var(--radius-sm);
+  border: 1px solid rgba(20, 100, 86, .13);
+  border-radius: 3px 10px 3px 10px;
   cursor: pointer;
   display: flex;
   align-items: center;

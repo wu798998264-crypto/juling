@@ -14,7 +14,7 @@ import { listen, UnlistenFn } from '@tauri-apps/api/event';
 import { invoke } from '@tauri-apps/api/core';
 import { open } from '@tauri-apps/plugin-dialog';
 import { useTranslation } from 'react-i18next';
-import { FileText, FolderOpen, RefreshCw, X } from 'lucide-react';
+import { ChevronRight, Command, FileText, FolderOpen, RefreshCw, X } from 'lucide-react';
 import { SideNav } from './components/layout/SideNav';
 import { BootReadyMarker, VisibleBootPage } from './components/BootReadyMarker';
 import { GlobalModal } from './components/GlobalModal';
@@ -901,7 +901,6 @@ function MainApp() {
   }, [hasBreakoutSession]);
 
   const {
-    count: easterEggClickCount,
     registerClick: handleEasterEggTriggerClick,
     reset: resetEasterEggTrigger,
   } = useEasterEggTrigger({
@@ -3500,10 +3499,82 @@ function MainApp() {
     appPathMissing?.app === 'claude' && appPathMissing.retry?.kind === 'instance';
   const shouldRenderUpdateNotification = showUpdateNotification
     || (updateRemindersEnabled && updateAction.state !== 'hidden');
+  const workspaceContext = (() => {
+    switch (page) {
+      case 'dashboard':
+        return { section: 'CONTROL', title: t('nav.dashboard', '总览') };
+      case 'manual':
+        return { section: 'SUPPORT', title: t('nav.manual', '使用手册') };
+      case 'settings':
+        return { section: 'SYSTEM', title: t('nav.settings', '设置') };
+      case '2fa':
+        return { section: 'SECURITY', title: t('nav.2faManager', '2FA / MFA 管理') };
+      case 'api-relay':
+        return { section: 'SERVICE', title: t('nav.apiRelay', '中转站') };
+      case 'overview':
+      case 'instances':
+      case 'wakeup':
+      case 'verification':
+        return { section: 'ANTIGRAVITY', title: t('nav.antigravity', 'Antigravity') };
+      case 'codex':
+        return { section: 'PLATFORM', title: 'Codex' };
+      case 'codex-api-service':
+        return { section: 'SERVICE', title: t('codex.apiService.navTitle', 'Codex API Service') };
+      case 'claude':
+      case 'claude-cli':
+        return { section: 'PLATFORM', title: 'Claude' };
+      case 'github-copilot':
+        return { section: 'PLATFORM', title: 'GitHub Copilot' };
+      case 'windsurf':
+        return { section: 'PLATFORM', title: 'Devin' };
+      case 'kiro':
+        return { section: 'PLATFORM', title: 'Kiro' };
+      case 'cursor':
+        return { section: 'PLATFORM', title: 'Cursor' };
+      case 'grok':
+        return { section: 'PLATFORM', title: 'Grok CLI' };
+      case 'codebuddy':
+        return { section: 'PLATFORM', title: 'CodeBuddy' };
+      case 'codebuddy-cn':
+        return { section: 'PLATFORM', title: t('nav.codebuddyCn', 'CodeBuddy CN') };
+      case 'qoder':
+        return { section: 'PLATFORM', title: t('nav.qoder', 'Qoder') };
+      case 'zcode':
+        return { section: 'PLATFORM', title: 'ZCode' };
+      case 'trae':
+        return { section: 'PLATFORM', title: t('nav.trae', 'Trae') };
+      case 'trae-solo':
+        return { section: 'PLATFORM', title: t('nav.traeSolo', 'TRAE SOLO') };
+      case 'trae-cn':
+        return { section: 'PLATFORM', title: t('nav.traeCn', 'Trae CN') };
+      case 'trae-solo-cn':
+        return { section: 'PLATFORM', title: t('nav.traeSoloCn', 'TRAE SOLO CN') };
+      case 'workbuddy':
+        return { section: 'PLATFORM', title: 'WorkBuddy' };
+      case 'accounts':
+      case 'codex-instances':
+      default:
+        return { section: 'WORKSPACE', title: t('nav.dashboard', '总览') };
+    }
+  })();
+  const shouldShowWorkspaceUpdateAction = updateAction.state !== 'hidden'
+    && (
+      updateRemindersEnabled
+      || updateAction.state === 'downloading'
+      || updateAction.state === 'installing'
+      || updateAction.state === 'ready'
+    );
+  const workspaceUpdateLabel = updateAction.state === 'downloading'
+    ? `${Math.max(0, Math.min(100, Math.round(updateAction.progress)))}%`
+    : updateAction.state === 'installing'
+      ? t('nav.quickUpdate.installing', '安装中')
+      : updateAction.state === 'ready'
+        ? t('update_notification.restartToInstall', '重启更新')
+        : t('nav.quickUpdate.update', '更新');
 
   return (
     <div
-      className={`app-container${isWindowsPlatform() ? ' app-container-windows' : ''}${sideNavLayoutMode === 'classic' ? ' app-container-side-nav-classic' : ''}${sideNavLayoutMode === 'classic' && sideNavClassicCollapsed ? ' app-container-side-nav-classic-collapsed' : ''}`}
+      className={`app-container app-container-command-deck${isWindowsPlatform() ? ' app-container-windows' : ''}${sideNavLayoutMode === 'classic' ? ' app-container-side-nav-classic' : ''}${sideNavLayoutMode === 'classic' && sideNavClassicCollapsed ? ' app-container-side-nav-classic-collapsed' : ''}`}
     >
       {/* 更新通知：活跃状态时保持挂载，关闭后继续保留当前更新状态 */}
       {shouldRenderUpdateNotification && (
@@ -3759,7 +3830,6 @@ function MainApp() {
         page={page}
         setPage={setPage}
         onOpenPlatformLayout={openPlatformLayoutModal}
-        easterEggClickCount={easterEggClickCount}
         onEasterEggTriggerClick={handleBreakoutEntryTriggerClick}
         hasBreakoutSession={hasBreakoutSession}
         updateActionState={updateAction.state}
@@ -3767,21 +3837,9 @@ function MainApp() {
         onUpdateActionClick={handleQuickUpdateActionClick}
         updateRemindersEnabled={updateRemindersEnabled}
         sponsorEntryVisible={sponsorEntryVisible}
-        onOpenLogViewer={() => setShowLogViewer(true)}
       />
 
       <AnnouncementHost onNavigate={setPage} />
-
-      {sideNavLayoutMode !== 'classic' && (
-        <button
-          className="log-entry-fab"
-          onClick={() => setShowLogViewer(true)}
-          title={t('manual.dataPrivacy.keywords.5', '日志')}
-          aria-label={t('manual.dataPrivacy.keywords.5', '日志')}
-        >
-          <FileText size={18} />
-        </button>
-      )}
 
       <Suspense fallback={null}>
         <PlatformLayoutModal
@@ -3797,6 +3855,52 @@ function MainApp() {
           onClose={() => setShowLogViewer(false)}
         />
       </Suspense>
+
+      <header className="workspace-context-bar">
+        <div className="workspace-context-identity">
+          <span className="workspace-context-mark" aria-hidden="true">
+            <Command size={17} />
+          </span>
+          <div className="workspace-context-copy">
+            <span className="workspace-context-path">
+              聚灵
+              <ChevronRight size={12} aria-hidden="true" />
+              {workspaceContext.section}
+            </span>
+            <strong>{workspaceContext.title}</strong>
+          </div>
+          <span className="workspace-local-state">
+            <span className="workspace-local-dot" aria-hidden="true" />
+            LOCAL
+          </span>
+        </div>
+        <div className="workspace-context-actions">
+          {shouldShowWorkspaceUpdateAction && (
+            <button
+              type="button"
+              className={`workspace-tool-btn workspace-update-btn is-${updateAction.state}`}
+              onClick={handleQuickUpdateActionClick}
+              disabled={updateAction.state === 'installing'}
+              title={workspaceUpdateLabel}
+            >
+              <RefreshCw
+                size={15}
+                className={updateAction.state === 'downloading' ? 'loading-spinner' : undefined}
+              />
+              <span>{workspaceUpdateLabel}</span>
+            </button>
+          )}
+          <button
+            type="button"
+            className="workspace-tool-btn workspace-tool-icon-btn"
+            onClick={() => setShowLogViewer(true)}
+            title={t('nav.logs', '日志')}
+            aria-label={t('nav.logs', '日志')}
+          >
+            <FileText size={16} />
+          </button>
+        </div>
+      </header>
 
       <div className="main-wrapper">
         {/* overview 现在是合并后的账号总览页面 */}

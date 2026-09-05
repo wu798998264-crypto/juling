@@ -308,7 +308,7 @@
       "backToCurrent": "返回",
       "switchToThisAccount": "切换",
       "openDetails": "打开详情页",
-      "openCockpitTools": "打开聚灵"
+      "openJulingTools": "打开聚灵"
     },
     "empty": {
       "title": "暂无账号",
@@ -414,16 +414,16 @@
   },
   "apiKeyFun": {
     "eyebrow": "中转站",
-    "title": "APIKEY.FUN 中转站",
-    "description": "Cockpit 官方合作中转站，为用户提供稳定、开放、高性价比的大模型 API 接入服务。支持 Claude、OpenAI、Gemini 等主流模型，适合在 Codex、Gemini CLI、Claude Code 及其他开发工具中统一配置使用。通过 Cockpit 专属链接注册，可享受最高充值永久 95 折优惠。",
+    "title": "JIULING.FUN 接入中枢",
+    "description": "Juling 官方合作中转站，为用户提供稳定、开放、高性价比的大模型 API 接入服务。支持 Claude、OpenAI、Gemini 等主流模型，适合在 Codex、Gemini CLI、Claude Code 及其他开发工具中统一配置使用。通过 Juling 专属链接注册，可享受最高充值永久 95 折优惠。",
     "register": "专属注册链接",
     "docs": "官方文档",
     "viewNow": "立即查看",
     "queryTitle": "密钥额度查询",
-    "queryDesc": "输入 APIKEY.FUN 的 API Key 后自动查询额度。",
+    "queryDesc": "输入 JIULING.FUN 的 API Key 后在本机查询额度。",
     "keyNotSet": "未输入秘钥",
     "apiKeyLabel": "API 密钥",
-    "apiKeyPlaceholder": "粘贴 APIKEY.FUN 控制台创建的 API Key",
+    "apiKeyPlaceholder": "粘贴 JIULING.FUN 控制台创建的 API Key",
     "hideKey": "隐藏",
     "showKey": "显示",
     "endpointLabel": "接入端点",
@@ -434,7 +434,7 @@
     "saving": "写入中",
     "saveSuccess": "已写入 Codex Provider：{{name}}",
     "toolsTitle": "一键写入客户端",
-    "toolsDesc": "按 APIKEY.FUN 文档和 CC Switch 的落盘方式，直接写入本机客户端配置文件。",
+    "toolsDesc": "按当前客户端的配置规范写入本机文件，接入参数始终由你掌控。",
     "endpoint": {
       "global": "全球线路",
       "globalDesc": "官方默认 API Base，适合大多数网络环境。",
@@ -532,7 +532,7 @@
       "claudeShort": "Claude CLI"
     },
     "prefill": {
-      "claudeDesktopReady": "已带入 APIKEY.FUN 配置，请确认后添加到 Claude。"
+      "claudeDesktopReady": "已带入 JIULING.FUN 配置，请确认后添加到 Claude。"
     }
   },
   "platformLayout": {
@@ -1215,7 +1215,7 @@
         "retentionDesc": "超过天数的备份会在下次检查时自动清理。",
         "retentionUnit": "天",
         "directoryTitle": "备份目录",
-        "directoryDesc": "定时备份和 Cockpit 行为快照都保存到此目录；可迁移到其他磁盘。",
+        "directoryDesc": "定时备份和 Juling 行为快照都保存到此目录；可迁移到其他磁盘。",
         "changeDirectory": "更换目录",
         "migrating": "迁移中...",
         "migrationConfirm": "是否将现有备份从 {{oldPath}} 迁移到 {{newPath}}？\n\n选择“取消”仍会切换目录，但不会迁移旧文件。",
@@ -1362,7 +1362,7 @@
       "passwordSavedPlaceholder": "已保存，留空保持不变",
       "clearPassword": "清除",
       "remoteDirTitle": "远端目录",
-      "remoteDirDesc": "只管理该目录下的 Cockpit 备份文件。",
+      "remoteDirDesc": "只管理该目录下的 Juling 备份文件。",
       "retentionTitle": "云端保留天数",
       "retentionDesc": "云端超过天数的备份会在下次同步时自动清理。",
       "retentionUnit": "天",
@@ -1376,7 +1376,7 @@
       "syncAction": "同步配置",
       "syncLatestConfirm": "确认拉取最新的远端备份 {{name}} 并同步到本地？此操作将覆盖本地现有数据。",
       "remoteListTitle": "远端备份",
-      "remoteListDesc": "仅显示匹配 Cockpit 自动/手动备份命名的 JSON 与 ZIP 文件。",
+      "remoteListDesc": "仅显示匹配 Juling 自动/手动备份命名的 JSON 与 ZIP 文件。",
       "emptyTitle": "暂无远端备份",
       "emptyDesc": "保存设置后可以生成并上传一份备份。",
       "unknownTime": "未知",
@@ -1437,7 +1437,7 @@
       "firewallHint": "如果访问不了，请检查系统防火墙设置。",
       "proxyTitle": "全局代理",
       "proxyEnabled": "启用全局代理",
-      "proxyEnabledDesc": "对 Cockpit 启动的受管平台进程统一注入代理环境变量",
+      "proxyEnabledDesc": "对 Juling 启动的受管平台进程统一注入代理环境变量",
       "proxyUrl": "代理地址",
       "proxyUrlDesc": "示例：http://127.0.0.1:7890 或 socks5://127.0.0.1:7890",
       "proxyUrlPlaceholder": "例如：http://127.0.0.1:7890",
@@ -1870,7 +1870,7 @@
       "importBtn": "导入",
       "oauthAction": "OAuth 授权",
       "fromExtension": "从插件导入",
-      "syncBadge": "同步 Antigravity Cockpit 插件账号",
+      "syncBadge": "同步 聚灵 插件账号",
       "fromLocalDB": "从本地数据库导入",
       "localDBDesc": "读取本机 Antigravity IDE 客户端登录账号",
       "toolsDescMigrate": "从 ~/.antigravity_tools/ 迁移历史账号",
@@ -2321,7 +2321,7 @@
       "description": "先配置和检查；只有点击切换或启动后才会修改客户端状态。",
       "notApplied": "尚未应用",
       "safeHint": "打开此窗口不会刷新 Token、关闭客户端或写入登录凭据。",
-      "modelConfigHint": "上下文窗口和压缩阈值按模型写入 Cockpit 受管模型目录。",
+      "modelConfigHint": "上下文窗口和压缩阈值按模型写入 Juling 受管模型目录。",
       "enablePerModelHint": "按模型配置需要启用可见模型；这里只修改草稿，保存或启动时才会写入。",
       "enablePerModel": "启用按模型配置",
       "unsavedConfig": "模型配置有未保存的更改；切换或启动前会先保存。",
@@ -2658,8 +2658,8 @@
       "testAuthFailed": "服务可达，但鉴权失败：{{detail}}。请检查 API 服务密钥或账号登录状态。",
       "testServiceUnavailable": "服务可达，但当前不可用：{{detail}}。请检查服务是否启用、账号集合是否为空或账号是否可用。",
       "gatewayErrors": {
-        "authUnavailable": "账号池当前没有可调度账号；账号可能正在冷却、授权失效或额度受限，请在 Cockpit Tools 的 API 服务页查看账号状态。",
-        "authNotFound": "账号池当前没有已配置的可用账号，请在 Cockpit Tools 的 API 服务页添加或启用账号。"
+        "authUnavailable": "账号池当前没有可调度账号；账号可能正在冷却、授权失效或额度受限，请在 聚灵 的 API 服务页查看账号状态。",
+        "authNotFound": "账号池当前没有已配置的可用账号，请在 聚灵 的 API 服务页添加或启用账号。"
       },
       "testRateLimited": "服务可达，但上游限流或额度不足：{{detail}}。",
       "testHttpFailed": "服务可达，但请求返回 HTTP {{status}}：{{detail}}。",
@@ -2952,7 +2952,7 @@
         "placeholder": "每行填写一个模型 ID，也可以使用逗号分隔。",
         "editHint": "上游结果仅填入当前草稿，可在保存前删除、补充或调整模型。",
         "syncToggle": "同步供应商模型到 Codex",
-        "syncDescription": "保存后使用当前模型列表生成 Cockpit 受管的 Codex 模型目录，不覆盖用户自定义目录。",
+        "syncDescription": "保存后使用当前模型列表生成 Juling 受管的 Codex 模型目录，不覆盖用户自定义目录。",
         "fetchCredentialsRequired": "请先填写 API Key 和 Base URL。",
         "fetchEmpty": "上游未返回可用模型，已保留当前列表。",
         "fetchFailed": "获取上游模型失败：{{error}}",
@@ -2973,7 +2973,7 @@
       },
       "providers": {
         "cockpit_api": {
-          "name": "Cockpit Api"
+          "name": "Juling Api"
         },
         "openai_official": {
           "name": "OpenAI Official"
@@ -3069,7 +3069,7 @@
       }
     },
     "cockpitApi": {
-      "panelTitle": "Cockpit Api 服务面板",
+      "panelTitle": "Juling Api 服务面板",
       "servicePanel": "服务面板",
       "balance": "额度",
       "requests": "请求",
@@ -3229,7 +3229,7 @@
           "contextWindowInvalid": "上下文窗口必须是大于 0 的整数",
           "autoCompactInvalid": "自动压缩阈值必须是大于 0 的整数"
         },
-        "modelCatalogDesc": "可见模型及每个模型的上下文配置统一写入当前 Codex 的 Cockpit 受管模型目录。"
+        "modelCatalogDesc": "可见模型及每个模型的上下文配置统一写入当前 Codex 的 Juling 受管模型目录。"
       },
       "testing": "测试中...",
       "testSuccess": "供应商连接正常：{{protocol}}，{{model}}，{{latency}}。",
@@ -4518,10 +4518,10 @@
     "noAccounts": "暂无 CodeBuddy 账号",
     "addAccount": "添加 CodeBuddy 账号",
     "flowNotice": {
-      "title": "CodeBuddy 账号管理说明（点击展开/收起）",
-      "desc": "切换账号需读取 CodeBuddy 本地认证存储并调用系统凭据服务进行加解密，数据仅在本地处理。",
-      "permission": "权限范围：读取 CodeBuddy 认证数据库 (state.vscdb)，调用系统凭据能力（macOS Keychain / Windows DPAPI / Linux Secret Service）进行解密/回写。",
-      "network": "网络范围：OAuth 授权登录与 Token 刷新需联网请求 codebuddy.ai；配额查询需调用计费 API。不上传本地密钥或凭证。"
+      "title": "CodeBuddy · 本机接入边界",
+      "desc": "切号只在你的电脑内完成：聚灵读取 CodeBuddy 登录会话，经系统凭据服务解密后写回同一位置。",
+      "permission": "本机动作：访问 state.vscdb，并使用 macOS Keychain、Windows DPAPI 或 Linux Secret Service 处理登录会话。",
+      "network": "外部通信：仅 OAuth、Token 刷新和额度查询连接 CodeBuddy 官方服务；本地数据库、系统密钥与凭据原文不会上传。"
     },
     "nickname": "昵称",
     "enterprise": "企业",
@@ -4662,11 +4662,11 @@
     "injectSuccess": "已成功将令牌注入 VS Code，VS Code 正在启动。",
     "injectRequireClose": "请先关闭 VS Code 再进行注入。",
     "flowNotice": {
-      "title": "GitHub Copilot 账号管理说明（点击展开/收起）",
-      "desc": "切换账号时需要读取 VS Code 本地认证存储，并调用系统凭据服务完成解密与回写；数据仅在本机处理。",
+      "title": "GitHub Copilot · 本机接入边界",
+      "desc": "聚灵在本机完成账号会话替换：读取 VS Code 登录存储、解密目标会话，再加密写回原位置。",
       "inject": "一键切号：本工具读取本地 VS Code 加密材料（DPAPI/Keychain/Secret Service），解密 state.vscdb 中的认证会话，替换 GitHub Copilot 令牌并重新加密 —— 全部在本机完成。",
-      "reason": "权限需求：读取 VS Code 认证数据库（state.vscdb），并调用系统加密能力（Windows DPAPI / macOS Keychain / Linux Secret Service）进行解密与写回。",
-      "storage": "数据范围：本机导入会读取 VS Code 中的 GitHub 登录会话，切号会更新同类会话；OAuth、Token 导入、本机导入校验和配额刷新会调用 GitHub 官方 API，仅发送必要认证字段，不上传 state.vscdb 或系统密钥。"
+      "reason": "本机动作：访问 VS Code 的 state.vscdb，并调用 Windows DPAPI、macOS Keychain 或 Linux Secret Service 处理会话。",
+      "storage": "外部通信：OAuth、Token 校验和额度刷新只连接 GitHub 官方 API，并仅发送必要认证字段；state.vscdb 与系统密钥不会离开本机。"
     }
   },
   "runtime": {
@@ -5034,11 +5034,11 @@
     "injectSuccess": "已完成切换，Devin 正在启动。",
     "injectRequireClose": "请先关闭 Devin 再进行切换。",
     "flowNotice": {
-      "title": "Devin 账号管理说明（点击展开/收起）",
-      "desc": "切换账号时需要读取 Devin 本地认证存储，并按客户端兼容规则调用系统凭据能力完成会话解密与写回；数据仅在本机处理。",
+      "title": "Devin · 本机接入边界",
+      "desc": "聚灵按 Devin 客户端兼容规则，在本机解密、替换并写回登录会话。",
       "inject": "一键切号：本工具读取本机 Devin 加密材料（DPAPI/Keychain/Secret Service），处理 state.vscdb 中的认证会话并写回 Devin 令牌 —— 全部在本机完成。",
-      "reason": "权限需求：读取 Devin 认证数据库（state.vscdb），并使用系统加密能力（Windows DPAPI / macOS Keychain / Linux Secret Service）处理登录会话的解密与写回。",
-      "storage": "读取范围：仅处理 Devin 登录会话相关数据，所有流程均在本地执行。"
+      "reason": "本机动作：访问 state.vscdb，并使用 Windows DPAPI、macOS Keychain 或 Linux Secret Service 处理登录会话。",
+      "storage": "边界承诺：只处理 Devin 登录相关条目，不读取无关数据库内容，不把本机会话与系统密钥上传。"
     }
   },
   "kiro": {
@@ -5072,10 +5072,10 @@
       "unknown": "未知"
     },
     "flowNotice": {
-      "title": "Kiro 账号管理说明（点击展开/收起）",
-      "desc": "账号切换会在本机读写 Kiro 登录文件与实例配置；OAuth 授权与配额刷新会调用 Kiro 官方接口。对于 Enterprise/IdC 账号，刷新还会调用 AWS IAM Identity Center OIDC 接口。",
-      "reason": "处理路径包括 ~/.aws/sso/cache/kiro-auth-token.json、实例目录 profile.json，以及 state.vscdb 中 kiro.kiroAgent 条目。",
-      "storage": "处理数据包括 Kiro 登录会话与配额信息；请求 Kiro 官方接口时会发送必要认证字段（如 code、refreshToken、accessToken、profileArn）。Enterprise/IdC 刷新会额外发送 OIDC 必要字段（如 client_id、client_secret、refresh_token）。"
+      "title": "Kiro · 本机接入边界",
+      "desc": "账号切换只改动本机 Kiro 登录文件与实例配置；授权和额度刷新走 Kiro 官方链路。",
+      "reason": "本机动作：处理 ~/.aws/sso/cache/kiro-auth-token.json、实例 profile.json 与 state.vscdb 的 kiro.kiroAgent 条目。",
+      "storage": "外部通信：向 Kiro 官方接口发送授权与额度所需字段；Enterprise/IdC 账号还会连接 AWS IAM Identity Center OIDC。"
     },
     "title": "Kiro 账号管理",
     "instances": {
@@ -5145,10 +5145,10 @@
       "localClient": "从本机 Cursor 导入"
     },
     "flowNotice": {
-      "title": "Cursor 账号管理说明（点击展开/收起）",
-      "desc": "支持从本地 Cursor 安装导入、粘贴 JWT 令牌或 OAuth 授权登录来管理 Cursor 账号。",
-      "reason": "权限范围：读取并写入 Cursor 本地认证存储（state.vscdb），用于账号导入与令牌注入（切号）。",
-      "storage": "网络请求范围：刷新配额时携带 JWT 向 cursor.com 官方接口请求使用量、用户信息及订阅信息；不向任何第三方服务器上传数据。"
+      "title": "Cursor · 本机接入边界",
+      "desc": "本机导入、JWT 与 OAuth 账号都汇入聚灵本地账号库；切号时只替换 Cursor 对应登录会话。",
+      "reason": "本机动作：读取和写入 Cursor 的 state.vscdb，仅用于账号导入与令牌注入。",
+      "storage": "外部通信：额度刷新仅携带 JWT 请求 cursor.com 官方接口；不会向第三方服务器上传账号库或本机存储。"
     },
     "filters": {
       "quotaFailed": "配额查询失败 ({{count}})",
@@ -5223,7 +5223,7 @@
     "actions": {
       "collapseAll": "全部收起",
       "expandAll": "全部展开",
-      "goAntigravity": "前往 Antigravity IDE",
+      "goAntigravity": "前往主账号工作台",
       "goCodex": "前往 Codex",
       "goDashboard": "前往仪表盘",
       "goGitHubCopilot": "前往 GitHub Copilot",
@@ -5240,7 +5240,7 @@
         "0": "若看到异常状态（如 403/刷新失败），先刷新再判断是否删除重登。"
       },
       "keywords": {
-        "0": "Antigravity IDE 账号",
+          "0": "主工作台账号",
         "1": "账号管理",
         "2": "配额",
         "3": "标签"
@@ -5254,13 +5254,13 @@
         "1": "使用“刷新全部”先同步一轮配额状态。",
         "2": "按配额/重置时间排序，选择当前要使用的账号。"
       },
-      "summary": "管理 Antigravity IDE 账号生命周期：添加、刷新配额、切换、分组与标签。",
-      "title": "Antigravity IDE 账号管理"
+      "summary": "在聚灵主工作台完成账号录入、状态同步、切换、分组和标签整理。",
+      "title": "主账号工作台"
     },
     "blocks": {
-      "cautions": "常见坑位 / 注意事项",
-      "outcomes": "这个功能能帮你什么",
-      "steps": "推荐操作步骤"
+      "cautions": "操作边界",
+      "outcomes": "它解决什么",
+      "steps": "建议路径"
     },
     "dashboard": {
       "cautions": {
@@ -5346,10 +5346,10 @@
       "summary": "用于账号隔离和并行运行。每个实例有独立目录、独立状态，可避免互相污染。",
       "title": "应用多开（重点）"
     },
-    "navTitle": "功能使用手册",
+    "navTitle": "使用说明",
     "providers": {
       "cautions": {
-        "0": "账号管理说明条里写了本地读写和权限范围，建议先读再操作。",
+        "0": "每个平台页顶部都有“本机接入边界”，操作前可先确认本机动作与外部通信范围。",
         "1": "部分平台或能力受系统限制，请按页面提示处理。"
       },
       "keywords": {
@@ -5370,8 +5370,8 @@
         "1": "确认账号列表中能看到计划/配额和重置时间。",
         "2": "执行“切换/注入”并在客户端验证生效。"
       },
-      "summary": "四个平台页结构一致：账号总览 + 应用多开，支持 OAuth、Token/JSON 导入与切换。",
-      "title": "Codex / GitHub Copilot / Devin / Kiro 平台"
+      "summary": "按目标客户端进入对应工作区，在同一条操作路径中完成账号接入、状态确认与应用切换。",
+      "title": "客户端账号工作区"
     },
     "quickStart": {
       "cautions": {
@@ -5395,12 +5395,12 @@
         "2": "使用“切换/注入”按钮验证切号生效。",
         "3": "再进入“应用多开”创建 1 个实例，验证隔离和并行运行。"
       },
-      "summary": "按“看状态 -> 加账号 -> 切账号 -> 开多实例”的顺序完成首轮上手，避免迷路。",
-      "title": "快速开始（5 分钟）"
+      "summary": "先确认全局状态，再接入一个账号并验证切换；流程跑通后再扩展到多实例。",
+      "title": "首次使用路径"
     },
     "resultCount": "共 {{count}} 个章节",
-    "searchAria": "搜索手册",
-    "searchPlaceholder": "搜索功能、场景或关键词（如：多开、注入、唤醒）",
+    "searchAria": "搜索使用说明",
+    "searchPlaceholder": "输入目标或动作，例如：切换、隔离、定时任务",
     "settings": {
       "cautions": {
         "0": "路径探测失败时，手动选择可执行文件路径最稳妥。",
@@ -5424,11 +5424,11 @@
         "1": "再按平台调自动刷新与告警阈值。",
         "2": "网络服务改端口后按提示重启生效。"
       },
-      "summary": "集中管理语言、主题、自动刷新、告警阈值、应用路径与网络服务配置。",
-      "title": "设置与系统能力"
+      "summary": "集中维护界面偏好、刷新策略、提醒阈值、客户端路径与本地服务参数。",
+      "title": "运行环境设置"
     },
-    "subtitle": "按任务场景组织的内置说明：先知道“为什么用”，再按步骤“马上可用”。",
-    "title": "功能使用手册",
+    "subtitle": "按工作目标找到对应模块，沿建议路径完成配置；所有账号与配置操作均由你主动触发。",
+    "title": "使用说明",
     "wakeup": {
       "cautions": {
         "0": "首次配置建议只选少量账号，确认稳定后再扩大范围。",
@@ -5450,17 +5450,17 @@
         "1": "先手动运行一次，确认任务参数可用。",
         "2": "在“验证”页面做批量巡检和历史复盘。"
       },
-      "summary": "用于定时运行唤醒任务和批量验证结果，帮助你持续跟踪账号可用性与状态。",
-      "title": "唤醒任务与验证"
+      "summary": "为需要持续检查的账号建立定时任务，并在验证区查看每次执行结果与异常原因。",
+      "title": "定时任务与状态验证"
     }
   },
   "qoder": {
     "title": "Qoder 账号管理",
     "flowNotice": {
-      "title": "Qoder 账号接入说明（点击展开/收起）",
-      "desc": "当前支持官方 CLI device login 授权、本地导入、JSON 导入、切号注入、应用多开绑定与配额概览。浏览器授权无需保持 Qoder 运行；切号注入按 Qoder 客户端真实落盘规则写回。",
-      "permission": "权限范围：读取 Qoder 本地认证存储、用户信息与机器标识缓存（如 machine_token.json、cache/id），用于官方授权登录、本地导入、账号切换与会话注入；所有数据仅在本机处理。",
-      "network": "网络范围：OAuth 授权登录会在浏览器中打开 Qoder 官方 device login 页面，并轮询 Qoder 官方 OpenAPI 完成授权；配额查询通过 Qoder API 获取用量数据。不上传本地密钥、凭证或原始存储内容。"
+      "title": "Qoder · 本机接入边界",
+      "desc": "授权、导入、切号与多开绑定共用一套本地账号库；切号按 Qoder 客户端真实落盘规则写回。",
+      "permission": "本机动作：读取 Qoder 认证存储、用户信息及 machine_token.json、cache/id 等机器标识缓存。",
+      "network": "外部通信：device login 与额度查询仅连接 Qoder 官方 OpenAPI；本地密钥、凭证和原始存储不会上传。"
     },
     "oauth": {
       "hint": "点击下方按钮，在浏览器中完成 Qoder 官方授权。该流程走官方 CLI device login 链路，无需保持 Qoder 运行。",
@@ -5499,15 +5499,15 @@
   "zcode": {
     "search": "搜索 ZCode 账号...",
     "flowNotice": {
-      "title": "ZCode 账号管理说明",
-      "desc": "Cockpit 按 ZCode 官方格式管理 OAuth 凭据与 API Key，用于真实切号与实例绑定。",
-      "permission": "本地范围：~/.zcode/v2/credentials.json、config.json、setting.json 与受管实例目录。",
-      "network": "网络范围：OAuth、用户信息、订阅与配额接口；不会将账号上传到 Cockpit 服务。"
+      "title": "ZCode · 本机接入边界",
+      "desc": "聚灵按 ZCode 官方格式组织 OAuth 凭据与 API Key，并将切号和实例绑定保持在本地工作区内。",
+      "permission": "本机动作：读写 ~/.zcode/v2/credentials.json、config.json、setting.json 与受管实例目录。",
+      "network": "外部通信：登录、用户信息、订阅和额度查询仅连接 ZCode 官方接口；账号库不会上传至聚灵服务。"
     },
     "empty": "暂无 ZCode 账号",
     "addAccount": "添加 ZCode 账号",
     "oauth": {
-      "desc": "关闭 ZCode 后，在 Cockpit 授权窗口完成登录；回调将由 Cockpit 直接接收。",
+      "desc": "关闭 ZCode 后，在 Juling 授权窗口完成登录；回调将由 Juling 直接接收。",
       "title": "ZCode 授权登录",
       "item1": "支持 Z.ai 与 BigModel 官方登录。",
       "item2": "授权后自动保存账号并刷新套餐与模型额度。",
@@ -5519,7 +5519,7 @@
       "success": "ZCode OAuth 登录成功"
     },
     "token": {
-      "desc": "粘贴由 Cockpit 导出的 ZCode 账号 JSON。"
+      "desc": "粘贴由 Juling 导出的 ZCode 账号 JSON。"
     },
     "apiKey": {
       "tab": "API 密钥",
@@ -5564,10 +5564,10 @@
       "localDesc": "支持从本机 Zed 当前登录状态或导出的 JSON 文件导入账号数据。"
     },
     "flowNotice": {
-      "title": "Zed 账号接入说明（点击展开/收起）",
-      "desc": "支持官方 OAuth 登录、JSON 导入、本机当前登录状态导入，以及按 Zed 客户端真实落盘规则应用账号并重启官方客户端。页面仅展示桌面端可直接读取的状态字段。",
-      "reason": "权限范围：浏览器打开 Zed 官方同源登录；读取本机当前 Zed 登录凭据用于导入；应用账号时按官方客户端相同位点写回系统凭据，并可按需启动或重启 Zed。",
-      "storage": "数据范围：本地仅保存导入或授权得到的账号记录、标签和导出内容；不会上传本机 Keychain/凭据原文，不会扫描浏览器网页登录会话，也不会修改无关系统凭据。"
+      "title": "Zed · 本机接入边界",
+      "desc": "OAuth、JSON 与本机登录状态统一保存到聚灵本地账号库；应用账号时按 Zed 官方客户端的实际位点写回。",
+      "reason": "本机动作：读取当前 Zed 凭据用于导入，切号时写回对应系统凭据，并可按你的设置启动或重启 Zed。",
+      "storage": "边界承诺：不上传 Keychain 或凭据原文，不扫描浏览器登录会话，也不改动与 Zed 无关的系统凭据。"
     },
     "page": {
       "subtitle": "支持官方同源登录、订阅与配额查询、真实覆盖登录信息并重启 Zed。",
@@ -5679,15 +5679,15 @@
       "jsonOnlyPlaceholder": "粘贴完整 Trae CN JSON..."
     },
     "flowNotice": {
-      "title": "Trae 账号接入说明（点击展开/收起）",
-      "desc": "支持官方 OAuth 授权、本机导入、JSON 导入与本地注入切号；切号过程按 Trae 客户端真实落盘规则写回。",
-      "permission": "权限范围：读取并写入本机 Trae 配置目录中的 storage.json 登录相关字段，用于账号导入、切号注入与套餐信息展示；所有数据仅在本机处理。",
-      "network": "网络范围：OAuth 登录、令牌刷新和套餐查询会请求 Trae 官方接口；不会向第三方服务上传本地账号文件或原始存储内容。",
-      "titleWithPlatform": "{{platform}} 账号接入说明（点击展开/收起）",
-      "descWithPlatform": "支持 {{platform}} 官方 OAuth 授权、本机导入、JSON 导入与本地注入切号；切号过程按 {{platform}} 客户端真实落盘规则写回。",
-      "permissionWithPlatform": "权限范围：读取并写入本机 {{platform}} 配置目录中的 storage.json 登录相关字段，用于账号导入、切号注入与套餐信息展示；所有数据仅在本机处理。",
-      "networkGlobal": "网络范围：{{platform}} OAuth 登录、令牌刷新和套餐查询会请求 trae.ai / traeapi.us 官方接口；不会向第三方服务上传本地账号文件或原始存储内容。",
-      "networkCn": "网络范围：{{platform}} OAuth 登录、令牌刷新和套餐查询会请求 trae.cn / trae.com.cn 官方接口；不会向第三方服务上传本地账号文件或原始存储内容。"
+      "title": "Trae · 本机接入边界",
+      "desc": "OAuth、本机与 JSON 导入共用聚灵本地账号库；切号按 Trae 客户端真实落盘规则写回。",
+      "permission": "本机动作：只读写 Trae 配置目录中 storage.json 的登录相关字段，用于导入、切号与套餐展示。",
+      "network": "外部通信：OAuth、令牌刷新和套餐查询仅连接 Trae 官方接口；本地账号文件与原始存储不会上传。",
+      "titleWithPlatform": "{{platform}} · 本机接入边界",
+      "descWithPlatform": "OAuth、本机与 JSON 导入共用聚灵本地账号库；切号按 {{platform}} 客户端真实落盘规则写回。",
+      "permissionWithPlatform": "本机动作：只读写 {{platform}} 配置目录中 storage.json 的登录相关字段，用于导入、切号与套餐展示。",
+      "networkGlobal": "外部通信：{{platform}} OAuth、令牌刷新和套餐查询仅连接 trae.ai / traeapi.us；本地账号文件与原始存储不会上传。",
+      "networkCn": "外部通信：{{platform}} OAuth、令牌刷新和套餐查询仅连接 trae.cn / trae.com.cn；本地账号文件与原始存储不会上传。"
     }
   },
   "codebuddyCn": {
@@ -5698,10 +5698,10 @@
     "oauthDesc": "点击下方按钮将在浏览器中打开 CodeBuddy CN 授权页面。",
     "tokenDesc": "粘贴 CodeBuddy CN 的 access token：",
     "flowNotice": {
-      "title": "CodeBuddy CN 账号管理说明（点击展开/收起）",
-      "desc": "切换账号需读取 CodeBuddy CN 本地认证存储并调用系统凭据服务进行加解密，数据仅在本地处理。",
-      "permission": "权限范围：读取 CodeBuddy CN 认证数据库 (state.vscdb)，调用系统凭据能力（macOS Keychain / Windows DPAPI / Linux Secret Service）进行解密/回写。",
-      "network": "网络范围：OAuth 授权登录与 Token 刷新需联网请求 codebuddy.cn 与 copilot.tencent.com；资源包配额刷新需调用计费 API。不上传本地密钥或凭证。"
+      "title": "CodeBuddy CN · 本机接入边界",
+      "desc": "切号只在你的电脑内完成：聚灵读取 CodeBuddy CN 登录会话，经系统凭据服务解密后写回同一位置。",
+      "permission": "本机动作：访问 state.vscdb，并使用 macOS Keychain、Windows DPAPI 或 Linux Secret Service 处理登录会话。",
+      "network": "外部通信：仅 OAuth、Token 刷新和额度查询连接 CodeBuddy CN 官方服务；本地数据库、系统密钥与凭据原文不会上传。"
     },
     "import": {
       "localDesc": "支持从本机 CodeBuddy CN 客户端或 JSON 文件导入账号数据。",
@@ -5762,10 +5762,10 @@
       "timeRangeError": "开始时间不能晚于结束时间"
     },
     "flowNotice": {
-      "title": "WorkBuddy 账号管理说明（点击展开/收起）",
-      "desc": "切换账号会按新版 WorkBuddy 官方客户端规则写入本机登录文件；本机导入读取同一登录文件，数据仅在本地处理。",
-      "permission": "权限范围：读取并写入 WorkBuddy 登录文件（CodeBuddyExtension/Data/Public/auth/workbuddy-desktop.info），用于本机导入与账号切换；不再读取或修改旧版 state.vscdb。",
-      "network": "网络范围：OAuth 授权登录与 Token 刷新需联网请求 WorkBuddy；配额查询需调用计费 API。不上传本地登录文件或凭证原文。"
+      "title": "WorkBuddy · 本机接入边界",
+      "desc": "聚灵按新版 WorkBuddy 客户端规则导入与写回登录文件，账号切换不经过中间服务器。",
+      "permission": "本机动作：读写 CodeBuddyExtension/Data/Public/auth/workbuddy-desktop.info；不再访问旧版 state.vscdb。",
+      "network": "外部通信：仅 OAuth、Token 刷新与额度查询连接 WorkBuddy 官方服务；登录文件和凭据原文不会上传。"
     },
     "nickname": "昵称",
     "enterprise": "企业",
@@ -5967,10 +5967,10 @@
   "grok": {
     "search": "搜索 Grok CLI 账号...",
     "flowNotice": {
-      "title": "Grok CLI 账号管理说明",
-      "desc": "默认使用独立 GROK_HOME；开启“切号同步官方登录”后，默认实例切换 OAuth 账号会写入官方 ~/.grok/auth.json，多开实例仍保持隔离。",
-      "permission": "本地范围：可读取默认 ~/.grok/auth.json 用于导入；仅在开关开启且默认实例切换 OAuth 账号时写入该文件，API Key 不会覆盖官方登录。",
-      "network": "网络范围：OAuth 授权、凭据刷新及账号用量查询；不会上传凭据到 Cockpit 服务。"
+      "title": "Grok CLI · 本机接入边界",
+      "desc": "默认实例使用独立 GROK_HOME；只有主动开启“切号同步官方登录”后，OAuth 切号才会同步到官方登录文件。",
+      "permission": "本机动作：可从 ~/.grok/auth.json 导入；开关开启时仅默认实例写回该文件，多开实例继续隔离，API Key 不覆盖官方登录。",
+      "network": "外部通信：OAuth、凭据刷新和用量查询仅连接 Grok 官方服务；本机凭据不会上传至聚灵服务。"
     },
     "empty": "暂无 Grok CLI 账号",
     "addAccount": "添加 Grok CLI 账号",
@@ -6073,16 +6073,16 @@
     },
     "deleteCurrentDisabled": "当前账号不可删除",
     "flowNotice": {
-      "title": "Claude 账号管理说明（点击展开/收起）",
-      "desc": "本工具可管理 Claude 登录态与 Anthropic API Key。Claude 登录会在平台授权窗口完成并先保存到本地账号库；切号时才写入官方 Claude。",
-      "permission": "权限范围：读取/写入官方 Claude 应用数据目录；API Key 与 Claude 快照保存于本工具本地账号数据。",
-      "network": "网络范围：Claude 登录窗口访问 claude.ai；刷新账号会请求 Claude Web 相关接口；API Key 导入本身不联网。",
-      "desktopDesc": "本工具可管理 Claude 登录态。登录会先保存到本地账号库；切号时才写入官方 Claude。",
-      "cliDesc": "本工具可管理 Claude Code OAuth 与多供应商 API Key。OAuth 切号会写入本机 Claude Code 配置；API Key 会写入 Claude Code settings.json 的 env。",
-      "desktopPermission": "权限范围：读取/写入官方 Claude 应用数据目录；Claude 快照保存于本工具本地账号数据。",
-      "cliPermission": "权限范围：读取/写入本机 Claude Code 配置目录与 macOS Keychain 中的 Claude Code 凭据；API Key 账号保存于本工具本地账号数据，并在切换或启动 CLI 时明文写入 settings.json 的 env。",
-      "desktopNetwork": "网络范围：Claude 登录窗口访问 claude.ai；刷新账号会请求 Claude Web 相关接口。",
-      "cliNetwork": "网络范围：OAuth 授权访问 Claude 官方授权页和 token/profile/usage 接口；API Key 导入不联网，启动后由 Claude CLI 访问所选供应商。"
+      "title": "Claude · 本机接入边界",
+      "desc": "Claude 登录态与 Anthropic API Key 先进入聚灵本地账号库，只有执行切号时才写入对应客户端。",
+      "permission": "本机动作：读写 Claude 应用数据目录；API Key 与 Claude 登录快照保存在聚灵本地账号数据中。",
+      "network": "外部通信：登录与账号刷新连接 Claude 官方页面和接口；单纯导入 API Key 不会发起网络请求。",
+      "desktopDesc": "Claude 登录会先保存为聚灵本地快照，只有执行切号时才写入官方 Claude 客户端。",
+      "cliDesc": "Claude Code OAuth 与多供应商 API Key 统一保存在本地；切号时写入 Claude Code 配置和 settings.json。",
+      "desktopPermission": "本机动作：读写 Claude 应用数据目录，并在聚灵本地账号库保存登录快照。",
+      "cliPermission": "本机动作：读写 Claude Code 配置目录及 macOS Keychain 中的 Claude Code 凭据；API Key 切换或启动 CLI 时写入 settings.json 的 env。",
+      "desktopNetwork": "外部通信：登录窗口访问 claude.ai，账号刷新请求 Claude Web 官方接口。",
+      "cliNetwork": "外部通信：OAuth 连接 Claude 官方授权页及 token、profile、usage 接口；API Key 导入不联网，启动后由 Claude CLI 连接所选供应商。"
     },
     "search": "搜索 Claude 账号...",
     "searchDesktop": "搜索 Claude 账号...",

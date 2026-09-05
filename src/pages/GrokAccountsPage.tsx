@@ -827,16 +827,16 @@ export function GrokAccountsPage() {
     searchPlaceholderDefault: "搜索 Grok CLI 账号...",
     flowNotice: {
       titleKey: "grok.flowNotice.title",
-      titleDefault: "Grok CLI 账号管理说明",
+      titleDefault: "Grok CLI · 本机接入边界",
       descKey: "grok.flowNotice.desc",
       descDefault:
-        "默认使用独立 GROK_HOME；开启“切号同步官方登录”后，默认实例切换 OAuth 账号会写入官方 ~/.grok/auth.json，多开实例仍保持隔离。",
+        "默认实例使用独立 GROK_HOME；只有主动开启“切号同步官方登录”后，OAuth 切号才会同步到官方登录文件。",
       permissionKey: "grok.flowNotice.permission",
       permissionDefault:
-        "本地范围：可读取默认 ~/.grok/auth.json 用于导入；仅在开关开启且默认实例切换 OAuth 账号时写入该文件，API Key 不会覆盖官方登录。",
+        "本机动作：可从 ~/.grok/auth.json 导入；开关开启时仅默认实例写回该文件，多开实例继续隔离，API Key 不覆盖官方登录。",
       networkKey: "grok.flowNotice.network",
       networkDefault:
-        "网络范围：OAuth 授权、凭据刷新及账号用量查询；不会上传凭据到 Cockpit 服务。",
+        "外部通信：OAuth、凭据刷新和用量查询仅连接 Grok 官方服务；本机凭据不会上传至聚灵服务。",
     },
     noAccountsKey: "grok.empty",
     noAccountsDefault: "暂无 Grok CLI 账号",

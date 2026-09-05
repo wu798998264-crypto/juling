@@ -1,6 +1,6 @@
-# Cockpit Tools
+# Juling
 
-Cockpit Tools manages local accounts and provider connections for supported AI developer tools.
+Juling manages local accounts and provider connections for supported AI developer tools.
 
 ## Language
 

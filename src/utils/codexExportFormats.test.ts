@@ -41,7 +41,7 @@ function jwt(payload: Record<string, unknown>): string {
   return `${encode({ alg: 'none', typ: 'JWT' })}.${encode(payload)}.`;
 }
 
-test('Cockpit Tools export preserves portable Agent Identity credentials', () => {
+test('Juling export preserves portable Agent Identity credentials', () => {
   const raw = JSON.stringify([agentIdentityAccount()]);
   const exported = JSON.parse(
     transformCodexExportJson(raw, 'cockpit_tools'),
@@ -189,7 +189,7 @@ test('CPA export rejects Agent Identity instead of producing empty tokens', () =
   );
 });
 
-test('regular token accounts keep their existing Cockpit Tools export shape', () => {
+test('regular token accounts keep their existing Juling export shape', () => {
   const account: CodexAccount = {
     id: 'codex-token-fixture',
     email: 'token@example.com',

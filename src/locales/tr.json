@@ -276,7 +276,7 @@
       "desc": "Bu alan tüm sayfalarda sağ üstte sabitlenir ve kampanya ya da marka reklamları için uygundur.",
       "action": "Ayrıntıları görüntüle"
     },
-    "appName": "Cockpit Tools​",
+    "appName": "Juling​",
     "collapse": "Daralt",
     "confirmDelete": "Silmeyi Onayla",
     "confirmDeleteTag": "Etiket Silmeyi Onayla",
@@ -328,12 +328,12 @@
   },
   "sponsors": {
     "pageTitle": "Sponsorlar",
-    "pageDesc": "Cockpit Tools'u destekleyen sponsorlara teşekkür ederiz.",
+    "pageDesc": "Juling'u destekleyen sponsorlara teşekkür ederiz.",
     "loading": "Sponsorlar yükleniyor...",
     "emptyTitle": "Henüz sponsor yok",
     "emptyDesc": "Uzak sponsor modülü şu anda devre dışı.",
     "listAriaLabel": "Sponsor listesi",
-    "defaultDescription": "Cockpit Tools'u desteklediğiniz için teşekkürler.",
+    "defaultDescription": "Juling'u desteklediğiniz için teşekkürler.",
     "openSponsor": "Aç"
   },
   "platformLayout": {
@@ -531,12 +531,12 @@
         "summary": "Ön eki olmayan modeller geçerli aboneliği kullanır; cpa/gpt-5.5 gibi ön ekli modeller üçüncü taraf bir API'ye iletilir. Her ikisi de yerel yönlendirme hizmetine bağlıdır.",
         "rowSummary": "Ön eki olmayan modeller geçerli aboneliği kullanır; cpa/gpt-5.5 gibi ön ekli modeller üçüncü taraf bir API'ye iletilir. Her ikisi de yerel yönlendirme hizmetine bağlıdır.",
         "confirmEnableTitle": "Üçüncü taraf API yönlendirmesi etkinleştirilsin mi?",
-        "confirmEnableMessage": "Codex model istekleri yerel Cockpit Tools hizmeti üzerinden yönlendirilecektir. Hizmet çalışmıyorsa hem abonelik hem de üçüncü taraf modelleri kullanılamayabilir. Kaydettiğinizde oturum açılışında başlatma etkinleştirilecektir.\n\nYönlendirme etkinleştirilsin mi?",
+        "confirmEnableMessage": "Codex model istekleri yerel Juling hizmeti üzerinden yönlendirilecektir. Hizmet çalışmıyorsa hem abonelik hem de üçüncü taraf modelleri kullanılamayabilir. Kaydettiğinizde oturum açılışında başlatma etkinleştirilecektir.\n\nYönlendirme etkinleştirilsin mi?",
         "confirmEnableAction": "Etkinleştir",
         "confirmDisableTitle": "Üçüncü taraf API yönlendirmesi devre dışı bırakılsın mı?",
         "confirmDisableMessage": "Bu değişiklik yürürlüğe girdikten sonra yerel ağ geçidi durdurulacak, yerel abonelik erişimi geri yüklenecek ve üçüncü taraf modelleri kullanılamayacaktır.\n\nDevre dışı bırakılsın mı?",
         "confirmDisableAction": "Devre dışı bırak",
-        "modalTip": "Hem abonelik hem de üçüncü taraf modelleri yerel yönlendirme hizmetinden geçer. Cockpit Tools'u arka planda çalışır durumda tutun. Hizmet otomatik olarak kurtarılır ve yinelenen arızalardan sonra resmi yapılandırmaya geri döner.",
+        "modalTip": "Hem abonelik hem de üçüncü taraf modelleri yerel yönlendirme hizmetinden geçer. Juling'u arka planda çalışır durumda tutun. Hizmet otomatik olarak kurtarılır ve yinelenen arızalardan sonra resmi yapılandırmaya geri döner.",
         "modelRequired": "Etkinleştirilen her API rotası en az bir model içermelidir.",
         "runningSaveTitle": "Yönlendirme ne zaman geçerli olsun?",
         "runningSaveMessage": "Bu Codex örneği çalışıyor. Yerel hizmeti şimdi değiştirmek mevcut görüşmeyi kesintiye uğratacaktır.\n\nŞimdi uygulamak için «Kaydet ve Codex'i yeniden başlat»ı veya mevcut oturumu değiştirmemek için «Daha sonra kaydet»i seçin.",
@@ -678,7 +678,7 @@
   },
   "settings": {
     "title": "Uygulama Ayarları",
-    "subtitle": "Cockpit Tools deneyiminizi özelleştirin.",
+    "subtitle": "Juling deneyiminizi özelleştirin.",
     "tabs": {
       "general": "Genel",
       "network": "Ağ",
@@ -761,7 +761,7 @@
       "codexSyncWsl": "Codex'i WSL ile eşitle",
       "codexSyncWslDesc": "Varsayılan Codex hesabı değiştirildikten sonra auth.json ve config.toml WSL içindeki Codex dizinine de yazılır.",
       "codexAppUiInjection": "API hizmeti kotası",
-      "codexAppUiInjectionDesc": "Codex örneği yeniden başlatıldıktan sonra Cockpit Tools API hizmetinin hesap sayısını, haftalık ve 5 saatlik kotasını oluşturucunun altında gösterir. Cockpit Tools arka planda çalışmaya devam etmelidir; uygulama tamamen kapatıldığında veya ağ kullanılamadığında güncellemeler durur.",
+      "codexAppUiInjectionDesc": "Codex örneği yeniden başlatıldıktan sonra Juling API hizmetinin hesap sayısını, haftalık ve 5 saatlik kotasını oluşturucunun altında gösterir. Juling arka planda çalışmaya devam etmelidir; uygulama tamamen kapatıldığında veya ağ kullanılamadığında güncellemeler durur.",
       "codexAppUiInjectionPoolLabel": "Hesaplar",
       "codexAppUiInjectionWeeklyLabel": "Hafta",
       "codexAppUiInjectionFiveHourLabel": "5 sa",
@@ -875,7 +875,7 @@
       "sideNavLayoutClassic": "Klasik Düzen",
       "antigravityDualSwitchNoRestart": "Yeniden başlatmadan çift geçiş",
       "antigravityDualSwitchNoRestartDesc": "Hesap değiştirirken yerel hesap verisi yazımı ve eklentinin kesintisiz geçişi tek akışta yürütülür; Antigravity IDE yeniden başlatılmaz.",
-      "appAutoLaunch": "Oturum açıldığında Cockpit Tools'u başlat",
+      "appAutoLaunch": "Oturum açıldığında Juling'u başlat",
       "appAutoLaunchDesc": "Oturum açınca başlat. Windows açılışında PowerShell hatası görürseniz kapatın.",
       "startupWakeupDisabled": "Devre dışı",
       "startupWakeupImmediate": "Hemen uyandır",
@@ -1024,7 +1024,7 @@
       "firewallHint": "URL erişilemiyorsa sistem güvenlik duvarı ayarlarını kontrol edin.",
       "proxyTitle": "Genel Proxy",
       "proxyEnabled": "Genel proxyyi etkinleştir",
-      "proxyEnabledDesc": "Cockpit tarafından başlatılan yönetilen platform süreçlerine proxy ortam değişkenleri enjekte eder.",
+      "proxyEnabledDesc": "Juling tarafından başlatılan yönetilen platform süreçlerine proxy ortam değişkenleri enjekte eder.",
       "proxyUrl": "Proxy URL​",
       "proxyUrlDesc": "Örnek: http://127.0.0.1:7890 veya socks5://127.0.0.1:7890",
       "proxyUrlPlaceholder": "örn. http://127.0.0.1:7890",
@@ -1034,7 +1034,7 @@
       "proxyUrlRequired": "Genel proxy etkin olduğunda proxy URL boş olamaz."
     },
     "about": {
-      "appName": "Cockpit Tools​",
+      "appName": "Juling​",
       "slogan": "Profesyonel Hesap Yönetimi Çözümü",
       "author": "Yazar",
       "wechat": "WeChat​",
@@ -1241,7 +1241,7 @@
       "passwordSavedPlaceholder": "Kaydedildi; korumak için boş bırakın",
       "clearPassword": "Temizle",
       "remoteDirTitle": "Uzak Klasör",
-      "remoteDirDesc": "Sadece bu klasördeki Cockpit yedekleme dosyaları yönetilir.",
+      "remoteDirDesc": "Sadece bu klasördeki Juling yedekleme dosyaları yönetilir.",
       "statusTitle": "Senkronizasyon Durumu",
       "statusDesc": "Uzak yedekten geri yükleme manuel seçim gerektirir ve yerel verileri asla sessizce üzerine yazmaz.",
       "lastUpload": "Son yükleme: {{time}}",
@@ -1252,7 +1252,7 @@
       "syncAction": "Ayarları Senkronize Et",
       "syncLatestConfirm": "En son uzak yedeği {{name}} çekmek ve yerel verilerle senkronize etmek istediğinizden emin misiniz? Bu işlem mevcut yerel verilerin üzerine yazacaktır.",
       "remoteListTitle": "Uzak Yedekler",
-      "remoteListDesc": "Sadece Cockpit otomatik/manuel yedekleme adlarıyla eşleşen JSON ve ZIP dosyaları gösterilir.",
+      "remoteListDesc": "Sadece Juling otomatik/manuel yedekleme adlarıyla eşleşen JSON ve ZIP dosyaları gösterilir.",
       "emptyTitle": "Uzak yedek yok",
       "emptyDesc": "Ayarları kaydedin, ardından bir yedek oluşturup yükleyin.",
       "unknownTime": "Bilinmeyen",
@@ -1671,7 +1671,7 @@
       "importBtn": "İçe Aktar",
       "oauthAction": "OAuth Yetkilendirme",
       "fromExtension": "Eklentiden İçe Aktar",
-      "syncBadge": "Antigravity Cockpit eklenti hesaplarını senkronize et",
+      "syncBadge": "Juling eklenti hesaplarını senkronize et",
       "fromLocalDB": "Yerel Veritabanından İçe Aktar",
       "localDBDesc": "Bu makinedeki Antigravity IDE İstemcisinden giriş hesaplarını oku",
       "toolsDescMigrate": "Hesapları ~/.antigravity_tools/ dizininden taşı",
@@ -2122,7 +2122,7 @@
       "description": "Önce yapılandırın ve denetleyin; istemci yalnızca Değiştir veya Başlat seçildikten sonra değişir.",
       "notApplied": "Henüz uygulanmadı",
       "safeHint": "Bu pencereyi açmak Token yenilemez, istemciyi kapatmaz veya oturum açma bilgilerini yazmaz.",
-      "modelConfigHint": "Bağlam penceresi ve sıkıştırma eşiği, model başına Cockpit tarafından yönetilen model kataloğuna yazılır.",
+      "modelConfigHint": "Bağlam penceresi ve sıkıştırma eşiği, model başına Juling tarafından yönetilen model kataloğuna yazılır.",
       "enablePerModelHint": "Model başına yapılandırma için görünür modeller gerekir. Kaydedene veya başlatana kadar yalnızca taslak değişir.",
       "enablePerModel": "Model başına ayarları etkinleştir",
       "unsavedConfig": "Model ayarlarında kaydedilmemiş değişiklikler var; değiştirme veya başlatmadan önce kaydedilecekler.",
@@ -2238,11 +2238,11 @@
     },
     "exportFormat": {
       "label": "Dışa aktarma biçimi",
-      "cockpitTools": "Cockpit Tools​",
+      "cockpitTools": "Juling​",
       "authJson": "Resmi auth.json",
       "sub2api": "sub2api biçimi",
       "cpa": "cpa biçimi",
-      "agentIdentityCpaUnsupported": "Agent Identity hesapları cpa biçiminde dışa aktarılamaz. Cockpit Tools veya sub2api kullanın.",
+      "agentIdentityCpaUnsupported": "Agent Identity hesapları cpa biçiminde dışa aktarılamaz. Juling veya sub2api kullanın.",
       "agentIdentityPrivateKeyNotice": "Bu dışa aktarım, hesabı başka bir cihazda geri yükleyebilen bir Agent Identity özel anahtarı içerir. Parola gibi koruyun.",
       "buildFailed": "Dışa aktarım oluşturulamıyor: seçilen hesaplarda desteklenmeyen bir tür veya eksik kimlik bilgileri var.",
       "downloadAll": "Tümünü indir",
@@ -2327,8 +2327,8 @@
       "testAuthFailed": "Hizmete erişiliyor ancak kimlik doğrulama başarısız: {{detail}}. API hizmeti anahtarını veya hesap oturum durumunu kontrol edin.",
       "testServiceUnavailable": "Hizmete erişiliyor ancak şu anda kullanılamıyor: {{detail}}. Hizmetin etkin olup olmadığını, hesap koleksiyonunun boş olup olmadığını veya hesapların kullanılabilirliğini kontrol edin.",
       "gatewayErrors": {
-        "authUnavailable": "Şu anda yönlendirilebilir hesap yok. Hesap beklemede, yetkisiz veya kota sınırlı olabilir. Cockpit Tools API hizmetinde durumunu kontrol edin.",
-        "authNotFound": "Hesap havuzunda kullanılabilir hesap yapılandırılmamış. Cockpit Tools API hizmetinde hesap ekleyin veya etkinleştirin."
+        "authUnavailable": "Şu anda yönlendirilebilir hesap yok. Hesap beklemede, yetkisiz veya kota sınırlı olabilir. Juling API hizmetinde durumunu kontrol edin.",
+        "authNotFound": "Hesap havuzunda kullanılabilir hesap yapılandırılmamış. Juling API hizmetinde hesap ekleyin veya etkinleştirin."
       },
       "testRateLimited": "Hizmete erişiliyor ancak upstream hız sınırında veya kota tükendi: {{detail}}.",
       "testHttpFailed": "Hizmete erişiliyor ancak istek HTTP {{status}} döndürdü: {{detail}}.",
@@ -3261,7 +3261,7 @@
         "placeholder": "Her satıra bir model kimliği girin veya kimlikleri virgülle ayırın.",
         "editHint": "Alınan modeller yalnızca bu taslağa eklenir. Kaydetmeden önce inceleyip düzenleyin.",
         "syncToggle": "Sağlayıcı modellerini Codex ile eşitle",
-        "syncDescription": "Kaydettikten sonra bu liste Cockpit tarafından yönetilen Codex model kataloğunu oluşturur. Özel katalogların üzerine yazılmaz.",
+        "syncDescription": "Kaydettikten sonra bu liste Juling tarafından yönetilen Codex model kataloğunu oluşturur. Özel katalogların üzerine yazılmaz.",
         "fetchCredentialsRequired": "Önce API Key ve Base URL girin.",
         "fetchEmpty": "Sağlayıcı model döndürmedi. Mevcut liste korundu.",
         "fetchFailed": "Sağlayıcı modelleri alınamadı: {{error}}",
@@ -3342,7 +3342,7 @@
           "name": "SiliconFlow​"
         },
         "cockpit_api": {
-          "name": "Cockpit Api​"
+          "name": "Juling Api​"
         }
       },
       "oauthBinding": {
@@ -3518,7 +3518,7 @@
         "contextWindowHint": "model_context_window yazar. Yalnızca Özel modda düzenlenebilir.",
         "partialDetected": "Şu anda yalnızca bir yönetilen alan ayarlanmıştır: model_context_window={{context}}, model_auto_compact_token_limit={{compact}}. Kaydetme, mevcut şemayı kullanarak her iki alanı da yeniden yazacaktır.",
         "notSet": "Ayarlanmadı",
-        "modelCatalogDesc": "Görünür modeller ve modele özel bağlam ayarları etkin Codex için Cockpit tarafından yönetilen model kataloğuna yazılır."
+        "modelCatalogDesc": "Görünür modeller ve modele özel bağlam ayarları etkin Codex için Juling tarafından yönetilen model kataloğuna yazılır."
       },
       "testing": "Test ediliyor...",
       "testSuccess": "Sağlayıcı bağlantısı sağlıklı: {{protocol}}, {{model}}, {{latency}}.",
@@ -3836,7 +3836,7 @@
       "saveFailed": "Hesap notu kaydedilemedi: {{error}}"
     },
     "cockpitApi": {
-      "panelTitle": "Cockpit Api hizmet paneli",
+      "panelTitle": "Juling Api hizmet paneli",
       "servicePanel": "Hizmet paneli",
       "balance": "Bakiye",
       "requests": "İstekler",
@@ -5538,14 +5538,14 @@
     "search": "ZCode hesaplarını ara...",
     "flowNotice": {
       "title": "ZCode hesap yönetimi",
-      "desc": "Cockpit, gerçek hesap geçişi ve örnek bağlama için ZCode'un şifreli yerel kimlik bilgilerini okur ve geri yazar.",
+      "desc": "Juling, gerçek hesap geçişi ve örnek bağlama için ZCode'un şifreli yerel kimlik bilgilerini okur ve geri yazar.",
       "permission": "Yerel kapsam: ~/.zcode/v2/credentials.json ve yönetilen örnek dizinleri.",
-      "network": "Ağ kapsamı: OAuth, kullanıcı, abonelik ve kota API'leri. Hesaplar Cockpit hizmetine yüklenmez."
+      "network": "Ağ kapsamı: OAuth, kullanıcı, abonelik ve kota API'leri. Hesaplar Juling hizmetine yüklenmez."
     },
     "empty": "ZCode hesabı yok",
     "addAccount": "ZCode Hesabı Ekle",
     "oauth": {
-      "desc": "ZCode'u kapatıp Cockpit yetkilendirme penceresinde oturum açın; geri çağrıyı Cockpit doğrudan alır.",
+      "desc": "ZCode'u kapatıp Juling yetkilendirme penceresinde oturum açın; geri çağrıyı Juling doğrudan alır.",
       "title": "ZCode OAuth Yetkilendirmesi",
       "item1": "Resmî Z.ai ve BigModel oturumu.",
       "item2": "Hesabı kaydeder, planı ve model kotalarını yeniler.",
@@ -5557,7 +5557,7 @@
       "success": "ZCode OAuth oturumu açıldı"
     },
     "token": {
-      "desc": "Cockpit tarafından dışa aktarılan ZCode hesap JSON'unu yapıştırın."
+      "desc": "Juling tarafından dışa aktarılan ZCode hesap JSON'unu yapıştırın."
     },
     "apiKey": {
       "tab": "API Anahtarı",
@@ -5684,7 +5684,7 @@
       "backToCurrent": "Geri",
       "switchToThisAccount": "Geç",
       "openDetails": "Ayrıntıları aç",
-      "openCockpitTools": "Cockpit Tools'u aç"
+      "openJulingTools": "Juling'u aç"
     },
     "empty": {
       "title": "Hesap yok",
@@ -5814,7 +5814,7 @@
   },
   "relay": {
     "pageTitle": "Özel aktarım",
-    "pageDesc": "Cockpit Tools kullanıcıları için Codex API Key hesaplarıyla kullanılabilen iş ortaklığı API servisi.",
+    "pageDesc": "Juling kullanıcıları için Codex API Key hesaplarıyla kullanılabilen iş ortaklığı API servisi.",
     "loading": "Aktarım yükleniyor...",
     "emptyTitle": "Aktarım kapalı",
     "emptyDesc": "Uzak yapılandırma özel aktarımı etkinleştirmedi.",
@@ -5844,7 +5844,7 @@
   "apiKeyFun": {
     "eyebrow": "Ara geçiş",
     "title": "APIKEY.FUN relay",
-    "description": "Cockpit resmi iş ortağı ara geçiş hizmeti, büyük model API erişimi için kararlı, açık ve yüksek fiyat-performanslı bir çözüm sunar. Claude, OpenAI, Gemini gibi ana akım modelleri destekler; Codex, Gemini CLI, Claude Code ve diğer geliştirici araçlarında tek tip yapılandırma için uygundur. Cockpit özel bağlantısıyla kaydolarak yüklemelerde kalıcı olarak %5’e varan indirim alabilirsiniz.",
+    "description": "Juling resmi iş ortağı ara geçiş hizmeti, büyük model API erişimi için kararlı, açık ve yüksek fiyat-performanslı bir çözüm sunar. Claude, OpenAI, Gemini gibi ana akım modelleri destekler; Codex, Gemini CLI, Claude Code ve diğer geliştirici araçlarında tek tip yapılandırma için uygundur. Juling özel bağlantısıyla kaydolarak yüklemelerde kalıcı olarak %5’e varan indirim alabilirsiniz.",
     "register": "Özel kayıt linki",
     "docs": "Resmi doküman",
     "viewNow": "Hemen bak",
@@ -5970,7 +5970,7 @@
       "title": "Grok CLI Hesap Yönetimi",
       "desc": "Varsayılan olarak ayrı GROK_HOME dizinleri kullanılır. Eşitleme açıkken varsayılan örnekteki OAuth değişikliği ~/.grok/auth.json dosyasına yazılır; ek örnekler yalıtılmış kalır.",
       "permission": "Yerel kapsam: ~/.grok/auth.json içe aktarma için okunabilir ve yalnızca eşitleme açıkken varsayılan örnekte OAuth değişiminde yazılır. API anahtarları resmî oturumun üzerine yazmaz.",
-      "network": "Ağ kapsamı: OAuth yetkilendirmesi, kimlik bilgisi yenileme ve hesap kullanım sorguları. Kimlik bilgileri Cockpit hizmetlerine yüklenmez."
+      "network": "Ağ kapsamı: OAuth yetkilendirmesi, kimlik bilgisi yenileme ve hesap kullanım sorguları. Kimlik bilgileri Juling hizmetlerine yüklenmez."
     },
     "empty": "Henüz Grok CLI hesabı yok",
     "addAccount": "Grok CLI Hesabı Ekle",

@@ -2180,7 +2180,7 @@ fn download_electron_runtime_zip(
     ));
 
     let client = reqwest::blocking::Client::builder()
-        .user_agent("Cockpit-Tools")
+        .user_agent("Juling")
         .timeout(Duration::from_secs(15 * 60))
         .build()
         .map_err(|e| format!("创建 Electron runtime 下载客户端失败: {}", e))?;

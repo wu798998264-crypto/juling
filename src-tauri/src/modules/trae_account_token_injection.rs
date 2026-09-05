@@ -2106,7 +2106,7 @@ fn storage_is_newer_than_saved_account(account: &TraeAccount, storage_path: &Pat
 
 /// Pull fresher tokens from Trae `storage.json` when identity matches.
 /// Critical for avoiding refresh-token races: Trae may have already rotated
-/// refresh tokens on disk while Cockpit still holds a stale copy.
+/// refresh tokens on disk while Juling still holds a stale copy.
 fn sync_account_tokens_from_storage_path(
     account: &mut TraeAccount,
     storage_path: &Path,
@@ -2245,7 +2245,7 @@ fn collect_storage_paths_for_account_sync(account: &TraeAccount) -> Vec<(String,
 }
 
 /// Before ExchangeToken, prefer disk tokens written by the official client.
-/// Persist any synced rotation so Cockpit does not keep a stale refresh token
+/// Persist any synced rotation so Juling does not keep a stale refresh token
 /// even if the subsequent ExchangeToken call fails.
 fn prepare_account_tokens_before_exchange(account: &mut TraeAccount) -> bool {
     let mut any_changed = false;
@@ -2290,7 +2290,7 @@ fn format_exchange_token_failure(official_err: &str, legacy_err: &str) -> String
         || combined.contains("403")
     {
         format!(
-            "{}。可能原因：官方客户端已刷新并轮换了 RefreshToken，或设备密钥/区域不一致导致互刷顶号。请在 Trae 重新登录后于 Cockpit「从本地导入」，并避免 Trae 运行中对同一账号做登录刷新。",
+            "{}。可能原因：官方客户端已刷新并轮换了 RefreshToken，或设备密钥/区域不一致导致互刷顶号。请在 Trae 重新登录后于 Juling「从本地导入」，并避免 Trae 运行中对同一账号做登录刷新。",
             combined
         )
     } else {
@@ -2482,7 +2482,7 @@ async fn refresh_account_async_once(account_id: &str) -> Result<TraeAccount, Str
     ));
 
     if normalize_non_empty(account.refresh_token.as_deref()).is_none() {
-        return Err("Trae refresh token 缺失，无法按官方流程刷新登录态。请在 Trae 登录后于 Cockpit「从本地导入」。".to_string());
+        return Err("Trae refresh token 缺失，无法按官方流程刷新登录态。请在 Trae 登录后于 Juling「从本地导入」。".to_string());
     }
 
     let exchange_response = match request_exchange_token_by_official_refresh(

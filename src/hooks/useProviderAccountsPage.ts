@@ -233,7 +233,7 @@ type ExternalImportBundleParseMessages = {
 
 const CODEX_REFRESH_TOKEN_PATTERN = /rt_[A-Za-z0-9._-]+/g;
 const COCKPIT_API_PROVIDER_ID = 'cockpit_api';
-const COCKPIT_API_PROVIDER_NAME = 'Cockpit Api';
+const COCKPIT_API_PROVIDER_NAME = 'Juling Api';
 const COCKPIT_TOOLS_IMPORT_PATH_MARKERS = [
   '/api/cockpit-tools/import/',
   '/user/api/toolsimport/',
@@ -466,7 +466,7 @@ const deriveApiBaseUrlFromImportUrl = (importUrl?: string | null): string | null
   }
 };
 
-const isCockpitToolsImportUrl = (importUrl?: string | null): boolean => {
+const isJulingToolsImportUrl = (importUrl?: string | null): boolean => {
   const trimmed = (importUrl || '').trim();
   if (!trimmed) return false;
   try {
@@ -478,7 +478,7 @@ const isCockpitToolsImportUrl = (importUrl?: string | null): boolean => {
   }
 };
 
-const isCockpitApiImportItem = (item: Record<string, unknown>): boolean => {
+const isJulingApiImportItem = (item: Record<string, unknown>): boolean => {
   const providerId = readRecordString(item, ['api_provider_id', 'apiProviderId']);
   if (providerId?.toLowerCase() === COCKPIT_API_PROVIDER_ID) return true;
 
@@ -493,10 +493,10 @@ const isCockpitApiImportItem = (item: Record<string, unknown>): boolean => {
   );
 };
 
-const withCockpitApiBaseUrl = (
+const withJulingApiBaseUrl = (
   item: unknown,
   apiBaseUrl: string | null,
-  isCockpitToolsImport: boolean,
+  isJulingToolsImport: boolean,
 ): unknown => {
   if (!apiBaseUrl || !item || typeof item !== 'object' || Array.isArray(item)) {
     return item;
@@ -507,7 +507,7 @@ const withCockpitApiBaseUrl = (
   if (authMode?.toLowerCase() !== 'apikey' || !apiKey) {
     return item;
   }
-  if (!isCockpitToolsImport && !isCockpitApiImportItem(payload)) {
+  if (!isJulingToolsImport && !isJulingApiImportItem(payload)) {
     return item;
   }
 
@@ -527,7 +527,7 @@ const withCockpitApiBaseUrl = (
   };
 };
 
-const applyCockpitApiBaseUrlToExternalImportItems = (
+const applyJulingApiBaseUrlToExternalImportItems = (
   items: unknown[],
   request: ExternalProviderImportPayload,
 ): unknown[] => {
@@ -536,9 +536,9 @@ const applyCockpitApiBaseUrlToExternalImportItems = (
     deriveApiBaseUrlFromImportUrl(request.importUrl);
   if (!apiBaseUrl) return items;
 
-  const isCockpitToolsImport =
-    Boolean(request.apiBaseUrl?.trim()) || isCockpitToolsImportUrl(request.importUrl);
-  return items.map((item) => withCockpitApiBaseUrl(item, apiBaseUrl, isCockpitToolsImport));
+  const isJulingToolsImport =
+    Boolean(request.apiBaseUrl?.trim()) || isJulingToolsImportUrl(request.importUrl);
+  return items.map((item) => withJulingApiBaseUrl(item, apiBaseUrl, isJulingToolsImport));
 };
 
 const buildInitialExternalImportProgress = (): ExternalImportProgressState => ({
@@ -1667,7 +1667,7 @@ export function useProviderAccountsPage<TAccount extends ProviderAccountBase>(
           });
           const items =
             platformId === 'codex'
-              ? applyCockpitApiBaseUrlToExternalImportItems(resolvedItems, request)
+              ? applyJulingApiBaseUrlToExternalImportItems(resolvedItems, request)
               : resolvedItems;
 
           let success = 0;

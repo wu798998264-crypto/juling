@@ -948,7 +948,7 @@ async fn fetch_remote_announcements() -> Result<AnnouncementResponse, String> {
     logger::log_info("[Announcement] 从远端拉取公告");
 
     let client = reqwest::Client::builder()
-        .user_agent("Cockpit-Tools")
+        .user_agent("Juling")
         .timeout(std::time::Duration::from_secs(10))
         .build()
         .map_err(|e| format!("创建公告 HTTP 客户端失败: {}", e))?;

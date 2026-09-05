@@ -1,4 +1,4 @@
-//! 统一管理 Cockpit 生成的备份目录、行为快照保留策略和空间统计。
+//! 统一管理 Juling 生成的备份目录、行为快照保留策略和空间统计。
 //!
 //! 定时 JSON/ZIP 与行为快照共用一个可配置根目录。历史版本散落在平台目录
 //! 旁边的备份仍会被统计和清理，但新生成的行为备份应通过本模块获取路径。
@@ -1041,33 +1041,33 @@ fn legacy_backup_roots() -> Vec<(String, PathBuf)> {
         {
             roots.push((
                 "codebuddy".to_string(),
-                home.join("Library/Application Support/CodeBuddyExtension/Backups/CockpitTools"),
+                home.join("Library/Application Support/CodeBuddyExtension/Backups/JulingTools"),
             ));
             roots.push((
                 "workbuddy".to_string(),
-                home.join(".workbuddy/Backups/CockpitTools"),
+                home.join(".workbuddy/Backups/JulingTools"),
             ));
         }
         #[cfg(target_os = "windows")]
         {
             roots.push((
                 "codebuddy".to_string(),
-                home.join("AppData/Local/CodeBuddyExtension/Backups/CockpitTools"),
+                home.join("AppData/Local/CodeBuddyExtension/Backups/JulingTools"),
             ));
             roots.push((
                 "workbuddy".to_string(),
-                home.join(".workbuddy/Backups/CockpitTools"),
+                home.join(".workbuddy/Backups/JulingTools"),
             ));
         }
         #[cfg(target_os = "linux")]
         {
             roots.push((
                 "codebuddy".to_string(),
-                home.join(".local/share/CodeBuddyExtension/Backups/CockpitTools"),
+                home.join(".local/share/CodeBuddyExtension/Backups/JulingTools"),
             ));
             roots.push((
                 "workbuddy".to_string(),
-                home.join(".workbuddy/Backups/CockpitTools"),
+                home.join(".workbuddy/Backups/JulingTools"),
             ));
         }
     }

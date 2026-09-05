@@ -15,7 +15,7 @@ import type { CodexAccount } from "../types/codex";
 import { CODEX_API_SERVICE_BIND_ID } from "../types/instance";
 import { createCodexOverviewAccountComparator, filterAndSortCodexOverviewAccounts } from "../utils/codexAccountOverview";
 import { buildPaginatedGroups, buildPaginationPageSizeStorageKey, isEveryIdSelected, usePagination } from "../hooks/usePagination";
-import { formatCockpitApiInteger, formatCockpitApiTokenCount, getCodexAccountNoteTitle, isPendingOAuthCodexAccount, resolveApiKeyUsageMode, shouldAutoHideBatchDeleteJob } from "./codexAccountsControllerModel";
+import { formatJulingApiInteger, formatJulingApiTokenCount, getCodexAccountNoteTitle, isPendingOAuthCodexAccount, resolveApiKeyUsageMode, shouldAutoHideBatchDeleteJob } from "./codexAccountsControllerModel";
 import type { useCodexAccountsBaseController } from "./useCodexAccountsBaseController";
 import type { useCodexAccountsOAuthController } from "./useCodexAccountsOAuthController";
 import type { useCodexAccountsAccessController } from "./useCodexAccountsAccessController";
@@ -114,7 +114,7 @@ export function useCodexAccountsOverviewController(context: Pick<ReturnType<type
   | "setBatchDeleteBusy"
   | "setBatchDeleteJob"
   | "setBatchDeleteModalError"
-  | "setCockpitApiPanelAccountId"
+  | "setJulingApiPanelAccountId"
   | "setCustomSortDropTargetId"
   | "setCustomSortOrder"
   | "setDeleteConfirm"
@@ -233,7 +233,7 @@ export function useCodexAccountsOverviewController(context: Pick<ReturnType<type
     setBatchDeleteBusy,
     setBatchDeleteJob,
     setBatchDeleteModalError,
-    setCockpitApiPanelAccountId,
+    setJulingApiPanelAccountId,
     setCustomSortDropTargetId,
     setCustomSortOrder,
     setDeleteConfirm,
@@ -477,11 +477,11 @@ export function useCodexAccountsOverviewController(context: Pick<ReturnType<type
                     : t("codex.modelProviders.usage.total", "累计用量"),
                   requests:
                     requestCount != null
-                      ? formatCockpitApiInteger(requestCount)
+                      ? formatJulingApiInteger(requestCount)
                       : null,
                   tokens:
                     tokenCount != null
-                      ? formatCockpitApiTokenCount(tokenCount)
+                      ? formatJulingApiTokenCount(tokenCount)
                       : null,
                   cost:
                     cost != null
@@ -659,7 +659,7 @@ export function useCodexAccountsOverviewController(context: Pick<ReturnType<type
             description: providerName,
             actionLabel: t("common.open", "打开"),
             onAction: () => {
-              setCockpitApiPanelAccountId(account.id);
+              setJulingApiPanelAccountId(account.id);
             },
           });
         } else if (resolveApiKeyUsageMode(apiKeyUsageMap[account.id]?.summary)) {
@@ -887,8 +887,8 @@ export function useCodexAccountsOverviewController(context: Pick<ReturnType<type
           usage: totals
             ? {
                 label: t("codex.localAccess.statsRange.weekly", "本周"),
-                requests: formatCockpitApiInteger(totals.requestCount),
-                tokens: formatCockpitApiTokenCount(totals.totalTokens),
+                requests: formatJulingApiInteger(totals.requestCount),
+                tokens: formatJulingApiTokenCount(totals.totalTokens),
                 cost: `$${totals.estimatedCostUsd.toFixed(2)}`,
                 extraLabel: t(
                   "codex.localAccess.stats.successRateLabel",

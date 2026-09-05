@@ -14,8 +14,8 @@ test('builds manifests from the same normalized assets uploaded to GitHub', () =
   const nsisDir = path.join(rawAssetsDir, 'nsis');
   const notesFile = path.join(root, 'notes.md');
   const outputDir = path.join(root, 'output');
-  const rawAssetName = 'Cockpit Tools_1.2.3_x64-setup.exe';
-  const stagedAssetName = 'Cockpit.Tools_1.2.3_x64-setup.exe';
+  const rawAssetName = 'Juling_1.2.3_x64-setup.exe';
+  const stagedAssetName = 'Juling.Tools_1.2.3_x64-setup.exe';
 
   fs.mkdirSync(nsisDir, { recursive: true });
   fs.writeFileSync(path.join(nsisDir, rawAssetName), 'installer');
@@ -56,9 +56,9 @@ test('builds a macOS target manifest from the raw Tauri updater archive', () => 
   const outputDir = path.join(root, 'output');
 
   fs.mkdirSync(path.join(rawAssetsDir, 'macos'), { recursive: true });
-  fs.writeFileSync(path.join(rawAssetsDir, 'macos', 'Cockpit Tools.app.tar.gz'), 'archive');
+  fs.writeFileSync(path.join(rawAssetsDir, 'macos', 'Juling.app.tar.gz'), 'archive');
   fs.writeFileSync(
-    path.join(rawAssetsDir, 'macos', 'Cockpit Tools.app.tar.gz.sig'),
+    path.join(rawAssetsDir, 'macos', 'Juling.app.tar.gz.sig'),
     'mac-signature',
   );
   fs.writeFileSync(notesFile, 'Release notes');
@@ -82,7 +82,7 @@ test('builds a macOS target manifest from the raw Tauri updater archive', () => 
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
   assert.equal(
     manifest.url,
-    'https://github.com/wu798998264-crypto/juling/releases/download/v1.2.3/Cockpit.Tools_aarch64.app.tar.gz',
+    'https://github.com/wu798998264-crypto/juling/releases/download/v1.2.3/Juling.Tools_aarch64.app.tar.gz',
   );
   assert.equal(manifest.signature, 'mac-signature');
 });
@@ -91,7 +91,7 @@ test('rejects updater assets that bypass stable staging', () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'cockpit-target-manifest-'));
   const assetsDir = path.join(root, 'bundle');
   const notesFile = path.join(root, 'notes.md');
-  const assetName = 'Cockpit Tools_1.2.3_x64-setup.exe';
+  const assetName = 'Juling_1.2.3_x64-setup.exe';
 
   fs.mkdirSync(assetsDir, { recursive: true });
   fs.writeFileSync(path.join(assetsDir, assetName), 'installer');
@@ -119,7 +119,7 @@ test('rejects assets without updater signatures', () => {
   const notesFile = path.join(root, 'notes.md');
 
   fs.mkdirSync(assetsDir, { recursive: true });
-  fs.writeFileSync(path.join(assetsDir, 'Cockpit.Tools_1.2.3_amd64.deb'), 'package');
+  fs.writeFileSync(path.join(assetsDir, 'Juling.Tools_1.2.3_amd64.deb'), 'package');
   fs.writeFileSync(notesFile, 'Release notes');
 
   assert.throws(
@@ -143,16 +143,16 @@ test('supports every staged release target', () => {
   const notesFile = path.join(root, 'notes.md');
   const outputDir = path.join(root, 'output');
   const assetsByTarget = {
-    'darwin-aarch64-app': 'Cockpit.Tools_1.2.3_aarch64.app.tar.gz',
-    'darwin-x86_64-app': 'Cockpit.Tools_1.2.3_x64.app.tar.gz',
-    'windows-x86_64-msi': 'Cockpit.Tools_1.2.3_x64_en-US.msi',
-    'windows-x86_64-nsis': 'Cockpit.Tools_1.2.3_x64-setup.exe',
-    'linux-x86_64-appimage': 'Cockpit.Tools_1.2.3_amd64.AppImage',
-    'linux-x86_64-deb': 'Cockpit.Tools_1.2.3_amd64.deb',
-    'linux-x86_64-rpm': 'Cockpit.Tools-1.2.3-1.x86_64.rpm',
-    'linux-aarch64-appimage': 'Cockpit.Tools_1.2.3_aarch64.AppImage',
-    'linux-aarch64-deb': 'Cockpit.Tools_1.2.3_arm64.deb',
-    'linux-aarch64-rpm': 'Cockpit.Tools-1.2.3-1.aarch64.rpm',
+    'darwin-aarch64-app': 'Juling.Tools_1.2.3_aarch64.app.tar.gz',
+    'darwin-x86_64-app': 'Juling.Tools_1.2.3_x64.app.tar.gz',
+    'windows-x86_64-msi': 'Juling.Tools_1.2.3_x64_en-US.msi',
+    'windows-x86_64-nsis': 'Juling.Tools_1.2.3_x64-setup.exe',
+    'linux-x86_64-appimage': 'Juling.Tools_1.2.3_amd64.AppImage',
+    'linux-x86_64-deb': 'Juling.Tools_1.2.3_amd64.deb',
+    'linux-x86_64-rpm': 'Juling.Tools-1.2.3-1.x86_64.rpm',
+    'linux-aarch64-appimage': 'Juling.Tools_1.2.3_aarch64.AppImage',
+    'linux-aarch64-deb': 'Juling.Tools_1.2.3_arm64.deb',
+    'linux-aarch64-rpm': 'Juling.Tools-1.2.3-1.aarch64.rpm',
   };
 
   fs.mkdirSync(assetsDir, { recursive: true });

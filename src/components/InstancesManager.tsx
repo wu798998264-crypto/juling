@@ -1349,7 +1349,7 @@ export function InstancesManager<TAccount extends AccountLike>({
           formExperimentalModelUnavailableMessage ||
             t(
               "instances.form.modelRouting.catalogUnavailable",
-              "当前实例的可见模型目录不可由 Cockpit 管理，暂不能启用模型路由。",
+              "当前实例的可见模型目录不可由 Juling 管理，暂不能启用模型路由。",
             ),
         );
         setFormErrorTick((prev) => prev + 1);

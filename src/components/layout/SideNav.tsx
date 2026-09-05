@@ -1,8 +1,8 @@
-import { Settings, Rocket, GaugeCircle, LayoutGrid, SlidersHorizontal, FileText, ChevronDown, PanelLeftClose, PanelLeftOpen, ShieldCheck } from 'lucide-react';
+import { Settings, GaugeCircle, LayoutGrid, SlidersHorizontal, PanelLeftClose, PanelLeftOpen, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useState, useRef, useCallback, useEffect, useLayoutEffect, useMemo, type CSSProperties } from 'react';
 import { createPortal } from 'react-dom';
-import apiKeyFunIcon from '../../assets/icons/apikey-fun.png';
+import julingCoreLogo from '../../assets/branding/juling-core-master.png';
 import { Page } from '../../types/navigation';
 import { isMenuVisiblePlatform, PlatformId, PLATFORM_PAGE_MAP } from '../../types/platform';
 import {
@@ -19,7 +19,6 @@ import {
   usePlatformLayoutStore,
 } from '../../stores/usePlatformLayoutStore';
 import { CLASSIC_SIDEBAR_ENTRY_LIMIT, ORIGINAL_SIDEBAR_ENTRY_LIMIT, useSideNavLayoutStore } from '../../stores/useSideNavLayoutStore';
-import { useGlobalModal } from '../../hooks/useGlobalModal';
 import { getPlatformLabel, renderPlatformIcon } from '../../utils/platformMeta';
 import { useAntigravityRuntimeTarget } from '../../hooks/useAntigravityRuntimeTarget';
 import { setAntigravityRuntimeTargetFromPlatform } from '../../utils/antigravityRuntimeTarget';
@@ -29,7 +28,6 @@ interface SideNavProps {
   page: Page;
   setPage: (page: Page) => void;
   onOpenPlatformLayout: () => void;
-  easterEggClickCount: number;
   onEasterEggTriggerClick: () => void;
   hasBreakoutSession: boolean;
   updateActionState: 'hidden' | 'available' | 'downloading' | 'installing' | 'ready';
@@ -37,12 +35,12 @@ interface SideNavProps {
   onUpdateActionClick: () => void;
   updateRemindersEnabled: boolean;
   sponsorEntryVisible: boolean;
-  onOpenLogViewer: () => void;
 }
 
-interface FlyingRocket {
+interface EnergyParticle {
   id: number;
-  x: number;
+  angle: number;
+  distance: number;
 }
 
 type SideNavEntryId = PlatformLayoutEntryId | ApiRelayLayoutEntryId;
@@ -81,7 +79,7 @@ const PAGE_PLATFORM_MAP: Partial<Record<Page, PlatformId>> = {
 };
 
 const APP_DISPLAY_NAME =
-  import.meta.env.VITE_COCKPIT_TOOLS_PROFILE === 'dev' ? 'Cockpit Tools Dev' : 'Cockpit Tools';
+  import.meta.env.VITE_COCKPIT_TOOLS_PROFILE === 'dev' ? '聚灵 Dev' : '聚灵';
 
 const CLASSIC_NAV_MIN_SCALE = 0.5;
 const CLASSIC_NAV_SCALE_EPSILON = 0.004;
@@ -92,7 +90,7 @@ function renderEntryIcon(entry: SideNavEntry, size: number) {
     return (
       <img
         className="nav-item-icon"
-        src={apiKeyFunIcon}
+        src={julingCoreLogo}
         alt=""
         width={size}
         height={size}
@@ -133,7 +131,6 @@ export function SideNav({
   page,
   setPage,
   onOpenPlatformLayout,
-  easterEggClickCount,
   onEasterEggTriggerClick,
   hasBreakoutSession,
   updateActionState,
@@ -141,11 +138,10 @@ export function SideNav({
   onUpdateActionClick,
   updateRemindersEnabled,
   sponsorEntryVisible,
-  onOpenLogViewer,
 }: SideNavProps) {
   const { t } = useTranslation();
-  const { showModal } = useGlobalModal();
-  const [flyingRockets, setFlyingRockets] = useState<FlyingRocket[]>([]);
+  const [energyParticles, setEnergyParticles] = useState<EnergyParticle[]>([]);
+  const [isEnergyCharging, setIsEnergyCharging] = useState(false);
   const [showMore, setShowMore] = useState(false);
   const [classicAdaptiveScale, setClassicAdaptiveScale] = useState(1);
   const [classicNavNeedsScroll, setClassicNavNeedsScroll] = useState(false);
@@ -156,16 +152,12 @@ export function SideNav({
     maxHeight: 560,
   });
   const sideNavLayoutMode = useSideNavLayoutStore((state) => state.mode);
-  const setSideNavLayoutMode = useSideNavLayoutStore((state) => state.setMode);
   const classicCollapsed = useSideNavLayoutStore((state) => state.classicCollapsed);
   const toggleClassicCollapsed = useSideNavLayoutStore((state) => state.toggleClassicCollapsed);
-  const hideClassicSwitchPrompt = useSideNavLayoutStore((state) => state.hideClassicSwitchPrompt);
-  const setHideClassicSwitchPrompt = useSideNavLayoutStore((state) => state.setHideClassicSwitchPrompt);
   const isClassicLayout = sideNavLayoutMode === 'classic';
   const isClassicCollapsed = isClassicLayout && classicCollapsed;
   const showClassicLabels = isClassicLayout && !classicCollapsed;
-  const rocketIdRef = useRef(0);
-  const classicSwitchDontAskAgainRef = useRef(false);
+  const energyIdRef = useRef(0);
   const sideNavRef = useRef<HTMLElement>(null);
   const updateEntryRef = useRef<HTMLDivElement>(null);
   const brandRef = useRef<HTMLDivElement>(null);
@@ -566,7 +558,6 @@ export function SideNav({
   }, [isClassicLayout, recalculateClassicAdaptiveScale]);
 
   const classicMainIconSize = Math.max(14, Math.round(20 * classicAdaptiveScale));
-  const classicBrandLogoIconSize = Math.max(14, Math.round(20 * classicAdaptiveScale));
   const classicHandleIconSize = Math.max(12, Math.round(16 * classicAdaptiveScale));
 
   const classicScaleStyle = isClassicLayout
@@ -577,53 +568,6 @@ export function SideNav({
     '--side-nav-classic-adaptive-scale': classicAdaptiveScale,
     ...(classicHandleTop == null ? {} : { top: `${classicHandleTop}px` }),
   } as CSSProperties);
-
-  const handleClassicLayoutEntryClick = useCallback(() => {
-    if (hideClassicSwitchPrompt) {
-      setSideNavLayoutMode('classic');
-      return;
-    }
-    classicSwitchDontAskAgainRef.current = false;
-    showModal({
-      title: t('nav.switchClassicLayoutTitle', '切换至经典侧边栏布局'),
-      description: t(
-        'nav.switchClassicLayoutDesc',
-        '经典布局会展示完整平台导航并支持折叠。你仍可在“设置 > 通用 > 侧边栏布局”中随时切换回原始布局。',
-      ),
-      width: 'sm',
-      content: (
-        <div className="side-nav-layout-switch-modal-content">
-          <label className="side-nav-layout-switch-remember">
-            <input
-              type="checkbox"
-              onChange={(event) => {
-                classicSwitchDontAskAgainRef.current = event.target.checked;
-              }}
-            />
-            <span>{t('nav.switchClassicLayoutDontAskAgain', '不再提示此引导')}</span>
-          </label>
-        </div>
-      ),
-      actions: [
-        {
-          id: 'classic-switch-cancel',
-          label: t('common.cancel', '取消'),
-          variant: 'secondary',
-        },
-        {
-          id: 'classic-switch-confirm',
-          label: t('nav.switchClassicLayoutConfirm', '立即切换'),
-          variant: 'primary',
-          onClick: () => {
-            if (classicSwitchDontAskAgainRef.current) {
-              setHideClassicSwitchPrompt(true);
-            }
-            setSideNavLayoutMode('classic');
-          },
-        },
-      ],
-    });
-  }, [hideClassicSwitchPrompt, setHideClassicSwitchPrompt, setSideNavLayoutMode, showModal, t]);
 
   useLayoutEffect(() => {
     if (!isClassicLayout || typeof window === 'undefined') {
@@ -664,16 +608,17 @@ export function SideNav({
       return;
     }
 
-    const newRocket: FlyingRocket = {
-      id: rocketIdRef.current++,
-      x: (Math.random() - 0.5) * 40,
-    };
-
-    setFlyingRockets((prev) => [...prev, newRocket]);
-
+    const burst = Array.from({ length: 8 }, (_, index) => ({
+      id: energyIdRef.current++,
+      angle: index * 45 + Math.random() * 14 - 7,
+      distance: 30 + Math.random() * 24,
+    }));
+    setEnergyParticles(burst);
+    setIsEnergyCharging(true);
     setTimeout(() => {
-      setFlyingRockets((prev) => prev.filter((rocket) => rocket.id !== newRocket.id));
-    }, 1500);
+      setEnergyParticles([]);
+      setIsEnergyCharging(false);
+    }, 1100);
 
     onEasterEggTriggerClick();
   }, [hasBreakoutSession, onEasterEggTriggerClick]);
@@ -859,7 +804,7 @@ export function SideNav({
       <nav
         ref={sideNavRef}
         style={classicScaleStyle}
-        className={`side-nav${isClassicLayout ? ' side-nav-classic' : ''}${isClassicCollapsed ? ' side-nav-classic-collapsed' : ''}`}
+        className={`side-nav side-nav-command-deck${isClassicLayout ? ' side-nav-classic' : ''}${isClassicCollapsed ? ' side-nav-classic-collapsed' : ''}`}
       >
       {shouldShowUpdateActionEntry && (
         <div className="side-nav-update-entry" ref={updateEntryRef}>
@@ -896,15 +841,12 @@ export function SideNav({
         <div className="side-nav-brand-main">
           <div
             ref={logoRef}
-            className={`brand-logo rocket-easter-egg${hasBreakoutSession ? ' rocket-easter-egg-active' : ''}`}
+            className={`brand-logo energy-core${isEnergyCharging ? ' energy-core-charging' : ''}${hasBreakoutSession ? ' energy-core-active' : ''}`}
             onClick={handleLogoClick}
             title={hasBreakoutSession ? t('breakout.resumeGameNav', '继续游戏') : undefined}
           >
-            <Rocket size={isClassicLayout ? classicBrandLogoIconSize : 20} />
-            {hasBreakoutSession && <span className="rocket-session-indicator" aria-hidden="true" />}
-            {!hasBreakoutSession && easterEggClickCount > 0 && (
-              <span className="rocket-click-count">{easterEggClickCount}</span>
-            )}
+            <img className="brand-logo-image" src={julingCoreLogo} alt="" aria-hidden="true" />
+            <span className="energy-core-ring" aria-hidden="true" />
           </div>
 
           {isClassicLayout && !isClassicCollapsed && (
@@ -922,14 +864,15 @@ export function SideNav({
             pointerEvents: 'none',
           }}
         >
-          {flyingRockets.map((rocket) => (
+          {energyParticles.map((particle) => (
             <span
-              key={rocket.id}
-              className="flying-rocket"
-              style={{ '--rocket-x': `${rocket.x}px` } as CSSProperties}
-            >
-              🚀
-            </span>
+              key={particle.id}
+              className="energy-particle"
+              style={{
+                '--energy-angle': `${particle.angle}deg`,
+                '--energy-distance': `${particle.distance}px`,
+              } as CSSProperties}
+            />
           ))}
         </div>
 
@@ -993,8 +936,7 @@ export function SideNav({
 
       </div>
 
-      {isClassicLayout && (
-        <div className="nav-bottom-actions" ref={bottomActionsRef}>
+      <div className="nav-bottom-actions command-deck-bottom-actions" ref={bottomActionsRef}>
 
 
           <button
@@ -1009,17 +951,6 @@ export function SideNav({
           </button>
 
           <button
-            className="nav-item"
-            onClick={onOpenLogViewer}
-            title={t('nav.logs', '日志')}
-          >
-            <FileText size={isClassicLayout ? classicMainIconSize : 20} />
-            {showClassicLabels ? (
-              <span className="nav-item-text">{t('nav.logs', '日志')}</span>
-            ) : null}
-          </button>
-
-          <button
             className={`nav-item ${page === 'settings' && !shouldLockActiveOnMore ? 'active' : ''}`}
             onClick={() => setPage('settings')}
             title={t('nav.settings')}
@@ -1029,33 +960,7 @@ export function SideNav({
               <span className="nav-item-text">{t('nav.settings')}</span>
             ) : null}
           </button>
-        </div>
-      )}
-
-      {!isClassicLayout && (
-        <>
-          <div className="nav-footer">
-            <button
-              className={`nav-item ${page === 'settings' && !shouldLockActiveOnMore ? 'active' : ''}`}
-              onClick={() => setPage('settings')}
-              title={t('nav.settings')}
-            >
-              <Settings size={20} />
-              <span className="tooltip">{t('nav.settings')}</span>
-            </button>
-          </div>
-
-          <button
-            type="button"
-            className="side-nav-layout-switch-trigger"
-            onClick={handleClassicLayoutEntryClick}
-            aria-label={t('nav.switchClassicLayoutEntry', '切换到经典布局')}
-          >
-            <ChevronDown size={16} />
-            <span className="tooltip">{t('nav.switchClassicLayoutEntry', '切换到经典布局')}</span>
-          </button>
-        </>
-      )}
+      </div>
 
       </nav>
 

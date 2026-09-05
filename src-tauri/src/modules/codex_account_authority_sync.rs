@@ -869,7 +869,7 @@ pub fn sync_managed_projection_from_auth_dir(
     base_dir: &Path,
 ) -> Result<CodexAccount, String> {
     let mut projection = read_managed_projection_from_dir(base_dir)
-        .ok_or_else(|| "目标目录不是 Cockpit 受管 Codex 投影，已拒绝反向同步".to_string())?;
+        .ok_or_else(|| "目标目录不是 Juling 受管 Codex 投影，已拒绝反向同步".to_string())?;
 
     let mut account =
         load_account(account_id).ok_or_else(|| format!("账号不存在: {}", account_id))?;
@@ -928,7 +928,7 @@ pub fn sync_managed_projection_from_auth_dir(
     }
 
     if token_changed {
-        // 最新凭据只写回 Cockpit 账号库及 API Service sidecar；其它官方 profile
+        // 最新凭据只写回 Juling 账号库及 API Service sidecar；其它官方 profile
         // 保留当前运行态，并在下次显式启动/切换时投影最新凭据。
         sync_managed_account_sidecar(&account);
         logger::log_info(&format!(

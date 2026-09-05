@@ -37,7 +37,7 @@ fs.mkdirSync(userDataDir, { recursive: true });
 fs.mkdirSync(path.dirname(statusFile), { recursive: true });
 fs.mkdirSync(path.dirname(exportFile), { recursive: true });
 
-app.setName('Cockpit Claude Auth');
+app.setName('Juling Claude Auth');
 app.setPath('userData', userDataDir);
 app.setPath('logs', path.join(userDataDir, 'Logs'));
 app.commandLine.appendSwitch('disable-features', 'CalculateNativeWinOcclusion');

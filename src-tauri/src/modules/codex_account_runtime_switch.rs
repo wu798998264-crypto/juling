@@ -599,7 +599,7 @@ pub async fn prepare_account_for_injection(account_id: &str) -> Result<CodexAcco
 }
 
 /// 准备账号注入（账号中心模式）：
-/// 只更新 Cockpit 账号库；刷新前采用官方运行态中最新的有效凭据。
+/// 只更新 Juling 账号库；刷新前采用官方运行态中最新的有效凭据。
 pub async fn prepare_account_for_injection_from_store(
     account_id: &str,
 ) -> Result<CodexAccount, String> {

@@ -1,6 +1,6 @@
 # Ubuntu 24.04 编译指导
 
-本文档用于在 Ubuntu 24.04 环境中本地编译 Cockpit Tools。WSL2 的 Ubuntu 24.04 也按本文档执行。
+本文档用于在 Ubuntu 24.04 环境中本地编译 聚灵。WSL2 的 Ubuntu 24.04 也按本文档执行。
 
 注意：项目官方发布目标是 macOS 和 Windows，Linux/Ubuntu 不是官方发布目标。本文档用于本地验证和自用构建。
 
@@ -310,9 +310,9 @@ find target/release/bundle -maxdepth 2 -type f -printf '%p %s bytes\n'
 常见产物：
 
 ```text
-target/release/bundle/deb/Cockpit Tools_0.22.20_amd64.deb
-target/release/bundle/rpm/Cockpit Tools-0.22.20-1.x86_64.rpm
-target/release/bundle/appimage/Cockpit Tools_0.22.20_amd64.AppImage
+target/release/bundle/deb/Juling_0.22.20_amd64.deb
+target/release/bundle/rpm/Juling-0.22.20-1.x86_64.rpm
+target/release/bundle/appimage/Juling_0.22.20_amd64.AppImage
 ```
 
 如果只想验证二进制能否编译，不需要生成 deb/rpm/AppImage：

@@ -18,7 +18,7 @@ export interface CodexApiProviderPreset {
 
 export const CODEX_API_PROVIDER_CUSTOM_ID = "custom";
 export const COCKPIT_API_PROVIDER_ID = "cockpit_api";
-export const COCKPIT_API_PROVIDER_NAME = "Cockpit Api";
+export const COCKPIT_API_PROVIDER_NAME = "Juling Api";
 export const COCKPIT_API_BASE_URL = "https://chongcodex.cn/v1";
 export const DEEPSEEK_API_PROVIDER_ID = "deepseek";
 export const DEEPSEEK_API_BASE_URL = "https://api.deepseek.com";
@@ -445,7 +445,7 @@ export function findCodexApiProviderPresetByBaseUrl(
   );
 }
 
-export function isCockpitApiProviderBaseUrl(rawBaseUrl: string): boolean {
+export function isJulingApiProviderBaseUrl(rawBaseUrl: string): boolean {
   const normalized = normalizeCodexProviderBaseUrl(rawBaseUrl);
   if (!normalized) return false;
   return COCKPIT_API_HIDDEN_BASE_URLS.some(

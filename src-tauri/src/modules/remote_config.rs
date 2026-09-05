@@ -260,7 +260,7 @@ async fn fetch_remote_config() -> Result<RemoteConfigPayload, String> {
     logger::log_info("[RemoteConfig] 从远端拉取配置");
 
     let client = reqwest::Client::builder()
-        .user_agent("Cockpit-Tools")
+        .user_agent("Juling")
         .timeout(std::time::Duration::from_secs(10))
         .build()
         .map_err(|e| format!("创建远端配置 HTTP 客户端失败: {}", e))?;

@@ -41,7 +41,7 @@ A **universal AI IDE account management tool**, currently supporting **Antigravi
       </a>
     </td>
     <td>
-      <a href="https://roxybrowser.cn?code=0326VTDA"><strong>RoxyBrowser</strong></a> is an anti-detect browser for multi-account operations and AI automation, supporting isolated browser fingerprint environments, Cookie / storage isolation, Roxy native residential IPs, team collaboration, and API / MCP automation. It helps users manage AI account matrices, reduce account association risk, and improve long-term stability. Register or purchase through the Cockpit <a href="https://roxybrowser.cn?code=0326VTDA"><strong>invite link</strong></a> to get a 10% fan discount.
+      <a href="https://roxybrowser.cn?code=0326VTDA"><strong>RoxyBrowser</strong></a> is an anti-detect browser for multi-account operations and AI automation, supporting isolated browser fingerprint environments, Cookie / storage isolation, Roxy native residential IPs, team collaboration, and API / MCP automation. It helps users manage AI account matrices, reduce account association risk, and improve long-term stability. Register or purchase through the Juling <a href="https://roxybrowser.cn?code=0326VTDA"><strong>invite link</strong></a> to get a 10% fan discount.
     </td>
   </tr>
 </table>
@@ -250,7 +250,7 @@ Manage original Trae client instances with isolated profiles and lifecycle contr
 
 ### 14. ZCode Account Management
 
-- **Official Sign-in**: With ZCode closed, complete Z.ai or BigModel OAuth in Cockpit's built-in authorization window; it captures the official `zcode://` callback directly and saves the account
+- **Official Sign-in**: With ZCode closed, complete Z.ai or BigModel OAuth in Juling's built-in authorization window; it captures the official `zcode://` callback directly and saves the account
 - **Import and Export**: Read encrypted local credentials from `~/.zcode/v2/credentials.json`, import or export JSON, and back up accounts
 - **Quota View**: Query subscription plans and per-model quotas while preserving raw plan values
 - **Batch Operations**: Tags, search, plan filters, export, and batch delete/refresh
@@ -449,7 +449,7 @@ Every bit of support helps sustain open-source development. Thank you!
 ## Acknowledgments
 
 - Antigravity account switching logic references: [Antigravity-Manager](https://github.com/lbjlaq/Antigravity-Manager)
-- The Codex API service integrates CLIProxyAPI; its Codex Live WebRTC/sideband support, Responses WebSocket state safety, canonical token accounting v2, Multi-Agent V2 compatibility, and open-source account and OAuth handling also informed Cockpit and the Grok CLI implementation: [router-for-me/CLIProxyAPI](https://github.com/router-for-me/CLIProxyAPI) (MIT)
+- The Codex API service integrates CLIProxyAPI; its Codex Live WebRTC/sideband support, Responses WebSocket state safety, canonical token accounting v2, Multi-Agent V2 compatibility, and open-source account and OAuth handling also informed Juling and the Grok CLI implementation: [router-for-me/CLIProxyAPI](https://github.com/router-for-me/CLIProxyAPI) (MIT)
 - Grok icon shape references: [LobeHub/lobe-icons](https://github.com/lobehub/lobe-icons) (MIT)
 - Grok CLI task-usage querying and compatibility parsing direction references: [junhoyeo/tokscale](https://github.com/junhoyeo/tokscale) (MIT)
 - Grok CLI third-party BYOK and custom-model configuration formats follow the upstream implementation and documentation: [xai-org/grok-build](https://github.com/xai-org/grok-build)

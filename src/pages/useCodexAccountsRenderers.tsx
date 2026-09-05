@@ -13,7 +13,7 @@ import { CODEX_API_SERVICE_BIND_ID } from "../types/instance";
 import { COCKPIT_API_BASE_URL } from "../utils/codexProviderPresets";
 import { formatCodexQuotaPoolPercent, formatCodexQuotaPoolWindowLabel } from "../utils/codexQuotaPool";
 import { resolveNewApiQuotaSnapshot } from "../services/modelProviderUsageService";
-import { CODEX_LOCAL_ACCESS_FALLBACK_API_KEY_MASK, formatCockpitApiInteger, formatCockpitApiTokenCount, getCockpitApiStatsRecord, getCockpitApiUsageRecord, getCodexAccountNoteTitle, hasCodexAccountNoteDetails, isPendingOAuthCodexAccount, isSponsorModelProvider, readCockpitApiNumber, readCockpitApiString, resolveApiKeyUsageMode, toCockpitApiRecord, type CockpitApiJsonRecord } from "./codexAccountsControllerModel";
+import { CODEX_LOCAL_ACCESS_FALLBACK_API_KEY_MASK, formatJulingApiInteger, formatJulingApiTokenCount, getJulingApiStatsRecord, getJulingApiUsageRecord, getCodexAccountNoteTitle, hasCodexAccountNoteDetails, isPendingOAuthCodexAccount, isSponsorModelProvider, readJulingApiNumber, readJulingApiString, resolveApiKeyUsageMode, toJulingApiRecord, type JulingApiJsonRecord } from "./codexAccountsControllerModel";
 import type { useCodexAccountsBaseController } from "./useCodexAccountsBaseController";
 import type { useCodexAccountsOAuthController } from "./useCodexAccountsOAuthController";
 import type { useCodexAccountsAccessController } from "./useCodexAccountsAccessController";
@@ -129,7 +129,7 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
   | "resolveAccountMeta"
   | "resolveApiKeyDisplayText"
   | "resolveApiProviderDisplayName"
-  | "resolveCockpitApiAccountBalanceText"
+  | "resolveJulingApiAccountBalanceText"
   | "resolveGroupAccounts"
   | "resolveLocalAccessBaseUrl"
   | "resolvePresentation"
@@ -144,7 +144,7 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
   | "selectedLocalAccessAddressKind"
   | "setActiveTab"
   | "setApiKeyUsageDetailAccountId"
-  | "setCockpitApiPanelAccountId"
+  | "setJulingApiPanelAccountId"
   | "setEditingApiKeyNameValue"
   | "setExternalImportSyncError"
   | "setGroupQuickAddGroupId"
@@ -272,7 +272,7 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
     resolveAccountMeta,
     resolveApiKeyDisplayText,
     resolveApiProviderDisplayName,
-    resolveCockpitApiAccountBalanceText,
+    resolveJulingApiAccountBalanceText,
     resolveGroupAccounts,
     resolveLocalAccessBaseUrl,
     resolvePresentation,
@@ -287,7 +287,7 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
     selectedLocalAccessAddressKind,
     setActiveTab,
     setApiKeyUsageDetailAccountId,
-    setCockpitApiPanelAccountId,
+    setJulingApiPanelAccountId,
     setEditingApiKeyNameValue,
     setExternalImportSyncError,
     setGroupQuickAddGroupId,
@@ -727,7 +727,7 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
           : presentation.planLabel;
         const cockpitApiAccountBalanceText =
           isNewApiAccount && !hideRelayQuota
-            ? resolveCockpitApiAccountBalanceText(account)
+            ? resolveJulingApiAccountBalanceText(account)
             : null;
         const accountTags = (account.tags || [])
           .map((tag) => tag.trim())
@@ -1088,7 +1088,7 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
                   {isNewApiAccount && (
                     <button
                       className="card-action-btn"
-                      onClick={() => setCockpitApiPanelAccountId(account.id)}
+                      onClick={() => setJulingApiPanelAccountId(account.id)}
                       title={t("codex.cockpitApi.servicePanel", "服务面板")}
                     >
                       <Database size={14} />
@@ -2131,7 +2131,7 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
           : presentation.planLabel;
         const cockpitApiAccountBalanceText =
           isNewApiAccount && !hideRelayQuota
-            ? resolveCockpitApiAccountBalanceText(account)
+            ? resolveJulingApiAccountBalanceText(account)
             : null;
         const isInLocalAccess = localAccessAccountIdSet.has(account.id);
         const subscriptionInfo = resolveSubscriptionPresentation(account);
@@ -2454,7 +2454,7 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
                 {isNewApiAccount && (
                   <button
                     className="action-btn"
-                    onClick={() => setCockpitApiPanelAccountId(account.id)}
+                    onClick={() => setJulingApiPanelAccountId(account.id)}
                     title={t("codex.cockpitApi.servicePanel", "服务面板")}
                   >
                     <Database size={14} />
@@ -2879,7 +2879,7 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
                       "今日请求",
                     ),
                     value: summary
-                      ? formatCockpitApiInteger(summary.todayRequests ?? 0)
+                      ? formatJulingApiInteger(summary.todayRequests ?? 0)
                       : "-",
                   },
                   {
@@ -2889,7 +2889,7 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
                       "今日 Token",
                     ),
                     value: summary
-                      ? formatCockpitApiTokenCount(summary.todayTotalTokens ?? 0)
+                      ? formatJulingApiTokenCount(summary.todayTotalTokens ?? 0)
                       : "-",
                   },
                 ]
@@ -3100,55 +3100,55 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
       );
     };
   
-    const renderCockpitApiServicePanel = () => {
+    const renderJulingApiServicePanel = () => {
       const account = cockpitApiPanelAccount;
       if (!account) return null;
   
-      const usage = getCockpitApiUsageRecord(account);
-      const stats = getCockpitApiStatsRecord(account);
-      const requests = toCockpitApiRecord(stats?.requests);
-      const tokens = toCockpitApiRecord(stats?.tokens);
-      const total = toCockpitApiRecord(stats?.total);
+      const usage = getJulingApiUsageRecord(account);
+      const stats = getJulingApiStatsRecord(account);
+      const requests = toJulingApiRecord(stats?.requests);
+      const tokens = toJulingApiRecord(stats?.tokens);
+      const total = toJulingApiRecord(stats?.total);
       const modelItems = (Array.isArray(stats?.models) ? stats.models : [])
-        .map(toCockpitApiRecord)
-        .filter((item): item is CockpitApiJsonRecord => Boolean(item))
+        .map(toJulingApiRecord)
+        .filter((item): item is JulingApiJsonRecord => Boolean(item))
         .slice(0, 8);
       const dailyItems = (Array.isArray(stats?.daily) ? stats.daily : [])
-        .map(toCockpitApiRecord)
-        .filter((item): item is CockpitApiJsonRecord => Boolean(item));
+        .map(toJulingApiRecord)
+        .filter((item): item is JulingApiJsonRecord => Boolean(item));
       const visible = visibleApiKeyAccountIds.has(account.id);
       const apiKeyDisplay = resolveApiKeyDisplayText(account, visible);
       const baseUrl = (account.api_base_url || "").trim() || COCKPIT_API_BASE_URL;
-      const quotaText = readCockpitApiString(usage, "summary_display") || "-";
+      const quotaText = readJulingApiString(usage, "summary_display") || "-";
       const cockpitApiAccountBalanceText =
-        resolveCockpitApiAccountBalanceText(account);
-      const usedPercent = readCockpitApiNumber(usage, "used_percent");
-      const requestCount = readCockpitApiNumber(requests, "total");
-      const todayCount = readCockpitApiNumber(requests, "today");
-      const last7Count = readCockpitApiNumber(requests, "last_7_days");
-      const last30Count = readCockpitApiNumber(requests, "last_30_days");
-      const totalTokens = readCockpitApiNumber(tokens, "total");
-      const totalQuotaDisplay = readCockpitApiString(total, "quota_display");
+        resolveJulingApiAccountBalanceText(account);
+      const usedPercent = readJulingApiNumber(usage, "used_percent");
+      const requestCount = readJulingApiNumber(requests, "total");
+      const todayCount = readJulingApiNumber(requests, "today");
+      const last7Count = readJulingApiNumber(requests, "last_7_days");
+      const last30Count = readJulingApiNumber(requests, "last_30_days");
+      const totalTokens = readJulingApiNumber(tokens, "total");
+      const totalQuotaDisplay = readJulingApiString(total, "quota_display");
       const panelDisplayName = resolvePresentation(account).displayName;
       const hasStats = Boolean(stats);
-      const usedPercentText = `${formatCockpitApiInteger(usedPercent)}%`;
+      const usedPercentText = `${formatJulingApiInteger(usedPercent)}%`;
       const summaryItems = [
         {
           key: "requests",
           label: t("codex.cockpitApi.requests", "请求"),
-          value: formatCockpitApiInteger(requestCount),
-          meta: `${t("codex.cockpitApi.today", "今日")} ${formatCockpitApiInteger(todayCount)}`,
+          value: formatJulingApiInteger(requestCount),
+          meta: `${t("codex.cockpitApi.today", "今日")} ${formatJulingApiInteger(todayCount)}`,
         },
         {
           key: "periods",
           label: t("codex.cockpitApi.periods", "周期"),
-          value: `7d ${formatCockpitApiInteger(last7Count)}`,
-          meta: `30d ${formatCockpitApiInteger(last30Count)}`,
+          value: `7d ${formatJulingApiInteger(last7Count)}`,
+          meta: `30d ${formatJulingApiInteger(last30Count)}`,
         },
         {
           key: "tokens",
           label: t("codex.cockpitApi.tokens", "Tokens"),
-          value: formatCockpitApiTokenCount(totalTokens),
+          value: formatJulingApiTokenCount(totalTokens),
           meta: `${t("codex.cockpitApi.quotaUsed", "消耗")} ${totalQuotaDisplay || "-"}`,
         },
       ];
@@ -3162,7 +3162,7 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
             <div className="modal-header cockpit-api-panel-header">
               <div>
                 <h2>
-                  {t("codex.cockpitApi.panelTitle", "Cockpit Api 服务面板")}
+                  {t("codex.cockpitApi.panelTitle", "Juling Api 服务面板")}
                 </h2>
                 <span className="cockpit-api-panel-subtitle">
                   {maskAccountText(panelDisplayName)}
@@ -3170,7 +3170,7 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
               </div>
               <button
                 className="modal-close"
-                onClick={() => setCockpitApiPanelAccountId(null)}
+                onClick={() => setJulingApiPanelAccountId(null)}
                 aria-label={t("common.close", "关闭")}
               >
                 <X />
@@ -3271,16 +3271,16 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
                       {modelItems.length > 0 ? (
                         modelItems.map((item) => {
                           const modelName =
-                            readCockpitApiString(item, "model_name") || "-";
-                          const count = readCockpitApiNumber(
+                            readJulingApiString(item, "model_name") || "-";
+                          const count = readJulingApiNumber(
                             item,
                             "request_count",
                           );
-                          const modelTokens = readCockpitApiNumber(
+                          const modelTokens = readJulingApiNumber(
                             item,
                             "total_tokens",
                           );
-                          const quotaDisplay = readCockpitApiString(
+                          const quotaDisplay = readJulingApiString(
                             item,
                             "quota_display",
                           );
@@ -3295,13 +3295,13 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
                                 </span>
                                 <small>
                                   {t("codex.cockpitApi.requests", "请求")}{" "}
-                                  {formatCockpitApiInteger(count)}
+                                  {formatJulingApiInteger(count)}
                                 </small>
                               </div>
                               <div className="cockpit-api-usage-values">
                                 <span>
                                   {t("codex.cockpitApi.tokens", "Tokens")}{" "}
-                                  {formatCockpitApiTokenCount(modelTokens)}
+                                  {formatJulingApiTokenCount(modelTokens)}
                                 </span>
                                 <strong>{quotaDisplay || "-"}</strong>
                               </div>
@@ -3325,16 +3325,16 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
                     <div className="cockpit-api-usage-list">
                       {dailyItems.length > 0 ? (
                         dailyItems.map((item) => {
-                          const date = readCockpitApiString(item, "date") || "-";
-                          const count = readCockpitApiNumber(
+                          const date = readJulingApiString(item, "date") || "-";
+                          const count = readJulingApiNumber(
                             item,
                             "request_count",
                           );
-                          const dayTokens = readCockpitApiNumber(
+                          const dayTokens = readJulingApiNumber(
                             item,
                             "total_tokens",
                           );
-                          const quotaDisplay = readCockpitApiString(
+                          const quotaDisplay = readJulingApiString(
                             item,
                             "quota_display",
                           );
@@ -3346,13 +3346,13 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
                                 </span>
                                 <small>
                                   {t("codex.cockpitApi.requests", "请求")}{" "}
-                                  {formatCockpitApiInteger(count)}
+                                  {formatJulingApiInteger(count)}
                                 </small>
                               </div>
                               <div className="cockpit-api-usage-values">
                                 <span>
                                   {t("codex.cockpitApi.tokens", "Tokens")}{" "}
-                                  {formatCockpitApiTokenCount(dayTokens)}
+                                  {formatJulingApiTokenCount(dayTokens)}
                                 </span>
                                 <strong>{quotaDisplay || "-"}</strong>
                               </div>
@@ -3416,7 +3416,7 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
     hasGroupEntryCards,
     inlineFolderCards,
     renderApiKeyUsageDetailModal,
-    renderCockpitApiServicePanel,
+    renderJulingApiServicePanel,
     renderCompactRows,
     renderGridCards,
     renderGroupTableRows,

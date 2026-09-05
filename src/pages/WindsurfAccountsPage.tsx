@@ -1319,15 +1319,15 @@ export function WindsurfAccountsPage() {
       <WindsurfOverviewTabsHeader active={activeTab} onTabChange={setActiveTab} />
       <div className={`ghcp-flow-notice ${isFlowNoticeCollapsed ? 'collapsed' : ''}`} role="note" aria-live="polite">
         <button type="button" className="ghcp-flow-notice-toggle" onClick={() => setIsFlowNoticeCollapsed((prev) => !prev)} aria-expanded={!isFlowNoticeCollapsed}>
-          <div className="ghcp-flow-notice-title"><CircleAlert size={16} /><span>{t('windsurf.flowNotice.title', 'Windsurf 账号管理说明（点击展开/收起）')}</span></div>
+          <div className="ghcp-flow-notice-title"><CircleAlert size={16} /><span>{t('windsurf.flowNotice.title', 'Devin · 本机接入边界')}</span></div>
           <ChevronDown size={16} className={`ghcp-flow-notice-arrow ${isFlowNoticeCollapsed ? 'collapsed' : ''}`} />
         </button>
         {!isFlowNoticeCollapsed && (
           <div className="ghcp-flow-notice-body">
-            <div className="ghcp-flow-notice-desc">{t('windsurf.flowNotice.desc', 'Switching accounts requires reading VS Code local auth storage and using the system credential service for decrypt/re-encrypt. Data is processed locally only.')}</div>
+            <div className="ghcp-flow-notice-desc">{t('windsurf.flowNotice.desc', '聚灵按 Devin 客户端兼容规则，在本机解密、替换并写回登录会话。')}</div>
             <ul className="ghcp-flow-notice-list">
-              <li>{t('windsurf.flowNotice.reason', 'Permission scope: read VS Code auth database (state.vscdb) and call system credential capability (Windows DPAPI / macOS Keychain / Linux Secret Service) for decrypt/write-back.')}</li>
-              <li>{t('windsurf.flowNotice.storage', 'Data scope: only Windsurf auth-session related entries are read/updated; system secrets are not modified and no key/token is uploaded.')}</li>
+              <li>{t('windsurf.flowNotice.reason', '本机动作：访问 state.vscdb，并使用 Windows DPAPI、macOS Keychain 或 Linux Secret Service 处理登录会话。')}</li>
+              <li>{t('windsurf.flowNotice.storage', '边界承诺：只处理 Devin 登录相关条目，不读取无关数据库内容，不把本机会话与系统密钥上传。')}</li>
             </ul>
           </div>
         )}
@@ -1461,7 +1461,7 @@ export function WindsurfAccountsPage() {
             </button>
             <button className="btn btn-secondary" onClick={() => window.dispatchEvent(new CustomEvent('app-request-navigate', { detail: 'manual' }))}>
               <BookOpen size={16} />
-              {t('manual.navTitle', '功能使用手册')}
+              {t('manual.navTitle', '使用说明')}
             </button>
           </div>
         </div>

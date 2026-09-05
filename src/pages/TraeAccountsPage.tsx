@@ -1195,7 +1195,7 @@ export function TraeAccountsPage({ platformId = 'trae' }: TraeAccountsPageProps)
             <span>
               {t('trae.flowNotice.titleWithPlatform', {
                 platform: platformConfig.platformKey,
-                defaultValue: '{{platform}} 账号接入说明（点击展开/收起）',
+                defaultValue: '{{platform}} · 本机接入边界',
               })}
             </span>
           </div>
@@ -1212,7 +1212,7 @@ export function TraeAccountsPage({ platformId = 'trae' }: TraeAccountsPageProps)
                 {
                   platform: platformConfig.platformKey,
                   defaultValue:
-                    '支持 {{platform}} 官方 OAuth 授权、本机导入、JSON 导入与本地注入切号；切号过程按 {{platform}} 客户端真实落盘规则写回。',
+                    'OAuth、本机与 JSON 导入共用聚灵本地账号库；切号按 {{platform}} 客户端真实落盘规则写回。',
                 },
               )}
             </div>
@@ -1223,7 +1223,7 @@ export function TraeAccountsPage({ platformId = 'trae' }: TraeAccountsPageProps)
                   {
                     platform: platformConfig.platformKey,
                     defaultValue:
-                      '权限范围：读取并写入本机 {{platform}} 配置目录中的 storage.json 登录相关字段，用于账号导入、切号注入与套餐信息展示；所有数据仅在本机处理。',
+                      '本机动作：只读写 {{platform}} 配置目录中 storage.json 的登录相关字段，用于导入、切号与套餐展示。',
                   },
                 )}
               </li>
@@ -1233,7 +1233,7 @@ export function TraeAccountsPage({ platformId = 'trae' }: TraeAccountsPageProps)
                   {
                     platform: platformConfig.platformKey,
                     defaultValue:
-                      '网络范围：{{platform}} OAuth 登录、令牌刷新和套餐查询会请求 Trae 官方接口；不会向第三方服务上传本地账号文件或原始存储内容。',
+                      '外部通信：{{platform}} OAuth、令牌刷新和套餐查询仅连接 Trae 官方接口；本地账号文件与原始存储不会上传。',
                   },
                 )}
               </li>
@@ -1505,7 +1505,7 @@ export function TraeAccountsPage({ platformId = 'trae' }: TraeAccountsPageProps)
                   }
                 >
                   <BookOpen size={16} />
-                  {t('manual.navTitle', '功能使用手册')}
+                  {t('manual.navTitle', '使用说明')}
                 </button>
               </div>
             </div>

@@ -933,18 +933,18 @@ export function CursorAccountsPage() {
         <button type="button" className="ghcp-flow-notice-toggle" onClick={() => setIsFlowNoticeCollapsed((prev) => !prev)} aria-expanded={!isFlowNoticeCollapsed}>
           <div className="ghcp-flow-notice-title">
             <CircleAlert size={16} />
-            <span>{t('cursor.flowNotice.title', 'Cursor 账号管理说明（点击展开/收起）')}</span>
+            <span>{t('cursor.flowNotice.title', 'Cursor · 本机接入边界')}</span>
           </div>
           <ChevronDown size={16} className={`ghcp-flow-notice-arrow ${isFlowNoticeCollapsed ? 'collapsed' : ''}`} />
         </button>
         {!isFlowNoticeCollapsed && (
           <div className="ghcp-flow-notice-body">
             <div className="ghcp-flow-notice-desc">
-              {t('cursor.flowNotice.desc', 'Manage Cursor accounts by importing from local Cursor installation or pasting JWT tokens. Data is processed locally only.')}
+              {t('cursor.flowNotice.desc', '本机导入、JWT 与 OAuth 账号都汇入聚灵本地账号库；切号时只替换 Cursor 对应登录会话。')}
             </div>
             <ul className="ghcp-flow-notice-list">
-              <li>{t('cursor.flowNotice.reason', 'Permission scope: read Cursor local auth storage for account import and token injection.')}</li>
-              <li>{t('cursor.flowNotice.storage', 'Data scope: only Cursor auth-session related entries are read/updated; no key/token is uploaded.')}</li>
+              <li>{t('cursor.flowNotice.reason', '本机动作：读取和写入 Cursor 的 state.vscdb，仅用于账号导入与令牌注入。')}</li>
+              <li>{t('cursor.flowNotice.storage', '外部通信：额度刷新仅携带 JWT 请求 cursor.com 官方接口；不会向第三方服务器上传账号库或本机存储。')}</li>
             </ul>
           </div>
         )}
@@ -1110,7 +1110,7 @@ export function CursorAccountsPage() {
             </button>
             <button className="btn btn-secondary" onClick={() => window.dispatchEvent(new CustomEvent('app-request-navigate', { detail: 'manual' }))}>
               <BookOpen size={16} />
-              {t('manual.navTitle', '功能使用手册')}
+              {t('manual.navTitle', '使用说明')}
             </button>
           </div>
         </div>

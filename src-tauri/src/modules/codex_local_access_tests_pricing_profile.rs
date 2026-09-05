@@ -43,7 +43,7 @@
         );
         assert!(
             auth_json.get("account_id").is_none(),
-            "Cockpit storage id must not be used as ChatGPT account id"
+            "Juling storage id must not be used as ChatGPT account id"
         );
 
         account.account_id = Some("workspace-at".to_string());
@@ -1518,7 +1518,7 @@ model_provider = "codex_local_access"
 model_catalog_json = "{}"
 
 [model_providers.codex_local_access]
-name = "Cockpit Mixed Model Routing"
+name = "Juling Mixed Model Routing"
 base_url = "http://127.0.0.1:14998/v1"
 wire_api = "responses"
 requires_openai_auth = false

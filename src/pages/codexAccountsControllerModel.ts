@@ -312,45 +312,45 @@ export function shouldAutoHideBatchDeleteJob(
   return job?.status === "completed" && job.failed === 0;
 }
 
-export type CockpitApiJsonRecord = Record<string, unknown>;
+export type JulingApiJsonRecord = Record<string, unknown>;
 
-export function toCockpitApiRecord(value: unknown): CockpitApiJsonRecord | null {
+export function toJulingApiRecord(value: unknown): JulingApiJsonRecord | null {
   return value && typeof value === "object" && !Array.isArray(value)
-    ? (value as CockpitApiJsonRecord)
+    ? (value as JulingApiJsonRecord)
     : null;
 }
 
-export function readCockpitApiString(
-  record: CockpitApiJsonRecord | null,
+export function readJulingApiString(
+  record: JulingApiJsonRecord | null,
   key: string,
 ): string {
   const value = record?.[key];
   return typeof value === "string" ? value.trim() : "";
 }
 
-export function readCockpitApiNumber(
-  record: CockpitApiJsonRecord | null,
+export function readJulingApiNumber(
+  record: JulingApiJsonRecord | null,
   key: string,
 ): number {
   const value = record?.[key];
   return typeof value === "number" && Number.isFinite(value) ? value : 0;
 }
 
-export function readCockpitApiOptionalNumber(
-  record: CockpitApiJsonRecord | null,
+export function readJulingApiOptionalNumber(
+  record: JulingApiJsonRecord | null,
   key: string,
 ): number | null {
   const value = record?.[key];
   return typeof value === "number" && Number.isFinite(value) ? value : null;
 }
 
-export function formatCockpitApiInteger(value: number): string {
+export function formatJulingApiInteger(value: number): string {
   return new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(
     Math.max(0, value),
   );
 }
 
-export function formatCockpitApiTokenCount(value: number): string {
+export function formatJulingApiTokenCount(value: number): string {
   const normalized = Math.max(0, value);
   if (normalized >= 100_000_000) {
     return `${(normalized / 100_000_000).toFixed(normalized >= 1_000_000_000 ? 1 : 2).replace(/\.?0+$/, "")}亿`;
@@ -363,19 +363,19 @@ export function formatCockpitApiTokenCount(value: number): string {
   );
 }
 
-export function getCockpitApiUsageRecord(
+export function getJulingApiUsageRecord(
   account: CodexAccount,
-): CockpitApiJsonRecord | null {
-  const raw = toCockpitApiRecord(account.quota?.raw_data);
-  const profile = toCockpitApiRecord(raw?.profile);
-  return toCockpitApiRecord(raw?.usage) ?? toCockpitApiRecord(profile?.usage);
+): JulingApiJsonRecord | null {
+  const raw = toJulingApiRecord(account.quota?.raw_data);
+  const profile = toJulingApiRecord(raw?.profile);
+  return toJulingApiRecord(raw?.usage) ?? toJulingApiRecord(profile?.usage);
 }
 
-export function getCockpitApiStatsRecord(
+export function getJulingApiStatsRecord(
   account: CodexAccount,
-): CockpitApiJsonRecord | null {
-  const usage = getCockpitApiUsageRecord(account);
-  return toCockpitApiRecord(usage?.stats);
+): JulingApiJsonRecord | null {
+  const usage = getJulingApiUsageRecord(account);
+  return toJulingApiRecord(usage?.stats);
 }
 
 export function resolveApiKeyUsageMode(

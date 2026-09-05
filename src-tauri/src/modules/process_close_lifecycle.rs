@@ -1626,7 +1626,7 @@ fn collect_codex_direct_app_server_pids_for_roots(root_pids: &[u32]) -> Vec<u32>
 
 /// 查找指定 Codex profile 对应的官方 direct `app-server` 子进程。
 ///
-/// 官方桌面端负责启动 app-server，Cockpit 无法接管它的 stdio；这里提供只读的
+/// 官方桌面端负责启动 app-server，Juling 无法接管它的 stdio；这里提供只读的
 /// 进程归属查询，供认证诊断记录 PID、网络连接和实例关系。
 #[cfg(any(target_os = "macos", target_os = "linux"))]
 pub fn collect_codex_app_server_pids_for_profile(profile_dir: &Path) -> Vec<u32> {
@@ -2101,7 +2101,7 @@ pub fn start_codex_with_args(codex_home: &str, extra_args: &[String]) -> Result<
         let args = build_codex_app_launch_args(extra_args);
 
         // 通过 LaunchServices 启动 GUI 应用，避免直接执行 ChatGPT 主程序时
-        // 被 macOS 以 Cockpit Tools 为 responsible process，导致偶发长时间停在
+        // 被 macOS 以 聚灵 为 responsible process，导致偶发长时间停在
         // dyld/AppKit 初始化阶段。当前 macOS 的 `open` 支持 --env，因此
         // CODEX_HOME 与独立 Electron user-data-dir 都可以随启动请求传入。
         if !codex_home_trimmed.is_empty() {

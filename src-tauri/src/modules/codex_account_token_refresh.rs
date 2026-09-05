@@ -473,7 +473,7 @@ pub(crate) async fn prepare_account_for_quota_query_with_runtime_snapshot(
         return Ok(account);
     }
 
-    // 只有 AT 确认过期后才进入跨进程 RT 临界区。等待期间若其它 Cockpit 或
+    // 只有 AT 确认过期后才进入跨进程 RT 临界区。等待期间若其它 Juling 或
     // 官方客户端已经写回新 AT，重新加载后直接复用，不再次轮换 RT。
     let _file_guard = acquire_codex_token_refresh_file_lock(account_id, "quota-query").await?;
     account = load_account(account_id).ok_or_else(|| format!("账号不存在: {}", account_id))?;
@@ -597,7 +597,7 @@ pub(crate) fn oauth_account_id_for_runtime_dir(base_dir: &Path) -> Option<String
 /// auth.json/keychain，但不会把新 Token 注入已经运行的官方进程；对这些账号
 /// 轮换 refresh_token 会让官方进程稍后在 cloud requirements/config 请求中
 /// 收到 Auth/relogin。这里只采用运行 profile 中实际可读的 OAuth 快照，不再按
-/// Cockpit 的绑定配置推断占用，避免旧绑定误拦截多开启动或 OAuth 绑定。
+/// Juling 的绑定配置推断占用，避免旧绑定误拦截多开启动或 OAuth 绑定。
 fn running_codex_oauth_account_ids_from_entries(
     process_entries: &[(u32, Option<String>)],
 ) -> Result<HashSet<String>, String> {
@@ -605,7 +605,7 @@ fn running_codex_oauth_account_ids_from_entries(
     let accounts = list_accounts();
     let mut account_ids = HashSet::new();
 
-    // 正式版、dev 与其它 Cockpit 数据目录可能维护各自的实例列表，但系统进程
+    // 正式版、dev 与其它 Juling 数据目录可能维护各自的实例列表，但系统进程
     // 是共享的。直接检查所有可识别 Codex 进程的 CODEX_HOME/auth 快照，避免
     // 另一个安装启动的实例漏出 TokenKeeper 保护范围。
     let default_home = get_codex_home();

@@ -1,6 +1,6 @@
-# Contributing to Cockpit Tools
+# Contributing to Juling
 
-Thank you for your interest in contributing to Cockpit Tools! This project aims to be the universal manager for AI IDEs, and we welcome contributions of all kinds.
+Thank you for your interest in contributing to Juling! This project aims to be the universal manager for AI IDEs, and we welcome contributions of all kinds.
 
 ## 🚀 Getting Started
 
@@ -17,9 +17,9 @@ Thank you for your interest in contributing to Cockpit Tools! This project aims 
 ## 🛠️ Project Structure
 
 This project is a Cargo Workspace:
-- `crates/cockpit-core`: Shared business logic (Library).
+- `crates/juling-core`: Shared business logic (Library).
 - `src-tauri`: The GUI application (Tauri + React).
-- `crates/cockpit-cli`: The command-line interface.
+- `crates/juling-cli`: The command-line interface.
 
 ## 📝 Coding Standards
 
@@ -30,8 +30,8 @@ This project is a Cargo Workspace:
 ## 🧪 Testing
 
 - **GUI:** `npm run tauri dev`
-- **CLI:** `cargo run --package cockpit-cli -- <commands>`
-- **Core:** `cargo test --package cockpit-core`
+- **CLI:** `cargo run --package juling-cli -- <commands>`
+- **Core:** `cargo test --package juling-core`
 
 ## 📬 Submitting a Pull Request
 

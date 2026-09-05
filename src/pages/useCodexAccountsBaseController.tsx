@@ -401,7 +401,7 @@ export function useCodexAccountsBaseController() {
       setCliLaunchingAccountId(null);
     }, []);
     useEscClose(Boolean(cliLaunchModal), closeCliLaunchModal);
-    const [cockpitApiPanelAccountId, setCockpitApiPanelAccountId] = useState<
+    const [cockpitApiPanelAccountId, setJulingApiPanelAccountId] = useState<
       string | null
     >(null);
     const [apiKeyUsageDetailAccountId, setApiKeyUsageDetailAccountId] = useState<
@@ -1230,7 +1230,7 @@ export function useCodexAccountsBaseController() {
       () => [
         {
           value: "cockpit_tools",
-          label: t("codex.exportFormat.cockpitTools", "Cockpit Tools"),
+          label: t("codex.exportFormat.cockpitTools", "Juling"),
         },
         {
           value: "auth_json",
@@ -2959,7 +2959,7 @@ export function useCodexAccountsBaseController() {
     setBatchImportTargetGroupId,
     setCliLaunchingAccountId,
     setCliLaunchModal,
-    setCockpitApiPanelAccountId,
+    setJulingApiPanelAccountId,
     setCodexAddTargetGroupId,
     setDeleteConfirm,
     setDeletingGroup,

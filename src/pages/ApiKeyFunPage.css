@@ -36,6 +36,44 @@
   animation: fadeUp 0.48s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* JIULING.FUN — 本地接入中枢，采用数据轨道而非传统卡片墙。 */
+.apikey-fun-brand-logo-shell {
+  width: 64px; height: 64px; flex: 0 0 64px;
+  display: grid; place-items: center;
+  border: 1px solid rgba(102, 255, 172, .5);
+  border-radius: 5px 20px 5px 20px;
+  background: linear-gradient(145deg, rgba(42, 255, 137, .2), rgba(4, 18, 15, .78));
+  box-shadow: inset 0 0 0 5px rgba(255,255,255,.04), 0 16px 32px rgba(0,0,0,.24);
+}
+.apikey-fun-brand-logo-shell .apikey-fun-brand-logo {
+  width: 46px; height: 46px; padding: 0; border-radius: 10px;
+  background: transparent; box-shadow: none; filter: hue-rotate(72deg) saturate(1.4);
+}
+.apikey-fun-local-status {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 12px; border: 1px solid rgba(119,255,177,.3);
+  border-radius: 3px 12px 3px 12px; color: #c9ffe0;
+  font: 700 11px/1 Consolas, monospace; letter-spacing: .08em;
+  background: rgba(11, 45, 34, .5);
+}
+.apikey-fun-local-status span { width: 7px; height: 7px; background: #37dd86; box-shadow: 0 0 10px #37dd86; transform: rotate(45deg); }
+.apikey-fun-header-brand { border-radius: 5px 26px 5px 26px; background: linear-gradient(116deg, #061510, #102a22 64%, #12392b); }
+.apikey-fun-dashboard-grid { grid-template-columns: minmax(0, 1fr) 310px; gap: 14px; }
+.apikey-fun-dashboard-panel { border-radius: 4px 18px 4px 18px; box-shadow: 0 16px 38px rgba(15,54,47,.08); }
+.apikey-fun-config-panel { border-left: 4px solid #29a879; }
+.apikey-fun-usage-grid {
+  display: grid; grid-template-columns: repeat(6, minmax(0,1fr)); gap: 0;
+  border: 1px solid var(--ak-line); border-radius: 3px 16px 3px 16px; overflow: hidden;
+  background: rgba(255,255,255,.48);
+}
+.apikey-fun-usage-card, .apikey-fun-usage-card.primary {
+  min-width: 0; border: 0; border-right: 1px solid var(--ak-line); border-radius: 0;
+  background: transparent; box-shadow: none; padding: 16px 12px;
+}
+.apikey-fun-usage-card:last-child { border-right: 0; }
+.apikey-fun-manager-panel { position: sticky; top: 76px; }
+@media (max-width: 1080px) { .apikey-fun-usage-grid { grid-template-columns: repeat(3, 1fr); } }
+
 [data-theme="dark"] .apikey-fun-page,
 html[data-theme="dark"] .apikey-fun-page {
   --ak-primary-hsl: 217, 91%, 64%;

@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { openUrl } from '@tauri-apps/plugin-opener';
 import { useTranslation } from 'react-i18next';
 import {
   BookmarkPlus,
   CheckCircle2,
-  ExternalLink,
   Eye,
   EyeOff,
   KeyRound,
@@ -22,7 +20,6 @@ import {
 import {
   APIKEY_FUN_GLOBAL_ENDPOINT,
   APIKEY_FUN_PROVIDER_BASE_URL,
-  APIKEY_FUN_REGISTER_URL,
   APIKEY_FUN_SOURCE_TAG,
   buildApiKeyFunProviderBaseUrl,
 } from '../utils/apikeyFunLinks';
@@ -34,7 +31,7 @@ import {
   getApiKeyFunPrefillPage,
   type ApiKeyFunPrefillTarget,
 } from '../utils/apiKeyFunPrefill';
-import apiKeyFunIcon from '../assets/icons/apikey-fun.png';
+import julingCoreLogo from '../assets/branding/juling-core-master.png';
 import './ApiKeyFunPage.css';
 
 type ManagedApiKey = {
@@ -210,16 +207,6 @@ export function ApiKeyFunPage() {
     return () => window.clearTimeout(timer);
   }, [saveFlash]);
 
-  const openExternal = useCallback((url: string) => {
-    try {
-      void openUrl(url).catch(() => {
-        window.location.href = url;
-      });
-    } catch {
-      window.location.href = url;
-    }
-  }, []);
-
   // 自动额度查询
   useEffect(() => {
     const key = apiKey.trim();
@@ -393,7 +380,7 @@ export function ApiKeyFunPage() {
         target,
         apiKey: key,
         apiKeyName: item.name || buildManagedKeyName(key),
-        providerName: 'APIKEY.FUN',
+        providerName: 'JIULING.FUN',
         baseUrl: target === 'codex' ? APIKEY_FUN_PROVIDER_BASE_URL : CLAUDE_APIKEY_FUN_BASE_URL,
         sourceTag: APIKEY_FUN_SOURCE_TAG,
         modelCatalog: apiKeyFunModelCatalog,
@@ -474,28 +461,24 @@ export function ApiKeyFunPage() {
     <div className="apikey-fun-page">
       <header className="apikey-fun-header-brand">
         <div className="apikey-fun-brand-main">
-          <img src={apiKeyFunIcon} alt="" className="apikey-fun-brand-logo" />
+          <div className="apikey-fun-brand-logo-shell">
+            <img src={julingCoreLogo} alt="聚灵" className="apikey-fun-brand-logo" />
+          </div>
           <div className="apikey-fun-brand-text">
             <div className="apikey-fun-eyebrow-container">
               <span className="apikey-fun-eyebrow">{t('apiKeyFun.eyebrow', '中转站')}</span>
             </div>
-            <h1>{t('apiKeyFun.title', 'APIKEY.FUN 中转站')}</h1>
+            <h1>{t('apiKeyFun.title', 'JIULING.FUN 接入中枢')}</h1>
             <p>
               {t(
                 'apiKeyFun.description',
-                'Cockpit 官方合作中转站，为用户提供稳定、开放、高性价比的大模型 API 接入服务。支持 Claude、OpenAI、Gemini 等主流模型，适合在 Codex、Gemini CLI、Claude Code 及其他开发工具中统一配置使用。通过 Cockpit 专属链接注册，可享受最高充值永久 95 折优惠。',
+                '把常用模型接入、密钥保存和用量观测收拢到一个本地控制台。支持 Claude、OpenAI、Gemini 等主流协议，并可将配置快速写入已支持的开发工具。',
               )}
             </p>
           </div>
         </div>
         <div className="apikey-fun-brand-actions">
-          <button
-            className="btn apikey-fun-register-btn"
-            onClick={() => openExternal(APIKEY_FUN_REGISTER_URL)}
-          >
-            <ExternalLink size={15} />
-            <span>{t('apiKeyFun.viewNow', '立即查看')}</span>
-          </button>
+          <div className="apikey-fun-local-status"><span /> 本地配置台</div>
         </div>
       </header>
 
@@ -519,7 +502,7 @@ export function ApiKeyFunPage() {
                   <input
                     value={apiKey}
                     type={showApiKey ? 'text' : 'password'}
-                    placeholder={t('apiKeyFun.apiKeyPlaceholder', '粘贴 APIKEY.FUN 控制台创建的 API Key')}
+                    placeholder={t('apiKeyFun.apiKeyPlaceholder', '粘贴 JIULING.FUN 控制台创建的 API Key')}
                     onChange={(event) => {
                       setApiKey(event.target.value);
                       setUsageError(null);

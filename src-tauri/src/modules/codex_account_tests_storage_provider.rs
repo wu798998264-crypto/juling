@@ -273,7 +273,7 @@ requires_openai_auth = true
 experimental_bearer_token = "sk-history"
 
 [model_providers.cockpit_api]
-name = "Cockpit Api"
+name = "Juling Api"
 base_url = "https://chongcodex.cn/v1"
 wire_api = "responses"
 requires_openai_auth = false
@@ -420,7 +420,7 @@ wire_api = "responses"
 requires_openai_auth = true
 
 [model_providers.cockpit_api]
-name = "Managed Cockpit API"
+name = "Managed Juling API"
 base_url = "https://managed.example.com/api"
 wire_api = "responses"
 requires_openai_auth = false

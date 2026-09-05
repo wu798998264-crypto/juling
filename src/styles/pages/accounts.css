@@ -340,12 +340,41 @@
 
 /* #1287 denser Codex account cards — hit real Codex DOM classes */
 .codex-accounts-page .codex-accounts-grid .codex-account-card {
-  padding: 12px 14px;
+  padding: 16px 15px 13px;
   gap: 12px;
 }
 .codex-accounts-page .codex-accounts-grid .codex-account-card .card-actions {
   gap: 6px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  position: static;
+  width: auto;
+  max-width: 100%;
+}
+
+.codex-accounts-page .codex-accounts-grid .codex-account-card .card-footer {
+  display: grid;
+  grid-template-columns: minmax(72px, auto) minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+}
+
+.codex-accounts-page .codex-accounts-grid .codex-account-card .card-date {
+  max-width: 132px;
+}
+
+.codex-accounts-page .codex-accounts-grid .codex-account-card .card-actions {
+  justify-self: end;
+}
+
+@media (max-width: 1040px) {
+  .codex-accounts-page .codex-accounts-grid .codex-account-card .card-footer {
+    grid-template-columns: 1fr;
+  }
+
+  .codex-accounts-page .codex-accounts-grid .codex-account-card .card-actions {
+    justify-self: stretch;
+    justify-content: flex-start;
+  }
 }
 
 /* Tech-Badge - Compact */

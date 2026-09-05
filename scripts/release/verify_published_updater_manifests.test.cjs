@@ -8,7 +8,7 @@ const {
 
 const TARGET = "windows-x86_64-nsis";
 const VERSION = "1.2.3";
-const ASSET_NAME = "Cockpit.Tools_1.2.3_x64-setup.exe";
+const ASSET_NAME = "Juling.Tools_1.2.3_x64-setup.exe";
 
 async function withReleaseServer(handler, run) {
   const server = http.createServer(handler);

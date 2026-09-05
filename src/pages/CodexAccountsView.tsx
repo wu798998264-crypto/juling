@@ -80,7 +80,7 @@ export function CodexAccountsView(props: CodexAccountsViewProps) {
     overviewLayoutMode,
     prepareCodexCliLaunch,
     renderApiKeyUsageDetailModal,
-    renderCockpitApiServicePanel,
+    renderJulingApiServicePanel,
     renderQuotaErrorDetailModal,
     selectAllBatchImportAccounts,
     selectedTerminal,
@@ -756,7 +756,7 @@ export function CodexAccountsView(props: CodexAccountsViewProps) {
         </div>
       )}
 
-      {renderCockpitApiServicePanel()}
+      {renderJulingApiServicePanel()}
       {renderApiKeyUsageDetailModal()}
       {renderQuotaErrorDetailModal()}
 

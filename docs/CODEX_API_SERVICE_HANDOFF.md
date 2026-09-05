@@ -3,7 +3,7 @@
 ## Scope
 
 This note describes the local service shown in the UI as **Codex API Service**.
-It is not a hosted Cockpit API. The desktop application creates a local,
+It is not a hosted Juling API. The desktop application creates a local,
 authenticated OpenAI-compatible gateway and can redirect Codex profiles to it.
 
 This repository contains the local service implementation used by Juling.
@@ -14,9 +14,9 @@ Juling backend.
 
 ```text
 Codex CLI / selected Codex profile
-  -> auth.json + config.toml injected by Cockpit
+  -> auth.json + config.toml injected by Juling
   -> http://localhost:<configured-port>/v1
-  -> cockpit-cliproxy sidecar by default
+  -> juling-cliproxy sidecar by default
   -> selected Codex OAuth credentials or configured provider API key
   -> OpenAI Codex upstream or provider upstream
 
@@ -26,7 +26,7 @@ React page -> Tauri invoke -> Rust collection/runtime -> sidecar config + manife
 The implementation has two gateway modes:
 
 - `sidecar` is the default. Rust materializes config and credentials, then starts
-  the bundled Go executable `cockpit-cliproxy`.
+  the bundled Go executable `juling-cliproxy`.
 - `legacy` retains the Rust in-process HTTP proxy path. Do not change defaults or
   route behavior in one mode without checking the other.
 
@@ -39,7 +39,7 @@ The implementation has two gateway modes:
 | Contract | `src/types/codexLocalAccess.ts`, `src-tauri/src/models/codex_local_access.rs` | Frontend/Rust state and configuration schema. Rust uses `serde(rename_all = "camelCase")`. |
 | Commands | `src-tauri/src/commands/codex.rs` | Tauri command boundary; commands are registered in `src-tauri/src/lib.rs`. |
 | Service coordinator | `src-tauri/src/modules/codex_local_access.rs` | Persistence, profile takeover, sidecar lifecycle, legacy proxy, routing, quotas, request logs and tests. |
-| Sidecar | `sidecars/cockpit-cliproxy/main.go` | Go HTTP gateway based on CLIProxyAPI SDK. Receives generated config and manifest. |
+| Sidecar | `sidecars/juling-cliproxy/main.go` | Go HTTP gateway based on CLIProxyAPI SDK. Receives generated config and manifest. |
 
 ## Runtime Flow
 

@@ -3,8 +3,9 @@ import { SettingsAccountTransferSection } from '../components/SettingsAccountTra
 import { SettingsWebdavSyncSection } from '../components/SettingsWebdavSyncSection';
 import './settings/Settings.css';
 import { useState } from 'react';
-import { Github, User, Rocket, Save, AlertCircle, RefreshCw, Heart, MessageSquare, FileText, Download, X } from 'lucide-react';
+import { Github, User, Save, AlertCircle, RefreshCw, Heart, MessageSquare, Download, X } from 'lucide-react';
 import sponsorQrCode from '../assets/branding/juling-sponsor-qrcode.png';
+import julingCoreLogo from '../assets/branding/juling-core-master.png';
 import type { PlatformId } from '../types/platform';
 import type { useSettingsPageController } from "./SettingsPage";
 import { SettingsGeneralPanel } from "./SettingsGeneralPanel";
@@ -32,7 +33,6 @@ export function SettingsPageView(props: SettingsPageViewProps) {
     handleCloseReleaseHistory,
     handleConfirmMenuBarQuotaModal,
     handleDownloadReleaseVersion,
-    handleOpenReleaseHistory,
     handleSaveNetworkConfig,
     menuBarQuotaDraftPlatform,
     menuBarQuotaDraftShowPrefix,
@@ -122,7 +122,7 @@ export function SettingsPageView(props: SettingsPageViewProps) {
         {/* === Network Tab === */}
         {activeTab === 'network' && (
           <>
-            <div className="group-title">Antigravity Cockpit API</div>
+            <div className="group-title">Juling API</div>
             <div className="settings-group">
               <div className="settings-row">
                 <div className="row-label">
@@ -406,12 +406,12 @@ export function SettingsPageView(props: SettingsPageViewProps) {
                 onClick={handleAboutAvatarTap}
                 onMouseDown={(event) => event.preventDefault()}
               >
-                <Rocket size={40} />
+                <img className="app-icon-brand-image" src={julingCoreLogo} alt="" aria-hidden="true" />
               </div>
               <div className="app-info">
                 <h2>{t('settings.about.appName')}</h2>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div className="version-tag">{appVersion}</div>
+                  <div className="version-tag" title={`内部构建 ${appVersion}`}>S1.0</div>
                   <button 
                     className="btn btn-sm btn-ghost"
                     onClick={handleCheckUpdate}
@@ -429,21 +429,6 @@ export function SettingsPageView(props: SettingsPageViewProps) {
                       {updateChecking ? t('settings.about.checking') : t('settings.about.checkUpdate')}
                     </>
                   </button>
-                  <button
-                    className="btn btn-sm btn-ghost"
-                    onClick={handleOpenReleaseHistory}
-                    disabled={releaseHistoryLoading}
-                    style={{
-                      fontSize: '12px',
-                      padding: '4px 10px',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '4px',
-                    }}
-                  >
-                    <FileText size={14} />
-                    {t('settings.about.viewReleaseHistory', '更新记录')}
-                  </button>
                 </div>
                 {updateCheckMessage && (
                   <div
@@ -460,10 +445,10 @@ export function SettingsPageView(props: SettingsPageViewProps) {
             </div>
 
             <div className="credits-list">
-              <button className="credit-item" onClick={() => openLink('https://v.douyin.com/3SHqMl6o4pg/')}>
+              <button className="credit-item" onClick={() => openLink('https://github.com/wu798998264-crypto')}>
                 <div className="credit-icon"><User size={24} /></div>
                 <h3>{t('settings.about.author')}</h3>
-                <p>@虾仁灭口</p>
+                <p>@wu798998264-crypto</p>
               </button>
               
               
@@ -648,13 +633,13 @@ export function SettingsPageView(props: SettingsPageViewProps) {
               )}
               {!releaseHistoryLoading &&
                 !releaseHistoryError &&
-                releaseHistoryItems.map((item) => (
+                releaseHistoryItems.map((item, itemIndex) => (
                   <article
                     key={`${item.version}-${item.date || 'unknown'}`}
                     className="settings-release-history-item"
                   >
                     <div className="settings-release-history-item-head">
-                      <span className="settings-release-history-version">v{item.version}</span>
+                      <span className="settings-release-history-version">{itemIndex === 0 ? 'S1.0' : `v${item.version}`}</span>
                       <div className="settings-release-history-item-meta">
                         {item.date ? (
                           <span className="settings-release-history-date">{item.date}</span>

@@ -67,7 +67,7 @@
 **Steps:**
 1. Run `npm install`, `npm run typecheck`, and `npm run build` in the independent copy.
 2. Search for remaining old repository/update/feedback URLs and confirm no source-level connection remains.
-3. Confirm `E:\Cockpit Tools\cockpit-tools.exe` timestamp/hash is unchanged.
+3. Confirm `E:\Juling\cockpit-tools.exe` timestamp/hash is unchanged.
 4. Initialize the first commit in the independent repository.
 5. Confirm `wu798998264-crypto/juling` does not already exist, create it with GitHub CLI, add only the new remote, and push the independent copy.
 

@@ -180,7 +180,7 @@ export function CodexQuickConfigCard({ onClose }: { onClose?: () => void }) {
           <p className="codex-quick-config-desc">
             {t(
               'codex.modelProviders.quickConfig.modelCatalogDesc',
-              '可见模型及每个模型的上下文配置统一写入当前 Codex 的 Cockpit 受管模型目录。',
+              '可见模型及每个模型的上下文配置统一写入当前 Codex 的 Juling 受管模型目录。',
             )}
           </p>
           <div className="codex-quick-config-card__path">

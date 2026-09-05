@@ -165,17 +165,26 @@
 /* 使用通用的 page-header 样式，不再覆盖 */
 
 .ghcp-flow-notice {
-  border: 1px solid rgba(59, 130, 246, 0.28);
-  background: linear-gradient(
-    135deg,
-    rgba(191, 219, 254, 0.28),
-    rgba(153, 246, 228, 0.18)
-  );
-  border-radius: 14px;
-  padding: 8px 10px;
+  --flow-boundary-accent: #15949b;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--bg-card) 95%, #eaf6f6 5%);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0;
+}
+
+.ghcp-flow-notice::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 3px;
+  background: var(--flow-boundary-accent);
 }
 
 .ghcp-flow-notice.collapsed {
@@ -186,7 +195,7 @@
   width: 100%;
   border: none;
   background: transparent;
-  padding: 4px 4px;
+  padding: 11px 13px 11px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -196,7 +205,8 @@
 }
 
 .ghcp-flow-notice-arrow {
-  color: #2563eb;
+  flex: 0 0 auto;
+  color: var(--flow-boundary-accent);
   transition: transform 0.2s ease;
 }
 
@@ -205,33 +215,144 @@
 }
 
 .ghcp-flow-notice-body {
-  padding: 0 6px 6px 6px;
+  display: grid;
+  grid-template-columns: minmax(180px, 0.72fr) minmax(0, 1.28fr);
+  gap: 0;
+  margin-inline-start: 16px;
+  border-top: 1px solid var(--border-light);
+  padding: 0 13px 13px 0;
 }
 
 .ghcp-flow-notice-title {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #1d4ed8;
+  min-width: 0;
+  color: var(--text-primary);
   font-size: 13px;
   font-weight: 700;
 }
 
+.ghcp-flow-notice-title::after {
+  content: 'LOCAL BOUNDARY';
+  flex: 0 0 auto;
+  margin-inline-start: 4px;
+  padding: 3px 6px;
+  border: 1px solid rgba(21, 148, 155, 0.22);
+  border-radius: 4px;
+  color: var(--flow-boundary-accent);
+  background: rgba(21, 148, 155, 0.07);
+  font-family: Consolas, "SFMono-Regular", monospace;
+  font-size: 8px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.ghcp-flow-notice-title > svg {
+  color: var(--flow-boundary-accent);
+}
+
 .ghcp-flow-notice-desc {
+  position: relative;
+  padding: 12px 16px 0 30px;
   color: var(--text-secondary);
   font-size: 12px;
-  line-height: 1.55;
+  line-height: 1.6;
+}
+
+.ghcp-flow-notice-desc::before {
+  content: 'A';
+  position: absolute;
+  top: 13px;
+  left: 4px;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(21, 148, 155, 0.28);
+  border-radius: 4px;
+  color: var(--flow-boundary-accent);
+  font-family: Consolas, "SFMono-Regular", monospace;
+  font-size: 9px;
+  font-weight: 700;
 }
 
 .ghcp-flow-notice-list {
-  margin: 8px 0 0;
-  padding-left: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+  margin: 0;
+  padding: 12px 0 0 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
   color: var(--text-secondary);
   font-size: 12px;
   line-height: 1.55;
+  list-style: none;
+  border-left: 1px solid var(--border-light);
+}
+
+.ghcp-flow-notice-list li {
+  position: relative;
+  min-width: 0;
+  padding: 9px 10px 9px 32px;
+  border: 1px solid var(--border-light);
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--bg-tertiary) 64%, transparent);
+}
+
+.ghcp-flow-notice-list li::before {
+  content: 'B';
+  position: absolute;
+  top: 9px;
+  left: 8px;
+  width: 17px;
+  height: 17px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  font-family: Consolas, "SFMono-Regular", monospace;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.ghcp-flow-notice-list li:nth-child(2)::before {
+  content: 'C';
+}
+
+.ghcp-flow-notice-toggle:hover {
+  background: color-mix(in srgb, var(--bg-hover) 74%, transparent);
+}
+
+[data-theme="dark"] .ghcp-flow-notice {
+  background: color-mix(in srgb, var(--bg-card) 95%, #0c3438 5%);
+}
+
+@media (max-width: 980px) {
+  .ghcp-flow-notice-body {
+    grid-template-columns: 1fr;
+  }
+
+  .ghcp-flow-notice-desc {
+    padding-bottom: 10px;
+  }
+
+  .ghcp-flow-notice-list {
+    border-left: 0;
+    border-top: 1px solid var(--border-light);
+  }
+}
+
+@media (max-width: 680px) {
+  .ghcp-flow-notice-title::after {
+    display: none;
+  }
+
+  .ghcp-flow-notice-list {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* GitHub Copilot 账号网格 */
@@ -3195,20 +3316,16 @@
 }
 
 [data-theme="dark"] .ghcp-flow-notice {
-  border-color: rgba(96, 165, 250, 0.35);
-  background: linear-gradient(
-    135deg,
-    rgba(30, 64, 175, 0.25),
-    rgba(15, 118, 110, 0.2)
-  );
+  border-color: var(--border);
+  background: color-mix(in srgb, var(--bg-card) 95%, #0c3438 5%);
 }
 
 [data-theme="dark"] .ghcp-flow-notice-arrow {
-  color: #93c5fd;
+  color: var(--flow-boundary-accent);
 }
 
 [data-theme="dark"] .ghcp-flow-notice-title {
-  color: #93c5fd;
+  color: var(--text-primary);
 }
 
 [data-theme="dark"] .qoder-accounts-page .qoder-usage-section .quota-bar-track {

@@ -10,7 +10,7 @@ For the **official DeepSeek preset** (`api.deepseek.com`):
    - Picker `display_name` is `DeepSeek-V4-Flash` / `Pro`.
    - Catalog `slug` uses official Codex whitelist shells `gpt-5.5` / `gpt-5.4`.
    - The sidecar replaces that slug with `deepseek-v4-flash` / `pro` and forwards the Responses body unchanged.
-   - Cockpit writes `cockpit-provider-model-catalog.json` into the **target instance `CODEX_HOME`**.
+   - Juling writes `cockpit-provider-model-catalog.json` into the **target instance `CODEX_HOME`**.
    - Official DeepSeek tool metadata is overlaid onto the Codex client-model shape.
    - Instance `models_cache.json` is invalidated after the catalog write.
 4. **Default model prefers `deepseek-v4-flash`**. Leftover shell names such as `gpt-5.6-sol` are replaced on switch.

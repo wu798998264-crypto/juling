@@ -449,8 +449,8 @@ input:checked + .slider:before {
   width: 80px;
   height: 80px;
   border-radius: 22px;
-  background: var(--gradient-primary);
-  color: white;
+  background: linear-gradient(145deg, #f9fcfd 0%, #ddf5f6 100%);
+  color: var(--color-primary-700);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -458,6 +458,16 @@ input:checked + .slider:before {
   position: relative;
   cursor: pointer;
   user-select: none;
+  overflow: hidden;
+  border: 1px solid rgba(55, 198, 208, 0.24);
+}
+
+.app-icon-brand-image {
+  width: 74%;
+  height: 74%;
+  display: block;
+  object-fit: contain;
+  pointer-events: none;
 }
 
 .app-icon-squircle.unlock-fireworks-active {

@@ -154,7 +154,7 @@ jobs:
         run: |
           set -euo pipefail
           TAG="v${{ steps.app_version.outputs.VERSION }}"
-          TITLE="Cockpit Tools v${{ steps.app_version.outputs.VERSION }}"
+          TITLE="Juling v${{ steps.app_version.outputs.VERSION }}"
           if gh release view "${TAG}" > /dev/null 2>&1; then
             gh release edit "${TAG}" \
               --title "${TITLE}" \
@@ -213,8 +213,8 @@ jobs:
       - name: 🐹 Go setup
         uses: actions/setup-go@v5
         with:
-          go-version-file: sidecars/cockpit-cliproxy/go.mod
-          cache-dependency-path: sidecars/cockpit-cliproxy/go.sum
+          go-version-file: sidecars/juling-cliproxy/go.mod
+          cache-dependency-path: sidecars/juling-cliproxy/go.sum
 
       - name: ⚙️ Node.js setup
         uses: actions/setup-node@v4
@@ -353,8 +353,8 @@ jobs:
       - name: 🐹 Go setup
         uses: actions/setup-go@v5
         with:
-          go-version-file: sidecars/cockpit-cliproxy/go.mod
-          cache-dependency-path: sidecars/cockpit-cliproxy/go.sum
+          go-version-file: sidecars/juling-cliproxy/go.mod
+          cache-dependency-path: sidecars/juling-cliproxy/go.sum
 
       - name: ⚙️ Node.js setup
         uses: actions/setup-node@v4
@@ -474,8 +474,8 @@ jobs:
       - name: 🐹 Go setup
         uses: actions/setup-go@v5
         with:
-          go-version-file: sidecars/cockpit-cliproxy/go.mod
-          cache-dependency-path: sidecars/cockpit-cliproxy/go.sum
+          go-version-file: sidecars/juling-cliproxy/go.mod
+          cache-dependency-path: sidecars/juling-cliproxy/go.sum
 
       - name: ⚙️ Node.js setup
         uses: actions/setup-node@v4
@@ -596,8 +596,8 @@ jobs:
       - name: 🐹 Go setup
         uses: actions/setup-go@v5
         with:
-          go-version-file: sidecars/cockpit-cliproxy/go.mod
-          cache-dependency-path: sidecars/cockpit-cliproxy/go.sum
+          go-version-file: sidecars/juling-cliproxy/go.mod
+          cache-dependency-path: sidecars/juling-cliproxy/go.sum
 
       - name: ⚙️ Node.js setup
         uses: actions/setup-node@v4
@@ -698,8 +698,8 @@ jobs:
       - name: 🐹 Go setup
         uses: actions/setup-go@v5
         with:
-          go-version-file: sidecars/cockpit-cliproxy/go.mod
-          cache-dependency-path: sidecars/cockpit-cliproxy/go.sum
+          go-version-file: sidecars/juling-cliproxy/go.mod
+          cache-dependency-path: sidecars/juling-cliproxy/go.sum
 
       - name: ⚙️ Node.js setup
         uses: actions/setup-node@v4
@@ -960,7 +960,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/v${VERSION}/Cockpit.Tools_${VERSION}_universal.dmg"
+          URL="https://github.com/${GITHUB_REPOSITORY}/releases/download/v${VERSION}/Juling.Tools_${VERSION}_universal.dmg"
           echo "Downloading: ${URL}"
           for i in $(seq 1 30); do
             if curl -fL --retry 3 --retry-delay 1 -o cockpit-tools.dmg "${URL}"; then

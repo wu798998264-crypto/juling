@@ -1360,7 +1360,7 @@ async fn ensure_profile_takeover(
     }
     if codex_account::profile_mutation_lease_held_by_other_process(profile_dir) {
         logger::log_codex_api_warn(&format!(
-            "跳过 API Service profile 自动接管：目标目录正由另一个 Cockpit 进程执行凭据事务: profile_dir={}",
+            "跳过 API Service profile 自动接管：目标目录正由另一个 Juling 进程执行凭据事务: profile_dir={}",
             profile_dir.display()
         ));
         return Ok(());

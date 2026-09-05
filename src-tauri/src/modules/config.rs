@@ -245,7 +245,7 @@ pub struct UserConfig {
     /// 最近一次自动备份时间（ISO 8601）
     #[serde(default)]
     pub auto_backup_last_backup_at: Option<String>,
-    /// Cockpit 生成的本地备份根目录；为空时使用数据目录下的 backups
+    /// Juling 生成的本地备份根目录；为空时使用数据目录下的 backups
     #[serde(default)]
     pub backup_directory: String,
     /// WebDAV 备份同步是否启用

@@ -153,7 +153,7 @@ impl WebdavSyncClient {
         bytes: Vec<u8>,
     ) -> Result<WebdavBackupFileEntry, String> {
         if !is_backup_file_name(file_name) {
-            return Err("WebDAV 只允许上传 Cockpit 备份文件".to_string());
+            return Err("WebDAV 只允许上传 Juling 备份文件".to_string());
         }
         self.ensure_remote_dir().await?;
 
@@ -192,7 +192,7 @@ impl WebdavSyncClient {
 
     pub async fn read_remote_backup_bytes(&self, file_name: &str) -> Result<Vec<u8>, String> {
         if !is_backup_file_name(file_name) {
-            return Err("WebDAV 只允许读取 Cockpit 备份文件".to_string());
+            return Err("WebDAV 只允许读取 Juling 备份文件".to_string());
         }
         let path = format!("{}/{}", self.remote_dir, file_name);
         let response = self
@@ -210,7 +210,7 @@ impl WebdavSyncClient {
 
     pub async fn delete_remote_backup(&self, file_name: &str) -> Result<(), String> {
         if !is_backup_file_name(file_name) {
-            return Err("WebDAV 只允许删除 Cockpit 备份文件".to_string());
+            return Err("WebDAV 只允许删除 Juling 备份文件".to_string());
         }
         let path = format!("{}/{}", self.remote_dir, file_name);
 
@@ -463,7 +463,7 @@ mod tests {
         assert!(normalize_base_url("").is_err());
         assert!(normalize_base_url("ftp://dav.example.com/dav/").is_err());
         assert!(normalize_remote_dir("../backups").is_err());
-        assert!(normalize_remote_dir("CockpitTools\\backups").is_err());
+        assert!(normalize_remote_dir("JulingTools\\backups").is_err());
     }
 
     #[test]

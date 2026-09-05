@@ -445,7 +445,7 @@
             refresh: modules::i18n::translate(lang, "common.refresh", &[]),
             open_cockpit_tools: modules::i18n::translate(
                 lang,
-                "floatingCard.actions.openCockpitTools",
+                "floatingCard.actions.openJulingTools",
                 &[],
             ),
             open_details: modules::i18n::translate(lang, "accounts.actions.viewDetails", &[]),

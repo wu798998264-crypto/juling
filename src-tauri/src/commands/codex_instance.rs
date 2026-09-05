@@ -870,7 +870,7 @@ pub fn start_mixed_model_gateway_watchdog(app: AppHandle) {
                                         }),
                                     );
                                     let body = if rollback_failed {
-                                        "本地分流服务连续恢复失败，且自动恢复官方配置未完全成功。请打开 Cockpit Tools 检查。"
+                                        "本地分流服务连续恢复失败，且自动恢复官方配置未完全成功。请打开 聚灵 检查。"
                                     } else {
                                         "本地分流服务连续恢复失败，已回退官方配置。请重新启动 Codex 后继续使用。"
                                     };
@@ -1498,7 +1498,7 @@ fn escape_applescript(value: &str) -> String {
 /// Whether Windows Terminal (`wt.exe`) is reachable on `PATH`.
 ///
 /// Win11 ships `wt.exe` under `%LOCALAPPDATA%\Microsoft\WindowsApps` (on PATH by default).
-/// Cockpit's `Command::spawn` uses `CreateProcess` directly and bypasses the OS default-terminal
+/// Juling's `Command::spawn` uses `CreateProcess` directly and bypasses the OS default-terminal
 /// redirection, so for `default_terminal = "system"` we probe for `wt.exe` and route through
 /// Windows Terminal when available.
 ///

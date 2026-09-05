@@ -711,7 +711,7 @@
         );
 
         // Provider supportsWebsockets=true must flow into codex-api-key.websockets so the
-        // second hop (Cockpit → OpenAI-compatible upstream) can keep Responses WebSocket.
+        // second hop (Juling → OpenAI-compatible upstream) can keep Responses WebSocket.
         account.api_supports_websockets = true;
         let enabled = sidecar_codex_key_config_value(&account, &collection, None)
             .expect("api key config with websockets");

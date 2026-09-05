@@ -558,7 +558,7 @@ export function SettingsWebdavSyncSection() {
           <div className="settings-row" style={{ borderBottom: 'none', paddingLeft: '24px', borderLeft: '1px solid var(--border-light)' }}>
             <div className="row-label" style={{ minWidth: 'auto' }}>
               <div className="row-title">{t('settings.webdav.remoteDirTitle', '远端目录')}</div>
-              <div className="row-desc">{t('settings.webdav.remoteDirDesc', '只管理该目录下的 Cockpit 备份文件。')}</div>
+              <div className="row-desc">{t('settings.webdav.remoteDirDesc', '只管理该目录下的 Juling 备份文件。')}</div>
             </div>
             <div className="row-control row-control--grow" style={{ maxWidth: '240px' }}>
               <input
@@ -675,7 +675,7 @@ export function SettingsWebdavSyncSection() {
               </span>
               {t('settings.webdav.remoteListTitle', '远端备份')}
             </div>
-            <div className="row-desc">{t('settings.webdav.remoteListDesc', '仅显示匹配 Cockpit 自动/手动备份命名的 JSON 与 ZIP 文件。')}</div>
+            <div className="row-desc">{t('settings.webdav.remoteListDesc', '仅显示匹配 Juling 自动/手动备份命名的 JSON 与 ZIP 文件。')}</div>
           </div>
           <div className="row-control" onClick={(e) => e.stopPropagation()}>
             {isRemoteExpanded && (

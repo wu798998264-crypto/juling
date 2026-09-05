@@ -31,7 +31,7 @@ mod legacy_platform_adapter_cleanup_tests {
     #[test]
     fn ignores_current_sidecar_and_official_apps() {
         let sidecar =
-            " 64680 1805 /Applications/Cockpit Tools.app/Contents/MacOS/cockpit-cliproxy --parent-pid 1805";
+            " 64680 1805 /Applications/Juling.app/Contents/MacOS/juling-cliproxy --parent-pid 1805";
         assert_eq!(
             orphaned_legacy_platform_adapter_pid_from_ps_line(sidecar, 99999),
             None

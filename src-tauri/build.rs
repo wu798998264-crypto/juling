@@ -36,7 +36,10 @@ fn go_target_from_rust_target(target: &str) -> Option<(&'static str, &'static st
 }
 
 fn should_skip_sidecar_build(output: &Path) -> bool {
-    std::env::var("COCKPIT_SKIP_CLIPROXY_BUILD").ok().as_deref() == Some("1") && output.exists()
+    let skip = std::env::var("JULING_SKIP_CLIPROXY_BUILD")
+        .or_else(|_| std::env::var("COCKPIT_SKIP_CLIPROXY_BUILD"))
+        .ok();
+    skip.as_deref() == Some("1") && output.exists()
 }
 
 fn emit_sidecar_rerun_inputs(path: &Path) {
@@ -76,7 +79,7 @@ fn build_go_sidecar(
     goarch: &str,
 ) -> PathBuf {
     let extension = if goos == "windows" { ".exe" } else { "" };
-    let output = output_dir.join(format!("cockpit-cliproxy-{rust_target}{extension}"));
+    let output = output_dir.join(format!("juling-cliproxy-{rust_target}{extension}"));
     if should_skip_sidecar_build(&output) {
         return output;
     }
@@ -94,17 +97,17 @@ fn build_go_sidecar(
         .arg(&output)
         .arg(".")
         .status()
-        .expect("failed to start go build for cockpit-cliproxy");
+        .expect("failed to start go build for juling-cliproxy");
 
     if !status.success() {
-        panic!("go build for cockpit-cliproxy failed with status: {status}");
+        panic!("go build for juling-cliproxy failed with status: {status}");
     }
 
     output
 }
 
 fn build_macos_universal_sidecar(sidecar_dir: &Path, output_dir: &Path) {
-    let output = output_dir.join("cockpit-cliproxy-universal-apple-darwin");
+    let output = output_dir.join("juling-cliproxy-universal-apple-darwin");
     if should_skip_sidecar_build(&output) {
         return;
     }
@@ -131,24 +134,25 @@ fn build_macos_universal_sidecar(sidecar_dir: &Path, output_dir: &Path) {
         .arg("-output")
         .arg(&output)
         .status()
-        .expect("failed to start lipo for cockpit-cliproxy universal sidecar");
+        .expect("failed to start lipo for juling-cliproxy universal sidecar");
 
     if !status.success() {
-        panic!("lipo for cockpit-cliproxy universal sidecar failed with status: {status}");
+        panic!("lipo for juling-cliproxy universal sidecar failed with status: {status}");
     }
 }
 
-fn build_cockpit_cliproxy_sidecar() {
+fn build_juling_cliproxy_sidecar() {
     let manifest_dir =
         PathBuf::from(std::env::var("CARGO_MANIFEST_DIR").expect("CARGO_MANIFEST_DIR is required"));
     let target = std::env::var("TARGET").expect("TARGET is required");
-    println!("cargo:rustc-env=COCKPIT_RUST_TARGET={target}");
-    let sidecar_dir = manifest_dir.join("../sidecars/cockpit-cliproxy");
+    println!("cargo:rustc-env=JULING_RUST_TARGET={target}");
+    let sidecar_dir = manifest_dir.join("../sidecars/juling-cliproxy");
     let output_dir = sidecar_dir.join("bin");
 
+    println!("cargo:rerun-if-env-changed=JULING_SKIP_CLIPROXY_BUILD");
     println!("cargo:rerun-if-env-changed=COCKPIT_SKIP_CLIPROXY_BUILD");
     emit_sidecar_rerun_inputs(&sidecar_dir);
-    std::fs::create_dir_all(&output_dir).expect("failed to create cockpit-cliproxy bin dir");
+    std::fs::create_dir_all(&output_dir).expect("failed to create juling-cliproxy bin dir");
 
     if cfg!(target_os = "macos") && target == "universal-apple-darwin" {
         build_macos_universal_sidecar(&sidecar_dir, &output_dir);
@@ -166,7 +170,7 @@ fn build_cockpit_cliproxy_sidecar() {
 
 fn main() {
     println!("cargo:rerun-if-changed=build.rs");
-    build_cockpit_cliproxy_sidecar();
+    build_juling_cliproxy_sidecar();
 
     #[cfg(target_os = "macos")]
     {

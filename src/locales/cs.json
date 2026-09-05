@@ -276,7 +276,7 @@
       "desc": "Tato oblast je pevně umístěná vpravo nahoře na všech stránkách pro kampaně nebo brandové reklamy.",
       "action": "Zobrazit podrobnosti"
     },
-    "appName": "Cockpit Tools​",
+    "appName": "Juling​",
     "collapse": "Sbalit",
     "confirmDelete": "Potvrdit smazání",
     "confirmDeleteTag": "Potvrdit smazání štítku",
@@ -328,12 +328,12 @@
   },
   "sponsors": {
     "pageTitle": "Sponzoři",
-    "pageDesc": "Děkujeme těmto sponzorům za podporu Cockpit Tools.",
+    "pageDesc": "Děkujeme těmto sponzorům za podporu Juling.",
     "loading": "Načítání sponzorů...",
     "emptyTitle": "Zatím žádní sponzoři",
     "emptyDesc": "Vzdálený modul sponzorů je aktuálně vypnutý.",
     "listAriaLabel": "Seznam sponzorů",
-    "defaultDescription": "Děkujeme za podporu Cockpit Tools.",
+    "defaultDescription": "Děkujeme za podporu Juling.",
     "openSponsor": "Otevřít"
   },
   "platformLayout": {
@@ -531,12 +531,12 @@
         "summary": "Modely bez předpony používají aktuální předplatné; modely s předponou jako cpa/gpt-5.5 jsou předávány do API třetích stran. Obojí závisí na místní službě směrování.",
         "rowSummary": "Modely bez předpony používají aktuální předplatné; modely s předponou jako cpa/gpt-5.5 jsou předávány do API třetích stran. Obojí závisí na místní službě směrování.",
         "confirmEnableTitle": "Povolit směrování API třetích stran?",
-        "confirmEnableMessage": "Požadavky na modely Codex budou směrovány přes místní službu Cockpit Tools. Pokud služba neběží, modely předplatného i modely třetích stran mohou být nedostupné. Spuštění při přihlášení bude povoleno při uložení.\n\nPovolit směrování?",
+        "confirmEnableMessage": "Požadavky na modely Codex budou směrovány přes místní službu Juling. Pokud služba neběží, modely předplatného i modely třetích stran mohou být nedostupné. Spuštění při přihlášení bude povoleno při uložení.\n\nPovolit směrování?",
         "confirmEnableAction": "Povolit",
         "confirmDisableTitle": "Zakázat směrování API třetích stran?",
         "confirmDisableMessage": "Jakmile tato změna vstoupí v platnost, místní brána se zastaví, obnoví se přímý přístup k oficiálnímu předplatnému a modely třetích stran nebudou k dispozici.\n\nZakázat směrování?",
         "confirmDisableAction": "Zakázat",
-        "modalTip": "Modely předplatného i modely třetích stran procházejí místní službou směrování. Ponechte Cockpit Tools spuštěné na pozadí. Služba se automaticky obnoví a po opakovaných selháních se vrátí k oficiální konfiguraci.",
+        "modalTip": "Modely předplatného i modely třetích stran procházejí místní službou směrování. Ponechte Juling spuštěné na pozadí. Služba se automaticky obnoví a po opakovaných selháních se vrátí k oficiální konfiguraci.",
         "modelRequired": "Každá povolená trasa API musí obsahovat alespoň jeden model.",
         "runningSaveTitle": "Kdy má směrování vstoupit v platnost?",
         "runningSaveMessage": "Tato instance Codexu je spuštěna. Nahrazení místní služby nyní přeruší probíhající konverzaci.\n\nZvolte „Uložit a restartovat Codex“ pro okamžité použití, nebo „Uložit na později“ pro zachování aktuální relace.",
@@ -678,7 +678,7 @@
   },
   "settings": {
     "title": "Nastavení aplikace",
-    "subtitle": "Přizpůsobte si prostředí Cockpit Tools.",
+    "subtitle": "Přizpůsobte si prostředí Juling.",
     "tabs": {
       "general": "Obecné",
       "network": "Síť",
@@ -757,7 +757,7 @@
       "codexSyncWsl": "Synchronizovat Codex do WSL",
       "codexSyncWslDesc": "Po přepnutí výchozího účtu Codex se auth.json a config.toml zapíší také do adresáře Codex ve WSL.",
       "codexAppUiInjection": "Kvóta API služby",
-      "codexAppUiInjectionDesc": "Po restartování instance Codex zobrazí pod kompozitorem počet účtů API služby Cockpit Tools a kvóty za týden a 5 hodin. Cockpit Tools musí běžet na pozadí; po úplném ukončení nebo bez sítě se údaje neobnovují.",
+      "codexAppUiInjectionDesc": "Po restartování instance Codex zobrazí pod kompozitorem počet účtů API služby Juling a kvóty za týden a 5 hodin. Juling musí běžet na pozadí; po úplném ukončení nebo bez sítě se údaje neobnovují.",
       "codexAppUiInjectionPoolLabel": "Účty",
       "codexAppUiInjectionWeeklyLabel": "Týden",
       "codexAppUiInjectionFiveHourLabel": "5 h",
@@ -871,7 +871,7 @@
       "sideNavLayoutClassic": "Klasické rozložení",
       "antigravityDualSwitchNoRestart": "Duální přepnutí bez restartu",
       "antigravityDualSwitchNoRestartDesc": "Při přepnutí účtu se v jednom kroku zapíší lokální data účtu a provede plynulé přepnutí rozšíření bez restartu Antigravity IDE.",
-      "appAutoLaunch": "Spustit Cockpit Tools po přihlášení",
+      "appAutoLaunch": "Spustit Juling po přihlášení",
       "appAutoLaunchDesc": "Spustit po přihlášení. Při chybě PowerShell při startu Windows vypněte.",
       "startupWakeupDisabled": "Vypnuto",
       "startupWakeupImmediate": "Probudit okamžitě",
@@ -995,7 +995,7 @@
       "codexHideRelayQuotaDesc": "Skryje panely kvóty relay / New API v přehledu účtů Codex."
     },
     "network": {
-      "apiTitle": "Antigravity Cockpit API​",
+      "apiTitle": "Juling API​",
       "wsService": "Služba WebSocket",
       "wsServiceDesc": "Povolit připojení externím programům (např. rozšíření VS Code)",
       "preferredPort": "Preferovaný port",
@@ -1024,7 +1024,7 @@
       "firewallHint": "Pokud URL není dostupná, zkontrolujte nastavení systémového firewallu.",
       "proxyTitle": "Globální proxy",
       "proxyEnabled": "Povolit globální proxy",
-      "proxyEnabledDesc": "Vloží proxy proměnné prostředí do spravovaných procesů platforem spuštěných aplikací Cockpit.",
+      "proxyEnabledDesc": "Vloží proxy proměnné prostředí do spravovaných procesů platforem spuštěných aplikací Juling.",
       "proxyUrl": "URL proxy",
       "proxyUrlDesc": "Příklad: http://127.0.0.1:7890 nebo socks5://127.0.0.1:7890",
       "proxyUrlPlaceholder": "např. http://127.0.0.1:7890",
@@ -1034,7 +1034,7 @@
       "proxyUrlRequired": "Když je globální proxy zapnutá, URL proxy nesmí být prázdná."
     },
     "about": {
-      "appName": "Cockpit Tools​",
+      "appName": "Juling​",
       "slogan": "Profesionální řešení pro správu účtů",
       "author": "Autor",
       "wechat": "WeChat​",
@@ -1241,7 +1241,7 @@
       "passwordSavedPlaceholder": "Uloženo; ponechte prázdné pro zachování",
       "clearPassword": "Vymazat",
       "remoteDirTitle": "Vzdálený adresář",
-      "remoteDirDesc": "Spravují se pouze záložní soubory Cockpit v tomto adresáři.",
+      "remoteDirDesc": "Spravují se pouze záložní soubory Juling v tomto adresáři.",
       "statusTitle": "Stav synchronizace",
       "statusDesc": "Vzdálená obnova vyžaduje ruční výběr a nikdy tiše nepřepíše lokální data.",
       "lastUpload": "Poslední nahrání: {{time}}",
@@ -1252,7 +1252,7 @@
       "syncAction": "Synchronizovat nastavení",
       "syncLatestConfirm": "Opravdu chcete stáhnout nejnovější vzdálenou zálohu {{name}} a synchronizovat ji lokálně? Tím dojde k přepsání stávajících lokálních dat.",
       "remoteListTitle": "Vzdálené zálohy",
-      "remoteListDesc": "Zobrazují se pouze soubory JSON a ZIP odpovídající názvům automatických/ručních záloh Cockpit.",
+      "remoteListDesc": "Zobrazují se pouze soubory JSON a ZIP odpovídající názvům automatických/ručních záloh Juling.",
       "emptyTitle": "Žádné vzdálené zálohy",
       "emptyDesc": "Uložte nastavení, poté vytvořte a nahrajte zálohu.",
       "unknownTime": "Neznámé",
@@ -1671,7 +1671,7 @@
       "importBtn": "Importovat",
       "oauthAction": "OAuth autorizace",
       "fromExtension": "Import z pluginu",
-      "syncBadge": "Synchronizovat účty pluginu Antigravity Cockpit",
+      "syncBadge": "Synchronizovat účty pluginu Juling",
       "fromLocalDB": "Import z lokální DB",
       "localDBDesc": "Načte přihlašovací účty z Antigravity IDE klienta v tomto zařízení",
       "toolsDescMigrate": "Migrace účtů z ~/.antigravity_tools/",
@@ -2122,7 +2122,7 @@
       "description": "Nejprve zkontrolujte nastavení; klient se změní až po volbě přepnutí nebo spuštění.",
       "notApplied": "Dosud nepoužito",
       "safeHint": "Otevření tohoto okna neobnoví Token, nezavře klienta ani nezapíše přihlašovací údaje.",
-      "modelConfigHint": "Kontextové okno a limit komprese se ukládají pro každý model do katalogu spravovaného Cockpitem.",
+      "modelConfigHint": "Kontextové okno a limit komprese se ukládají pro každý model do katalogu spravovaného Julingem.",
       "enablePerModelHint": "Nastavení podle modelu vyžaduje Viditelné modely; změny zůstanou konceptem až do uložení nebo spuštění.",
       "enablePerModel": "Zapnout nastavení podle modelu",
       "unsavedConfig": "Nastavení modelů obsahuje neuložené změny; před přepnutím nebo spuštěním se uloží.",
@@ -2238,11 +2238,11 @@
     },
     "exportFormat": {
       "label": "Formát exportu",
-      "cockpitTools": "Cockpit Tools​",
+      "cockpitTools": "Juling​",
       "authJson": "Oficiální auth.json",
       "sub2api": "sub2api formát",
       "cpa": "cpa formát",
-      "agentIdentityCpaUnsupported": "Účty Agent Identity nelze exportovat ve formátu cpa. Použijte Cockpit Tools nebo sub2api.",
+      "agentIdentityCpaUnsupported": "Účty Agent Identity nelze exportovat ve formátu cpa. Použijte Juling nebo sub2api.",
       "agentIdentityPrivateKeyNotice": "Export obsahuje soukromý klíč Agent Identity, který umožňuje obnovit účet na jiném zařízení. Chraňte jej jako heslo.",
       "buildFailed": "Export nelze vytvořit: vybrané účty obsahují nepodporovaný typ nebo neúplné přihlašovací údaje.",
       "downloadAll": "Stáhnout vše",
@@ -2327,8 +2327,8 @@
       "testAuthFailed": "Služba je dosažitelná, ale ověření selhalo: {{detail}}. Zkontrolujte klíč API služby nebo stav přihlášení účtu.",
       "testServiceUnavailable": "Služba je dosažitelná, ale momentálně není dostupná: {{detail}}. Zkontrolujte, zda je služba zapnutá, kolekce účtů není prázdná a účty jsou použitelné.",
       "gatewayErrors": {
-        "authUnavailable": "Momentálně není k dispozici žádný účet pro směrování. Účet může být v čekací lhůtě, bez ověření nebo omezený kvótou. Zkontrolujte jeho stav v API službě Cockpit Tools.",
-        "authNotFound": "V kolekci účtů není nastaven žádný použitelný účet. Přidejte nebo aktivujte účet v API službě Cockpit Tools."
+        "authUnavailable": "Momentálně není k dispozici žádný účet pro směrování. Účet může být v čekací lhůtě, bez ověření nebo omezený kvótou. Zkontrolujte jeho stav v API službě Juling.",
+        "authNotFound": "V kolekci účtů není nastaven žádný použitelný účet. Přidejte nebo aktivujte účet v API službě Juling."
       },
       "testRateLimited": "Služba je dosažitelná, ale upstream je omezen nebo kvóta vyčerpána: {{detail}}.",
       "testHttpFailed": "Služba je dosažitelná, ale požadavek vrátil HTTP {{status}}: {{detail}}.",
@@ -3261,7 +3261,7 @@
         "placeholder": "Zadejte jedno ID modelu na řádek nebo je oddělte čárkami.",
         "editHint": "Načtené modely se vloží pouze do tohoto návrhu. Před uložením je zkontrolujte a upravte.",
         "syncToggle": "Synchronizovat modely poskytovatele do Codexu",
-        "syncDescription": "Po uložení se tento seznam použije k vytvoření katalogu modelů Codex spravovaného Cockpitem. Vlastní katalogy se nepřepíší.",
+        "syncDescription": "Po uložení se tento seznam použije k vytvoření katalogu modelů Codex spravovaného Julingem. Vlastní katalogy se nepřepíší.",
         "fetchCredentialsRequired": "Nejprve zadejte API Key a Base URL.",
         "fetchEmpty": "Poskytovatel nevrátil žádné modely. Aktuální seznam zůstal zachován.",
         "fetchFailed": "Načtení modelů poskytovatele se nezdařilo: {{error}}",
@@ -3342,7 +3342,7 @@
           "name": "SiliconFlow​"
         },
         "cockpit_api": {
-          "name": "Cockpit Api​"
+          "name": "Juling Api​"
         }
       },
       "oauthBinding": {
@@ -3518,7 +3518,7 @@
         "contextWindowHint": "Zapíše model_context_window. Upravitelné pouze v uživatelském režimu.",
         "partialDetected": "Aktuálně je nastaveno pouze jedno spravované pole: model_context_window={{context}}, model_auto_compact_token_limit={{compact}}. Uložením se přepíší obě pole podle aktuálního schématu.",
         "notSet": "Nenastaveno",
-        "modelCatalogDesc": "Viditelné modely a jejich nastavení kontextu se zapisují do katalogu modelů aktivního Codex spravovaného nástrojem Cockpit."
+        "modelCatalogDesc": "Viditelné modely a jejich nastavení kontextu se zapisují do katalogu modelů aktivního Codex spravovaného nástrojem Juling."
       },
       "testing": "Testování...",
       "testSuccess": "Připojení poskytovatele je v pořádku: {{protocol}}, {{model}}, {{latency}}.",
@@ -3836,7 +3836,7 @@
       "saveFailed": "Uložení poznámky účtu selhalo: {{error}}"
     },
     "cockpitApi": {
-      "panelTitle": "Panel služby Cockpit Api",
+      "panelTitle": "Panel služby Juling Api",
       "servicePanel": "Panel služby",
       "balance": "Zůstatek",
       "requests": "Požadavky",
@@ -5538,14 +5538,14 @@
     "search": "Hledat účty ZCode...",
     "flowNotice": {
       "title": "Správa účtů ZCode",
-      "desc": "Cockpit čte a zapisuje šifrované místní přihlašovací údaje ZCode pro skutečné přepínání účtů a propojení instancí.",
+      "desc": "Juling čte a zapisuje šifrované místní přihlašovací údaje ZCode pro skutečné přepínání účtů a propojení instancí.",
       "permission": "Místní rozsah: ~/.zcode/v2/credentials.json a adresáře spravovaných instancí.",
-      "network": "Síťový rozsah: API OAuth, uživatele, předplatného a kvót. Účty se neodesílají do služby Cockpit."
+      "network": "Síťový rozsah: API OAuth, uživatele, předplatného a kvót. Účty se neodesílají do služby Juling."
     },
     "empty": "Žádné účty ZCode",
     "addAccount": "Přidat účet ZCode",
     "oauth": {
-      "desc": "Zavřete ZCode a přihlaste se v autorizačním okně Cockpit; zpětné volání převezme Cockpit přímo.",
+      "desc": "Zavřete ZCode a přihlaste se v autorizačním okně Juling; zpětné volání převezme Juling přímo.",
       "title": "OAuth ZCode",
       "item1": "Oficiální přihlášení přes Z.ai a BigModel.",
       "item2": "Uloží účet a obnoví tarif a kvóty modelů.",
@@ -5557,7 +5557,7 @@
       "success": "Přihlášení OAuth ZCode bylo úspěšné"
     },
     "token": {
-      "desc": "Vložte JSON účtu ZCode exportovaný z Cockpit."
+      "desc": "Vložte JSON účtu ZCode exportovaný z Juling."
     },
     "apiKey": {
       "tab": "Klíč API",
@@ -5684,7 +5684,7 @@
       "backToCurrent": "Zpět",
       "switchToThisAccount": "Přepnout",
       "openDetails": "Otevřít detail",
-      "openCockpitTools": "Otevřít Cockpit Tools"
+      "openJulingTools": "Otevřít Juling"
     },
     "empty": {
       "title": "Žádné účty",
@@ -5814,7 +5814,7 @@
   },
   "relay": {
     "pageTitle": "Exkluzivní relay",
-    "pageDesc": "Partnerská API služba pro uživatele Cockpit Tools použitelná s účty Codex API Key.",
+    "pageDesc": "Partnerská API služba pro uživatele Juling použitelná s účty Codex API Key.",
     "loading": "Načítání relay...",
     "emptyTitle": "Relay vypnutý",
     "emptyDesc": "Vzdálená konfigurace exkluzivní relay nepovolila.",
@@ -5844,7 +5844,7 @@
   "apiKeyFun": {
     "eyebrow": "Přepojení",
     "title": "Relay APIKEY.FUN",
-    "description": "Oficiální partnerský relay Cockpit poskytuje stabilní, otevřený a cenově výhodný API přístup k velkým modelům. Podporuje hlavní modely jako Claude, OpenAI a Gemini a hodí se pro jednotnou konfiguraci v Codex, Gemini CLI, Claude Code a dalších vývojářských nástrojích. Registrací přes exkluzivní odkaz Cockpit můžete získat trvalou slevu až 5% na dobíjení.",
+    "description": "Oficiální partnerský relay Juling poskytuje stabilní, otevřený a cenově výhodný API přístup k velkým modelům. Podporuje hlavní modely jako Claude, OpenAI a Gemini a hodí se pro jednotnou konfiguraci v Codex, Gemini CLI, Claude Code a dalších vývojářských nástrojích. Registrací přes exkluzivní odkaz Juling můžete získat trvalou slevu až 5% na dobíjení.",
     "register": "Exkluzivní odkaz",
     "docs": "Oficiální dokumentace",
     "viewNow": "Zobrazit",
@@ -5970,7 +5970,7 @@
       "title": "Správa účtů Grok CLI",
       "desc": "Ve výchozím stavu se používají samostatné adresáře GROK_HOME. Při zapnuté synchronizaci změna účtu OAuth ve výchozí instanci zapíše ~/.grok/auth.json; další instance zůstávají izolované.",
       "permission": "Místní rozsah: ~/.grok/auth.json lze číst při importu a zapisuje se jen při zapnuté synchronizaci během změny OAuth ve výchozí instanci. Klíče API oficiální přihlášení nepřepisují.",
-      "network": "Síťový rozsah: autorizace OAuth, obnova přihlašovacích údajů a dotazy na využití účtu. Přihlašovací údaje se do služeb Cockpit neodesílají."
+      "network": "Síťový rozsah: autorizace OAuth, obnova přihlašovacích údajů a dotazy na využití účtu. Přihlašovací údaje se do služeb Juling neodesílají."
     },
     "empty": "Zatím žádné účty Grok CLI",
     "addAccount": "Přidat účet Grok CLI",

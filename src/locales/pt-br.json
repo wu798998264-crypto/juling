@@ -276,7 +276,7 @@
       "desc": "Esta área fica fixa no canto superior direito de todas as páginas para campanhas ou anúncios da marca.",
       "action": "Ver detalhes"
     },
-    "appName": "Cockpit Tools​",
+    "appName": "Juling​",
     "collapse": "Recolher",
     "confirmDelete": "Confirmar exclusão",
     "confirmDeleteTag": "Confirmar exclusão de tag",
@@ -328,12 +328,12 @@
   },
   "sponsors": {
     "pageTitle": "Patrocinadores",
-    "pageDesc": "Agradecemos a estes patrocinadores pelo apoio ao Cockpit Tools.",
+    "pageDesc": "Agradecemos a estes patrocinadores pelo apoio ao Juling.",
     "loading": "Carregando patrocinadores...",
     "emptyTitle": "Nenhum patrocinador ainda",
     "emptyDesc": "O módulo remoto de patrocinadores está desativado no momento.",
     "listAriaLabel": "Lista de patrocinadores",
-    "defaultDescription": "Obrigado por apoiar o Cockpit Tools.",
+    "defaultDescription": "Obrigado por apoiar o Juling.",
     "openSponsor": "Abrir"
   },
   "platformLayout": {
@@ -531,12 +531,12 @@
         "summary": "Modelos sem prefixo usam a assinatura atual; modelos com prefixo como cpa/gpt-5.5 são encaminhados para uma API de terceiros. Ambos dependem do serviço de roteamento local.",
         "rowSummary": "Modelos sem prefixo usam a assinatura atual; modelos com prefixo como cpa/gpt-5.5 são encaminhados para uma API de terceiros. Ambos dependem do serviço de roteamento local.",
         "confirmEnableTitle": "Ativar roteamento de API de terceiros?",
-        "confirmEnableMessage": "As solicitações de modelos do Codex serão roteadas através do serviço local Cockpit Tools. Se o serviço não estiver em execução, tanto os modelos de assinatura quanto os de terceiros poderão ficar indisponíveis. A inicialização no login será ativada ao salvar.\n\nAtivar roteamento?",
+        "confirmEnableMessage": "As solicitações de modelos do Codex serão roteadas através do serviço local Juling. Se o serviço não estiver em execução, tanto os modelos de assinatura quanto os de terceiros poderão ficar indisponíveis. A inicialização no login será ativada ao salvar.\n\nAtivar roteamento?",
         "confirmEnableAction": "Ativar",
         "confirmDisableTitle": "Desativar roteamento de API de terceiros?",
         "confirmDisableMessage": "Após essa alteração entrar em vigor, o gateway local será interrompido, o acesso nativo da assinatura será restaurado e os modelos de terceiros ficarão indisponíveis.\n\nDesativar roteamento?",
         "confirmDisableAction": "Desativar",
-        "modalTip": "Tanto os modelos de assinatura quanto os de terceiros passam pelo serviço de roteamento local. Mantenha o Cockpit Tools em execução em segundo plano. O serviço se recupera automaticamente e reverte para a configuração oficial após falhas consecutivas.",
+        "modalTip": "Tanto os modelos de assinatura quanto os de terceiros passam pelo serviço de roteamento local. Mantenha o Juling em execução em segundo plano. O serviço se recupera automaticamente e reverte para a configuração oficial após falhas consecutivas.",
         "modelRequired": "Cada rota de API habilitada deve incluir pelo menos um modelo.",
         "runningSaveTitle": "Quando o roteamento deve entrar em vigor?",
         "runningSaveMessage": "Esta instância do Codex está em execução. Substituir o serviço local agora interromperá a conversa atual.\n\nEscolha «Salvar e reiniciar o Codex» para aplicar agora ou «Salvar para depois» para manter a sessão atual inalterada.",
@@ -678,7 +678,7 @@
   },
   "settings": {
     "title": "Configurações do App",
-    "subtitle": "Personalize sua experiência no Cockpit Tools.",
+    "subtitle": "Personalize sua experiência no Juling.",
     "tabs": {
       "general": "Geral",
       "network": "Rede",
@@ -761,7 +761,7 @@
       "codexSyncWsl": "Sincronizar Codex com WSL",
       "codexSyncWslDesc": "Depois de trocar a conta padrão do Codex, auth.json e config.toml também são gravados no diretório Codex no WSL.",
       "codexAppUiInjection": "Cota do serviço de API",
-      "codexAppUiInjectionDesc": "Após reiniciar uma instância do Codex, mostrar abaixo do compositor a quantidade de contas e as cotas semanal e de 5 horas do serviço de API do Cockpit Tools. O Cockpit Tools deve continuar em execução em segundo plano; as atualizações param ao fechar completamente o aplicativo ou quando a rede está indisponível.",
+      "codexAppUiInjectionDesc": "Após reiniciar uma instância do Codex, mostrar abaixo do compositor a quantidade de contas e as cotas semanal e de 5 horas do serviço de API do Juling. O Juling deve continuar em execução em segundo plano; as atualizações param ao fechar completamente o aplicativo ou quando a rede está indisponível.",
       "codexAppUiInjectionPoolLabel": "Contas",
       "codexAppUiInjectionWeeklyLabel": "Semana",
       "codexAppUiInjectionFiveHourLabel": "5 h",
@@ -875,7 +875,7 @@
       "sideNavLayoutClassic": "Layout clássico",
       "antigravityDualSwitchNoRestart": "Troca dupla sem reiniciar",
       "antigravityDualSwitchNoRestartDesc": "Ao trocar de conta, a gravação local dos dados e a troca contínua da extensão são executadas em um único fluxo, sem reiniciar o Antigravity IDE.",
-      "appAutoLaunch": "Iniciar o Cockpit Tools ao entrar no sistema",
+      "appAutoLaunch": "Iniciar o Juling ao entrar no sistema",
       "appAutoLaunchDesc": "Iniciar após o login. Se o PowerShell falhar no boot do Windows, desative.",
       "startupWakeupDisabled": "Desativado",
       "startupWakeupImmediate": "Despertar imediatamente",
@@ -1024,7 +1024,7 @@
       "firewallHint": "Se a URL estiver inacessível, verifique as configurações do firewall do sistema.",
       "proxyTitle": "Proxy global",
       "proxyEnabled": "Ativar proxy global",
-      "proxyEnabledDesc": "Injeta variáveis de ambiente de proxy nos processos gerenciados iniciados pelo Cockpit.",
+      "proxyEnabledDesc": "Injeta variáveis de ambiente de proxy nos processos gerenciados iniciados pelo Juling.",
       "proxyUrl": "URL do proxy",
       "proxyUrlDesc": "Exemplo: http://127.0.0.1:7890 ou socks5://127.0.0.1:7890",
       "proxyUrlPlaceholder": "ex.: http://127.0.0.1:7890",
@@ -1034,7 +1034,7 @@
       "proxyUrlRequired": "A URL do proxy não pode ficar vazia quando o proxy global estiver ativado."
     },
     "about": {
-      "appName": "Cockpit Tools​",
+      "appName": "Juling​",
       "slogan": "Solução Profissional de Gerenciamento de Contas",
       "author": "Autor",
       "wechat": "WeChat​",
@@ -1241,7 +1241,7 @@
       "passwordSavedPlaceholder": "Salva; deixe em branco para manter",
       "clearPassword": "Limpar",
       "remoteDirTitle": "Pasta remota",
-      "remoteDirDesc": "Somente os arquivos de backup do Cockpit nesta pasta são gerenciados.",
+      "remoteDirDesc": "Somente os arquivos de backup do Juling nesta pasta são gerenciados.",
       "statusTitle": "Status de sincronização",
       "statusDesc": "A restauração remota requer uma seleção manual e nunca sobrescreve silenciosamente os dados locais.",
       "lastUpload": "Último envio: {{time}}",
@@ -1252,7 +1252,7 @@
       "syncAction": "Sincronizar configuração",
       "syncLatestConfirm": "Tem certeza de que deseja baixar o backup remoto mais recente {{name}} e sincronizá-lo localmente? Isso substituirá os dados locais existentes.",
       "remoteListTitle": "Backups remotos",
-      "remoteListDesc": "Somente arquivos JSON e ZIP que correspondem aos nomes dos backups automáticos/manuais do Cockpit são exibidos.",
+      "remoteListDesc": "Somente arquivos JSON e ZIP que correspondem aos nomes dos backups automáticos/manuais do Juling são exibidos.",
       "emptyTitle": "Nenhum backup remoto",
       "emptyDesc": "Salve as configurações, crie e faça o upload de um backup.",
       "unknownTime": "Desconhecido",
@@ -1671,7 +1671,7 @@
       "importBtn": "Importar",
       "oauthAction": "Autorização OAuth",
       "fromExtension": "Importar do Plugin",
-      "syncBadge": "Sincronizar contas do plugin Antigravity Cockpit",
+      "syncBadge": "Sincronizar contas do plugin Juling",
       "fromLocalDB": "Importar do BD Local",
       "localDBDesc": "Ler contas de login do cliente Antigravity IDE nesta máquina",
       "toolsDescMigrate": "Migrar contas de ~/.antigravity_tools/",
@@ -2122,7 +2122,7 @@
       "description": "Configure e verifique primeiro; o cliente só muda após escolher Alternar ou Iniciar.",
       "notApplied": "Ainda não aplicado",
       "safeHint": "Abrir esta janela não atualiza tokens, não fecha o cliente e não grava credenciais de login.",
-      "modelConfigHint": "A janela de contexto e o limite de compactação são gravados por modelo no catálogo gerenciado pelo Cockpit.",
+      "modelConfigHint": "A janela de contexto e o limite de compactação são gravados por modelo no catálogo gerenciado pelo Juling.",
       "enablePerModelHint": "A configuração por modelo exige Modelos visíveis. Aqui apenas o rascunho muda até salvar ou iniciar.",
       "enablePerModel": "Ativar configuração por modelo",
       "unsavedConfig": "Há alterações de modelo não salvas; elas serão salvas antes de alternar ou iniciar.",
@@ -2238,11 +2238,11 @@
     },
     "exportFormat": {
       "label": "Formato de exportação",
-      "cockpitTools": "Cockpit Tools​",
+      "cockpitTools": "Juling​",
       "authJson": "auth.json oficial",
       "sub2api": "Formato sub2api",
       "cpa": "Formato cpa",
-      "agentIdentityCpaUnsupported": "Contas Agent Identity não podem ser exportadas no formato cpa. Use Cockpit Tools ou sub2api.",
+      "agentIdentityCpaUnsupported": "Contas Agent Identity não podem ser exportadas no formato cpa. Use Juling ou sub2api.",
       "agentIdentityPrivateKeyNotice": "Esta exportação contém uma chave privada do Agent Identity que permite restaurar a conta em outro dispositivo. Proteja-a como uma senha.",
       "buildFailed": "Não foi possível criar a exportação: as contas selecionadas incluem um tipo não compatível ou credenciais incompletas.",
       "downloadAll": "Baixar tudo",
@@ -2327,8 +2327,8 @@
       "testAuthFailed": "O serviço está acessível, mas a autenticação falhou: {{detail}}. Verifique a chave do serviço de API ou o estado de login da conta.",
       "testServiceUnavailable": "O serviço está acessível, mas indisponível no momento: {{detail}}. Verifique se o serviço está ativado, se a coleção de contas está vazia ou se as contas podem ser usadas.",
       "gatewayErrors": {
-        "authUnavailable": "Nenhuma conta do grupo está disponível para roteamento agora. A conta pode estar em espera, sem autorização ou limitada por cota. Verifique o estado no serviço API do Cockpit Tools.",
-        "authNotFound": "Nenhuma conta utilizável está configurada no grupo. Adicione ou ative uma conta no serviço API do Cockpit Tools."
+        "authUnavailable": "Nenhuma conta do grupo está disponível para roteamento agora. A conta pode estar em espera, sem autorização ou limitada por cota. Verifique o estado no serviço API do Juling.",
+        "authNotFound": "Nenhuma conta utilizável está configurada no grupo. Adicione ou ative uma conta no serviço API do Juling."
       },
       "testRateLimited": "O serviço está acessível, mas o upstream está limitado ou a cota acabou: {{detail}}.",
       "testHttpFailed": "O serviço está acessível, mas a requisição retornou HTTP {{status}}: {{detail}}.",
@@ -3261,7 +3261,7 @@
         "placeholder": "Insira um ID de modelo por linha ou separe os IDs por vírgulas.",
         "editHint": "Os modelos buscados são adicionados apenas a este rascunho. Revise e edite antes de salvar.",
         "syncToggle": "Sincronizar modelos do provedor com o Codex",
-        "syncDescription": "Após salvar, esta lista gera o catálogo de modelos do Codex gerenciado pelo Cockpit. Catálogos personalizados não são substituídos.",
+        "syncDescription": "Após salvar, esta lista gera o catálogo de modelos do Codex gerenciado pelo Juling. Catálogos personalizados não são substituídos.",
         "fetchCredentialsRequired": "Informe primeiro a API Key e a Base URL.",
         "fetchEmpty": "O provedor não retornou modelos. A lista atual foi mantida.",
         "fetchFailed": "Não foi possível buscar os modelos do provedor: {{error}}",
@@ -3342,7 +3342,7 @@
           "name": "SiliconFlow​"
         },
         "cockpit_api": {
-          "name": "Cockpit Api​"
+          "name": "Juling Api​"
         }
       },
       "oauthBinding": {
@@ -3518,7 +3518,7 @@
         "contextWindowHint": "Grava model_context_window. Editável apenas no modo Personalizado.",
         "partialDetected": "Apenas um campo gerenciado está definido atualmente: model_context_window={{context}}, model_auto_compact_token_limit={{compact}}. Salvar irá reescrever ambos os campos usando o esquema atual.",
         "notSet": "Não definido",
-        "modelCatalogDesc": "Os modelos visíveis e suas configurações de contexto são gravados no catálogo de modelos gerenciado pelo Cockpit do Codex ativo."
+        "modelCatalogDesc": "Os modelos visíveis e suas configurações de contexto são gravados no catálogo de modelos gerenciado pelo Juling do Codex ativo."
       },
       "testing": "Testando...",
       "testSuccess": "Conexão do provedor saudável: {{protocol}}, {{model}}, {{latency}}.",
@@ -3836,7 +3836,7 @@
       "saveFailed": "Falha ao salvar a nota da conta: {{error}}"
     },
     "cockpitApi": {
-      "panelTitle": "Painel do serviço Cockpit Api",
+      "panelTitle": "Painel do serviço Juling Api",
       "servicePanel": "Painel do serviço",
       "balance": "Saldo",
       "requests": "Requisições",
@@ -5538,14 +5538,14 @@
     "search": "Buscar contas ZCode...",
     "flowNotice": {
       "title": "Guia de contas ZCode",
-      "desc": "O Cockpit lê e regrava as credenciais locais criptografadas do ZCode para troca real de conta e vínculo de instâncias.",
+      "desc": "O Juling lê e regrava as credenciais locais criptografadas do ZCode para troca real de conta e vínculo de instâncias.",
       "permission": "Escopo local: ~/.zcode/v2/credentials.json e diretórios de instâncias gerenciadas.",
-      "network": "Escopo de rede: APIs de OAuth, usuário, assinatura e cota. As contas não são enviadas a um serviço do Cockpit."
+      "network": "Escopo de rede: APIs de OAuth, usuário, assinatura e cota. As contas não são enviadas a um serviço do Juling."
     },
     "empty": "Nenhuma conta ZCode",
     "addAccount": "Adicionar conta ZCode",
     "oauth": {
-      "desc": "Feche o ZCode e entre pela janela de autorização do Cockpit; o Cockpit receberá o retorno diretamente.",
+      "desc": "Feche o ZCode e entre pela janela de autorização do Juling; o Juling receberá o retorno diretamente.",
       "title": "OAuth do ZCode",
       "item1": "Login oficial pelo Z.ai e BigModel.",
       "item2": "Salva a conta e atualiza o plano e as cotas de modelos.",
@@ -5557,7 +5557,7 @@
       "success": "Login OAuth do ZCode concluído"
     },
     "token": {
-      "desc": "Cole o JSON de uma conta ZCode exportado pelo Cockpit."
+      "desc": "Cole o JSON de uma conta ZCode exportado pelo Juling."
     },
     "apiKey": {
       "tab": "Chave de API",
@@ -5684,7 +5684,7 @@
       "backToCurrent": "Voltar",
       "switchToThisAccount": "Alternar",
       "openDetails": "Abrir detalhes",
-      "openCockpitTools": "Abrir Cockpit Tools"
+      "openJulingTools": "Abrir Juling"
     },
     "empty": {
       "title": "Nenhuma conta",
@@ -5814,7 +5814,7 @@
   },
   "relay": {
     "pageTitle": "Relay exclusivo",
-    "pageDesc": "Serviço de API parceiro para usuários do Cockpit Tools, utilizável com contas API Key do Codex.",
+    "pageDesc": "Serviço de API parceiro para usuários do Juling, utilizável com contas API Key do Codex.",
     "loading": "Carregando relay...",
     "emptyTitle": "Relay desativado",
     "emptyDesc": "A configuração remota não ativou o relay exclusivo.",
@@ -5844,7 +5844,7 @@
   "apiKeyFun": {
     "eyebrow": "Intermediador",
     "title": "Relay APIKEY.FUN",
-    "description": "O relay parceiro oficial do Cockpit oferece acesso API estável, aberto e com ótimo custo-benefício a grandes modelos. Ele oferece suporte a modelos principais como Claude, OpenAI e Gemini, e é adequado para configuração unificada no Codex, Gemini CLI, Claude Code e outras ferramentas de desenvolvimento. Ao se cadastrar pelo link exclusivo do Cockpit, você pode obter desconto permanente de até 5% nas recargas.",
+    "description": "O relay parceiro oficial do Juling oferece acesso API estável, aberto e com ótimo custo-benefício a grandes modelos. Ele oferece suporte a modelos principais como Claude, OpenAI e Gemini, e é adequado para configuração unificada no Codex, Gemini CLI, Claude Code e outras ferramentas de desenvolvimento. Ao se cadastrar pelo link exclusivo do Juling, você pode obter desconto permanente de até 5% nas recargas.",
     "register": "Link exclusivo",
     "docs": "Docs oficiais",
     "viewNow": "Ver agora",
@@ -5970,7 +5970,7 @@
       "title": "Gerenciamento de contas do Grok CLI",
       "desc": "Por padrão, são usados GROK_HOME separados. Com a sincronização ativa, uma troca OAuth da instância padrão grava em ~/.grok/auth.json; as instâncias adicionais continuam isoladas.",
       "permission": "Escopo local: ~/.grok/auth.json pode ser lido para importação e só é gravado com a sincronização ativa em uma troca OAuth da instância padrão. Chaves de API nunca substituem o login oficial.",
-      "network": "Escopo de rede: autorização OAuth, renovação de credenciais e consulta de uso. As credenciais não são enviadas aos serviços do Cockpit."
+      "network": "Escopo de rede: autorização OAuth, renovação de credenciais e consulta de uso. As credenciais não são enviadas aos serviços do Juling."
     },
     "empty": "Nenhuma conta do Grok CLI",
     "addAccount": "Adicionar conta do Grok CLI",

@@ -568,7 +568,7 @@ function toOfficialAuthJson(account: CodexAccount): JsonRecord {
   };
 }
 
-function toCockpitToolsPortableStorage(
+function toJulingToolsPortableStorage(
   account: CodexAccount,
   options: CodexExportBuildOptions = {},
 ): CodexPortableTokenStorage | JsonRecord {
@@ -581,7 +581,7 @@ function toCockpitToolsPortableStorage(
   return toPortableTokenStorage(account, options);
 }
 
-export function parseCockpitToolsCodexExport(rawJson: string): CodexAccount[] {
+export function parseJulingToolsCodexExport(rawJson: string): CodexAccount[] {
   const parsed = JSON.parse(rawJson) as unknown;
   if (Array.isArray(parsed)) {
     return parsed as CodexAccount[];
@@ -594,7 +594,7 @@ export function parseCockpitToolsCodexExport(rawJson: string): CodexAccount[] {
 
 export function hasCodexExportSensitiveNotes(rawJson: string): boolean {
   try {
-    return parseCockpitToolsCodexExport(rawJson).some(hasSensitiveNoteFields);
+    return parseJulingToolsCodexExport(rawJson).some(hasSensitiveNoteFields);
   } catch {
     return false;
   }
@@ -602,7 +602,7 @@ export function hasCodexExportSensitiveNotes(rawJson: string): boolean {
 
 export function hasCodexExportAgentIdentity(rawJson: string): boolean {
   try {
-    return parseCockpitToolsCodexExport(rawJson).some(hasAgentIdentity);
+    return parseJulingToolsCodexExport(rawJson).some(hasAgentIdentity);
   } catch {
     return false;
   }
@@ -613,11 +613,11 @@ export function transformCodexExportJson(
   format: CodexExportFormat,
   options: CodexExportBuildOptions = {},
 ): string {
-  const accounts = parseCockpitToolsCodexExport(rawJson);
+  const accounts = parseJulingToolsCodexExport(rawJson);
 
   if (format === 'cockpit_tools') {
     return JSON.stringify(
-      accounts.map((account) => toCockpitToolsPortableStorage(account, options)),
+      accounts.map((account) => toJulingToolsPortableStorage(account, options)),
       null,
       2,
     );
@@ -694,7 +694,7 @@ export function buildCodexExportContent(
   options: CodexExportBuildOptions = {},
 ): CodexExportContent {
   const fileNameBase = buildCodexExportFileNameBase(baseName, format);
-  const accounts = parseCockpitToolsCodexExport(rawJson);
+  const accounts = parseJulingToolsCodexExport(rawJson);
   const splitPerAccount = format === 'cpa' || format === 'auth_json';
 
   if (!splitPerAccount || accounts.length <= 1) {

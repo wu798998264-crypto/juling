@@ -1,4 +1,4 @@
-//! Codex/ChatGPT renderer 的 Cockpit Tools API 服务可选额度显示注入。
+//! Codex/ChatGPT renderer 的 聚灵 API 服务可选额度显示注入。
 //!
 //! 该模块只连接实例自己的 loopback CDP 端口，不修改官方 app.asar，
 //! 也不修改官方额度或速度逻辑。额度以独立的小字段显示在 composer 操作栏下方。
@@ -1593,7 +1593,7 @@ fn collect_app_server_diagnostic_observation(profile_dir: &Path) -> AppServerDia
     AppServerDiagnosticObservation {
         pids,
         sockets: sockets.join("|"),
-        // 官方桌面端持有 app-server 的 stdio，Cockpit 只能通过进程树、socket 和
+        // 官方桌面端持有 app-server 的 stdio，Juling 只能通过进程树、socket 和
         // 认证存储快照诊断，不能从外部安全接管它的 stdin/stdout。
         stdio: "owned_by_official_electron".to_string(),
         auth_file: app_server_auth_file_snapshot(profile_dir),

@@ -37,7 +37,7 @@ impl Default for CodexApiProviderMode {
     }
 }
 
-/// Cockpit 管理的 Codex 模型目录条目
+/// Juling 管理的 Codex 模型目录条目
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
 pub struct CodexExperimentalModelDefinition {
     pub model_id: String,

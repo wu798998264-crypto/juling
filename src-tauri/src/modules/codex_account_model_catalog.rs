@@ -1816,7 +1816,7 @@ fn write_api_key_builtin_openai_to_config_toml(
     provider_config: &ApiProviderConfig,
     cleanup_managed_model_catalog: bool,
 ) -> Result<(), String> {
-    // Provider id/name remain user-facing Cockpit metadata. A Responses-compatible relay uses the
+    // Provider id/name remain user-facing Juling metadata. A Responses-compatible relay uses the
     // built-in Codex provider at runtime and changes only its account-specific `openai_base_url`.
     let builtin_openai_config = resolve_api_provider_config(
         provider_config.base_url.as_deref(),

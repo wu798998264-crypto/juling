@@ -266,7 +266,7 @@ fn provider_gateway_lifecycle_lock() -> &'static TokioMutex<()> {
 }
 
 fn sidecar_binary_file_names() -> Vec<String> {
-    let target = env!("COCKPIT_RUST_TARGET");
+    let target = env!("JULING_RUST_TARGET");
     if cfg!(target_os = "windows") {
         vec![
             format!("{CODEX_LOCAL_ACCESS_SIDECAR_BIN_NAME}.exe"),
@@ -296,7 +296,7 @@ fn sidecar_binary_candidates() -> Result<Vec<PathBuf>, String> {
         .ok_or_else(|| format!("当前程序路径缺少父目录: {}", exe.display()))?;
     let mut candidates = Vec::new();
     let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-    let dev_sidecar_dir = manifest_dir.join("../sidecars/cockpit-cliproxy/bin");
+    let dev_sidecar_dir = manifest_dir.join("../sidecars/juling-cliproxy/bin");
 
     if cfg!(debug_assertions) {
         push_sidecar_binary_candidates(&mut candidates, &dev_sidecar_dir);
@@ -332,7 +332,7 @@ fn sidecar_binary_path() -> Result<PathBuf, String> {
 fn sanitize_sidecar_command_env(command: &mut TokioCommand) {
     #[cfg(target_os = "macos")]
     {
-        // 避免把 Cockpit 的应用身份和 XPC 上下文传给 sidecar，导致局域网访问异常。
+        // 避免把 Juling 的应用身份和 XPC 上下文传给 sidecar，导致局域网访问异常。
         command.env_remove("__CFBundleIdentifier");
         command.env_remove("XPC_SERVICE_NAME");
     }
@@ -1294,7 +1294,7 @@ fn sync_sidecar_auth_file_for_account_with_task_source(
     harden_sidecar_auth_file_permissions(&auth_path)?;
     invalidate_prepared_account_if_unlocked(&account.id);
     logger::log_codex_api_info(&format!(
-        "[CodexLocalAccess][sidecar] 已写穿 Cockpit Token Authority 凭证: account_id={}",
+        "[CodexLocalAccess][sidecar] 已写穿 Juling Token Authority 凭证: account_id={}",
         account.id
     ));
     Ok(())
@@ -1545,7 +1545,7 @@ fn parse_http_url_host_port(raw: &str) -> Option<(String, u16)> {
     Some((host, port))
 }
 
-/// True when `raw` is the Cockpit API Service client URL (gateway), not a real upstream.
+/// True when `raw` is the Juling API Service client URL (gateway), not a real upstream.
 fn is_local_access_gateway_base_url(raw: &str, collection: &CodexLocalAccessCollection) -> bool {
     if profile_base_url_matches(Some(raw), &build_collection_base_url(collection)) {
         return true;
@@ -1559,7 +1559,7 @@ fn is_local_access_gateway_base_url(raw: &str, collection: &CodexLocalAccessColl
 
 /// True when `raw` must not be used as a sidecar upstream Base URL.
 ///
-/// Only rejects the current Cockpit API Service client/gateway URL (same host/port
+/// Only rejects the current Juling API Service client/gateway URL (same host/port
 /// self-reference). Loopback URLs on a **different** port are allowed so users can
 /// point API Key providers at a separate local OpenAI-compatible process.
 fn is_unsafe_sidecar_upstream_base_url(raw: &str, collection: &CodexLocalAccessCollection) -> bool {
@@ -1574,7 +1574,7 @@ fn normalize_upstream_base_url_string(raw: &str) -> Option<String> {
     Some(trimmed.trim_end_matches('/').to_string())
 }
 
-/// Look up real provider Base URL from a Cockpit data directory store.
+/// Look up real provider Base URL from a Juling data directory store.
 fn lookup_codex_model_provider_base_url_in_dir(
     data_dir: &Path,
     provider_id: Option<&str>,
@@ -1626,7 +1626,7 @@ fn lookup_codex_model_provider_base_url_in_dir(
     None
 }
 
-/// Look up real provider Base URL from Cockpit's model-provider store.
+/// Look up real provider Base URL from Juling's model-provider store.
 fn lookup_codex_model_provider_base_url(
     provider_id: Option<&str>,
     provider_name: Option<&str>,
@@ -1732,7 +1732,7 @@ fn sidecar_codex_key_config_value_with_metered_feature_patterns(
     let excluded_models =
         sidecar_excluded_models_for_account(account, collection, metered_feature_patterns);
     // Map account/provider supportsWebsockets → cliproxy codex-api-key.websockets so the
-    // second hop (Cockpit → OpenAI-compatible upstream such as Sub2API) can stay on
+    // second hop (Juling → OpenAI-compatible upstream such as Sub2API) can stay on
     // Responses WebSocket when the client already connected with WebSocket.
     let mut value = json!({
         "api-key": api_key,

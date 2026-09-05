@@ -2,12 +2,12 @@
 
 ## Status
 
-- Repository baseline: `upstream/main` at `18055d05`, Cockpit Tools `v1.3.34`.
+- Repository baseline: `upstream/main` at `18055d05`, Juling `v1.3.34`.
 - Scope: local work-in-progress implementation on `codex/mixed-model-routing`.
 - Isolation: the feature is default-off and has only been exercised with the
-  development data directory; the installed Cockpit Tools profile is unchanged.
+  development data directory; the installed Juling profile is unchanged.
 - Decision: the feature is feasible as an opt-in extension of the existing
-  `cockpit-cliproxy` sidecar. It does not require a custom `codex-server` or a
+  `juling-cliproxy` sidecar. It does not require a custom `codex-server` or a
   second Codex `app-server`.
 
 ## User Goal
@@ -28,13 +28,13 @@ subscription route.
 
 ## Current Architecture
 
-Cockpit Tools currently has four relevant layers:
+Juling currently has four relevant layers:
 
 ```mermaid
 flowchart LR
   UI[React / Vite UI]
   Rust[Tauri / Rust instance and account management]
-  Sidecar[cockpit-cliproxy Go sidecar]
+  Sidecar[juling-cliproxy Go sidecar]
   AppServer[Official Codex app-server]
   Official[ChatGPT Codex subscription upstream]
   Provider[Third-party provider / CPA]
@@ -50,12 +50,12 @@ Important current behavior:
 
 1. An instance has one `bind_account_id` in
    [`src-tauri/src/models/instance.rs`](../src-tauri/src/models/instance.rs).
-2. API Key accounts may bind an OAuth account. Cockpit then writes OAuth identity
+2. API Key accounts may bind an OAuth account. Juling then writes OAuth identity
    and an API provider override into the same profile. This is identity dual-track,
    but requests still use one instance-wide `model_provider`.
 3. The profile takeover implementation already backs up and restores managed
    `auth.json` and `config.toml` state.
-4. `cockpit-cliproxy` already reads the request JSON model, validates the model,
+4. `juling-cliproxy` already reads the request JSON model, validates the model,
    selects OAuth credentials, calls Provider Gateway endpoints, translates
    Responses/Chat Completions, streams responses, and records usage diagnostics.
 5. A current `apiKeySpec` chooses either OAuth execution or one
@@ -84,13 +84,13 @@ The design keeps exactly one official app-server.
 
 ### Confirmed reusable capabilities
 
-- Model IDs allow `/`, so names such as `cpa/gpt-5.5` pass Cockpit catalog
+- Model IDs allow `/`, so names such as `cpa/gpt-5.5` pass Juling catalog
   validation.
 - The sidecar receives the actual selected model in request JSON.
 - Provider Gateway already supports model rewrite, request translation, streaming,
   vision capability checks, and provider header isolation.
 - Profile takeover already has backup and restoration behavior.
-- Sidecar OAuth auth files intentionally exclude `refresh_token`; Cockpit remains
+- Sidecar OAuth auth files intentionally exclude `refresh_token`; Juling remains
   the token authority and avoids competing with the official client for a
   one-time refresh token.
 
@@ -119,7 +119,7 @@ flowchart TD
   Desktop[Codex Desktop]
   AppServer[One official app-server]
   LocalProvider[codex_local_access provider]
-  Router[Model route resolver in cockpit-cliproxy]
+  Router[Model route resolver in juling-cliproxy]
   OAuth[OAuth executor and account selector]
   Gateway[Provider Gateway executor]
   Subscription[chatgpt.com/backend-api/codex]
@@ -134,7 +134,7 @@ flowchart TD
   Gateway --> CPA
 ```
 
-The instance remains logged in with the existing bound OAuth account. Cockpit
+The instance remains logged in with the existing bound OAuth account. Juling
 changes only the model HTTP egress by pointing the instance at one local sidecar.
 
 ## Persistent Data Model
@@ -185,7 +185,7 @@ Validation rules:
 - namespaces are lowercase, unique, 2-32 characters, and match
   `[a-z0-9][a-z0-9_-]*`;
 - reserved namespaces include `official`, `subscription`, `openai`, `codex`, and
-  internal Cockpit model IDs;
+  internal Juling model IDs;
 - deleting or disabling an API account leaves the instance configuration visible
   but invalid. Launch fails with a precise validation error until repaired;
 - failure policy is fixed to strict in v1 and is not user-configurable.
@@ -270,7 +270,7 @@ is the routing contract.
 ## Model Catalog and Model Management UI
 
 The source should be visible in the existing model manager without adding source
-metadata to Codex's catalog JSON. Cockpit can derive the source from the model ID
+metadata to Codex's catalog JSON. Juling can derive the source from the model ID
 and active instance routes.
 
 ### Instance edit page
@@ -380,7 +380,7 @@ configuration, then perform an explicit controlled restart:
 
 - stop only the sidecar owned by that profile and routing configuration;
 - restore the existing takeover backup;
-- remove only Cockpit-managed model catalog/provider fields;
+- remove only Juling-managed model catalog/provider fields;
 - preserve unrelated user `config.toml` keys and existing user changes;
 - if restore fails, keep the backup and show a blocking recovery action;
 - disabling mixed routing must not disable the global API Service or other
@@ -428,13 +428,13 @@ capabilities fail clearly and remain visible in the UI.
 
 ## CPA and Privacy Boundary
 
-CPA and `cockpit-cliproxy` are not byte-for-byte blind tunnels. They parse and may
+CPA and `juling-cliproxy` are not byte-for-byte blind tunnels. They parse and may
 transform the complete request/response JSON to handle model names, Responses vs
 Chat Completions, tool schemas, images, streaming, retries, and usage. They do not
 perform model inference, but they can technically see conversation content and
 tool parameters.
 
-Cockpit's request-log database should continue to store metadata only. Add two
+Juling's request-log database should continue to store metadata only. Add two
 hardening rules for mixed routing:
 
 - persist `routeKind`, `routeId`, `providerAccountId`, `clientModel`, and
@@ -538,7 +538,7 @@ instances.
    sub-agent, image input, and session reopen.
 7. Force/await OAuth access-token refresh and verify the running instance continues.
 8. Exercise a long context to observe compaction behavior.
-9. Disable mixed routing and verify the profile restores and ordinary Cockpit
+9. Disable mixed routing and verify the profile restores and ordinary Juling
    instance operations still work.
 
 ## Delivery Phases
@@ -581,7 +581,7 @@ not send the selected model reliably, or requires an unhookable transport path.
 
 The bridge has a larger blast radius because it replaces or wraps app-server
 startup and protocol handling. The current sidecar route design preserves more of
-Cockpit Tools and the official Codex client unchanged.
+Juling and the official Codex client unchanged.
 
 ## Final Recommendation
 

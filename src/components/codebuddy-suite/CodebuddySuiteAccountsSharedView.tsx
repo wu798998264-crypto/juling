@@ -883,6 +883,7 @@ export function CodebuddySuiteAccountsSharedView<
           type="button"
           className="ghcp-flow-notice-toggle"
           onClick={() => setIsFlowNoticeCollapsed((prev) => !prev)}
+          aria-expanded={!isFlowNoticeCollapsed}
         >
           <div className="ghcp-flow-notice-title">
             <CircleAlert size={16} />

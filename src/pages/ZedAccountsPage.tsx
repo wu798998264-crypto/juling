@@ -1002,7 +1002,7 @@ export function ZedAccountsPage() {
         >
           <div className="ghcp-flow-notice-title">
             <CircleAlert size={16} />
-            <span>{t('zed.flowNotice.title', 'Zed 账号接入说明（点击展开/收起）')}</span>
+            <span>{t('zed.flowNotice.title', 'Zed · 本机接入边界')}</span>
           </div>
           <ChevronDown size={16} className={`ghcp-flow-notice-arrow ${isFlowNoticeCollapsed ? 'collapsed' : ''}`} />
         </button>
@@ -1011,20 +1011,20 @@ export function ZedAccountsPage() {
             <div className="ghcp-flow-notice-desc">
               {t(
                 'zed.flowNotice.desc',
-                '支持官方 OAuth 登录、JSON 导入、本机当前登录状态导入，以及按 Zed 客户端真实落盘规则应用账号并重启官方客户端。页面仅展示桌面端可直接读取的状态字段。',
+                'OAuth、JSON 与本机登录状态统一保存到聚灵本地账号库；应用账号时按 Zed 官方客户端的实际位点写回。',
               )}
             </div>
             <ul className="ghcp-flow-notice-list">
               <li>
                 {t(
                   'zed.flowNotice.reason',
-                  '权限范围：浏览器打开 Zed 官方同源登录；读取本机当前 Zed 登录凭据用于导入；应用账号时按官方客户端相同位点写回系统凭据，并可按需启动或重启 Zed。',
+                  '本机动作：读取当前 Zed 凭据用于导入，切号时写回对应系统凭据，并可按你的设置启动或重启 Zed。',
                 )}
               </li>
               <li>
                 {t(
                   'zed.flowNotice.storage',
-                  '数据范围：本地仅保存导入或授权得到的账号记录、标签和导出内容；不会上传本机 Keychain/凭据原文，不会扫描浏览器网页登录会话，也不会修改无关系统凭据。',
+                  '边界承诺：不上传 Keychain 或凭据原文，不扫描浏览器登录会话，也不改动与 Zed 无关的系统凭据。',
                 )}
               </li>
             </ul>

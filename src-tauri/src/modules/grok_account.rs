@@ -1392,7 +1392,7 @@ fn parse_auth_registry(value: &Value) -> Result<GrokAccount, String> {
         validate_importable_account(&account)?;
         return Ok(account);
     }
-    Err("未识别 Grok JSON 格式（支持官方 auth.json 或 Cockpit 导出账号数组）".to_string())
+    Err("未识别 Grok JSON 格式（支持官方 auth.json 或 Juling 导出账号数组）".to_string())
 }
 
 /// 是否具备可恢复的登录凭据（OAuth access/refresh 或 API Key）。
@@ -1433,7 +1433,7 @@ fn import_full_accounts(accounts: Vec<GrokAccount>) -> Result<Vec<GrokAccountVie
     Ok(result)
 }
 
-/// 尝试按 Cockpit 完整账号结构解析（导出格式）。
+/// 尝试按 Juling 完整账号结构解析（导出格式）。
 fn try_import_cockpit_export(value: &Value) -> Option<Result<Vec<GrokAccountView>, String>> {
     // 数组：[GrokAccount, ...]
     if let Ok(accounts) = serde_json::from_value::<Vec<GrokAccount>>(value.clone()) {
@@ -1495,7 +1495,7 @@ pub fn import_from_json(content: &str) -> Result<Vec<GrokAccountView>, String> {
     let value: Value =
         serde_json::from_str(content).map_err(|error| format!("解析 Grok JSON 失败: {}", error))?;
 
-    // 1) Cockpit 导出的完整账号（含凭据）— 与文件导入 / Token 粘贴共用
+    // 1) Juling 导出的完整账号（含凭据）— 与文件导入 / Token 粘贴共用
     if let Some(result) = try_import_cockpit_export(&value) {
         return result;
     }
@@ -3288,7 +3288,7 @@ mod tests {
         assert_eq!(accounts[0].refresh_token, account.refresh_token);
         super::validate_importable_account(&accounts[0])
             .expect("export credentials must be importable");
-        // 导出数组应被识别为 Cockpit 完整导出格式
+        // 导出数组应被识别为 Juling 完整导出格式
         assert!(
             matches!(
                 super::try_import_cockpit_export(&value),

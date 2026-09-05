@@ -885,18 +885,18 @@ export function KiroAccountsPage() {
         <button type="button" className="ghcp-flow-notice-toggle" onClick={() => setIsFlowNoticeCollapsed((prev) => !prev)} aria-expanded={!isFlowNoticeCollapsed}>
           <div className="ghcp-flow-notice-title">
             <CircleAlert size={16} />
-            <span>{t('kiro.flowNotice.title', 'Kiro 账号管理说明（点击展开/收起）')}</span>
+            <span>{t('kiro.flowNotice.title', 'Kiro · 本机接入边界')}</span>
           </div>
           <ChevronDown size={16} className={`ghcp-flow-notice-arrow ${isFlowNoticeCollapsed ? 'collapsed' : ''}`} />
         </button>
         {!isFlowNoticeCollapsed && (
           <div className="ghcp-flow-notice-body">
             <div className="ghcp-flow-notice-desc">
-              {t('kiro.flowNotice.desc', 'Switching accounts requires reading VS Code local auth storage and using the system credential service for decrypt/re-encrypt. Data is processed locally only.')}
+              {t('kiro.flowNotice.desc', '账号切换只改动本机 Kiro 登录文件与实例配置；授权和额度刷新走 Kiro 官方链路。')}
             </div>
             <ul className="ghcp-flow-notice-list">
-              <li>{t('kiro.flowNotice.reason', 'Permission scope: read VS Code auth database (state.vscdb) and call system credential capability (Windows DPAPI / macOS Keychain / Linux Secret Service) for decrypt/write-back.')}</li>
-              <li>{t('kiro.flowNotice.storage', 'Data scope: only Kiro auth-session related entries are read/updated; system secrets are not modified and no key/token is uploaded.')}</li>
+              <li>{t('kiro.flowNotice.reason', '本机动作：处理 ~/.aws/sso/cache/kiro-auth-token.json、实例 profile.json 与 state.vscdb 的 kiro.kiroAgent 条目。')}</li>
+              <li>{t('kiro.flowNotice.storage', '外部通信：向 Kiro 官方接口发送授权与额度所需字段；Enterprise/IdC 账号还会连接 AWS IAM Identity Center OIDC。')}</li>
             </ul>
           </div>
         )}
@@ -1046,7 +1046,7 @@ export function KiroAccountsPage() {
             </button>
             <button className="btn btn-secondary" onClick={() => window.dispatchEvent(new CustomEvent('app-request-navigate', { detail: 'manual' }))}>
               <BookOpen size={16} />
-              {t('manual.navTitle', '功能使用手册')}
+              {t('manual.navTitle', '使用说明')}
             </button>
           </div>
         </div>

@@ -28,7 +28,7 @@ import {
   usePlatformLayoutStore,
 } from '../stores/usePlatformLayoutStore';
 import { Page } from '../types/navigation';
-import { Users, CheckCircle2, Sparkles, RotateCw, Play, Github, Tag, ChevronDown, EyeOff, X } from 'lucide-react';
+import { Users, CheckCircle2, Sparkles, RotateCw, Play, Github, Tag, ChevronDown, EyeOff, X, Activity, Layers3, SlidersHorizontal } from 'lucide-react';
 import { TagEditModal } from '../components/TagEditModal';
 import { Account } from '../types/account';
 import {
@@ -2739,15 +2739,6 @@ export function DashboardPage({
     }
     return result;
   }, [platformGroups, remoteHiddenPlatformSet, visibleDashboardEntryOrder]);
-  const isSinglePlatformMode = visibleDashboardCardIds.length === 1;
-  const cardRows = useMemo(() => {
-    const rows: PlatformId[][] = [];
-    for (let i = 0; i < visibleDashboardCardIds.length; i += 2) {
-      rows.push(visibleDashboardCardIds.slice(i, i + 2));
-    }
-    return rows;
-  }, [visibleDashboardCardIds]);
-
   const handleHidePlatformCard = useCallback((platformId: PlatformId) => {
     const entryId = orderedEntryIds.find(
       (candidate) => resolveEntryPlatformIds(candidate, platformGroups).includes(platformId),
@@ -3528,18 +3519,42 @@ export function DashboardPage({
 
   return (
     <main className="main-content dashboard-page fade-in">
-      <div className="page-tabs-row" style={{ minHeight: '60px' }}>
-        <div className="page-tabs-label dashboard-title-label">
-          <span>{t('nav.dashboard', '仪表盘')}</span>
-          <ManualHelpIconButton className="header-action-btn dashboard-manual-btn dashboard-title-manual-btn" />
+      <section className="dashboard-command-overview">
+        <div className="dashboard-command-heading">
+          <span className="dashboard-command-kicker">
+            <Activity size={13} />
+            JULING CONTROL DESK
+          </span>
+          <div className="dashboard-command-title-row">
+            <h1>{t('nav.dashboard', '总览')}</h1>
+            <ManualHelpIconButton className="header-action-btn dashboard-manual-btn dashboard-title-manual-btn" />
+          </div>
+          <div className="dashboard-command-status">
+            <span className="dashboard-command-status-dot" aria-hidden="true" />
+            {t('settings.localMode', '本地模式')}
+          </div>
         </div>
-        <div className="dashboard-top-actions">
-          <button className="header-action-btn" onClick={onOpenPlatformLayout}>
-            <span>{t('platformLayout.title', '平台布局')}</span>
-          </button>
-          <AnnouncementCenter onNavigate={onNavigate} variant="inline" trigger="button" />
+
+        <div className="dashboard-command-metrics">
+          <div className="dashboard-command-metric metric-primary">
+            <span>{t('dashboard.totalAccounts', '账号总数')}</span>
+            <strong>{stats.total}</strong>
+            <Users size={18} aria-hidden="true" />
+          </div>
+          <div className="dashboard-command-metric">
+            <span>{t('dashboard.activeWorkspaces', '活动工作区')}</span>
+            <strong>{visibleDashboardCardIds.length}</strong>
+            <Layers3 size={18} aria-hidden="true" />
+          </div>
+          <div className="dashboard-command-actions">
+            <button className="header-action-btn" onClick={onOpenPlatformLayout}>
+              <SlidersHorizontal size={14} />
+              <span>{t('platformLayout.title', '平台布局')}</span>
+            </button>
+            <AnnouncementCenter onNavigate={onNavigate} variant="inline" trigger="button" />
+          </div>
         </div>
-      </div>
+      </section>
 
       {grokActionMessage && (
         <div className={`action-message ${grokActionMessage.tone}`} role="alert">
@@ -3555,17 +3570,17 @@ export function DashboardPage({
         </div>
       )}
 
-      {/* Top Stats */}
-      <div className="stats-row">
-        <div className="stat-card">
-          <div className="stat-icon-bg primary"><Users size={24} /></div>
-          <div className="stat-info">
-            <span className="stat-label">{t('dashboard.totalAccounts', '账号总数')}</span>
-            <span className="stat-value">{stats.total}</span>
+      <section className="dashboard-command-section dashboard-platform-index">
+        <div className="dashboard-section-heading">
+          <div>
+            <span className="dashboard-section-index">01</span>
+            <h2>{t('dashboard.platformIndex', '平台索引')}</h2>
           </div>
+          <span>{visibleDashboardEntryOrder.length.toString().padStart(2, '0')}</span>
         </div>
 
-        {visibleDashboardEntryOrder.map((entryId) => {
+        <div className="stats-row">
+          {visibleDashboardEntryOrder.map((entryId) => {
           if (entryId === API_RELAY_LAYOUT_ENTRY_ID) {
             return (
               <button
@@ -3666,24 +3681,22 @@ export function DashboardPage({
               </div>
             </button>
           );
-        })}
+          })}
+        </div>
+      </section>
 
-      </div>
-
-      {/* Main Comparison Section */}
-      <div className="cards-section">
-        {cardRows.map((row, rowIndex) => (
-          <div
-            className={`cards-split-row${isSinglePlatformMode ? ' single-platform-row' : ''}`}
-            key={`row-${rowIndex}`}
-          >
-            {row.map((cardId) => (
-              renderPlatformCard(cardId)
-            ))}
-            {!isSinglePlatformMode && row.length < 2 && <div className="main-card main-card-placeholder" />}
+      <section className="dashboard-command-section dashboard-active-workspaces">
+        <div className="dashboard-section-heading">
+          <div>
+            <span className="dashboard-section-index">02</span>
+            <h2>{t('dashboard.activeWorkspaces', '活动工作区')}</h2>
           </div>
-        ))}
-      </div>
+          <span>{visibleDashboardCardIds.length.toString().padStart(2, '0')}</span>
+        </div>
+        <div className="cards-section command-workspace-grid">
+          {visibleDashboardCardIds.map((cardId) => renderPlatformCard(cardId))}
+        </div>
+      </section>
 
       {tagModalState && (
         <TagEditModal

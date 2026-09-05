@@ -1281,7 +1281,7 @@
             Ok(_) => panic!("concurrent writer must be rejected"),
             Err(error) => error,
         };
-        assert!(second.contains("另一个 Cockpit Tools 环境正在操作"));
+        assert!(second.contains("另一个 聚灵 环境正在操作"));
 
         drop(first);
         super::try_acquire_profile_mutation_lease(&profile, "test-after-release")
@@ -3081,7 +3081,7 @@
     #[test]
     fn quota_refresh_ownership_errors_are_internal_only() {
         assert!(super::is_refresh_ownership_deferred_error(
-            "官方 ChatGPT/Codex 客户端正在使用此账号；为避免重复轮换 refresh_token，Cockpit Tools 已暂停该账号刷新。"
+            "官方 ChatGPT/Codex 客户端正在使用此账号；为避免重复轮换 refresh_token，聚灵 已暂停该账号刷新。"
         ));
         assert!(super::is_refresh_ownership_deferred_error(
             "该账号正在执行 Codex 实例启动或受控转移；为避免重复轮换 refresh_token，本次刷新已取消。"
@@ -4006,7 +4006,7 @@
             persisted_runtime.tokens.refresh_token,
             runtime_tokens.refresh_token
         );
-        let persisted_account = load_account(&account.id).expect("local Cockpit account");
+        let persisted_account = load_account(&account.id).expect("local Juling account");
         assert_eq!(
             persisted_account.tokens.access_token,
             account.tokens.access_token

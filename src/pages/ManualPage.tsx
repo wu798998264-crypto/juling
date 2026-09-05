@@ -162,7 +162,7 @@ export function ManualPage({ onNavigate, onOpenPlatformLayout }: ManualPageProps
           t('manual.providers.steps.2', '执行“切换/注入”并在客户端验证生效。'),
         ],
         cautions: [
-          t('manual.providers.cautions.0', '账号管理说明条里写了本地读写和权限范围，建议先读再操作。'),
+          t('manual.providers.cautions.0', '每个平台页顶部都有“本机接入边界”，操作前可先确认本机动作与外部通信范围。'),
           t('manual.providers.cautions.1', '部分平台或能力受系统限制，请按页面提示处理。'),
         ],
         keywords: [
@@ -384,11 +384,11 @@ export function ManualPage({ onNavigate, onOpenPlatformLayout }: ManualPageProps
   return (
     <main className="main-content manual-page">
       <div className="page-header">
-        <div className="page-title">{t('manual.title', '功能使用手册')}</div>
+        <div className="page-title">{t('manual.title', '使用说明')}</div>
         <div className="page-subtitle">
           {t(
             'manual.subtitle',
-            '按任务场景组织的内置说明：先知道“为什么用”，再按步骤“马上可用”。',
+            '按工作目标找到对应模块，沿着建议路径完成配置；所有账号与配置操作都由你主动触发。',
           )}
         </div>
       </div>
@@ -422,11 +422,26 @@ export function ManualPage({ onNavigate, onOpenPlatformLayout }: ManualPageProps
           <p>{t('manual.empty.desc', '尝试更换关键词，例如“实例”“切换”“设置”“导出”。')}</p>
         </div>
       ) : (
-        <div className="manual-sections">
-          {filteredSections.map((section) => {
+        <div className="manual-workspace">
+          <aside className="manual-index-rail" aria-label="说明章节">
+            <div className="manual-index-caption">GUIDE INDEX</div>
+            {filteredSections.map((section, sectionIndex) => (
+              <button
+                type="button"
+                key={`index-${section.id}`}
+                onClick={() => document.getElementById(`manual-${section.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })}
+              >
+                <span>{String(sectionIndex + 1).padStart(2, '0')}</span>
+                <strong>{section.title}</strong>
+              </button>
+            ))}
+          </aside>
+          <div className="manual-sections">
+          {filteredSections.map((section, sectionIndex) => {
             const expanded = expandedIds.has(section.id);
             return (
               <article
+                id={`manual-${section.id}`}
                 key={section.id}
                 className={`manual-card ${expanded ? 'expanded' : ''}`}
               >
@@ -437,6 +452,7 @@ export function ManualPage({ onNavigate, onOpenPlatformLayout }: ManualPageProps
                   aria-expanded={expanded}
                 >
                   <div className="manual-card-title-wrap">
+                    <span className="manual-card-index">{String(sectionIndex + 1).padStart(2, '0')}</span>
                     <span className="manual-card-icon">{section.icon}</span>
                     <div className="manual-card-title-block">
                       <h3>{section.title}</h3>
@@ -450,7 +466,7 @@ export function ManualPage({ onNavigate, onOpenPlatformLayout }: ManualPageProps
                   <div className="manual-card-body">
                     <div className="manual-info-grid">
                       <section className="manual-info-block">
-                        <h4>💡 {t('manual.blocks.outcomes', '这个功能能帮你什么')}</h4>
+                        <h4>{t('manual.blocks.outcomes', '它解决什么')}</h4>
                         <ul>
                           {section.outcomes.map((item, idx) => (
                             <li key={`${section.id}-outcome-${idx}`}>{item}</li>
@@ -458,7 +474,7 @@ export function ManualPage({ onNavigate, onOpenPlatformLayout }: ManualPageProps
                         </ul>
                       </section>
                       <section className="manual-info-block">
-                        <h4>🎯 {t('manual.blocks.steps', '推荐操作步骤')}</h4>
+                        <h4>{t('manual.blocks.steps', '建议路径')}</h4>
                         <ol>
                           {section.steps.map((item, idx) => (
                             <li key={`${section.id}-step-${idx}`}>{item}</li>
@@ -466,7 +482,7 @@ export function ManualPage({ onNavigate, onOpenPlatformLayout }: ManualPageProps
                         </ol>
                       </section>
                       <section className="manual-info-block caution">
-                        <h4>⚠️ {t('manual.blocks.cautions', '常见坑位 / 注意事项')}</h4>
+                        <h4>{t('manual.blocks.cautions', '操作边界')}</h4>
                         <ul>
                           {section.cautions.map((item, idx) => (
                             <li key={`${section.id}-caution-${idx}`}>{item}</li>
@@ -500,6 +516,7 @@ export function ManualPage({ onNavigate, onOpenPlatformLayout }: ManualPageProps
               </article>
             );
           })}
+          </div>
         </div>
       )}
     </main>

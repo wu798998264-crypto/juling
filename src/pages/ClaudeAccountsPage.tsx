@@ -2838,10 +2838,11 @@ export function ClaudeAccountsPage({ subPlatform = 'desktop' }: ClaudeAccountsPa
               type="button"
               className="ghcp-flow-notice-toggle"
               onClick={() => setIsFlowNoticeCollapsed((prev) => !prev)}
+              aria-expanded={!isFlowNoticeCollapsed}
             >
               <div className="ghcp-flow-notice-title">
                 <CircleAlert size={16} />
-                <span>{t('claude.flowNotice.title', 'Claude 账号管理说明（点击展开/收起）')}</span>
+                <span>{t('claude.flowNotice.title', 'Claude · 本机接入边界')}</span>
               </div>
               <ChevronDown size={16} className={`ghcp-flow-notice-arrow ${isFlowNoticeCollapsed ? 'collapsed' : ''}`} />
             </button>
@@ -2851,8 +2852,8 @@ export function ClaudeAccountsPage({ subPlatform = 'desktop' }: ClaudeAccountsPa
                   {t(
                     isDesktopSubPlatform ? 'claude.flowNotice.desktopDesc' : 'claude.flowNotice.cliDesc',
                     isDesktopSubPlatform
-                      ? '本工具可管理 Claude 登录态。登录会先保存到本地账号库；切号时才写入官方 Claude。'
-                      : '本工具可管理 Claude Code OAuth 与多供应商 API Key。OAuth 切号会写入本机 Claude Code 配置；API Key 会写入 Claude Code settings.json 的 env。',
+                      ? 'Claude 登录会先保存为聚灵本地快照，只有执行切号时才写入官方 Claude 客户端。'
+                      : 'Claude Code OAuth 与多供应商 API Key 统一保存在本地；切号时写入 Claude Code 配置和 settings.json。',
                   )}
                 </div>
                 <ul className="ghcp-flow-notice-list">
@@ -2860,16 +2861,16 @@ export function ClaudeAccountsPage({ subPlatform = 'desktop' }: ClaudeAccountsPa
                     {t(
                     isDesktopSubPlatform ? 'claude.flowNotice.desktopPermission' : 'claude.flowNotice.cliPermission',
                     isDesktopSubPlatform
-                      ? '权限范围：读取/写入官方 Claude 应用数据目录；Claude 快照保存于本工具本地账号数据。'
-                        : '权限范围：读取/写入本机 Claude Code 配置目录与 macOS Keychain 中的 Claude Code 凭据；API Key 账号保存于本工具本地账号数据，并在切换或启动 CLI 时明文写入 settings.json 的 env。',
+                      ? '本机动作：读写 Claude 应用数据目录，并在聚灵本地账号库保存登录快照。'
+                        : '本机动作：读写 Claude Code 配置目录及 macOS Keychain 中的 Claude Code 凭据；API Key 切换或启动 CLI 时写入 settings.json 的 env。',
                     )}
                   </li>
                   <li>
                     {t(
                     isDesktopSubPlatform ? 'claude.flowNotice.desktopNetwork' : 'claude.flowNotice.cliNetwork',
                     isDesktopSubPlatform
-                      ? '网络范围：Claude 登录窗口访问 claude.ai；刷新账号会请求 Claude Web 相关接口。'
-                        : '网络范围：OAuth 授权访问 Claude 官方授权页和 token/profile/usage 接口；API Key 导入不联网，启动后由 Claude CLI 访问所选供应商。',
+                      ? '外部通信：登录窗口访问 claude.ai，账号刷新请求 Claude Web 官方接口。'
+                        : '外部通信：OAuth 连接 Claude 官方授权页及 token、profile、usage 接口；API Key 导入不联网，启动后由 Claude CLI 连接所选供应商。',
                     )}
                   </li>
                 </ul>

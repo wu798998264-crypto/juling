@@ -247,7 +247,7 @@ function normalizeCodexApiBaseUrlForMatch(rawValue?: string | null): string {
   }
 }
 
-export function isCodexCockpitApiBaseUrl(rawValue?: string | null): boolean {
+export function isCodexJulingApiBaseUrl(rawValue?: string | null): boolean {
   return (
     normalizeCodexApiBaseUrlForMatch(rawValue) ===
     normalizeCodexApiBaseUrlForMatch(COCKPIT_API_BASE_URL)
@@ -981,7 +981,7 @@ export function isCodexNewApiAccount(account: CodexAccount): boolean {
     isCodexApiKeyAccount(account) &&
     (providerId === "cockpit_api" ||
       providerId === "new_api" ||
-      isCodexCockpitApiBaseUrl(account.api_base_url) ||
+      isCodexJulingApiBaseUrl(account.api_base_url) ||
       planType === "COCKPIT API" ||
       planType === "NEW_API_EXCLUSIVE")
   );
@@ -1082,7 +1082,7 @@ function normalizeCodexAuthFilePlanType(
 
 function getCodexPlanBadgeLabel(account: CodexAccount): string {
   if (isCodexNewApiAccount(account)) {
-    return account.plan_type?.trim() || "Cockpit Api";
+    return account.plan_type?.trim() || "Juling Api";
   }
   if (isCodexApiKeyAccount(account)) {
     return "API";

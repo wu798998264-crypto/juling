@@ -753,7 +753,7 @@ export function GitHubCopilotAccountsPage() {
         >
           <div className="ghcp-flow-notice-title">
             <CircleAlert size={16} />
-            <span>{t('githubCopilot.flowNotice.title', 'GitHub Copilot 账号管理说明（点击展开/收起）')}</span>
+            <span>{t('githubCopilot.flowNotice.title', 'GitHub Copilot · 本机接入边界')}</span>
           </div>
           <ChevronDown size={16} className={`ghcp-flow-notice-arrow ${isFlowNoticeCollapsed ? 'collapsed' : ''}`} />
         </button>
@@ -762,20 +762,20 @@ export function GitHubCopilotAccountsPage() {
             <div className="ghcp-flow-notice-desc">
               {t(
                 'githubCopilot.flowNotice.desc',
-                'Switching accounts requires reading VS Code local auth storage and using the system credential service for decrypt/re-encrypt. Data is processed locally only.',
+                '聚灵在本机完成账号会话替换：读取 VS Code 登录存储、解密目标会话，再加密写回原位置。',
               )}
             </div>
             <ul className="ghcp-flow-notice-list">
               <li>
                 {t(
                   'githubCopilot.flowNotice.reason',
-                  'Permission scope: read VS Code auth database (state.vscdb) and call system credential capability (Windows DPAPI / macOS Keychain / Linux Secret Service) for decrypt/write-back.',
+                  '本机动作：访问 VS Code 的 state.vscdb，并调用 Windows DPAPI、macOS Keychain 或 Linux Secret Service 处理会话。',
                 )}
               </li>
               <li>
                 {t(
                   'githubCopilot.flowNotice.storage',
-                  'Data scope: local import reads GitHub auth sessions from VS Code, and switching updates the same entries; OAuth, token import, local-import validation, and quota refresh call GitHub official APIs with required auth fields. state.vscdb and system keys are not uploaded.',
+                  '外部通信：OAuth、Token 校验和额度刷新只连接 GitHub 官方 API，并仅发送必要认证字段；state.vscdb 与系统密钥不会离开本机。',
                 )}
               </li>
             </ul>
@@ -1021,7 +1021,7 @@ export function GitHubCopilotAccountsPage() {
             </button>
             <button className="btn btn-secondary" onClick={() => window.dispatchEvent(new CustomEvent('app-request-navigate', { detail: 'manual' }))}>
               <BookOpen size={16} />
-              {t('manual.navTitle', '功能使用手册')}
+              {t('manual.navTitle', '使用说明')}
             </button>
           </div>
         </div>

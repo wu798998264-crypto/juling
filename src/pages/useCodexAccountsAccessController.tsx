@@ -29,7 +29,7 @@ import { CODEX_API_KEY_USAGE_REFRESHED_EVENT, readCodexApiKeyUsageCache, writeCo
 import { isModelProviderUsageUnavailableError, formatModelProviderUsageMoney, listModelProviderModels, resolveNewApiQuotaSnapshot } from "../services/modelProviderUsageService";
 import { upsertSavedMfaRecord } from "../utils/mfaVault";
 import md5 from "blueimp-md5";
-import { CODEX_BATCH_IMPORT_SESSION_STORAGE_KEY, DEFAULT_CODEX_API_BASE_URL, DEFAULT_CODEX_API_PROVIDER_ID, formatCockpitApiInteger, formatCockpitApiTokenCount, getCockpitApiStatsRecord, getCockpitApiUsageRecord, inferCodexAccountProviderMode, isRelayApiProviderTemplateId, isSameHttpBaseUrl, joinFilePath, maskCodexApiKey, normalizeHttpBaseUrl, normalizePathForCompare, OPENAI_OFFICIAL_PRESET_ID, parseApiModelCatalogText, parseOAuthQuotaReservePercent, persistLastCodexCliWorkingDir, readCockpitApiOptionalNumber, readCockpitApiString, readLastCodexCliWorkingDir, resolveApiKeyUsageMode, sanitizeCodexCliInstanceName, toCockpitApiRecord, type CockpitApiJsonRecord, type CodexCliInstanceDraft, type CodexCliLaunchModalState, type OAuthBindingQuotaReserveFieldErrors } from "./codexAccountsControllerModel";
+import { CODEX_BATCH_IMPORT_SESSION_STORAGE_KEY, DEFAULT_CODEX_API_BASE_URL, DEFAULT_CODEX_API_PROVIDER_ID, formatJulingApiInteger, formatJulingApiTokenCount, getJulingApiStatsRecord, getJulingApiUsageRecord, inferCodexAccountProviderMode, isRelayApiProviderTemplateId, isSameHttpBaseUrl, joinFilePath, maskCodexApiKey, normalizeHttpBaseUrl, normalizePathForCompare, OPENAI_OFFICIAL_PRESET_ID, parseApiModelCatalogText, parseOAuthQuotaReservePercent, persistLastCodexCliWorkingDir, readJulingApiOptionalNumber, readJulingApiString, readLastCodexCliWorkingDir, resolveApiKeyUsageMode, sanitizeCodexCliInstanceName, toJulingApiRecord, type JulingApiJsonRecord, type CodexCliInstanceDraft, type CodexCliLaunchModalState, type OAuthBindingQuotaReserveFieldErrors } from "./codexAccountsControllerModel";
 import type { CodexAccountsAccessControllerContext } from "./codexAccountsAccessControllerContract";
 
 /** 封装 useCodexAccountsPageController 的 useCodexAccountsAccessController 业务域状态与动作。 */
@@ -3227,16 +3227,16 @@ export function useCodexAccountsAccessController(context: CodexAccountsAccessCon
       [formatApiKeyUsageMoney, t],
     );
   
-    const resolveCockpitApiAccountBalanceText = useCallback(
+    const resolveJulingApiAccountBalanceText = useCallback(
       (account: CodexAccount): string | null => {
-        const usage = getCockpitApiUsageRecord(account);
-        const stats = getCockpitApiStatsRecord(account);
-        const total = toCockpitApiRecord(stats?.total);
-        const profile = toCockpitApiRecord(
-          toCockpitApiRecord(account.quota?.raw_data)?.profile,
+        const usage = getJulingApiUsageRecord(account);
+        const stats = getJulingApiStatsRecord(account);
+        const total = toJulingApiRecord(stats?.total);
+        const profile = toJulingApiRecord(
+          toJulingApiRecord(account.quota?.raw_data)?.profile,
         );
         const records = [usage, total, profile].filter(
-          (record): record is CockpitApiJsonRecord => Boolean(record),
+          (record): record is JulingApiJsonRecord => Boolean(record),
         );
         const displayKeys = [
           "balance_display",
@@ -3245,14 +3245,14 @@ export function useCodexAccountsAccessController(context: CodexAccountsAccessCon
         ];
         for (const record of records) {
           for (const key of displayKeys) {
-            const value = readCockpitApiString(record, key);
+            const value = readJulingApiString(record, key);
             if (value) return value;
           }
         }
         const numberKeys = ["balance", "account_balance", "wallet_balance"];
         for (const record of records) {
           for (const key of numberKeys) {
-            const value = readCockpitApiOptionalNumber(record, key);
+            const value = readJulingApiOptionalNumber(record, key);
             if (value != null) return formatApiKeyUsageMoney(value, "USD");
           }
         }
@@ -3416,7 +3416,7 @@ export function useCodexAccountsAccessController(context: CodexAccountsAccessCon
             item.key === "todayTokens" ||
             item.key === "totalTokens")
         ) {
-          return formatCockpitApiTokenCount(numeric);
+          return formatJulingApiTokenCount(numeric);
         }
         if (Number.isFinite(numeric) && item.key === "accessUntil") {
           return numeric > 0 ? formatDate(numeric * 1000) : "-";
@@ -3461,7 +3461,7 @@ export function useCodexAccountsAccessController(context: CodexAccountsAccessCon
           Number.isFinite(numeric) &&
           ["totalGranted", "totalAvailable"].includes(item.key)
         ) {
-          return formatCockpitApiInteger(numeric);
+          return formatJulingApiInteger(numeric);
         }
         if (Number.isFinite(numeric) && item.key === "totalUsage") {
           return formatApiKeyUsageMoney(numeric / 100, unit);
@@ -3472,7 +3472,7 @@ export function useCodexAccountsAccessController(context: CodexAccountsAccessCon
             item.key === "todayRequests" ||
             item.key === "totalRequests")
         ) {
-          return formatCockpitApiInteger(numeric);
+          return formatJulingApiInteger(numeric);
         }
         return raw || "-";
       },
@@ -3688,7 +3688,7 @@ export function useCodexAccountsAccessController(context: CodexAccountsAccessCon
                     )}
                   </span>
                   <strong>
-                    {formatCockpitApiInteger(summary.todayRequests ?? 0)}
+                    {formatJulingApiInteger(summary.todayRequests ?? 0)}
                   </strong>
                 </div>
                 <div>
@@ -3699,7 +3699,7 @@ export function useCodexAccountsAccessController(context: CodexAccountsAccessCon
                     )}
                   </span>
                   <strong>
-                    {formatCockpitApiTokenCount(summary.todayTotalTokens ?? 0)}
+                    {formatJulingApiTokenCount(summary.todayTotalTokens ?? 0)}
                   </strong>
                 </div>
               </div>
@@ -3861,7 +3861,7 @@ export function useCodexAccountsAccessController(context: CodexAccountsAccessCon
                           )}
                         </span>
                         <strong>
-                          {formatCockpitApiInteger(summary.todayRequests ?? 0)}
+                          {formatJulingApiInteger(summary.todayRequests ?? 0)}
                         </strong>
                       </div>
                       <div>
@@ -3872,7 +3872,7 @@ export function useCodexAccountsAccessController(context: CodexAccountsAccessCon
                           )}
                         </span>
                         <strong>
-                          {formatCockpitApiTokenCount(
+                          {formatJulingApiTokenCount(
                             summary.todayTotalTokens ?? 0,
                           )}
                         </strong>
@@ -4242,7 +4242,7 @@ export function useCodexAccountsAccessController(context: CodexAccountsAccessCon
     resolveApiKeyDisplayText,
     resolveApiProviderDisplayName,
     resolveBoundOAuthAccount,
-    resolveCockpitApiAccountBalanceText,
+    resolveJulingApiAccountBalanceText,
     resolveUsageProviderForApiKeyAccount,
     selectAllBatchImportAccounts,
     selectReadyBatchImportAccounts,

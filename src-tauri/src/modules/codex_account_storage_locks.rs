@@ -290,7 +290,7 @@ impl Drop for CodexTokenRefreshFileLock {
 
 /// 跨 dev/正式版进程协调官方 Codex profile 的写入租约。
 ///
-/// 两个 Cockpit 安装共享默认 `~/.codex`，但各自的账号库和进程内锁彼此不可见。
+/// 两个 Juling 安装共享默认 `~/.codex`，但各自的账号库和进程内锁彼此不可见。
 /// 所有会改变默认 profile 凭据的完整事务都必须持有这把锁，避免“检查通过后被另一进程
 /// 在启动前覆盖”的竞态。
 pub(crate) struct CodexProfileMutationLease {
@@ -355,7 +355,7 @@ fn codex_profile_mutation_lock_path(profile_dir: &Path) -> PathBuf {
 fn codex_profile_mutation_lock_root() -> PathBuf {
     // Unit tests intentionally change HOME to isolate account stores and run in parallel.
     // Keep the cross-process profile lease on one stable test root; production continues to
-    // share ~/.codex between dev and installed Cockpit environments.
+    // share ~/.codex between dev and installed Juling environments.
     #[cfg(test)]
     {
         return std::env::temp_dir().join("cockpit-profile-mutation-lock-root");
@@ -414,7 +414,7 @@ pub(crate) fn try_acquire_profile_mutation_lease(
                     continue;
                 }
                 return Err(format!(
-                    "另一个 Cockpit Tools 环境正在操作同一个 Codex profile，请等待该操作完成后重试: profile_dir={}",
+                    "另一个 聚灵 环境正在操作同一个 Codex profile，请等待该操作完成后重试: profile_dir={}",
                     profile_dir.display()
                 ));
             }
@@ -425,7 +425,7 @@ pub(crate) fn try_acquire_profile_mutation_lease(
     }
 
     Err(format!(
-        "另一个 Cockpit Tools 环境正在操作同一个 Codex profile，请稍后重试: profile_dir={}",
+        "另一个 聚灵 环境正在操作同一个 Codex profile，请稍后重试: profile_dir={}",
         profile_dir.display()
     ))
 }

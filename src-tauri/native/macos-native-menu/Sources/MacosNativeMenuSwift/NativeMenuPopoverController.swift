@@ -112,7 +112,7 @@ final class NativeMenuPopoverController: NSObject, ObservableObject, NSMenuDeleg
             guard let platform = self.selectedPlatform else { return }
             self.closeMenu()
             dispatchRustMenuAction(action: "view_all_accounts", platformId: platform.id)
-        case .openCockpitTools:
+        case .openJulingTools:
             self.closeMenu()
             dispatchRustMenuAction(action: "open_cockpit_tools")
         case .settings:
@@ -177,8 +177,8 @@ final class NativeMenuPopoverController: NSObject, ObservableObject, NSMenuDeleg
         self.dispatch(action: .openDetails)
     }
 
-    @objc private func handleOpenCockpitTools(_: Any?) {
-        self.dispatch(action: .openCockpitTools)
+    @objc private func handleOpenJulingTools(_: Any?) {
+        self.dispatch(action: .openJulingTools)
     }
 
     @objc private func handleViewAllAccounts(_: Any?) {
@@ -304,7 +304,7 @@ final class NativeMenuPopoverController: NSObject, ObservableObject, NSMenuDeleg
         menu.addItem(self.makeActionMenuItem(
             title: snapshot.strings.open_cockpit_tools,
             systemName: "macwindow",
-            action: #selector(self.handleOpenCockpitTools(_:))
+            action: #selector(self.handleOpenJulingTools(_:))
         ))
         menu.addItem(self.makeActionMenuItem(
             title: snapshot.strings.settings,
@@ -446,7 +446,7 @@ enum NativeRustAction {
     case switchAccount
     case openDetails
     case viewAllAccounts
-    case openCockpitTools
+    case openJulingTools
     case settings
     case quit
 }

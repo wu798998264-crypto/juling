@@ -1536,10 +1536,10 @@ fn should_detach_child() -> bool {
 
 #[cfg(target_os = "macos")]
 fn sanitize_macos_gui_launch_env(cmd: &mut Command) {
-    // Avoid inheriting Cockpit bundle identity into child GUI apps.
+    // Avoid inheriting Juling bundle identity into child GUI apps.
     cmd.env_remove("__CFBundleIdentifier");
     cmd.env_remove("XPC_SERVICE_NAME");
-    // Electron / Chromium rejects several Node flags. Cockpit dev shells often
+    // Electron / Chromium rejects several Node flags. Juling dev shells often
     // set NODE_OPTIONS=--openssl-legacy-provider; if that leaks into `open -a`
     // or a direct Electron spawn, Trae/VS Code-based apps flash and exit with:
     //   electron: --openssl-legacy-provider is not allowed in NODE_OPTIONS

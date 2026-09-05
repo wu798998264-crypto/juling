@@ -897,7 +897,7 @@ export function QoderAccountsPage() {
           ? t('accounts.deleteConfirm.single', '确认删除该账号？')
           : t('accounts.deleteConfirm.multi', '确认删除选中的 {{count}} 个账号？', { count: ids.length }),
         {
-          title: t('common.appName', 'Cockpit Tools'),
+          title: t('common.appName', 'Juling'),
           kind: 'warning',
           okLabel: t('common.confirm', '确认'),
           cancelLabel: t('common.cancel', '取消'),
@@ -1886,7 +1886,7 @@ export function QoderAccountsPage() {
             >
               <div className="ghcp-flow-notice-title">
                 <CircleAlert size={16} />
-                <span>{t('qoder.flowNotice.title', 'Qoder 账号接入说明（点击展开/收起）')}</span>
+                <span>{t('qoder.flowNotice.title', 'Qoder · 本机接入边界')}</span>
               </div>
               <ChevronDown size={16} className={`ghcp-flow-notice-arrow ${isFlowNoticeCollapsed ? 'collapsed' : ''}`} />
             </button>
@@ -1895,12 +1895,12 @@ export function QoderAccountsPage() {
                 <div className="ghcp-flow-notice-desc">
                   {t(
                     'qoder.flowNotice.desc',
-                    '当前支持官方授权登录（回调）、本地导入、JSON 导入、切号注入、应用多开绑定与配额概览。登录流程沿用 Qoder 客户端真实落盘数据。',
+                    '授权、导入、切号与多开绑定共用一套本地账号库；切号按 Qoder 客户端真实落盘规则写回。',
                   )}
                 </div>
                 <ul className="ghcp-flow-notice-list">
-                  <li>{t('qoder.flowNotice.permission', '权限范围：读取 Qoder 本地认证存储（auth 凭据与用户信息），用于账号切换与会话注入；所有数据仅在本机处理。')}</li>
-                  <li>{t('qoder.flowNotice.network', '网络范围：OAuth 授权登录需联网请求 Qoder 官方服务完成回调；配额查询通过 Qoder API 获取用量数据。不上传本地密钥或凭证。')}</li>
+                  <li>{t('qoder.flowNotice.permission', '本机动作：读取 Qoder 认证存储、用户信息及 machine_token.json、cache/id 等机器标识缓存。')}</li>
+                  <li>{t('qoder.flowNotice.network', '外部通信：device login 与额度查询仅连接 Qoder 官方 OpenAPI；本地密钥、凭证和原始存储不会上传。')}</li>
                 </ul>
               </div>
             )}

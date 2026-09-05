@@ -16,7 +16,7 @@ import { CODEX_ADDITIONAL_QUOTA_VISIBILITY_CHANGED_EVENT, CODEX_CODE_REVIEW_QUOT
 import { emitAccountsChanged } from "../utils/accountSyncEvents";
 import { resolveCodexModelProviderAccountName } from "../utils/codexModelProviderAccountName";
 import { readCodexCustomSortOrder, writeCodexCustomSortActive, writeCodexCustomSortOrder } from "../utils/codexAccountOverview";
-import { CODEX_API_PROVIDER_CUSTOM_ID, COCKPIT_API_PROVIDER_ID, COCKPIT_API_PROVIDER_NAME, codexApiProviderPresetVisionSupport, findCodexApiProviderPresetById, isCockpitApiProviderBaseUrl } from "../utils/codexProviderPresets";
+import { CODEX_API_PROVIDER_CUSTOM_ID, COCKPIT_API_PROVIDER_ID, COCKPIT_API_PROVIDER_NAME, codexApiProviderPresetVisionSupport, findCodexApiProviderPresetById, isJulingApiProviderBaseUrl } from "../utils/codexProviderPresets";
 import { isApiKeyFunProviderBaseUrl } from "../utils/apikeyFunLinks";
 import { type ApiKeyFunPrefillPayload } from "../utils/apiKeyFunPrefill";
 import { resolveCodexProviderCapabilityProfile } from "../utils/codexProviderGateway";
@@ -52,7 +52,7 @@ export function useCodexAccountsOAuthController(context: Pick<ReturnType<typeof 
   | "savingPendingOAuthAccount"
   | "setAccountNoteError"
   | "setApiKeyUsageDetailAccountId"
-  | "setCockpitApiPanelAccountId"
+  | "setJulingApiPanelAccountId"
   | "setPendingOAuthEmailInput"
   | "setPendingOAuthFieldErrors"
   | "setReauthTargetAccount"
@@ -90,7 +90,7 @@ export function useCodexAccountsOAuthController(context: Pick<ReturnType<typeof 
     savingPendingOAuthAccount,
     setAccountNoteError,
     setApiKeyUsageDetailAccountId,
-    setCockpitApiPanelAccountId,
+    setJulingApiPanelAccountId,
     setPendingOAuthEmailInput,
     setPendingOAuthFieldErrors,
     setReauthTargetAccount,
@@ -471,7 +471,7 @@ export function useCodexAccountsOAuthController(context: Pick<ReturnType<typeof 
   
     useEffect(() => {
       if (cockpitApiPanelAccountId && !cockpitApiPanelAccount) {
-        setCockpitApiPanelAccountId(null);
+        setJulingApiPanelAccountId(null);
       }
     }, [cockpitApiPanelAccount, cockpitApiPanelAccountId]);
   
@@ -548,7 +548,7 @@ export function useCodexAccountsOAuthController(context: Pick<ReturnType<typeof 
         if (!normalizedBaseUrl) {
           return { apiProviderMode: "openai_builtin" };
         }
-        if (isCockpitApiProviderBaseUrl(normalizedBaseUrl)) {
+        if (isJulingApiProviderBaseUrl(normalizedBaseUrl)) {
           return {
             apiProviderMode: "custom",
             apiProviderId: COCKPIT_API_PROVIDER_ID,

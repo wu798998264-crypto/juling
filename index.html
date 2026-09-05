@@ -2,7 +2,7 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/png" href="/src/assets/branding/juling-core-master.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>聚灵</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -52,9 +52,19 @@
       }
 
       .app-boot-mark {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
         font-size: 18px;
         font-weight: 700;
         letter-spacing: 0.02em;
+      }
+
+      .app-boot-logo {
+        width: 58px;
+        height: 58px;
+        object-fit: contain;
       }
 
       .app-boot-progress {
@@ -117,7 +127,10 @@
 
   <body>
     <div id="app-boot-splash" aria-hidden="true">
-      <div class="app-boot-mark">聚灵</div>
+      <div class="app-boot-mark">
+        <img class="app-boot-logo" src="/src/assets/branding/juling-core-master.png" alt="" />
+        <span>聚灵</span>
+      </div>
       <div class="app-boot-progress" data-mode="indeterminate">
         <div class="app-boot-bar" id="app-boot-bar"></div>
       </div>

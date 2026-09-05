@@ -574,21 +574,21 @@ export function CodebuddyAccountsPage() {
       ) : (
         <>
       <div className={`ghcp-flow-notice ${isFlowNoticeCollapsed ? 'collapsed' : ''}`} role="note">
-        <button type="button" className="ghcp-flow-notice-toggle" onClick={() => setIsFlowNoticeCollapsed((prev) => !prev)}>
+        <button type="button" className="ghcp-flow-notice-toggle" onClick={() => setIsFlowNoticeCollapsed((prev) => !prev)} aria-expanded={!isFlowNoticeCollapsed}>
           <div className="ghcp-flow-notice-title">
             <CircleAlert size={16} />
-            <span>{t('codebuddy.flowNotice.title', 'CodeBuddy 账号管理说明（点击展开/收起）')}</span>
+            <span>{t('codebuddy.flowNotice.title', 'CodeBuddy · 本机接入边界')}</span>
           </div>
           <ChevronDown size={16} className={`ghcp-flow-notice-arrow ${isFlowNoticeCollapsed ? 'collapsed' : ''}`} />
         </button>
         {!isFlowNoticeCollapsed && (
           <div className="ghcp-flow-notice-body">
             <div className="ghcp-flow-notice-desc">
-              {t('codebuddy.flowNotice.desc', '切换账号需读取 CodeBuddy 本地认证存储并调用系统凭据服务进行加解密，数据仅在本地处理。')}
+              {t('codebuddy.flowNotice.desc', '切号只在你的电脑内完成：聚灵读取 CodeBuddy 登录会话，经系统凭据服务解密后写回同一位置。')}
             </div>
             <ul className="ghcp-flow-notice-list">
-              <li>{t('codebuddy.flowNotice.permission', '权限范围：读取 CodeBuddy 认证数据库 (state.vscdb)，调用系统凭据能力（macOS Keychain / Windows DPAPI / Linux Secret Service）进行解密/回写。')}</li>
-              <li>{t('codebuddy.flowNotice.network', '网络范围：OAuth 授权登录与 Token 刷新需联网请求 codebuddy.ai；配额查询需调用计费 API。不上传本地密钥或凭证。')}</li>
+              <li>{t('codebuddy.flowNotice.permission', '本机动作：访问 state.vscdb，并使用 macOS Keychain、Windows DPAPI 或 Linux Secret Service 处理登录会话。')}</li>
+              <li>{t('codebuddy.flowNotice.network', '外部通信：仅 OAuth、Token 刷新和额度查询连接 CodeBuddy 官方服务；本地数据库、系统密钥与凭据原文不会上传。')}</li>
             </ul>
           </div>
         )}

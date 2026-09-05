@@ -176,7 +176,7 @@ fn build_auth_file_value(account: &CodexAccount) -> Result<serde_json::Value, St
             access_token: account.tokens.access_token.clone(),
             // Codex CLI's auth.json parser requires the refresh_token key to
             // exist even for access-token-only accounts. Use an empty string so
-            // Cockpit can switch short-lived opaque `at-...` credentials without
+            // Juling can switch short-lived opaque `at-...` credentials without
             // inventing a refresh token that would be sent to OAuth refresh.
             refresh_token: Some(
                 normalize_optional_ref(account.tokens.refresh_token.as_deref()).unwrap_or_default(),
@@ -1176,7 +1176,7 @@ fn sync_managed_account_sidecar_checked(account: &CodexAccount) -> Result<(), St
     })
 }
 
-/// OAuth 重新授权后只更新 Cockpit 账号库关联的 API Service sidecar 认证。
+/// OAuth 重新授权后只更新 Juling 账号库关联的 API Service sidecar 认证。
 /// 官方 profile 不做后台写穿；默认实例、多开实例和 API Key 绑定会在下次显式
 /// 启动/切换时从账号库投影最新凭据，避免后台任务覆盖正在使用的 profile。
 pub async fn sync_bound_oauth_consumers_after_reauth(account_id: &str) -> Result<(), String> {

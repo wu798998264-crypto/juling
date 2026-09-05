@@ -1079,7 +1079,7 @@ export function CodexAddAccountDialog(props: CodexAccountsViewProps) {
                                   <small>
                                     {t(
                                       "codex.api.modelCatalog.syncDescription",
-                                      "保存后使用当前模型列表生成 Cockpit 受管的 Codex 模型目录，不覆盖用户自定义目录。",
+                                      "保存后使用当前模型列表生成 Juling 受管的 Codex 模型目录，不覆盖用户自定义目录。",
                                     )}
                                   </small>
                                 </span>

@@ -2,6 +2,43 @@
    Rocket Easter Egg
    ============================================ */
 
+/* 聚灵能量核心：保留彩蛋触发链路，只替换火箭与红点的视觉表达。 */
+.energy-core {
+  position: relative;
+  cursor: pointer;
+  isolation: isolate;
+  transition: transform .22s cubic-bezier(.2,.8,.2,1), filter .22s ease;
+}
+
+.energy-core:hover { transform: scale(1.06); filter: drop-shadow(0 8px 14px rgba(20, 184, 106, .22)); }
+.energy-core:active { transform: scale(.94); }
+.energy-core-charging .brand-logo-image { animation: julingCoreSpin 1.05s cubic-bezier(.3,.7,.2,1); }
+.energy-core-ring {
+  position: absolute;
+  inset: -5px;
+  z-index: -1;
+  border: 1px solid rgba(31, 174, 99, .45);
+  border-radius: 14px;
+  opacity: 0;
+}
+.energy-core-charging .energy-core-ring { animation: julingCorePulse 1.05s ease-out; }
+.energy-core-active .energy-core-ring { opacity: 1; box-shadow: 0 0 18px rgba(20, 184, 106, .32); }
+.energy-particle {
+  --energy-angle: 0deg;
+  --energy-distance: 42px;
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 5px; height: 5px;
+  border-radius: 1px 50% 50%;
+  background: linear-gradient(135deg, #c8ffdd, #16a36a 55%, #0f766e);
+  box-shadow: 0 0 9px #32d583;
+  transform: translate(-50%, -50%) rotate(var(--energy-angle)) translateX(var(--energy-distance));
+  animation: julingEnergyGather 1.05s cubic-bezier(.3,.8,.2,1) forwards;
+}
+@keyframes julingCoreSpin { to { transform: rotate(720deg); } }
+@keyframes julingCorePulse { 0% { opacity: 0; transform: scale(.65) rotate(0); } 45% { opacity: 1; } 100% { opacity: 0; transform: scale(1.6) rotate(90deg); } }
+@keyframes julingEnergyGather { 0% { opacity: 0; } 20% { opacity: 1; } 78% { opacity: 1; transform: translate(-50%, -50%) rotate(var(--energy-angle)) translateX(4px) scale(.8); } 100% { opacity: 0; transform: translate(-50%, -50%) rotate(var(--energy-angle)) translateX(0) scale(0); } }
+
 .rocket-easter-egg {
   cursor: pointer;
   position: relative;

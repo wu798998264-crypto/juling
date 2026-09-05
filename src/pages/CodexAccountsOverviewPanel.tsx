@@ -734,7 +734,7 @@ export function CodexAccountsOverviewPanel(props: CodexAccountsViewProps) {
                   }
                 >
                   <BookOpen size={16} />
-                  {t("manual.navTitle", "功能使用手册")}
+                  {t("manual.navTitle", "使用说明")}
                 </button>
               </div>
             </div>
@@ -2420,7 +2420,7 @@ export function CodexAccountsOverviewPanel(props: CodexAccountsViewProps) {
                               <small>
                                 {t(
                                   "codex.api.modelCatalog.syncDescription",
-                                  "保存后使用当前模型列表生成 Cockpit 受管的 Codex 模型目录，不覆盖用户自定义目录。",
+                                  "保存后使用当前模型列表生成 Juling 受管的 Codex 模型目录，不覆盖用户自定义目录。",
                                 )}
                               </small>
                             </span>
@@ -2688,7 +2688,7 @@ export function CodexAccountsOverviewPanel(props: CodexAccountsViewProps) {
                         reportExportModalError(
                           t(
                             "codex.exportFormat.agentIdentityCpaUnsupported",
-                            "Agent Identity 账号不支持 cpa 格式，请使用 Cockpit Tools 或 sub2api 格式导出。",
+                            "Agent Identity 账号不支持 cpa 格式，请使用 聚灵 或 sub2api 格式导出。",
                           ),
                         );
                         return;
