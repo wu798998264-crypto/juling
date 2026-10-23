@@ -46,7 +46,7 @@ func assertUnsupportedImagesModelResponse(t *testing.T, resp *httptest.ResponseR
 	}
 
 	message := gjson.GetBytes(resp.Body.Bytes(), "error.message").String()
-	expectedMessage := "Model " + model + " is not supported on " + imagesGenerationsPath + " or " + imagesEditsPath + ". Use " + gptImage15Model + ", " + defaultImagesToolModel + ", " + defaultXAIImagesModel + ", " + xaiImagesQualityModel + ", " + xaiImages20Model + ", or a configured openai-compatibility image model."
+	expectedMessage := "Model " + model + " is not supported on " + imagesGenerationsPath + " or " + imagesEditsPath + ". Use " + gptImage15Model + ", " + legacyImagesToolModel + ", " + defaultImagesToolModel + ", " + gptImage25FlareModel + ", " + gptImage25SunburstModel + ", " + defaultXAIImagesModel + ", " + xaiImagesQualityModel + ", " + xaiImages20Model + ", or a configured openai-compatibility image model."
 	if message != expectedMessage {
 		t.Fatalf("error message = %q, want %q", message, expectedMessage)
 	}
@@ -56,7 +56,24 @@ func assertUnsupportedImagesModelResponse(t *testing.T, resp *httptest.ResponseR
 }
 
 func TestImagesModelValidationAllowsGPTImageAndXAIModels(t *testing.T) {
-	for _, model := range []string{"gpt-image-1.5", "codex/gpt-image-1.5", "gpt-image-2", "codex/gpt-image-2", "grok-imagine-image", "xai/grok-imagine-image", "grok-imagine-image-quality", "xai/grok-imagine-image-quality", "grok-imagine-image-2.0", "xai/grok-imagine-image-2.0"} {
+	for _, model := range []string{
+		"gpt-image-1.5",
+		"codex/gpt-image-1.5",
+		"gpt-image-2",
+		"codex/gpt-image-2",
+		"gpt-image-2.5",
+		"codex/gpt-image-2.5",
+		"gpt-image-2.5-flare",
+		"codex/gpt-image-2.5-flare",
+		"gpt-image-2.5-sunburst",
+		"codex/gpt-image-2.5-sunburst",
+		"grok-imagine-image",
+		"xai/grok-imagine-image",
+		"grok-imagine-image-quality",
+		"xai/grok-imagine-image-quality",
+		"grok-imagine-image-2.0",
+		"xai/grok-imagine-image-2.0",
+	} {
 		if !isSupportedImagesModel(model) {
 			t.Fatalf("expected %s to be supported", model)
 		}
@@ -496,5 +513,17 @@ func TestSSEFrameAccumulatorKeepsMultipleFramesDistinct(t *testing.T) {
 	}
 	if string(frames[0]) != first || string(frames[1]) != second {
 		t.Fatalf("frames were overwritten during buffer compaction: %q", frames)
+	}
+}
+
+func TestHostedImagesResponsesUseLunaMainModel(t *testing.T) {
+	for _, tc := range []struct{ tool, want string }{
+		{`{"type":"image_generation","model":"gpt-image-2"}`, "gpt-5.6-luna"},
+		{`{"type":"image_generation","model":"custom/gpt-image-2"}`, "custom/gpt-5.6-luna"},
+	} {
+		request := buildImagesResponsesRequest("draw", nil, []byte(tc.tool))
+		if got := gjson.GetBytes(request, "model").String(); got != tc.want {
+			t.Fatalf("hosted image main model = %s, want %s", got, tc.want)
+		}
 	}
 }

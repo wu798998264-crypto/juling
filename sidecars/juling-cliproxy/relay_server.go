@@ -14,6 +14,7 @@ import (
 	"os"
 
 	"strings"
+	"sync"
 
 	"time"
 
@@ -29,26 +30,37 @@ import (
 )
 
 type relayServer struct {
-	runtime            executorRuntime
-	cfg                *config.Config
-	manifest           *manifest
-	authManager        *coreauth.Manager
-	emitter            *eventEmitter
-	policy             *requestPolicy
-	responsesWebsocket gin.HandlerFunc
-	codexLive          *codexlive.Handler
-	quotaPoolStatePath string
+	automaticSelector     coreauth.Selector
+	automaticSelectorOnce sync.Once
+	runtime               executorRuntime
+	cfg                   *config.Config
+	manifest              *manifest
+	authManager           *coreauth.Manager
+	emitter               *eventEmitter
+	policy                *requestPolicy
+	responsesWebsocket    gin.HandlerFunc
+	codexLive             *codexlive.Handler
+	quotaPoolStatePath    string
+	providerBackoff       providerGatewayBackoffState
+	imageDownloads        *imageDownloadPolicy
 }
 
 func (s *relayServer) router() *gin.Engine {
 	router := gin.New()
 	router.Use(gin.Recovery())
 	router.Use(corsMiddleware())
+	router.Use(func(c *gin.Context) {
+		s.bindRelayContext(c)
+		c.Next()
+	})
 	router.Use(s.policy.middleware())
 	router.GET("/v1/models", s.handleModels)
-	router.GET(cockpitQuotaPath, s.handleJulingQuota)
-	router.POST("/v1/cockpit/auth/reset", s.handleResetAuthState)
-	router.POST("/v1/cockpit/accounts/reset-scheduler", s.handleResetSchedulerState)
+	router.GET(julingQuotaPath, s.handleJulingQuota)
+	router.POST("/v1/juling/auth/reset", s.handleResetAuthState)
+	router.POST(requestDiagnosticsConfigPath, s.handleRequestDiagnosticsConfig)
+	router.POST(apiServiceTierDefaultPath, s.handleAPIServiceTierDefault)
+	router.GET(requestDiagnosticsEventsPath, s.handleRequestDiagnosticsEvents)
+	router.POST("/v1/juling/accounts/reset-scheduler", s.handleResetSchedulerState)
 	router.POST("/v1/live", s.handleCodexLive)
 	router.GET("/v1/live/:call_id", s.handleCodexLiveSideband)
 	router.POST("/v1/realtime/calls", s.handleCodexLive)
@@ -65,6 +77,7 @@ func (s *relayServer) router() *gin.Engine {
 	router.POST("/v1/realtime/calls/:call_id/accept", s.handleCodexSIPControl)
 	router.POST("/v1/realtime/calls/:call_id/reject", s.handleCodexSIPControl)
 	router.POST("/v1/realtime/calls/:call_id/refer", s.handleCodexSIPControl)
+	s.registerVoiceAliases(router)
 	// Codex Responses WebSocket upgrade uses GET /v1/responses (not POST/SSE).
 	router.GET("/v1/responses", s.handleResponsesWebsocket)
 	router.POST("/v1/responses", s.handleResponses)
@@ -101,33 +114,37 @@ type quotaPoolWindowState struct {
 }
 
 type quotaPoolAccountState struct {
+	PlanType  string                `json:"planType,omitempty"`
 	Primary   *quotaPoolWindowState `json:"primary,omitempty"`
 	Secondary *quotaPoolWindowState `json:"secondary,omitempty"`
 	UpdatedAt *int64                `json:"updatedAt,omitempty"`
+	Cooldown  *quotaCooldownState   `json:"cooldown,omitempty"`
 }
 
 type quotaPoolStateFile struct {
 	Accounts map[string]quotaPoolAccountState `json:"accounts"`
 }
 
-type cockpitQuotaResponse struct {
+type julingQuotaResponse struct {
 	Version                  int                       `json:"version"`
 	Scope                    string                    `json:"scope"`
 	RemainingPercent         *int                      `json:"remainingPercent,omitempty"`
 	WeeklyRemainingPercent   *int                      `json:"weeklyRemainingPercent,omitempty"`
 	FiveHourRemainingPercent *int                      `json:"fiveHourRemainingPercent,omitempty"`
+	WeeklyCapacityPercent    *int                      `json:"weeklyCapacityPercent,omitempty"`
+	FiveHourCapacityPercent  *int                      `json:"fiveHourCapacityPercent,omitempty"`
 	AccountCount             int                       `json:"accountCount"`
 	IncludedAccountCount     int                       `json:"includedAccountCount"`
 	MissingAccountCount      int                       `json:"missingAccountCount"`
 	AvailableAccountCount    int                       `json:"availableAccountCount"`
 	AbnormalAccountCount     int                       `json:"abnormalAccountCount"`
 	CooldownAccountCount     int                       `json:"cooldownAccountCount"`
-	Plans                    []cockpitQuotaPlanSummary `json:"plans,omitempty"`
+	Plans                    []julingQuotaPlanSummary `json:"plans,omitempty"`
 	UpdatedAt                int64                     `json:"updatedAt,omitempty"`
 	Stale                    bool                      `json:"stale"`
 }
 
-type cockpitQuotaPlanSummary struct {
+type julingQuotaPlanSummary struct {
 	Plan                     string `json:"plan"`
 	Count                    int    `json:"count"`
 	WeeklyRemainingPercent   *int   `json:"weeklyRemainingPercent,omitempty"`
@@ -164,12 +181,15 @@ func quotaWindowValue(window *quotaPoolWindowState) (int, int64, bool) {
 	return *window.RemainingPercent, minutes, true
 }
 
-func quotaPlanLabel(account *accountSpec) string {
+func quotaPlanLabel(account *accountSpec, snapshot quotaPoolAccountState) string {
+	if account != nil && strings.EqualFold(strings.TrimSpace(account.AuthKind), "api_key") {
+		return "API_KEY"
+	}
+	if plan := strings.TrimSpace(snapshot.PlanType); plan != "" {
+		return strings.ToUpper(strings.ReplaceAll(strings.ReplaceAll(plan, "-", "_"), " ", "_"))
+	}
 	if account == nil {
 		return "UNKNOWN"
-	}
-	if strings.EqualFold(strings.TrimSpace(account.AuthKind), "api_key") {
-		return "API_KEY"
 	}
 	plan := strings.TrimSpace(account.PlanType)
 	if plan == "" {
@@ -186,11 +206,11 @@ func addQuotaPercent(current *int, value int) *int {
 	return &result
 }
 
-func buildJulingQuotaResponse(spec *apiKeySpec, state quotaPoolStateFile, now time.Time) cockpitQuotaResponse {
+func buildJulingQuotaResponse(spec *apiKeySpec, state quotaPoolStateFile, now time.Time) julingQuotaResponse {
 	return buildJulingQuotaResponseWithAccounts(spec, state, now, nil)
 }
 
-func buildJulingQuotaResponseWithAccounts(spec *apiKeySpec, state quotaPoolStateFile, now time.Time, accounts map[string]*accountSpec) cockpitQuotaResponse {
+func buildJulingQuotaResponseWithAccounts(spec *apiKeySpec, state quotaPoolStateFile, now time.Time, accounts map[string]*accountSpec) julingQuotaResponse {
 	accountIDs := make([]string, 0)
 	if spec != nil {
 		accountIDs = normalizeStringList(spec.AccountIDs)
@@ -205,7 +225,7 @@ func buildJulingQuotaResponseWithAccounts(spec *apiKeySpec, state quotaPoolState
 			quotaAccountIDs = append(quotaAccountIDs, accountID)
 		}
 	}
-	result := cockpitQuotaResponse{
+	result := julingQuotaResponse{
 		Version:      1,
 		Scope:        "api_key_account_pool",
 		AccountCount: len(quotaAccountIDs),
@@ -216,12 +236,13 @@ func buildJulingQuotaResponseWithAccounts(spec *apiKeySpec, state quotaPoolState
 		if accounts != nil {
 			account = accounts[accountID]
 		}
-		plan := quotaPlanLabel(account)
+		item := state.Accounts[accountID]
+		plan := quotaPlanLabel(account, item)
 		index, exists := planIndex[plan]
 		if !exists {
 			index = len(result.Plans)
 			planIndex[plan] = index
-			result.Plans = append(result.Plans, cockpitQuotaPlanSummary{Plan: plan})
+			result.Plans = append(result.Plans, julingQuotaPlanSummary{Plan: plan})
 		}
 		result.Plans[index].Count++
 	}
@@ -229,6 +250,8 @@ func buildJulingQuotaResponseWithAccounts(spec *apiKeySpec, state quotaPoolState
 	hasValue := false
 	weeklyTotal := 0
 	fiveHourTotal := 0
+	weeklyCapacity := 0
+	fiveHourCapacity := 0
 	hasWeekly := false
 	hasFiveHour := false
 	for _, accountID := range quotaAccountIDs {
@@ -240,6 +263,13 @@ func buildJulingQuotaResponseWithAccounts(spec *apiKeySpec, state quotaPoolState
 		}
 		primaryValue, primaryMinutes, primaryOK := quotaWindowValue(item.Primary)
 		secondaryValue, secondaryMinutes, secondaryOK := quotaWindowValue(item.Secondary)
+		// The API Service account view treats an exhausted weekly window as
+		// blocking the shorter window too. Keep the CDP quota endpoint on the
+		// same effective-quota semantics instead of exposing raw primary values
+		// such as 400% for a four-account pool.
+		if primaryOK && secondaryOK && secondaryValue == 0 {
+			primaryValue = 0
+		}
 		value, ok := 0, false
 		switch {
 		case primaryOK && secondaryOK && primaryMinutes <= secondaryMinutes:
@@ -261,25 +291,29 @@ func buildJulingQuotaResponseWithAccounts(spec *apiKeySpec, state quotaPoolState
 		hasValue = true
 		if primaryOK && primaryMinutes >= 5*24*60 {
 			weeklyTotal += primaryValue
+			weeklyCapacity += 100
 			hasWeekly = true
 		}
 		if secondaryOK && secondaryMinutes >= 5*24*60 {
 			weeklyTotal += secondaryValue
+			weeklyCapacity += 100
 			hasWeekly = true
 		}
 		if primaryOK && primaryMinutes > 0 && primaryMinutes <= 6*60 {
 			fiveHourTotal += primaryValue
+			fiveHourCapacity += 100
 			hasFiveHour = true
 		}
 		if secondaryOK && secondaryMinutes > 0 && secondaryMinutes <= 6*60 {
 			fiveHourTotal += secondaryValue
+			fiveHourCapacity += 100
 			hasFiveHour = true
 		}
 		var account *accountSpec
 		if accounts != nil {
 			account = accounts[accountID]
 		}
-		if index, exists := planIndex[quotaPlanLabel(account)]; exists {
+		if index, exists := planIndex[quotaPlanLabel(account, item)]; exists {
 			planSummary := &result.Plans[index]
 			if primaryOK && primaryMinutes >= 5*24*60 {
 				planSummary.WeeklyRemainingPercent = addQuotaPercent(planSummary.WeeklyRemainingPercent, primaryValue)
@@ -313,10 +347,16 @@ func buildJulingQuotaResponseWithAccounts(spec *apiKeySpec, state quotaPoolState
 	if hasFiveHour {
 		result.FiveHourRemainingPercent = &fiveHourTotal
 	}
+	if hasWeekly || result.AccountCount == 0 {
+		result.WeeklyCapacityPercent = &weeklyCapacity
+	}
+	if hasFiveHour || result.AccountCount == 0 {
+		result.FiveHourCapacityPercent = &fiveHourCapacity
+	}
 	return result
 }
 
-func applyJulingQuotaAuthHealth(result *cockpitQuotaResponse, spec *apiKeySpec, state quotaPoolStateFile, auths []*coreauth.Auth, now time.Time) {
+func applyJulingQuotaAuthHealth(result *julingQuotaResponse, spec *apiKeySpec, state quotaPoolStateFile, auths []*coreauth.Auth, now time.Time) {
 	if result == nil || spec == nil || len(auths) == 0 {
 		return
 	}
@@ -366,13 +406,13 @@ func (s *relayServer) handleJulingQuota(c *gin.Context) {
 		return
 	}
 	if strings.TrimSpace(s.quotaPoolStatePath) == "" {
-		c.JSON(http.StatusOK, cockpitQuotaResponse{Version: 1, Scope: "api_key_account_pool"})
+		c.JSON(http.StatusOK, julingQuotaResponse{Version: 1, Scope: "api_key_account_pool"})
 		return
 	}
 	state, err := readQuotaPoolState(s.quotaPoolStatePath)
 	if err != nil {
 		if errors.Is(err, os.ErrNotExist) {
-			c.JSON(http.StatusOK, cockpitQuotaResponse{Version: 1, Scope: "api_key_account_pool"})
+			c.JSON(http.StatusOK, julingQuotaResponse{Version: 1, Scope: "api_key_account_pool"})
 			return
 		}
 		writeAPIError(c, http.StatusServiceUnavailable, "quota state unavailable", "quota_state_unavailable")
@@ -383,7 +423,7 @@ func (s *relayServer) handleJulingQuota(c *gin.Context) {
 		applyJulingQuotaAuthHealth(&response, spec, state, s.authManager.List(), time.Now())
 	}
 	if response.RemainingPercent == nil && spec != nil && spec.ProviderGateway != nil {
-		upstreamURL, urlErr := providerGatewayURL(spec.ProviderGateway.BaseURL, cockpitQuotaPath)
+		upstreamURL, urlErr := providerGatewayURL(spec.ProviderGateway.BaseURL, julingQuotaPath)
 		if urlErr == nil {
 			request, requestErr := http.NewRequestWithContext(c.Request.Context(), http.MethodGet, upstreamURL, nil)
 			if requestErr == nil {
@@ -392,7 +432,7 @@ func (s *relayServer) handleJulingQuota(c *gin.Context) {
 				if upstream, doErr := client.Do(request); doErr == nil {
 					defer upstream.Body.Close()
 					if upstream.StatusCode == http.StatusOK {
-						var upstreamResponse cockpitQuotaResponse
+						var upstreamResponse julingQuotaResponse
 						if json.NewDecoder(upstream.Body).Decode(&upstreamResponse) == nil {
 							c.JSON(http.StatusOK, upstreamResponse)
 							return
@@ -463,6 +503,7 @@ func (s *relayServer) handleResetAuthState(c *gin.Context) {
 			resetAccountIDs = append(resetAccountIDs, target.accountID)
 		}
 	}
+	clearQuotaCooldownForAccounts(s.manifest, resetAccountIDs, time.Now())
 	c.JSON(http.StatusOK, gin.H{
 		"status":     "ok",
 		"reset":      len(resetAccountIDs),
@@ -558,6 +599,7 @@ func (s *relayServer) handleResetSchedulerState(c *gin.Context) {
 			resetAuthCount++
 		}
 	}
+	clearQuotaCooldownForAccounts(s.manifest, selected, time.Now())
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":         "ok",
@@ -588,7 +630,7 @@ func (s *relayServer) handleModels(c *gin.Context) {
 	}
 	models := clientCatalogModelsForAPIKey(s.manifest, spec)
 	if isCodexClientModelsRequest(c.Request) {
-		c.JSON(http.StatusOK, buildCodexClientModelsResponse(models, spec, contextWindowsForAPIKey(s.manifest, spec)))
+		c.JSON(http.StatusOK, buildCodexClientModelsResponse(models, spec, contextWindowsForAPIKey(s.manifest, spec), s.manifest))
 		return
 	}
 	c.JSON(http.StatusOK, buildModelsResponse(models))
@@ -693,7 +735,11 @@ func (s *relayServer) handleResponsesWebsocket(c *gin.Context) {
 		return
 	}
 	if !spec.ResponsesWebsockets {
-		writeAPIError(c, http.StatusBadRequest, "responses websocket is disabled", "websocket_disabled")
+		if diagnosticTransport(c.Request) == "websocket" {
+			c.Set(ginResponsesWebsocketDisabledKey, true)
+			_ = c.Error(errors.New("responses websocket is disabled"))
+		}
+		writeAPIError(c, http.StatusUpgradeRequired, "responses websocket is disabled", "websocket_disabled")
 		return
 	}
 	if s.responsesWebsocket == nil {
@@ -754,7 +800,7 @@ func (s *relayServer) handleCodexAlphaSearch(c *gin.Context) {
 	if model != "" {
 		canonical := canonicalModelForClientModel(s.manifest, spec, model)
 		if !validateClientModelVisible(s.manifest, spec, model, canonical) {
-			writeAPIError(c, http.StatusNotFound, fmt.Sprintf("模型 %s 不在当前 API Key 的可用模型范围内", model), "model_not_available")
+			writeAPIError(c, http.StatusNotFound, s.manifest.modelUnavailableMessage(model), "model_not_available")
 			return
 		}
 		model = canonical
@@ -868,7 +914,8 @@ func (s *relayServer) handleGeminiAction(c *gin.Context) {
 }
 
 func (s *relayServer) handleImagesGenerations(c *gin.Context) {
-	if _, ok := s.requireAPIKey(c); !ok {
+	spec, ok := s.requireAPIKey(c)
+	if !ok {
 		return
 	}
 	rawJSON, err := c.GetRawData()
@@ -876,7 +923,11 @@ func (s *relayServer) handleImagesGenerations(c *gin.Context) {
 		writeAPIError(c, http.StatusBadRequest, "failed to read request body", "invalid_request")
 		return
 	}
-	imageReq, err := buildImageGenerationRelayRequest(rawJSON)
+	imageReq, err := buildImageGenerationRelayRequestWithModel(
+		rawJSON,
+		configuredImagesToolModel(s.manifest),
+		len(imageGenerationAccountIDsForSpec(spec)) > 0,
+	)
 	if err != nil {
 		writeAPIError(c, http.StatusBadRequest, err.Error(), "invalid_request")
 		return
@@ -885,10 +936,15 @@ func (s *relayServer) handleImagesGenerations(c *gin.Context) {
 }
 
 func (s *relayServer) handleImagesEdits(c *gin.Context) {
-	if _, ok := s.requireAPIKey(c); !ok {
+	spec, ok := s.requireAPIKey(c)
+	if !ok {
 		return
 	}
-	imageReq, err := buildImageEditRelayRequest(c)
+	imageReq, err := buildImageEditRelayRequestWithModel(
+		c,
+		configuredImagesToolModel(s.manifest),
+		len(imageGenerationAccountIDsForSpec(spec)) > 0,
+	)
 	if err != nil {
 		writeAPIError(c, http.StatusBadRequest, err.Error(), "invalid_request")
 		return

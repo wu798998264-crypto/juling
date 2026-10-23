@@ -1,4 +1,4 @@
-// cockpit-core Codex 账号测试：凭据、切号、导入和配额行为。
+// juling-core Codex 账号测试：凭据、切号、导入和配额行为。
 // 测试内容作为原 tests 模块内部实现被 include。
     use super::{
         build_account_storage_id, build_auth_file_value, decode_jwt_payload_value,
@@ -53,10 +53,10 @@
 
             let previous_home = std::env::var_os("HOME");
             let previous_codex_home = std::env::var_os("CODEX_HOME");
-            let previous_data_dir = std::env::var_os("COCKPIT_TOOLS_DATA_DIR");
+            let previous_data_dir = std::env::var_os("JULING_TOOLS_DATA_DIR");
             std::env::set_var("HOME", &home_dir);
             std::env::set_var("CODEX_HOME", &codex_home);
-            std::env::set_var("COCKPIT_TOOLS_DATA_DIR", &home_dir);
+            std::env::set_var("JULING_TOOLS_DATA_DIR", &home_dir);
 
             Self {
                 home_dir,
@@ -82,17 +82,17 @@
                 None => std::env::remove_var("CODEX_HOME"),
             }
             match self.previous_data_dir.as_ref() {
-                Some(value) => std::env::set_var("COCKPIT_TOOLS_DATA_DIR", value),
-                None => std::env::remove_var("COCKPIT_TOOLS_DATA_DIR"),
+                Some(value) => std::env::set_var("JULING_TOOLS_DATA_DIR", value),
+                None => std::env::remove_var("JULING_TOOLS_DATA_DIR"),
             }
             let _ = fs::remove_dir_all(&self.home_dir);
         }
     }
 
     #[test]
-    fn test_env_guard_isolates_and_restores_cockpit_data_dir() {
+    fn test_env_guard_isolates_and_restores_juling_data_dir() {
         let _lock = TEST_ENV_LOCK.lock().unwrap_or_else(|err| err.into_inner());
-        let previous_data_dir = std::env::var_os("COCKPIT_TOOLS_DATA_DIR");
+        let previous_data_dir = std::env::var_os("JULING_TOOLS_DATA_DIR");
         let isolated_data_dir = {
             let env = TestEnvGuard::new("codex-core-data-dir-guard-test");
             let legacy_data_dir = env.home_dir.join("legacy-codex-data");
@@ -115,7 +115,7 @@
         };
 
         assert_eq!(
-            std::env::var_os("COCKPIT_TOOLS_DATA_DIR"),
+            std::env::var_os("JULING_TOOLS_DATA_DIR"),
             previous_data_dir
         );
         assert!(!isolated_data_dir.exists());
@@ -1038,7 +1038,7 @@ wire_api = "responses"
 requires_openai_auth = true
 experimental_bearer_token = "sk-test"
 
-[model_providers.cockpit_api]
+[model_providers.juling_api]
 name = "Juling Api"
 base_url = "https://chongcodex.cn/v1"
 wire_api = "responses"
@@ -1071,7 +1071,7 @@ requires_openai_auth = false
         let content = fs::read_to_string(&config_path).expect("read config");
         assert!(!content.contains("model_provider = "));
         assert!(!content.contains("[model_providers.codex_local_access]"));
-        assert!(!content.contains("[model_providers.cockpit_api]"));
+        assert!(!content.contains("[model_providers.juling_api]"));
         assert!(!content.contains("[model_providers.openai_api_key]"));
         assert!(!content.contains("experimental_bearer_token"));
         assert!(content.contains("[model_providers.user_manual_provider_not_managed]"));
@@ -1373,5 +1373,38 @@ requires_openai_auth = false
                 "[LocalCodexRepairTest] 应用日志文件: {}",
                 log_file.display()
             );
+        }
+    }
+
+    #[test]
+    fn identity_isolation_core_excludes_provider_from_oauth_import() {
+        let _lock = TEST_ENV_LOCK.lock().unwrap_or_else(|err| err.into_inner());
+        for mixed in [false, true] {
+            let _env = TestEnvGuard::new("core-identity-isolation");
+            let mut provider = CodexAccount::new_api_key(
+                "codex_grok_test".into(), "shared@example.com".into(),
+                String::new(), CodexApiProviderMode::Custom,
+                Some("https://example.test/v1".into()), Some("grok".into()), Some("Grok".into()),
+            );
+            if mixed {
+                provider.auth_mode = crate::models::codex::CodexAuthMode::OAuth;
+                provider.account_id = Some("acc-shared".into());
+                provider.organization_id = Some("org-shared".into());
+            }
+            super::save_account(&provider).unwrap();
+            let mut index = CodexAccountIndex::new();
+            index.accounts.push(CodexAccountSummary {
+                id: provider.id.clone(), email: provider.email.clone(),
+                plan_type: provider.plan_type.clone(), created_at: provider.created_at,
+                last_used: provider.last_used,
+            });
+            super::save_account_index(&index).unwrap();
+            assert!(super::find_existing_account_id(&index, &provider.email, None, None).is_none());
+            let imported = super::upsert_account(make_codex_tokens(
+                "shared@example.com", "acc-shared", "org-shared", "new", "rt-new",
+            )).unwrap();
+            assert_ne!(imported.id, provider.id);
+            assert_eq!(load_account_index().accounts.len(), 2);
+            assert_eq!(load_account(&provider.id).unwrap().auth_mode, provider.auth_mode);
         }
     }

@@ -132,6 +132,7 @@ pub fn get_auth_url(redirect_uri: &str, state: Option<&str>) -> String {
         "https://www.googleapis.com/auth/userinfo.profile",
         "https://www.googleapis.com/auth/cclog",
         "https://www.googleapis.com/auth/experimentsandconfigs",
+        "https://www.googleapis.com/auth/aicode",
     ]
     .join(" ");
 

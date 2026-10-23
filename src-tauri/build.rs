@@ -9,6 +9,26 @@ fn link_macos_swift_runtime_rpaths() {
     println!("cargo:rustc-link-arg=-Wl,-rpath,/usr/lib/swift");
 }
 
+#[cfg(target_os = "macos")]
+fn link_swift_package_products(package_name: &str) {
+    // Use the same DEBUG value as swift-rs when choosing SwiftPM configuration.
+    let configuration = if std::env::var("DEBUG").ok().as_deref() == Some("true") {
+        "Debug"
+    } else {
+        "Release"
+    };
+    let products_dir = PathBuf::from(
+        std::env::var("OUT_DIR").expect("OUT_DIR is required for Swift package linking"),
+    )
+    .join("swift-rs")
+    .join(package_name)
+    .join("out/Products")
+    .join(configuration);
+    // Xcode 27 / Swift 6.4 writes here. Keep swift-rs's original search path
+    // as well, since older SwiftPM versions still use the target triple path.
+    println!("cargo:rustc-link-search=native={}", products_dir.display());
+}
+
 fn go_target_from_rust_target(target: &str) -> Option<(&'static str, &'static str)> {
     let goos = if target.contains("windows") {
         "windows"
@@ -37,7 +57,7 @@ fn go_target_from_rust_target(target: &str) -> Option<(&'static str, &'static st
 
 fn should_skip_sidecar_build(output: &Path) -> bool {
     let skip = std::env::var("JULING_SKIP_CLIPROXY_BUILD")
-        .or_else(|_| std::env::var("COCKPIT_SKIP_CLIPROXY_BUILD"))
+        .or_else(|_| std::env::var("JULING_SKIP_CLIPROXY_BUILD"))
         .ok();
     skip.as_deref() == Some("1") && output.exists()
 }
@@ -52,6 +72,9 @@ fn emit_sidecar_rerun_inputs(path: &Path) {
     };
 
     if metadata.is_dir() {
+        // 目录本身也纳入追踪：只追踪已有文件时，新增 .go 文件不会触发重建，
+        // dev 启动会继续使用旧的 sidecar 二进制。
+        println!("cargo:rerun-if-changed={}", path.display());
         let Ok(entries) = std::fs::read_dir(path) else {
             return;
         };
@@ -150,7 +173,7 @@ fn build_juling_cliproxy_sidecar() {
     let output_dir = sidecar_dir.join("bin");
 
     println!("cargo:rerun-if-env-changed=JULING_SKIP_CLIPROXY_BUILD");
-    println!("cargo:rerun-if-env-changed=COCKPIT_SKIP_CLIPROXY_BUILD");
+    println!("cargo:rerun-if-env-changed=JULING_SKIP_CLIPROXY_BUILD");
     emit_sidecar_rerun_inputs(&sidecar_dir);
     std::fs::create_dir_all(&output_dir).expect("failed to create juling-cliproxy bin dir");
 
@@ -170,13 +193,23 @@ fn build_juling_cliproxy_sidecar() {
 
 fn main() {
     println!("cargo:rerun-if-changed=build.rs");
+    // Build-script cfg describes the host, not the binary being linked. Reserve
+    // 8 MiB for the Windows MSVC host application even when cross-compiling.
+    // Scope the flag to the application binary, not the library or sidecars.
+    let target = std::env::var("TARGET").expect("TARGET is required");
+    if target.ends_with("-windows-msvc") {
+        println!("cargo:rustc-link-arg-bin=juling=/STACK:8388608");
+    }
     build_juling_cliproxy_sidecar();
 
+    // The cfg gate selects the build host. Only link Swift for a macOS target,
+    // otherwise macOS-to-Windows builds inherit Darwin-only linker arguments.
     #[cfg(target_os = "macos")]
-    {
+    if target.ends_with("-apple-darwin") {
         SwiftLinker::new("12.0")
             .with_package("MacosNativeMenuSwift", "native/macos-native-menu")
             .link();
+        link_swift_package_products("MacosNativeMenuSwift");
         link_macos_swift_runtime_rpaths();
     }
 

@@ -1,4 +1,9 @@
 // Codex Local Access：Request log database, usage statistics and repricing workers。
+#[cfg(test)]
+#[path = "codex_request_summary_writer_tests.rs"]
+mod request_summary_writer_tests;
+include!("codex_local_access_log_maintenance.rs");
+include!("codex_local_access_window_stats.rs");
 // 通过 include! 保持原 modules::codex_local_access 作用域和私有调用关系。
 fn request_kind_to_db_value(request_kind: CodexLocalAccessRequestKind) -> &'static str {
     match request_kind {
@@ -22,6 +27,7 @@ fn gateway_mode_to_db_value(gateway_mode: CodexLocalAccessGatewayMode) -> &'stat
     match gateway_mode {
         CodexLocalAccessGatewayMode::Legacy => "legacy",
         CodexLocalAccessGatewayMode::Sidecar => "sidecar",
+        CodexLocalAccessGatewayMode::Native => "native",
     }
 }
 
@@ -29,6 +35,7 @@ fn gateway_mode_from_db_value(value: &str) -> Option<CodexLocalAccessGatewayMode
     match value.trim() {
         "legacy" => Some(CodexLocalAccessGatewayMode::Legacy),
         "sidecar" => Some(CodexLocalAccessGatewayMode::Sidecar),
+        "native" => Some(CodexLocalAccessGatewayMode::Native),
         _ => None,
     }
 }
@@ -128,6 +135,40 @@ fn quarantine_local_access_logs_db(
     Ok(backup_path)
 }
 
+fn request_logs_output_generation_select(conn: &Connection) -> Result<&'static str, String> {
+    request_logs_has_column(conn, "output_generation_ms")
+        .map(|present| {
+            if present {
+                "output_generation_ms"
+            } else {
+                "NULL AS output_generation_ms"
+            }
+        })
+        .map_err(|error| format!("检查输出计时列失败: {error}"))
+}
+
+// Keep the evidence source and raw value; do not normalize default to standard.
+fn recorded_service_tier_value(value: Option<&str>) -> Option<String> {
+    value
+        .map(str::trim)
+        .filter(|value| !value.is_empty())
+        .map(str::to_string)
+}
+
+fn request_logs_service_tier_evidence_select(conn: &Connection) -> Result<String, String> {
+    ["requested_service_tier", "response_service_tier"]
+        .into_iter()
+        .map(|column| {
+            request_logs_has_column(conn, column)
+                .map(|present| {
+                    if present { column.to_string() } else { format!("'' AS {column}") }
+                })
+                .map_err(|error| format!("检查 API 服务日志 {column} 列失败: {error}"))
+        })
+        .collect::<Result<Vec<_>, _>>()
+        .map(|columns| columns.join(", "))
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum RequestLogsSchemaState {
     MissingTable,
@@ -159,14 +200,21 @@ fn create_request_logs_table(
             api_key_id TEXT NOT NULL DEFAULT '',
             api_key_label TEXT NOT NULL DEFAULT '',
             client_instance_id TEXT NOT NULL DEFAULT '',
+            proxy_route_json TEXT NOT NULL DEFAULT '',
             model_id TEXT NOT NULL DEFAULT '',
+            requested_model TEXT NOT NULL DEFAULT '',
+            upstream_model TEXT NOT NULL DEFAULT '',
             gateway_mode TEXT NOT NULL DEFAULT '',
             request_kind TEXT NOT NULL DEFAULT 'other',{service_tier_column}
+            turn_state_length INTEGER,
+            turn_state_class TEXT NOT NULL DEFAULT '',
             success INTEGER NOT NULL DEFAULT 0,
             http_status INTEGER,
             error_category TEXT NOT NULL DEFAULT '',
             error_message TEXT NOT NULL DEFAULT '',
             latency_ms INTEGER NOT NULL DEFAULT 0,
+            first_response_ms INTEGER,
+            output_generation_ms INTEGER,
             input_tokens INTEGER NOT NULL DEFAULT 0,
             output_tokens INTEGER NOT NULL DEFAULT 0,
             total_tokens INTEGER NOT NULL DEFAULT 0,
@@ -212,7 +260,22 @@ fn open_local_access_logs_db_once(
         "client_instance_id",
         "client_instance_id TEXT NOT NULL DEFAULT ''",
     )?;
+    ensure_request_logs_column(
+        &conn,
+        "proxy_route_json",
+        "proxy_route_json TEXT NOT NULL DEFAULT ''",
+    )?;
     ensure_request_logs_column(&conn, "model_id", "model_id TEXT NOT NULL DEFAULT ''")?;
+    ensure_request_logs_column(
+        &conn,
+        "requested_model",
+        "requested_model TEXT NOT NULL DEFAULT ''",
+    )?;
+    ensure_request_logs_column(
+        &conn,
+        "upstream_model",
+        "upstream_model TEXT NOT NULL DEFAULT ''",
+    )?;
     ensure_request_logs_column(
         &conn,
         "gateway_mode",
@@ -235,6 +298,12 @@ fn open_local_access_logs_db_once(
         "reasoning_effort",
         "reasoning_effort TEXT NOT NULL DEFAULT ''",
     )?;
+    ensure_request_logs_column(&conn, "turn_state_length", "turn_state_length INTEGER")?;
+    ensure_request_logs_column(
+        &conn,
+        "turn_state_class",
+        "turn_state_class TEXT NOT NULL DEFAULT ''",
+    )?;
     ensure_request_logs_column(&conn, "success", "success INTEGER NOT NULL DEFAULT 0")?;
     ensure_request_logs_column(&conn, "http_status", "http_status INTEGER")?;
     ensure_request_logs_column(
@@ -248,6 +317,12 @@ fn open_local_access_logs_db_once(
         "error_message TEXT NOT NULL DEFAULT ''",
     )?;
     ensure_request_logs_column(&conn, "latency_ms", "latency_ms INTEGER NOT NULL DEFAULT 0")?;
+    ensure_request_logs_column(&conn, "first_response_ms", "first_response_ms INTEGER")?;
+    ensure_request_logs_column(
+        &conn,
+        "output_generation_ms",
+        "output_generation_ms INTEGER",
+    )?;
     ensure_request_logs_column(
         &conn,
         "input_tokens",
@@ -332,38 +407,6 @@ fn open_local_access_logs_db_once(
         CREATE INDEX IF NOT EXISTS idx_codex_local_access_logs_request_id
             ON request_logs(request_id, timestamp DESC);
         "#,
-    )?;
-    conn.execute(
-        r#"
-        UPDATE request_logs
-        SET error_category = 'upstream_response_failed'
-        WHERE success = 0
-          AND error_category != 'upstream_response_failed'
-          AND (
-            lower(error_message) LIKE '%upstream_response_failed%'
-            OR lower(error_message) LIKE '%codex upstream response.failed%'
-            OR lower(error_message) LIKE '%last_event=response.failed%'
-          )
-        "#,
-        [],
-    )?;
-    conn.execute(
-        r#"
-        UPDATE request_logs
-        SET error_category = 'stream_incomplete'
-        WHERE success = 0
-          AND error_category != 'stream_incomplete'
-          AND error_category != 'upstream_response_failed'
-          AND (
-            lower(error_message) LIKE '%stream disconnected before completion%'
-            OR lower(error_message) LIKE '%error decoding response body%'
-            OR lower(error_message) LIKE '%closed before response.completed%'
-            OR lower(error_message) LIKE '%closed before response.done%'
-            OR lower(error_message) LIKE '%stream ended before completion%'
-            OR lower(error_message) LIKE '%incomplete_eof%'
-          )
-        "#,
-        [],
     )?;
     Ok(conn)
 }
@@ -480,6 +523,35 @@ fn deserialize_token_breakdown_from_db(raw: &str) -> Option<CodexTokenBreakdown>
     serde_json::from_str(raw).ok()
 }
 
+fn request_logs_proxy_route_select(conn: &Connection) -> Result<String, String> {
+    let projection = ["proxy_route_json", "authorization_route"].into_iter().map(|column| {
+        request_logs_has_column(conn, column).map(|exists| if exists { column.to_string() } else { format!("'' AS {column}") })
+    }).collect::<Result<Vec<_>, _>>().map_err(|error| error.to_string())?;
+    Ok(projection.join(", "))
+}
+
+fn request_logs_authorization_fallback_select(conn: &Connection) -> Result<String, String> {
+    if !diagnostics_table_exists(conn).map_err(|error| error.to_string())? {
+        return Ok("'' AS authorization_attempts_json".into());
+    }
+    // Primary-key lookup per visible row only. Never read payloads, wait for an in-flight
+    // diagnostic, or scan all diagnostics merely to decorate a paginated list.
+    Ok("(SELECT CASE WHEN length(CAST(attempts_json AS BLOB)) <= 65536 THEN attempts_json ELSE '[]' END FROM request_diagnostics WHERE request_id=request_logs.request_id) AS authorization_attempts_json".into())
+}
+
+fn authorization_fallback_from_attempts_json(raw: &str) -> Option<crate::models::codex_local_access::CodexLocalAccessAuthorizationFallbackTrace> {
+    if raw.is_empty() || raw.len() > 65536 { return None; }
+    let attempts: Vec<CodexLocalAccessRequestAttempt> = serde_json::from_str(raw).ok()?;
+    attempts.into_iter().take(REQUEST_DIAGNOSTICS_MAX_ATTEMPTS).find_map(|mut attempt| {
+        normalize_authorization_fallback_trace(&mut attempt);
+        attempt.authorization_fallback
+    })
+}
+
+fn service_tier_adaptation_from_attempts_json(raw: &str) -> Option<crate::models::codex_local_access::CodexLocalAccessServiceTierAdaptation> {
+    crate::modules::codex_request_summary::service_tier_adaptation(raw)
+}
+
 fn official_stats_account_id(local_account_id: &str) -> Option<String> {
     let local_account_id = local_account_id.trim();
     if local_account_id.is_empty() {
@@ -499,6 +571,12 @@ fn insert_local_access_usage_event(
     conn: &Connection,
     event: &CodexLocalAccessUsageEvent,
 ) -> Result<(), String> {
+    // Classify the incoming row once; readers never rewrite failed history.
+    let normalized_error_category = normalized_request_log_error_category(
+        event.success,
+        event.error_category.trim(),
+        event.error_message.trim(),
+    );
     let has_service_tier_column = request_logs_has_service_tier_column(conn)
         .map_err(|e| format!("检查 API 服务日志 service_tier 列失败: {}", e))?;
     let has_reasoning_effort_column = request_logs_has_column(conn, "reasoning_effort")
@@ -513,7 +591,32 @@ fn insert_local_access_usage_event(
         .as_deref()
         .and_then(normalize_recorded_reasoning_effort)
         .unwrap_or_default();
+    // 风控检测已移除：列结构保留以兼容历史库，但不再写入新的 state 观测值。
+    let turn_state_length: Option<i64> = None;
+    let turn_state_class = "";
     let token_breakdown_json = serialize_token_breakdown_for_db(event.token_breakdown.as_ref());
+    // Only writes add the optional snapshot column; historical rows remain unrecorded.
+    ensure_request_logs_column(
+        conn,
+        "proxy_route_json",
+        "proxy_route_json TEXT NOT NULL DEFAULT ''",
+    )
+    .map_err(|e| format!("添加 API 服务日志代理快照列失败: {}", e))?;
+    for column in ["requested_service_tier", "response_service_tier"] {
+        ensure_request_logs_column(conn, column, &format!("{column} TEXT NOT NULL DEFAULT ''"))
+            .map_err(|error| format!("添加 API 服务日志 {column} 列失败: {error}"))?;
+    }
+    let requested_service_tier = recorded_service_tier_value(event.requested_service_tier.as_deref())
+        .unwrap_or_default();
+    let response_service_tier = recorded_service_tier_value(event.response_service_tier.as_deref())
+        .unwrap_or_default();
+    let proxy_route_json = event
+        .proxy_route
+        .as_ref()
+        .map(serde_json::to_string)
+        .transpose()
+        .map_err(|e| format!("序列化 API 服务日志代理快照失败: {}", e))?
+        .unwrap_or_default();
     if has_service_tier_column && has_reasoning_effort_column {
         conn.execute(
             r#"
@@ -527,6 +630,8 @@ fn insert_local_access_usage_event(
                 api_key_label,
                 client_instance_id,
                 model_id,
+                requested_model,
+                upstream_model,
                 gateway_mode,
                 request_kind,
                 service_tier,
@@ -546,8 +651,13 @@ fn insert_local_access_usage_event(
                 model_pricing_version,
                 input_usd_per_million,
                 output_usd_per_million,
-                cached_input_usd_per_million
-            ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, ?23, ?24, ?25, ?26, ?27, ?28, ?29)
+                cached_input_usd_per_million,
+                turn_state_length,
+                turn_state_class,
+                proxy_route_json,
+                requested_service_tier,
+                response_service_tier
+            ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, ?23, ?24, ?25, ?26, ?27, ?28, ?29, ?30, ?31, ?32, ?33, ?34, ?35, ?36)
             "#,
             params![
                 local_access_log_event_key(event),
@@ -559,6 +669,8 @@ fn insert_local_access_usage_event(
                 event.api_key_label.trim(),
                 event.client_instance_id.trim(),
                 event.model_id.trim(),
+                event.requested_model.trim(),
+                event.upstream_model.trim(),
                 event
                     .gateway_mode
                     .map(gateway_mode_to_db_value)
@@ -568,7 +680,7 @@ fn insert_local_access_usage_event(
                 reasoning_effort,
                 bool_to_db_value(event.success),
                 event.http_status.map(|value| value as i64),
-                event.error_category.trim(),
+                normalized_error_category.as_ref(),
                 event.error_message.trim(),
                 event.latency_ms as i64,
                 event.input_tokens as i64,
@@ -582,6 +694,11 @@ fn insert_local_access_usage_event(
                 event.input_usd_per_million,
                 event.output_usd_per_million,
                 event.cached_input_usd_per_million,
+                turn_state_length,
+                turn_state_class,
+                proxy_route_json,
+                requested_service_tier,
+                response_service_tier,
             ],
         )
         .map_err(|e| format!("写入 API 服务请求日志失败: {}", e))?;
@@ -598,6 +715,8 @@ fn insert_local_access_usage_event(
                 api_key_label,
                 client_instance_id,
                 model_id,
+                requested_model,
+                upstream_model,
                 gateway_mode,
                 request_kind,
                 service_tier,
@@ -616,8 +735,13 @@ fn insert_local_access_usage_event(
                 model_pricing_version,
                 input_usd_per_million,
                 output_usd_per_million,
-                cached_input_usd_per_million
-            ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, ?23, ?24, ?25, ?26, ?27, ?28)
+                cached_input_usd_per_million,
+                turn_state_length,
+                turn_state_class,
+                proxy_route_json,
+                requested_service_tier,
+                response_service_tier
+            ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, ?23, ?24, ?25, ?26, ?27, ?28, ?29, ?30, ?31, ?32, ?33, ?34, ?35)
             "#,
             params![
                 local_access_log_event_key(event),
@@ -629,6 +753,8 @@ fn insert_local_access_usage_event(
                 event.api_key_label.trim(),
                 event.client_instance_id.trim(),
                 event.model_id.trim(),
+                event.requested_model.trim(),
+                event.upstream_model.trim(),
                 event
                     .gateway_mode
                     .map(gateway_mode_to_db_value)
@@ -637,7 +763,7 @@ fn insert_local_access_usage_event(
                 service_tier,
                 bool_to_db_value(event.success),
                 event.http_status.map(|value| value as i64),
-                event.error_category.trim(),
+                normalized_error_category.as_ref(),
                 event.error_message.trim(),
                 event.latency_ms as i64,
                 event.input_tokens as i64,
@@ -651,6 +777,11 @@ fn insert_local_access_usage_event(
                 event.input_usd_per_million,
                 event.output_usd_per_million,
                 event.cached_input_usd_per_million,
+                turn_state_length,
+                turn_state_class,
+                proxy_route_json,
+                requested_service_tier,
+                response_service_tier,
             ],
         )
         .map_err(|e| format!("写入 API 服务请求日志失败: {}", e))?;
@@ -667,6 +798,8 @@ fn insert_local_access_usage_event(
                 api_key_label,
                 client_instance_id,
                 model_id,
+                requested_model,
+                upstream_model,
                 gateway_mode,
                 request_kind,
                 success,
@@ -684,8 +817,13 @@ fn insert_local_access_usage_event(
                 model_pricing_version,
                 input_usd_per_million,
                 output_usd_per_million,
-                cached_input_usd_per_million
-            ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, ?23, ?24, ?25, ?26, ?27)
+                cached_input_usd_per_million,
+                turn_state_length,
+                turn_state_class,
+                proxy_route_json,
+                requested_service_tier,
+                response_service_tier
+            ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17, ?18, ?19, ?20, ?21, ?22, ?23, ?24, ?25, ?26, ?27, ?28, ?29, ?30, ?31, ?32, ?33, ?34)
             "#,
             params![
                 local_access_log_event_key(event),
@@ -697,6 +835,8 @@ fn insert_local_access_usage_event(
                 event.api_key_label.trim(),
                 event.client_instance_id.trim(),
                 event.model_id.trim(),
+                event.requested_model.trim(),
+                event.upstream_model.trim(),
                 event
                     .gateway_mode
                     .map(gateway_mode_to_db_value)
@@ -704,7 +844,7 @@ fn insert_local_access_usage_event(
                 request_kind_to_db_value(event.request_kind),
                 bool_to_db_value(event.success),
                 event.http_status.map(|value| value as i64),
-                event.error_category.trim(),
+                normalized_error_category.as_ref(),
                 event.error_message.trim(),
                 event.latency_ms as i64,
                 event.input_tokens as i64,
@@ -718,9 +858,18 @@ fn insert_local_access_usage_event(
                 event.input_usd_per_million,
                 event.output_usd_per_million,
                 event.cached_input_usd_per_million,
+                turn_state_length,
+                turn_state_class,
+                proxy_route_json,
+                requested_service_tier,
+                response_service_tier,
             ],
         )
         .map_err(|e| format!("写入 API 服务请求日志失败: {}", e))?;
+    }
+    ensure_request_logs_column(conn, "authorization_route", "authorization_route TEXT NOT NULL DEFAULT ''").map_err(|error| error.to_string())?;
+    if let Some(route) = event.authorization_route.as_deref().filter(|route| matches!(*route, "official" | "local_gateway")) {
+        conn.execute("UPDATE request_logs SET authorization_route=?1 WHERE event_key=?2 AND authorization_route=''", params![route, local_access_log_event_key(event)]).map_err(|error| error.to_string())?;
     }
     if let Some(official_account_id) = official_stats_account_id(&event.account_id) {
         conn.execute(
@@ -729,12 +878,54 @@ fn insert_local_access_usage_event(
         )
         .map_err(|e| format!("写入 API 服务请求日志官方账号 ID 失败: {}", e))?;
     }
+    ensure_request_logs_column(conn, "output_generation_ms", "output_generation_ms INTEGER")
+        .map_err(|error| format!("添加输出计时列失败: {error}"))?;
+    conn.execute(
+        "UPDATE request_logs SET output_generation_ms=COALESCE(?1,output_generation_ms) WHERE event_key=?2",
+        params![event.output_generation_ms.map(|value| value.min(i64::MAX as u64) as i64),local_access_log_event_key(event)],
+    ).map_err(|error| format!("保存输出计时失败: {error}"))?;
+    ensure_request_logs_column(conn, "first_response_ms", "first_response_ms INTEGER")
+        .map_err(|error| format!("添加请求首响列失败: {error}"))?;
+    let first_response_ms = event
+        .first_response_ms
+        .map(|value| value.min(i64::MAX as u64) as i64);
+    if diagnostics_table_exists(conn).unwrap_or(false) {
+        conn.execute("UPDATE request_logs SET first_response_ms=COALESCE(
+            (SELECT first_response_ms FROM request_diagnostics WHERE request_id=?1),?2,first_response_ms)
+            WHERE event_key=?3", params![event.request_id,first_response_ms,local_access_log_event_key(event)])
+            .map_err(|error| format!("合并请求首响失败: {error}"))?;
+    } else if first_response_ms.is_some() {
+        conn.execute(
+            "UPDATE request_logs SET first_response_ms=?1 WHERE event_key=?2",
+            params![first_response_ms, local_access_log_event_key(event)],
+        )
+        .map_err(|error| format!("保存请求首响失败: {error}"))?;
+    }
     Ok(())
 }
 
 fn persist_local_access_usage_event(event: &CodexLocalAccessUsageEvent) -> Result<(), String> {
     let (_write_guard, conn) = open_local_access_logs_db_for_write()?;
-    insert_local_access_usage_event(&conn, event)
+    insert_live_local_access_usage_event(&conn, event)
+}
+
+// Live Rust and sidecar events use this wrapper. Historical JSON migration
+// intentionally calls the original insert function and never backfills summaries.
+fn insert_live_local_access_usage_event(
+    conn: &Connection,
+    event: &CodexLocalAccessUsageEvent,
+) -> Result<(), String> {
+    insert_local_access_usage_event(conn, event)?;
+    refresh_live_request_summary(conn, &event.request_id);
+    Ok(())
+}
+
+fn refresh_live_request_summary(conn: &Connection, request_id: &str) {
+    if let Err(error) = crate::modules::codex_request_summary::refresh_request(conn, request_id) {
+        logger::log_codex_api_warn(&format!(
+            "请求展示摘要更新失败，原始请求日志已保留，后续请求更新可重试: {error}"
+        ));
+    }
 }
 
 fn migrate_local_access_json_events(
@@ -1157,6 +1348,7 @@ async fn apply_reprice_changes_to_runtime_stats(changes: &[RequestLogRepriceChan
         let mut runtime = gateway_runtime().lock().await;
         apply_reprice_changes_to_stats(&mut runtime.stats, changes);
         runtime.stats_dirty = true;
+        runtime.stats_revision = runtime.stats_revision.wrapping_add(1);
     }
     schedule_stats_flush_if_needed().await;
 }
@@ -1202,6 +1394,32 @@ async fn queue_model_pricing_reprice(
     }
 }
 
+async fn run_model_pricing_reprice_in_background(
+    work: impl FnOnce() + Send + 'static,
+) -> Result<(), String> {
+    tokio::task::spawn_blocking(work)
+        .await
+        .map_err(|error| format!("历史价格重算任务失败: {error}"))
+}
+
+#[cfg(test)]
+mod model_pricing_background_tests {
+    #[tokio::test(flavor = "current_thread")]
+    async fn slow_reprice_work_does_not_block_async_runtime_progress() {
+        let started = std::time::Instant::now();
+        let work = tokio::spawn(super::run_model_pricing_reprice_in_background(|| {
+            std::thread::sleep(std::time::Duration::from_millis(300));
+        }));
+        tokio::time::sleep(std::time::Duration::from_millis(20)).await;
+        assert!(started.elapsed() < std::time::Duration::from_millis(200));
+        assert!(
+            !work.is_finished(),
+            "async work must progress before the slow batch ends"
+        );
+        work.await.unwrap().unwrap();
+    }
+}
+
 async fn run_model_pricing_reprice_worker(app: AppHandle) {
     loop {
         let job = {
@@ -1215,7 +1433,18 @@ async fn run_model_pricing_reprice_worker(app: AppHandle) {
             job
         };
 
-        run_model_pricing_reprice_job(app.clone(), job).await;
+        let job_id = job.job_id;
+        let model_ids = job.model_ids.clone();
+        let job_app = app.clone();
+        // SQLite waits and price calculations stay off the async runtime threads.
+        if let Err(error) = run_model_pricing_reprice_in_background(move || {
+            tauri::async_runtime::block_on(run_model_pricing_reprice_job(job_app, job));
+        })
+        .await
+        {
+            logger::log_codex_api_warn(&error);
+            emit_model_pricing_reprice_event(&app, job_id, "failed", 0, 0, 0, &model_ids, &error);
+        }
 
         let mut worker = model_pricing_reprice_worker().lock().await;
         if worker.pending.is_none() {
@@ -1293,7 +1522,6 @@ async fn run_model_pricing_reprice_job(app: AppHandle, job: ModelPricingRepriceJ
 
     let mut processed = 0_u64;
     let mut updated = 0_u64;
-    let mut all_changes = Vec::new();
     emit_model_pricing_reprice_event(
         &app,
         job.job_id,
@@ -1307,7 +1535,6 @@ async fn run_model_pricing_reprice_job(app: AppHandle, job: ModelPricingRepriceJ
 
     loop {
         if model_pricing_reprice_has_newer_pending_job(job.job_id).await {
-            apply_reprice_changes_to_runtime_stats(&all_changes).await;
             emit_model_pricing_reprice_event(
                 &app,
                 job.job_id,
@@ -1333,7 +1560,6 @@ async fn run_model_pricing_reprice_job(app: AppHandle, job: ModelPricingRepriceJ
                     "API 服务后台历史估算价值分批重算失败: {}",
                     error
                 ));
-                apply_reprice_changes_to_runtime_stats(&all_changes).await;
                 emit_model_pricing_reprice_event(
                     &app,
                     job.job_id,
@@ -1357,14 +1583,13 @@ async fn run_model_pricing_reprice_job(app: AppHandle, job: ModelPricingRepriceJ
                 Err(error) => Err(error),
             }
         };
-        let mut batch_changes = match batch_changes_result {
+        let batch_changes = match batch_changes_result {
             Ok(changes) => changes,
             Err(error) => {
                 logger::log_codex_api_warn(&format!(
                     "API 服务后台历史估算价值分批写回失败: {}",
                     error
                 ));
-                apply_reprice_changes_to_runtime_stats(&all_changes).await;
                 emit_model_pricing_reprice_event(
                     &app,
                     job.job_id,
@@ -1380,7 +1605,8 @@ async fn run_model_pricing_reprice_job(app: AppHandle, job: ModelPricingRepriceJ
         };
         processed = processed.saturating_add(processed_rows).min(total);
         updated = updated.saturating_add(updates.len() as u64);
-        all_changes.append(&mut batch_changes);
+        // Apply each bounded batch and release it instead of retaining the entire history.
+        apply_reprice_changes_to_runtime_stats(&batch_changes).await;
 
         if processed_rows == 0 {
             break;
@@ -1403,7 +1629,6 @@ async fn run_model_pricing_reprice_job(app: AppHandle, job: ModelPricingRepriceJ
         tokio::task::yield_now().await;
     }
 
-    apply_reprice_changes_to_runtime_stats(&all_changes).await;
     emit_model_pricing_reprice_event(
         &app,
         job.job_id,
@@ -1457,9 +1682,20 @@ fn reprice_request_logs_with_model_ids(
 }
 
 fn clear_local_access_usage_events_db() -> Result<(), String> {
+    REQUEST_LOG_RECORDS_CLEARED_BEFORE.store(now_ms(), Ordering::SeqCst);
+    REQUEST_LOG_WRITE_EPOCH.fetch_add(1, Ordering::SeqCst);
     let (_write_guard, conn) = open_local_access_logs_db_for_write()?;
+    conn.execute_batch("BEGIN IMMEDIATE")
+        .map_err(|e| format!("开始清空 API 服务请求日志失败: {}", e))?;
+    if diagnostics_table_exists(&conn).unwrap_or(false) {
+        conn.execute("DELETE FROM request_diagnostics", [])
+            .map_err(|e| format!("清空 API 服务请求诊断失败: {}", e))?;
+    }
+    crate::modules::codex_request_summary::clear_if_present(&conn)?;
     conn.execute("DELETE FROM request_logs", [])
         .map_err(|e| format!("清空 API 服务请求日志失败: {}", e))?;
+    conn.execute_batch("COMMIT")
+        .map_err(|e| format!("提交清空 API 服务请求日志失败: {}", e))?;
     Ok(())
 }
 
@@ -1475,7 +1711,14 @@ fn usage_event_from_row(row: &rusqlite::Row<'_>) -> rusqlite::Result<CodexLocalA
         let value: i64 = row.get(name)?;
         Ok(value.max(0) as u64)
     };
-    Ok(CodexLocalAccessUsageEvent {
+    let mut event = CodexLocalAccessUsageEvent {
+        service_tier_adaptation: row.get::<_, String>("authorization_route").ok()
+            .filter(|route| route == "official")
+            .and_then(|_| row.get::<_, Option<String>>("authorization_attempts_json").ok().flatten())
+            .as_deref().and_then(service_tier_adaptation_from_attempts_json),
+        authorization_route: row.get::<_, String>("authorization_route").ok().filter(|route| matches!(route.as_str(), "official" | "local_gateway")),
+        authorization_fallback: row.get::<_, Option<String>>("authorization_attempts_json").ok().flatten()
+            .as_deref().and_then(authorization_fallback_from_attempts_json),
         timestamp: row.get("timestamp")?,
         request_id: row.get("request_id")?,
         account_id: row.get("account_id")?,
@@ -1485,10 +1728,23 @@ fn usage_event_from_row(row: &rusqlite::Row<'_>) -> rusqlite::Result<CodexLocalA
         client_instance_id: row
             .get::<_, String>("client_instance_id")
             .unwrap_or_else(|_| String::new()),
+        proxy_route: row
+            .get::<_, String>("proxy_route_json")
+            .ok()
+            .filter(|raw| !raw.trim().is_empty())
+            .and_then(|raw| serde_json::from_str(&raw).ok()),
         model_id: row.get("model_id")?,
+        requested_model: row.get::<_, String>("requested_model").unwrap_or_default(),
+        upstream_model: row.get::<_, String>("upstream_model").unwrap_or_default(),
         gateway_mode: gateway_mode_from_db_value(gateway_mode.as_str()),
         request_kind: request_kind_from_db_value(request_kind.as_str()),
         service_tier: normalize_proxy_service_tier(service_tier.as_str()).map(str::to_string),
+        requested_service_tier: recorded_service_tier_value(
+            row.get::<_, String>("requested_service_tier").ok().as_deref(),
+        ),
+        response_service_tier: recorded_service_tier_value(
+            row.get::<_, String>("response_service_tier").ok().as_deref(),
+        ),
         reasoning_effort: normalize_recorded_reasoning_effort(reasoning_effort.as_str())
             .map(str::to_string),
         success: success != 0,
@@ -1496,6 +1752,16 @@ fn usage_event_from_row(row: &rusqlite::Row<'_>) -> rusqlite::Result<CodexLocalA
         error_category: row.get("error_category")?,
         error_message: row.get("error_message")?,
         latency_ms: read_u64("latency_ms")?,
+        first_response_ms: row
+            .get::<_, Option<i64>>("first_response_ms")
+            .ok()
+            .flatten()
+            .and_then(|value| u64::try_from(value).ok()),
+        output_generation_ms: row
+            .get::<_, Option<i64>>("output_generation_ms")
+            .ok()
+            .flatten()
+            .and_then(|value| u64::try_from(value).ok()),
         input_tokens: read_u64("input_tokens")?,
         output_tokens: read_u64("output_tokens")?,
         total_tokens: read_u64("total_tokens")?,
@@ -1507,27 +1773,47 @@ fn usage_event_from_row(row: &rusqlite::Row<'_>) -> rusqlite::Result<CodexLocalA
         input_usd_per_million: row.get("input_usd_per_million")?,
         output_usd_per_million: row.get("output_usd_per_million")?,
         cached_input_usd_per_million: row.get("cached_input_usd_per_million")?,
-    })
+    };
+    // A background migration may not have reached this row yet. Decode the
+    // same category on either side of its checkpoint, without another scan.
+    normalize_request_log_event_category(&mut event);
+    Ok(event)
 }
 
-fn load_local_access_usage_events_since(
-    since: i64,
-) -> Result<Vec<CodexLocalAccessUsageEvent>, String> {
+fn for_each_local_access_usage_event_since<F>(since: i64, on_event: F) -> Result<(), String>
+where
+    F: FnMut(CodexLocalAccessUsageEvent) -> Result<(), String>,
+{
     let conn = open_local_access_logs_db()?;
-    let service_tier_select = if request_logs_has_service_tier_column(&conn)
+    for_each_local_access_usage_event_since_from_conn(&conn, since, on_event)
+}
+
+fn for_each_local_access_usage_event_since_from_conn<F>(
+    conn: &Connection,
+    since: i64,
+    mut on_event: F,
+) -> Result<(), String>
+where
+    F: FnMut(CodexLocalAccessUsageEvent) -> Result<(), String>,
+{
+    let service_tier_select = if request_logs_has_service_tier_column(conn)
         .map_err(|e| format!("检查 API 服务日志 service_tier 列失败: {}", e))?
     {
         "service_tier"
     } else {
         "'' AS service_tier"
     };
-    let reasoning_effort_select = if request_logs_has_column(&conn, "reasoning_effort")
+    let reasoning_effort_select = if request_logs_has_column(conn, "reasoning_effort")
         .map_err(|e| format!("检查 API 服务日志 reasoning_effort 列失败: {}", e))?
     {
         "reasoning_effort"
     } else {
         "'' AS reasoning_effort"
     };
+    let service_tier_evidence_select = request_logs_service_tier_evidence_select(conn)?;
+    let proxy_route_select = request_logs_proxy_route_select(conn)?;
+    let first_response_select = request_logs_first_response_select(conn)?;
+    let output_generation_select = request_logs_output_generation_select(conn)?;
     let load_sql = format!(
         r#"
             SELECT
@@ -1539,10 +1825,17 @@ fn load_local_access_usage_events_since(
                 api_key_label,
                 client_instance_id,
                 model_id,
+                requested_model,
+                upstream_model,
                 gateway_mode,
                 request_kind,
                 {service_tier_select},
                 {reasoning_effort_select},
+                {service_tier_evidence_select},
+                {proxy_route_select},
+            {first_response_select}, {output_generation_select},
+                turn_state_length,
+                turn_state_class,
                 success,
                 http_status,
                 error_category,
@@ -1570,8 +1863,11 @@ fn load_local_access_usage_events_since(
     let rows = stmt
         .query_map(params![since], usage_event_from_row)
         .map_err(|e| format!("读取 API 服务日志失败: {}", e))?;
-    rows.collect::<Result<Vec<_>, _>>()
-        .map_err(|e| format!("解析 API 服务日志失败: {}", e))
+    for row in rows {
+        let event = row.map_err(|e| format!("解析 API 服务日志失败: {}", e))?;
+        on_event(event)?;
+    }
+    Ok(())
 }
 
 fn local_calendar_window_starts(now: i64) -> (i64, i64, i64) {
@@ -1617,6 +1913,168 @@ fn empty_usage_event_page(page: u32, page_size: u32) -> CodexLocalAccessUsageEve
     }
 }
 
+/// Only completed local API-service metadata is exposed to the account proxy UI.
+/// This log does not record or prove the public exit of each request.
+#[derive(Debug, serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct CodexAccountProxyRecentRequest {
+    timestamp: i64,
+    model_id: String,
+    success: bool,
+    http_status: Option<i64>,
+    latency_ms: i64,
+}
+
+fn query_recent_account_proxy_requests_from_conn(
+    conn: &Connection,
+    account_id: &str,
+) -> Result<Vec<CodexAccountProxyRecentRequest>, SqliteError> {
+    let mut stmt = conn.prepare(
+        "SELECT timestamp, model_id, success, http_status, latency_ms \
+         FROM request_logs WHERE account_id = ?1 AND gateway_mode = 'sidecar' \
+         ORDER BY timestamp DESC, id DESC LIMIT 8",
+    )?;
+    let rows = stmt.query_map(params![account_id], |row| {
+        Ok(CodexAccountProxyRecentRequest {
+            timestamp: row.get(0)?,
+            model_id: row.get(1)?,
+            success: row.get::<_, i64>(2)? != 0,
+            http_status: row.get(3)?,
+            latency_ms: row.get(4)?,
+        })
+    })?;
+    rows.collect()
+}
+
+pub async fn query_recent_account_proxy_requests(
+    account_id: String,
+) -> Result<Vec<CodexAccountProxyRecentRequest>, String> {
+    if account_id.trim().is_empty()
+        || account_id.len() > 256
+        || account_id.chars().any(char::is_control)
+    {
+        return Err("PROXY_INVALID_ACCOUNT".into());
+    }
+    tauri::async_runtime::spawn_blocking(move || {
+        let path = local_access_logs_db_path()?;
+        read_recent_account_proxy_requests(&path, &account_id)
+    })
+    .await
+    .map_err(|_| "PROXY_LOGS_UNAVAILABLE".to_string())?
+}
+
+// Historical metadata is independent of today's account/proxy/engine configuration.
+// Keep this a read-only path: no account decryption, runtime startup or DB migration.
+fn read_recent_account_proxy_requests(
+    path: &Path,
+    account_id: &str,
+) -> Result<Vec<CodexAccountProxyRecentRequest>, String> {
+    if !path
+        .try_exists()
+        .map_err(|_| "PROXY_LOGS_UNAVAILABLE".to_string())?
+    {
+        return Ok(Vec::new());
+    }
+    let conn = Connection::open_with_flags(path, rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY)
+        .map_err(|_| "PROXY_LOGS_UNAVAILABLE".to_string())?;
+    conn.busy_timeout(Duration::from_secs(1))
+        .map_err(|_| "PROXY_LOGS_UNAVAILABLE".to_string())?;
+    query_recent_account_proxy_requests_from_conn(&conn, account_id)
+        .map_err(|_| "PROXY_LOGS_UNAVAILABLE".to_string())
+}
+
+#[cfg(test)]
+mod account_proxy_recent_request_tests {
+    use super::*;
+
+    #[test]
+    fn history_reads_need_only_the_log_db_and_never_create_or_repair_it() {
+        struct Fixture(PathBuf);
+        impl Drop for Fixture {
+            fn drop(&mut self) {
+                let _ = fs::remove_dir_all(&self.0);
+            }
+        }
+        let fixture = Fixture(
+            std::env::temp_dir().join(format!("juling-proxy-history-{}", uuid::Uuid::new_v4())),
+        );
+        fs::create_dir_all(&fixture.0).unwrap();
+        let path = fixture.0.join("history.db");
+        // No account file, binding, unified settings, or engine exists in this fixture.
+        assert!(read_recent_account_proxy_requests(&path, "unbound-account")
+            .unwrap()
+            .is_empty());
+        assert!(
+            !path.exists(),
+            "reading absent history must not create a database"
+        );
+        let conn = Connection::open(&path).unwrap();
+        conn.execute_batch(
+            "CREATE TABLE request_logs (
+            id INTEGER PRIMARY KEY, timestamp INTEGER, account_id TEXT, gateway_mode TEXT,
+            model_id TEXT, success INTEGER, http_status INTEGER, latency_ms INTEGER
+        );",
+        )
+        .unwrap();
+        for id in 1..=12 {
+            conn.execute("INSERT INTO request_logs VALUES (?1, ?1, 'unbound-account', 'sidecar', 'model', 1, 200, 10)", params![id]).unwrap();
+        }
+        drop(conn);
+        let before = fs::read(&path).unwrap();
+        let rows = read_recent_account_proxy_requests(&path, "unbound-account").unwrap();
+        assert_eq!(
+            rows.iter().map(|row| row.timestamp).collect::<Vec<_>>(),
+            vec![12, 11, 10, 9, 8, 7, 6, 5]
+        );
+        assert!(read_recent_account_proxy_requests(&path, "other-account")
+            .unwrap()
+            .is_empty());
+        assert_eq!(
+            fs::read(&path).unwrap(),
+            before,
+            "history reads must not modify storage"
+        );
+        fs::write(&path, b"corrupt sqlite database").unwrap();
+        assert_eq!(
+            read_recent_account_proxy_requests(&path, "unbound-account").unwrap_err(),
+            "PROXY_LOGS_UNAVAILABLE"
+        );
+        assert_eq!(fs::read(&path).unwrap(), b"corrupt sqlite database");
+    }
+
+    #[test]
+    fn recent_request_summary_filters_exact_account_and_excludes_secrets() {
+        let conn = Connection::open_in_memory().expect("open database");
+        conn.execute_batch(
+            "CREATE TABLE request_logs (
+            id INTEGER PRIMARY KEY, timestamp INTEGER, account_id TEXT, gateway_mode TEXT,
+            model_id TEXT, success INTEGER, http_status INTEGER, latency_ms INTEGER,
+            error_message TEXT, api_key_label TEXT
+        );",
+        )
+        .expect("create request log table");
+        for (id, account_id, gateway_mode) in [
+            (1, "account-a", "sidecar"),
+            (2, "account-a-other", "sidecar"),
+            (3, "account-a", "legacy"),
+        ] {
+            conn.execute(
+                "INSERT INTO request_logs (id, timestamp, account_id, gateway_mode, model_id, success, http_status, latency_ms, error_message, api_key_label)
+                 VALUES (?1, ?1, ?2, ?3, 'gpt-test', 1, 200, 12, 'secret-error', 'secret-key')",
+                params![id, account_id, gateway_mode],
+            ).expect("insert request log");
+        }
+        let rows = query_recent_account_proxy_requests_from_conn(&conn, "account-a")
+            .expect("query recent requests");
+        assert_eq!(rows.len(), 1);
+        assert_eq!(rows[0].timestamp, 1);
+        let serialized = serde_json::to_string(&rows).expect("serialize summary");
+        assert!(!serialized.contains("secret-error"));
+        assert!(!serialized.contains("secret-key"));
+        assert!(!serialized.contains("account-a"));
+    }
+}
+
 fn query_local_access_usage_events_blocking(
     page: u32,
     page_size: u32,
@@ -1648,7 +2106,18 @@ fn query_local_access_usage_events_blocking(
         clauses.push("timestamp <= ?".to_string());
         params.push(SqlValue::Integer(end_at));
     }
-    push_like_filter(&mut clauses, &mut params, "model_id LIKE ?", model_query);
+    // 模型筛选同时匹配客户端请求模型与实际上游模型：
+    // 例如用 `cpa/gpt-5.6-sol` 或 `glm-5.3` 都能命中同一条路由日志。
+    push_like_filter(
+        &mut clauses,
+        &mut params,
+        "(model_id LIKE ? OR requested_model LIKE ? OR upstream_model LIKE ?)",
+        model_query.clone(),
+    );
+    if let Some(model_query) = normalize_log_filter(model_query) {
+        params.push(SqlValue::Text(format!("%{}%", model_query)));
+        params.push(SqlValue::Text(format!("%{}%", model_query)));
+    }
     push_like_filter(
         &mut clauses,
         &mut params,
@@ -1756,6 +2225,11 @@ fn query_local_access_usage_events_blocking(
             return Ok(empty_usage_event_page(page, page_size));
         }
     };
+    let service_tier_evidence_select = request_logs_service_tier_evidence_select(&conn)?;
+    let proxy_route_select = request_logs_proxy_route_select(&conn)?;
+    let first_response_select = request_logs_first_response_select(&conn)?;
+    let output_generation_select = request_logs_output_generation_select(&conn)?;
+    let authorization_fallback_select = request_logs_authorization_fallback_select(&conn)?;
     let list_sql = format!(
         r#"
         SELECT
@@ -1767,10 +2241,18 @@ fn query_local_access_usage_events_blocking(
             api_key_label,
             client_instance_id,
             model_id,
+            requested_model,
+            upstream_model,
             gateway_mode,
             request_kind,
             {service_tier_select},
             {reasoning_effort_select},
+            {service_tier_evidence_select},
+            {proxy_route_select},
+            {authorization_fallback_select},
+            {first_response_select}, {output_generation_select},
+            turn_state_length,
+            turn_state_class,
             success,
             http_status,
             error_category,
@@ -1892,9 +2374,14 @@ fn query_local_access_stats_window_blocking(
     } else {
         "'' AS reasoning_effort"
     };
+    let service_tier_evidence_select = request_logs_service_tier_evidence_select(&conn)?;
+    let proxy_route_select = request_logs_proxy_route_select(&conn)?;
+    let first_response_select = request_logs_first_response_select(&conn)?;
+    let output_generation_select = request_logs_output_generation_select(&conn)?;
     let sql = format!(
         r#"SELECT timestamp, request_id, account_id, email, api_key_id, api_key_label,
-                  client_instance_id, model_id, gateway_mode, request_kind, {service_tier_select}, {reasoning_effort_select}, success,
+                  client_instance_id, model_id, requested_model, upstream_model, gateway_mode, request_kind, {service_tier_select}, {reasoning_effort_select}, {service_tier_evidence_select}, {proxy_route_select},
+            {first_response_select}, {output_generation_select}, turn_state_length, turn_state_class, success,
                   http_status, error_category, error_message, latency_ms, input_tokens,
                   output_tokens, total_tokens, cached_tokens, reasoning_tokens, token_breakdown_json,
                   estimated_cost_usd, model_pricing_version, input_usd_per_million,
@@ -1907,16 +2394,23 @@ fn query_local_access_stats_window_blocking(
         .prepare(sql.as_str())
         .map_err(|e| format!("准备 API 服务统计查询失败: {}", e))?;
     let mut window = empty_stats_window(start_at, start_at);
+    let hourly_trend = end_at.saturating_sub(start_at) <= 36 * 60 * 60 * 1000;
+    let mut trend = HashMap::new();
     let rows = statement
         .query_map(params![start_at, end_at], usage_event_from_row)
         .map_err(|e| format!("查询 API 服务统计失败: {}", e))?;
     for row in rows {
         let event = row.map_err(|e| format!("解析 API 服务统计失败: {}", e))?;
         apply_usage_event_to_window(&mut window, &event);
+        apply_usage_event_to_trend(&mut trend, &event, hourly_trend);
     }
     sort_usage_accounts(&mut window.accounts);
     sort_usage_models(&mut window.models);
     sort_usage_api_keys(&mut window.api_keys);
+    let mut trend = trend.into_values().collect::<Vec<_>>();
+    trend.sort_by_key(|point| point.bucket_start);
+    window.trend = trend;
+    window.trend_hourly = hourly_trend;
     Ok(window)
 }
 
@@ -1932,161 +2426,6 @@ pub async fn query_local_access_stats_window(
     .map_err(|e| format!("统计 API 服务时间范围任务失败: {}", e))?
 }
 
-pub async fn query_local_access_account_window_stats(
-    queries: Vec<CodexLocalAccessAccountWindowQuery>,
-) -> Result<Vec<CodexLocalAccessAccountWindowStats>, String> {
-    ensure_runtime_loaded_without_start().await?;
-    tauri::async_runtime::spawn_blocking(move || {
-        query_local_access_account_window_stats_blocking(queries)
-    })
-    .await
-    .map_err(|e| format!("统计 API 服务账号窗口用量任务失败: {}", e))?
-}
-
-/// request_logs.timestamp 存毫秒。官方额度 resetAt / 前端误传的 Unix 秒会小于 1e12。
-fn normalize_request_log_time_bound(value: i64) -> i64 {
-    if value > 0 && value < 1_000_000_000_000 {
-        value.saturating_mul(1000)
-    } else {
-        value
-    }
-}
-
-struct AccountWindowStatSpec {
-    account_id: String,
-    window_key: String,
-    start_at: i64,
-    end_at: i64,
-}
-
-/// API 服务请求日志的 `account_id` 是本地 Codex 账号 ID。
-/// Team/Workspace 的官方 `account_id` 可能被多个成员共享，不能作为本地账号统计键。
-fn account_window_stat_identity_matches(row_account_id: &str, requested_account_id: &str) -> bool {
-    let row_account_id = row_account_id.trim();
-    let requested_account_id = requested_account_id.trim();
-    !row_account_id.is_empty() && row_account_id == requested_account_id
-}
-
-fn query_local_access_account_window_stats_blocking(
-    queries: Vec<CodexLocalAccessAccountWindowQuery>,
-) -> Result<Vec<CodexLocalAccessAccountWindowStats>, String> {
-    let conn = open_local_access_logs_db()?;
-    query_local_access_account_window_stats_from_conn(&conn, queries)
-}
-
-fn query_local_access_account_window_stats_from_conn(
-    conn: &Connection,
-    queries: Vec<CodexLocalAccessAccountWindowQuery>,
-) -> Result<Vec<CodexLocalAccessAccountWindowStats>, String> {
-    if queries.is_empty() {
-        return Ok(Vec::new());
-    }
-
-    let mut specs = Vec::new();
-    let mut min_start = i64::MAX;
-    let mut max_end = 0i64;
-    let mut local_account_ids = HashSet::new();
-    for query in &queries {
-        let account_id = query.account_id.trim();
-        let window_key = query.window_key.trim();
-        let start_at = normalize_request_log_time_bound(query.start_at);
-        let end_at = normalize_request_log_time_bound(query.end_at);
-        if account_id.is_empty() || window_key.is_empty() || end_at < start_at {
-            continue;
-        }
-        min_start = min_start.min(start_at);
-        max_end = max_end.max(end_at);
-        local_account_ids.insert(account_id.to_string());
-        specs.push(AccountWindowStatSpec {
-            account_id: account_id.to_string(),
-            window_key: window_key.to_string(),
-            start_at,
-            end_at,
-        });
-    }
-    if specs.is_empty() {
-        return Ok(Vec::new());
-    }
-
-    let placeholders = local_account_ids
-        .iter()
-        .map(|_| "?")
-        .collect::<Vec<_>>()
-        .join(", ");
-    let sql = format!(
-        "SELECT account_id, timestamp,
-                input_tokens, output_tokens, total_tokens,
-                cached_tokens, estimated_cost_usd
-         FROM request_logs
-         WHERE timestamp >= ? AND timestamp <= ?
-           AND account_id IN ({placeholders})"
-    );
-    let mut statement = conn
-        .prepare(sql.as_str())
-        .map_err(|e| format!("准备 API 服务账号窗口查询失败: {}", e))?;
-    let mut params: Vec<rusqlite::types::Value> = vec![
-        rusqlite::types::Value::Integer(min_start),
-        rusqlite::types::Value::Integer(max_end),
-    ];
-    for account_id in &local_account_ids {
-        params.push(rusqlite::types::Value::Text(account_id.clone()));
-    }
-
-    let mut totals = HashMap::<(String, String), CodexLocalAccessAccountWindowStats>::new();
-    for spec in &specs {
-        totals.insert(
-            (spec.account_id.clone(), spec.window_key.clone()),
-            CodexLocalAccessAccountWindowStats {
-                account_id: spec.account_id.clone(),
-                window_key: spec.window_key.clone(),
-                ..CodexLocalAccessAccountWindowStats::default()
-            },
-        );
-    }
-
-    let rows = statement
-        .query_map(rusqlite::params_from_iter(params.iter()), |row| {
-            Ok((
-                row.get::<_, String>(0)?,
-                row.get::<_, i64>(1)?,
-                row.get::<_, i64>(2)?.max(0) as u64,
-                row.get::<_, i64>(3)?.max(0) as u64,
-                row.get::<_, i64>(4)?.max(0) as u64,
-                row.get::<_, i64>(5)?.max(0) as u64,
-                row.get::<_, f64>(6).unwrap_or(0.0),
-            ))
-        })
-        .map_err(|e| format!("查询 API 服务账号窗口用量失败: {}", e))?;
-
-    for row in rows {
-        let (row_account_id, timestamp, input, output, total, cached, cost) =
-            row.map_err(|e| format!("解析 API 服务账号窗口用量失败: {}", e))?;
-        for spec in &specs {
-            if !account_window_stat_identity_matches(&row_account_id, &spec.account_id)
-                || timestamp < spec.start_at
-                || timestamp > spec.end_at
-            {
-                continue;
-            }
-            if let Some(entry) = totals.get_mut(&(spec.account_id.clone(), spec.window_key.clone()))
-            {
-                entry.request_count = entry.request_count.saturating_add(1);
-                entry.input_tokens = entry.input_tokens.saturating_add(input);
-                entry.output_tokens = entry.output_tokens.saturating_add(output);
-                entry.total_tokens = entry.total_tokens.saturating_add(total);
-                entry.cached_tokens = entry.cached_tokens.saturating_add(cached);
-                if cost.is_finite() && cost > 0.0 {
-                    entry.estimated_cost_usd += cost;
-                }
-            }
-        }
-    }
-
-    Ok(specs
-        .into_iter()
-        .filter_map(|spec| totals.remove(&(spec.account_id, spec.window_key)))
-        .collect())
-}
 
 fn apply_usage_event_to_stats(
     stats: &mut CodexLocalAccessStats,
@@ -2152,11 +2491,11 @@ fn apply_usage_event_to_stats(
         };
         stats.updated_at = stats.updated_at.max(event.timestamp);
     }
-    stats.events.push(event.clone());
+    push_recent_usage_event(&mut stats.events, event.clone());
 }
 
 fn rebuild_stats_from_request_logs() -> Result<CodexLocalAccessStats, String> {
-    let events = load_local_access_usage_events_since(0)?;
+    let now = now_ms();
     let mut stats = empty_stats_snapshot();
     stats.since = 0;
     stats.updated_at = 0;
@@ -2165,10 +2504,17 @@ fn rebuild_stats_from_request_logs() -> Result<CodexLocalAccessStats, String> {
     stats.models.clear();
     stats.api_keys.clear();
     stats.events.clear();
-    for event in &events {
-        apply_usage_event_to_stats(&mut stats, event);
+    ensure_stats_windows_current(&mut stats, now);
+    for_each_local_access_usage_event_since(0, |event| {
+        apply_usage_event_to_stats(&mut stats, &event);
+        apply_usage_event_to_current_windows(&mut stats, &event, now);
+        Ok(())
+    })?;
+    sort_stats_rows(&mut stats);
+    if stats.since <= 0 {
+        stats.since = now;
     }
-    normalize_stats(&mut stats);
+    stats.updated_at = stats.updated_at.max(now);
     Ok(stats)
 }
 
@@ -2179,6 +2525,7 @@ fn reprice_request_logs_for_collection(
     reprice_request_logs_with_model_ids(conn, Some(collection), None).map(|changes| changes.len())
 }
 
+#[cfg(test)]
 fn append_usage_event(
     events: &mut Vec<CodexLocalAccessUsageEvent>,
     now: i64,
@@ -2193,6 +2540,8 @@ fn append_usage_event(
     request_kind: CodexLocalAccessRequestKind,
     service_tier: Option<&str>,
     reasoning_effort: Option<&str>,
+    requested_model: Option<&str>,
+    upstream_model: Option<&str>,
     success: bool,
     http_status: Option<u16>,
     error_category: Option<&str>,
@@ -2203,8 +2552,68 @@ fn append_usage_event(
     model_pricing_version: u64,
     estimated_cost_usd: f64,
 ) -> CodexLocalAccessUsageEvent {
+    append_usage_event_with_meta(
+        events,
+        now,
+        request_id,
+        account_id,
+        account_email,
+        api_key_id,
+        api_key_label,
+        client_instance_id,
+        model_id,
+        gateway_mode,
+        request_kind,
+        service_tier,
+        reasoning_effort,
+        requested_model,
+        upstream_model,
+        success,
+        http_status,
+        error_category,
+        error_message,
+        latency_ms,
+        usage,
+        pricing,
+        model_pricing_version,
+        estimated_cost_usd,
+        None,
+    )
+}
+
+fn append_usage_event_with_meta(
+    events: &mut Vec<CodexLocalAccessUsageEvent>,
+    now: i64,
+    request_id: Option<&str>,
+    account_id: Option<&str>,
+    account_email: Option<&str>,
+    api_key_id: Option<&str>,
+    api_key_label: Option<&str>,
+    client_instance_id: Option<&str>,
+    model_id: Option<&str>,
+    gateway_mode: Option<CodexLocalAccessGatewayMode>,
+    request_kind: CodexLocalAccessRequestKind,
+    service_tier: Option<&str>,
+    reasoning_effort: Option<&str>,
+    requested_model: Option<&str>,
+    upstream_model: Option<&str>,
+    success: bool,
+    http_status: Option<u16>,
+    error_category: Option<&str>,
+    error_message: Option<&str>,
+    latency_ms: u64,
+    usage: Option<&UsageCapture>,
+    pricing: Option<&CodexLocalAccessModelPricing>,
+    model_pricing_version: u64,
+    estimated_cost_usd: f64,
+    proxy_route: Option<&CodexLocalAccessProxyRoute>,
+) -> CodexLocalAccessUsageEvent {
     let usage = usage.cloned().unwrap_or_default();
+    let model_id = model_id.unwrap_or_default().trim().to_string();
     let event = CodexLocalAccessUsageEvent {
+        authorization_route: None,
+        authorization_fallback: None,
+        service_tier_adaptation: None,
         timestamp: now,
         request_id: request_id.unwrap_or_default().trim().to_string(),
         account_id: account_id.unwrap_or_default().trim().to_string(),
@@ -2212,9 +2621,22 @@ fn append_usage_event(
         api_key_id: api_key_id.unwrap_or_default().trim().to_string(),
         api_key_label: api_key_label.unwrap_or_default().trim().to_string(),
         client_instance_id: client_instance_id.unwrap_or_default().trim().to_string(),
-        model_id: model_id.unwrap_or_default().trim().to_string(),
+        proxy_route: proxy_route.cloned(),
+        requested_model: requested_model
+            .map(str::trim)
+            .filter(|value| !value.is_empty())
+            .unwrap_or(model_id.as_str())
+            .to_string(),
+        upstream_model: upstream_model
+            .map(str::trim)
+            .filter(|value| !value.is_empty())
+            .unwrap_or(model_id.as_str())
+            .to_string(),
+        model_id,
         gateway_mode,
         request_kind,
+        requested_service_tier: None,
+        response_service_tier: None,
         service_tier: service_tier
             .and_then(normalize_proxy_service_tier)
             .map(str::to_string),
@@ -2226,6 +2648,8 @@ fn append_usage_event(
         error_category: error_category.unwrap_or_default().trim().to_string(),
         error_message: error_message.unwrap_or_default().trim().to_string(),
         latency_ms,
+        first_response_ms: cached_request_first_response(request_id),
+        output_generation_ms: None,
         input_tokens: usage.input_tokens,
         output_tokens: usage.output_tokens,
         total_tokens: usage.total_tokens,
@@ -2242,8 +2666,19 @@ fn append_usage_event(
             .unwrap_or_default(),
         cached_input_usd_per_million: pricing.and_then(|item| item.cached_input_usd_per_million),
     };
-    events.push(event.clone());
+    push_recent_usage_event(events, event.clone());
     event
+}
+
+fn push_recent_usage_event(
+    events: &mut Vec<CodexLocalAccessUsageEvent>,
+    event: CodexLocalAccessUsageEvent,
+) {
+    events.push(event);
+    if events.len() > STATE_RECENT_USAGE_EVENT_LIMIT {
+        let remove_count = events.len() - STATE_RECENT_USAGE_EVENT_LIMIT;
+        events.drain(..remove_count);
+    }
 }
 
 fn apply_usage_event_to_window(
@@ -2303,6 +2738,157 @@ fn apply_usage_event_to_window(
         event.timestamp,
     );
     window.updated_at = window.updated_at.max(event.timestamp);
+}
+
+fn usage_trend_bucket_start(timestamp: i64, hourly: bool) -> i64 {
+    let local = chrono::DateTime::<chrono::Utc>::from_timestamp_millis(timestamp)
+        .unwrap_or_else(chrono::Utc::now)
+        .with_timezone(&Local);
+    if !hourly {
+        return local_date_start_ms(local.date_naive());
+    }
+    let hour = local
+        .date_naive()
+        .and_hms_opt(local.hour(), 0, 0)
+        .expect("a local hour must be valid");
+    match Local.from_local_datetime(&hour) {
+        LocalResult::Single(value) => value.timestamp_millis(),
+        LocalResult::Ambiguous(first, second) => {
+            first.timestamp_millis().min(second.timestamp_millis())
+        }
+        LocalResult::None => local_date_start_ms(local.date_naive()),
+    }
+}
+
+fn apply_usage_event_to_trend(
+    trend: &mut HashMap<i64, CodexLocalAccessUsageTrendPoint>,
+    event: &CodexLocalAccessUsageEvent,
+    hourly: bool,
+) {
+    let bucket_start = usage_trend_bucket_start(event.timestamp, hourly);
+    let point = trend
+        .entry(bucket_start)
+        .or_insert_with(|| CodexLocalAccessUsageTrendPoint {
+            bucket_start,
+            usage: CodexLocalAccessUsageStats::default(),
+        });
+    let usage = UsageCapture {
+        input_tokens: event.input_tokens,
+        output_tokens: event.output_tokens,
+        total_tokens: event.total_tokens,
+        cached_tokens: event.cached_tokens,
+        reasoning_tokens: event.reasoning_tokens,
+        token_breakdown: event.token_breakdown.clone(),
+    };
+    apply_usage_stats(
+        &mut point.usage,
+        event.request_kind,
+        event.success,
+        Some(event.error_category.as_str()),
+        event.latency_ms,
+        Some(&usage),
+        event.estimated_cost_usd,
+    );
+}
+
+fn ensure_stats_windows_current(stats: &mut CodexLocalAccessStats, now: i64) {
+    let (day_since, week_since, month_since) = local_calendar_window_starts(now);
+    let updated_at = stats.updated_at.max(now);
+    if stats.daily.since != day_since {
+        stats.daily = empty_stats_window(day_since, updated_at);
+    }
+    if stats.weekly.since != week_since {
+        stats.weekly = empty_stats_window(week_since, updated_at);
+    }
+    if stats.monthly.since != month_since {
+        stats.monthly = empty_stats_window(month_since, updated_at);
+    }
+}
+
+fn apply_usage_event_to_current_windows(
+    stats: &mut CodexLocalAccessStats,
+    event: &CodexLocalAccessUsageEvent,
+    now: i64,
+) {
+    ensure_stats_windows_current(stats, now);
+    if event.timestamp >= stats.monthly.since {
+        apply_usage_event_to_window(&mut stats.monthly, event);
+    }
+    if event.timestamp >= stats.weekly.since {
+        apply_usage_event_to_window(&mut stats.weekly, event);
+    }
+    if event.timestamp >= stats.daily.since {
+        apply_usage_event_to_window(&mut stats.daily, event);
+    }
+}
+
+fn apply_snapshot_usage_event_to_current_windows(
+    stats: &mut CodexLocalAccessStats,
+    mut event: CodexLocalAccessUsageEvent,
+    now: i64,
+) {
+    normalize_request_log_event_category(&mut event);
+    apply_usage_event_to_current_windows(stats, &event, now);
+    push_recent_usage_event(&mut stats.events, event);
+}
+
+fn load_stats_windows_and_recent_events_from_conn(
+    conn: &Connection,
+    now: i64,
+) -> Result<
+    (
+        CodexLocalAccessStatsWindow,
+        CodexLocalAccessStatsWindow,
+        CodexLocalAccessStatsWindow,
+        Vec<CodexLocalAccessUsageEvent>,
+    ),
+    String,
+> {
+    let (day_since, week_since, month_since) = local_calendar_window_starts(now);
+    let mut daily = empty_stats_window(day_since, day_since);
+    let mut weekly = empty_stats_window(week_since, week_since);
+    let mut monthly = empty_stats_window(month_since, month_since);
+    let mut recent_events = Vec::with_capacity(STATE_RECENT_USAGE_EVENT_LIMIT);
+
+    for_each_local_access_usage_event_since_from_conn(
+        conn,
+        week_since.min(month_since),
+        |event| {
+            if event.timestamp >= month_since {
+                apply_usage_event_to_window(&mut monthly, &event);
+            }
+            if event.timestamp >= week_since {
+                apply_usage_event_to_window(&mut weekly, &event);
+            }
+            if event.timestamp >= day_since {
+                apply_usage_event_to_window(&mut daily, &event);
+            }
+            push_recent_usage_event(&mut recent_events, event);
+            Ok(())
+        },
+    )?;
+
+    for window in [&mut daily, &mut weekly, &mut monthly] {
+        sort_usage_accounts(&mut window.accounts);
+        sort_usage_models(&mut window.models);
+        sort_usage_api_keys(&mut window.api_keys);
+    }
+    Ok((daily, weekly, monthly, recent_events))
+}
+
+fn load_stats_windows_and_recent_events(
+    now: i64,
+) -> Result<
+    (
+        CodexLocalAccessStatsWindow,
+        CodexLocalAccessStatsWindow,
+        CodexLocalAccessStatsWindow,
+        Vec<CodexLocalAccessUsageEvent>,
+    ),
+    String,
+> {
+    let conn = open_local_access_logs_db()?;
+    load_stats_windows_and_recent_events_from_conn(&conn, now)
 }
 
 fn recompute_time_windows(stats: &mut CodexLocalAccessStats, now: i64) {
@@ -2470,3 +3056,36 @@ fn apply_reprice_changes_to_stats(
     sort_usage_api_keys(&mut stats.monthly.api_keys);
 }
 
+#[cfg(test)]
+#[path = "codex_local_access_tests_proxy_route_storage.rs"]
+mod proxy_route_storage_tests;
+
+#[cfg(test)]
+mod official_service_tier_adaptation_tests {
+    use super::*;
+
+    fn attempt(route: &str, adaptation: bool) -> CodexLocalAccessRequestAttempt {
+        CodexLocalAccessRequestAttempt {
+            authorization_route: Some(route.into()),
+            transport: "http".into(),
+            service_tier_adaptation: adaptation.then(|| crate::models::codex_local_access::CodexLocalAccessServiceTierAdaptation {
+                requested_tier: "priority".into(), sent_tier: "default".into(), reason: "official_default_only".into(),
+            }),
+            ..Default::default()
+        }
+    }
+
+    #[test]
+    fn official_service_tier_summary_uses_final_route_and_validates_recorded_metadata() {
+        let official = attempt("official", true);
+        let local = attempt("local_gateway", false);
+        let encode = |items: Vec<CodexLocalAccessRequestAttempt>| serde_json::to_string(&items).unwrap();
+        assert!(service_tier_adaptation_from_attempts_json(&encode(vec![official.clone()])).is_some());
+        assert!(service_tier_adaptation_from_attempts_json(&encode(vec![official.clone(), local])).is_none());
+        let mut invalid = official.clone();
+        invalid.service_tier_adaptation.as_mut().unwrap().sent_tier = "priority".into();
+        assert!(service_tier_adaptation_from_attempts_json(&encode(vec![invalid])).is_none());
+        let mut skipped_local = attempt("local_gateway", false); skipped_local.transport = "preflight".into();
+        assert!(service_tier_adaptation_from_attempts_json(&encode(vec![official, skipped_local])).is_some());
+    }
+}

@@ -23,9 +23,12 @@ const EXTENSION_SECRET_STORAGE_KEYS: [&str; 2] = [
     "antigravity.autoTrigger.credentials",
     "antigravity.autoTrigger.credential",
 ];
-const EXTENSION_SECRET_STORAGE_EXTENSION_IDS: [&str; 2] = [
+// External extension IDs are protocol compatibility identifiers, not UI branding.
+const EXTENSION_SECRET_STORAGE_EXTENSION_IDS: [&str; 4] = [
     "jlcodes.antigravity-cockpit",
     "jlcodes99.antigravity-cockpit",
+    "jlcodes.antigravity-juling",
+    "jlcodes99.antigravity-juling",
 ];
 
 #[derive(Debug, Deserialize)]
@@ -1269,9 +1272,9 @@ mod account_note_import_tests {
         ));
         let _ = fs::remove_dir_all(&data_dir);
         fs::create_dir_all(&data_dir).expect("create test data dir");
-        std::env::set_var("COCKPIT_TOOLS_TEST_DATA_DIR", &data_dir);
+        std::env::set_var("JULING_TOOLS_TEST_DATA_DIR", &data_dir);
         let result = run();
-        std::env::remove_var("COCKPIT_TOOLS_TEST_DATA_DIR");
+        std::env::remove_var("JULING_TOOLS_TEST_DATA_DIR");
         let _ = fs::remove_dir_all(&data_dir);
         result
     }

@@ -25,6 +25,9 @@ func applyCodexPromptCacheHeaders(from sdktranslator.Format, req cliproxyexecuto
 
 func applyCodexPromptCacheHeadersWithContext(ctx context.Context, from sdktranslator.Format, req cliproxyexecutor.Request, rawJSON []byte, headerSets ...http.Header) ([]byte, http.Header, error) {
 	headers := http.Header{}
+	if cliproxyexecutor.ContinuityActive(ctx) {
+		return rawJSON, headers, nil
+	}
 	if len(rawJSON) == 0 {
 		return rawJSON, headers, nil
 	}
@@ -127,8 +130,9 @@ func applyCodexWebsocketHeaders(ctx context.Context, headers http.Header, auth *
 	if auth != nil {
 		attrs = auth.Attributes
 	}
-	util.ApplyCustomHeadersFromAttrs(&http.Request{Header: headers}, attrs, ginHeaders)
-	applyCodexCloakingHeaders(headers, cfg)
+	req := (&http.Request{Header: headers}).WithContext(ctx)
+	util.ApplyCustomHeadersFromAttrs(req, attrs, ginHeaders)
+	applyCodexCloakingHeaders(headers, cfg, isAPIKey)
 
 	return headers
 }

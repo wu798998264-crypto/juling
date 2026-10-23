@@ -125,7 +125,7 @@ mod tests {
             .duration_since(UNIX_EPOCH)
             .unwrap()
             .as_nanos();
-        let path = std::env::temp_dir().join(format!("cockpit-user-memory-{stamp}.json"));
+        let path = std::env::temp_dir().join(format!("juling-user-memory-{stamp}.json"));
         let _ = std::fs::remove_file(&path);
 
         let empty = read_memory_from_path(&path).expect("empty memory");

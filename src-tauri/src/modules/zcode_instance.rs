@@ -94,9 +94,7 @@ pub fn get_default_user_data_dir() -> Result<PathBuf, String> {
 }
 
 pub fn get_instances_root_dir() -> Result<PathBuf, String> {
-    Ok(dirs::home_dir()
-        .ok_or_else(|| "无法获取用户主目录".to_string())?
-        .join(".antigravity_cockpit/instances/zcode"))
+    crate::modules::data_paths::resolve_data_dir().map(|root| root.join("instances").join("zcode"))
 }
 
 pub fn get_instance_defaults() -> Result<modules::instance::InstanceDefaults, String> {
@@ -162,6 +160,9 @@ fn copy_default_to_root(root: &Path) -> Result<(), String> {
 }
 
 pub fn create_instance(params: CreateInstanceParams) -> Result<InstanceProfile, String> {
+    let directory_preexisted = std::path::Path::new(params.user_data_dir.trim()).exists();
+    let creation_mode = params.init_mode.clone().unwrap_or_else(|| "copy".to_string());
+    let _creation_guard = crate::modules::instance_storage_cleanup::protect_instance_creation()?;
     let _guard = STORE_LOCK.lock().map_err(|_| "获取 ZCode 实例锁失败")?;
     let mut store = load_instance_store()?;
     let name = instance_store::normalize_name(&params.name)?;
@@ -218,6 +219,9 @@ pub fn create_instance(params: CreateInstanceParams) -> Result<InstanceProfile, 
         last_launched_at: None,
         last_pid: None,
     };
+    crate::modules::instance_directory_ownership::record_creation(
+        std::path::Path::new(&instance.user_data_dir), &instance.id, &creation_mode, directory_preexisted,
+    )?;
     store.instances.push(instance.clone());
     save_instance_store(&store)?;
     Ok(instance)
@@ -256,6 +260,7 @@ pub fn update_instance(params: UpdateInstanceParams) -> Result<InstanceProfile, 
 }
 
 pub fn delete_instance(instance_id: &str) -> Result<(), String> {
+    let _creation_guard = crate::modules::instance_storage_cleanup::protect_instance_creation()?;
     let _guard = STORE_LOCK.lock().map_err(|_| "获取 ZCode 实例锁失败")?;
     let mut store = load_instance_store()?;
     let index = store
@@ -788,7 +793,7 @@ mod tests {
     fn process_collection_uses_helper_user_data_dir_after_main_rewrites_argv() {
         let output = r#"
 37764     1 ZCode [333]
-37767 37764 /Applications/ZCode.app/Contents/Frameworks/ZCode Helper.app/Contents/MacOS/ZCode Helper --type=gpu-process --user-data-dir=/Users/test/.antigravity_cockpit/instances/zcode/managed/electron --shared-files
+37767 37764 /Applications/ZCode.app/Contents/Frameworks/ZCode Helper.app/Contents/MacOS/ZCode Helper --type=gpu-process --user-data-dir=/Users/test/.antigravity_juling/instances/zcode/managed/electron --shared-files
 41440     1 ZCode
 41443 41440 /Applications/ZCode.app/Contents/Frameworks/ZCode Helper.app/Contents/MacOS/ZCode Helper --type=gpu-process --user-data-dir=/Users/test/Library/Application Support/ZCode --shared-files
 "#;
@@ -798,7 +803,7 @@ mod tests {
                 (
                     37764,
                     Some(
-                        "/Users/test/.antigravity_cockpit/instances/zcode/managed/electron"
+                        "/Users/test/.antigravity_juling/instances/zcode/managed/electron"
                             .to_string()
                     )
                 ),
@@ -813,7 +818,7 @@ mod tests {
     #[test]
     fn pid_resolution_distinguishes_default_and_managed_user_data_dirs() {
         let default_dir = Path::new("/Users/test/Library/Application Support/ZCode");
-        let managed_root = Path::new("/Users/test/.antigravity_cockpit/instances/zcode/managed");
+        let managed_root = Path::new("/Users/test/.antigravity_juling/instances/zcode/managed");
         let entries = vec![
             (
                 37764,

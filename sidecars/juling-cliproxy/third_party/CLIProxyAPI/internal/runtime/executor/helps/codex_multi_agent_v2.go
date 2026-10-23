@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	multiagentv2 "github.com/router-for-me/CLIProxyAPI/v7/internal/client/codex/optimize-multi-agent-v2"
+	"github.com/router-for-me/CLIProxyAPI/v7/internal/codex/collaboration"
 	"github.com/router-for-me/CLIProxyAPI/v7/internal/config"
 	"github.com/router-for-me/CLIProxyAPI/v7/internal/thinking"
 	openaichatclaude "github.com/router-for-me/CLIProxyAPI/v7/internal/translator/claude/openai/chat-completions"
@@ -14,6 +15,7 @@ import (
 	interactionsclaude "github.com/router-for-me/CLIProxyAPI/v7/internal/translator/interactions/claude"
 	openaiclaude "github.com/router-for-me/CLIProxyAPI/v7/internal/translator/openai/claude"
 	cliproxyauth "github.com/router-for-me/CLIProxyAPI/v7/sdk/cliproxy/auth"
+	cliproxyexecutor "github.com/router-for-me/CLIProxyAPI/v7/sdk/cliproxy/executor"
 	sdktranslator "github.com/router-for-me/CLIProxyAPI/v7/sdk/translator"
 )
 
@@ -25,8 +27,21 @@ func RewriteCodexSpawnAgentDescription(ctx context.Context, headers http.Header,
 
 // RewriteCodexMultiAgentV2Input converts official Codex multi-agent input into
 // standard Responses API messages when multi-agent v2 optimization is enabled.
-func RewriteCodexMultiAgentV2Input(ctx context.Context, headers http.Header, payload []byte, cfg *config.Config) []byte {
-	return multiagentv2.RewriteCodexMultiAgentV2Input(ctx, headers, payload, cfg)
+func RewriteCodexMultiAgentV2Input(ctx context.Context, headers http.Header, payload []byte, cfg *config.Config, isCompat ...bool) []byte {
+	return multiagentv2.RewriteCodexMultiAgentV2Input(ctx, headers, payload, cfg, isCompat...)
+}
+
+// RewriteCodexPortableGatewayInput retains generic provider gateway routing
+// metadata as readable content, without changing the CPA Codex adapter contract.
+func RewriteCodexPortableGatewayInput(ctx context.Context, headers http.Header, payload []byte, cfg *config.Config) []byte {
+	return multiagentv2.RewriteCodexPortableGatewayInput(ctx, headers, payload, cfg)
+}
+
+// RewriteCodexOrphanDelegationInput converts orphan Codex delegation outputs into
+// standard user messages when orphan delegation compatibility is enabled and the
+// request carries the X-Openai-Subagent: collab_spawn header.
+func RewriteCodexOrphanDelegationInput(ctx context.Context, headers http.Header, payload []byte, cfg *config.Config) []byte {
+	return multiagentv2.RewriteCodexOrphanDelegationInputForConfig(ctx, headers, payload, cfg)
 }
 
 // TranslateRequestWithCodexMultiAgentV2 normalizes official Codex multi-agent
@@ -71,8 +86,11 @@ func TranslateRequestWithAPIKeyModelCompatibility(ctx context.Context, headers h
 	if !isCompat {
 		return TranslateRequestWithCodexMultiAgentV2(ctx, headers, cfg, from, to, model, payload, stream)
 	}
-	if from == sdktranslator.FormatOpenAIResponse && to != sdktranslator.FormatCodex && to != sdktranslator.FormatOpenAIResponse {
-		payload = multiagentv2.RewriteCodexMultiAgentV2Input(ctx, headers, payload, cfg)
+	if from == sdktranslator.FormatOpenAIResponse {
+		payload = RewriteCodexOrphanDelegationInput(ctx, headers, payload, cfg)
+		if to != sdktranslator.FormatCodex && to != sdktranslator.FormatOpenAIResponse {
+			payload = multiagentv2.RewriteCodexMultiAgentV2Input(ctx, headers, payload, cfg, true)
+		}
 	}
 
 	var translated []byte
@@ -109,13 +127,14 @@ func OptimizeCodexMultiAgentV2Request(ctx context.Context, headers http.Header, 
 	return multiagentv2.OptimizeCodexMultiAgentV2Request(ctx, headers, payload, cfg)
 }
 
-// OptimizeCodexMultiAgentV2RequestForAuth applies the standard Codex MultiAgentV2
-// request optimization and, when the selected codex-api-key model has is-compat
-// enabled, also converts agent_message items into portable message/user input.
-func OptimizeCodexMultiAgentV2RequestForAuth(ctx context.Context, headers http.Header, payload []byte, cfg *config.Config, auth *cliproxyauth.Auth, model string) ([]byte, bool) {
+// OptimizeCodexMultiAgentV2RequestForAuth applies CPA's execution-attempt policy:
+// orphan delegation, optional official-client optimization, then model compatibility.
+// Compatibility is independent of the optional optimization switch and user agent.
+func OptimizeCodexMultiAgentV2RequestForAuth(ctx context.Context, headers http.Header, payload []byte, cfg *config.Config, auth *cliproxyauth.Auth, isCompat bool) ([]byte, bool) {
+	payload = multiagentv2.RewriteCodexOrphanDelegationInputForConfig(ctx, headers, payload, cfg)
 	updated, optimized := multiagentv2.OptimizeCodexMultiAgentV2Request(ctx, headers, payload, cfg)
-	if cliproxyauth.CodexAPIKeyModelIsCompat(cfg, auth, model) {
-		updated = multiagentv2.RewriteCodexMultiAgentV2Input(ctx, headers, updated, cfg)
+	if isCompat {
+		updated = multiagentv2.RewriteCodexMultiAgentV2Input(ctx, headers, updated, cfg, true)
 	}
 	return updated, optimized
 }
@@ -124,4 +143,47 @@ func OptimizeCodexMultiAgentV2RequestForAuth(ctx context.Context, headers http.H
 // values before an upstream response is translated and returned to the client.
 func RestoreCodexMultiAgentV2Response(payload []byte, optimized bool) []byte {
 	return multiagentv2.RestoreCodexMultiAgentV2Response(payload, optimized)
+}
+
+// MarkCodexMultiAgentV2PlaintextResponse uses the final sent request, independently
+// of the namespace optimization boolean or connection-level namespace state.
+func MarkCodexMultiAgentV2PlaintextResponse(ctx context.Context, headers http.Header, payload []byte, policy collaboration.PlaintextPolicy, cfg *config.Config) []byte {
+	return multiagentv2.MarkCodexMultiAgentV2PlaintextResponse(ctx, headers, payload, policy, cfg)
+}
+
+// SetCodexMultiAgentV2PlaintextObserver applies the same final declaration policy
+// before new output reaches the continuity store, while raw wire logs stay intact.
+func SetCodexMultiAgentV2PlaintextObserver(ctx context.Context, headers http.Header, attempt *cliproxyexecutor.ContinuityAttempt, policy collaboration.PlaintextPolicy, cfg *config.Config) {
+	attempt.SetEventTransform(func(payload []byte) []byte {
+		return multiagentv2.MarkCodexMultiAgentV2PlaintextWireEvent(ctx, headers, payload, policy, cfg)
+	})
+}
+
+// PrepareCodexMultiAgentV2Tools refreshes the collaboration tool declarations at
+// the Responses API boundary without renaming the collaboration namespace.
+// Executors that perform their own namespace folding (for example the xAI
+// executor) use it to refresh spawn_agent model details and to drop encrypted
+// message parameters before the tools reach a third-party upstream.
+func PrepareCodexMultiAgentV2Tools(ctx context.Context, headers http.Header, payload []byte, cfg *config.Config) []byte {
+	if cfg == nil {
+		return payload
+	}
+	updated, _ := multiagentv2.PrepareCodexMultiAgentV2Tools(ctx, headers, payload, cfg.Codex.OptimizeMultiAgentV2, cfg.Home.Enabled)
+	return updated
+}
+
+// NormalizeCodexCollaborationToolNames rewrites flat collaboration tool names
+// (for example `collaboration::spawn_agent` or `collaboration.spawn_agent`)
+// emitted by third-party models into the structured {name, namespace} shape
+// Codex clients register.
+func NormalizeCodexCollaborationToolNames(payload []byte) []byte {
+	return multiagentv2.RestoreCodexCollaborationFlatToolNames(payload)
+}
+
+// NormalizeCodexCollaborationToolCalls normalizes flat collaboration tool names
+// and integer-valued floating point arguments produced by third-party models
+// into the strictly typed shape Codex clients accept.
+func NormalizeCodexCollaborationToolCalls(payload []byte) []byte {
+	payload = multiagentv2.RestoreCodexCollaborationFlatToolNames(payload)
+	return multiagentv2.NormalizeCodexCollaborationArguments(payload)
 }

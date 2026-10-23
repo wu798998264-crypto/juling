@@ -19,6 +19,7 @@ import (
 )
 
 func (e *XAIExecutor) Execute(ctx context.Context, auth *cliproxyauth.Auth, req cliproxyexecutor.Request, opts cliproxyexecutor.Options) (resp cliproxyexecutor.Response, err error) {
+	ctx = helps.EnsureSessionContext(ctx, opts, req.Payload)
 	if opts.Alt == "responses/compact" {
 		return e.executeCompact(ctx, auth, req, opts)
 	}
@@ -43,6 +44,7 @@ func (e *XAIExecutor) Execute(ctx context.Context, auth *cliproxyauth.Auth, req 
 	reporter.SetTranslatedReasoningEffort(prepared.body, e.Identifier())
 
 	url := strings.TrimSuffix(baseURL, "/") + "/responses"
+	prepared.body = prepared.finalizePayload(prepared.body)
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(prepared.body))
 	if err != nil {
 		return resp, err
@@ -71,7 +73,7 @@ func (e *XAIExecutor) Execute(ctx context.Context, auth *cliproxyauth.Auth, req 
 		}
 		helps.AppendAPIResponseChunk(ctx, e.cfg, data)
 		helps.LogWithRequestID(ctx).Debugf("request error, error status: %d, error message: %s", httpResp.StatusCode, helps.SummarizeErrorBody(httpResp.Header.Get("Content-Type"), data))
-		return resp, xaiStatusErr(httpResp.StatusCode, data)
+		return resp, cliproxyexecutor.UpstreamRequestRejected(xaiStatusErr(httpResp.StatusCode, data))
 	}
 
 	data, err := io.ReadAll(httpResp.Body)
@@ -84,13 +86,26 @@ func (e *XAIExecutor) Execute(ctx context.Context, auth *cliproxyauth.Auth, req 
 	outputItemsByIndex := make(map[int64][]byte)
 	var outputItemsFallback [][]byte
 	responseFilter := newXAIInternalXSearchResponseFilter(prepared.filterInternalXSearch, prepared.clientDeclaredTools)
+	namespaceRestorer := newXAINamespaceRestorer(prepared.namespaceTools)
+	applyPatchRestorer := newXAIApplyPatchRestorer(prepared.restoreApplyPatch)
+	toolSearchRestorer := helps.NewXAIClientToolSearchRestorer(prepared.clientToolSearch)
 	for _, line := range bytes.Split(data, []byte("\n")) {
 		if !bytes.HasPrefix(line, xaiDataTag) {
 			continue
 		}
 		eventData := xaiNormalizeReasoningSummaryData(bytes.TrimSpace(line[len(xaiDataTag):]))
-		eventData = restoreXAINamespaceToolCalls(eventData, prepared.namespaceTools)
+		eventData, err = toolSearchRestorer.Apply(eventData)
+		if err != nil {
+			return resp, statusErr{code: http.StatusBadGateway, msg: err.Error()}
+		}
+		eventData = namespaceRestorer.restore(eventData)
+		eventData = helps.NormalizeXAICollaborationToolCalls(eventData)
+		eventData = restoreXAIClientWebSearchName(eventData, prepared.webSearchAlias)
 		eventData = responseFilter.apply(eventData)
+		eventData = applyPatchRestorer.applyStream(eventData)
+		if applyPatchRestorer != nil && applyPatchRestorer.err != nil {
+			return resp, statusErr{code: http.StatusBadGateway, msg: applyPatchRestorer.err.Error()}
+		}
 		if len(eventData) == 0 {
 			continue
 		}
@@ -103,6 +118,15 @@ func (e *XAIExecutor) Execute(ctx context.Context, auth *cliproxyauth.Auth, req 
 				reporter.Publish(ctx, detail)
 			}
 			completedData := xaiPatchCompletedOutput(eventData, outputItemsByIndex, outputItemsFallback)
+			completedData = applyPatchRestorer.restore(completedData)
+			if errPatch := applyPatchRestorer.finish(); errPatch != nil {
+				return resp, statusErr{code: http.StatusBadGateway, msg: errPatch.Error()}
+			}
+			completedData, err = prepared.clientToolSearch.RestorePayload(completedData)
+			if err != nil {
+				return resp, statusErr{code: http.StatusBadGateway, msg: err.Error()}
+			}
+			completedData = helps.NormalizeXAICollaborationToolCalls(completedData)
 			completedData = xaiNormalizeReasoningSummaryData(completedData)
 			if eventType == "response.completed" {
 				// A truncated turn carries no replayable terminal state, so only a
@@ -149,19 +173,23 @@ func (e *XAIExecutor) executeCompactRequest(ctx context.Context, auth *cliproxya
 	prepared.body, _ = sjson.DeleteBytes(prepared.body, "stream")
 	prepared.body, _ = sjson.DeleteBytes(prepared.body, "tools")
 	// Compact deletes tools after prepareResponsesRequestTo, which can now keep
-	// image_generation and rewrite its forced choice to allowed_tools on grok-4.6+.
+	// image_generation and rewrite its forced choice to "required" on grok-4.6+.
 	// Drop the leftover selection so compact does not send tool_choice without tools.
 	prepared.body = normalizeXAIToolChoiceForTools(prepared.body)
 	for _, field := range []string{"max_output_tokens", "temperature", "top_p", "top_k", "stop"} {
 		prepared.body, _ = sjson.DeleteBytes(prepared.body, field)
 	}
 	prepared.body = xaiRemoveInputItemsByType(prepared.body, "compaction_trigger")
+	if previousResponseID := strings.TrimSpace(gjson.GetBytes(req.Payload, "previous_response_id").String()); previousResponseID != "" {
+		prepared.body, _ = sjson.SetBytes(prepared.body, "previous_response_id", previousResponseID)
+	}
 
 	reporter := helps.NewExecutorUsageReporter(ctx, e, prepared.baseModel, auth)
 	defer reporter.TrackFailure(ctx, &err)
 	reporter.SetTranslatedReasoningEffort(prepared.body, e.Identifier())
 
 	requestURL := strings.TrimSuffix(baseURL, "/") + "/responses/compact"
+	prepared.body = prepared.finalizePayload(prepared.body)
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, requestURL, bytes.NewReader(prepared.body))
 	if err != nil {
 		return nil, nil, nil, err
@@ -194,7 +222,7 @@ func (e *XAIExecutor) executeCompactRequest(ctx context.Context, auth *cliproxya
 
 	if httpResp.StatusCode < 200 || httpResp.StatusCode >= 300 {
 		helps.LogWithRequestID(ctx).Debugf("request error, error status: %d, error message: %s", httpResp.StatusCode, helps.SummarizeErrorBody(httpResp.Header.Get("Content-Type"), data))
-		err = xaiStatusErr(httpResp.StatusCode, data)
+		err = cliproxyexecutor.UpstreamRequestRejected(xaiStatusErr(httpResp.StatusCode, data))
 		return nil, nil, nil, err
 	}
 

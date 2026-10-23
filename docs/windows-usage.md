@@ -1,0 +1,15 @@
+# 聚灵 Windows 本地版
+
+界面版本 S1.0，内部功能基线 1.3.73。
+
+安装版使用 Juling_1.3.73_x64-setup.exe；便携版解压后运行「聚灵.exe」。
+需要 Windows 10/11 x64 和 Microsoft Edge WebView2 Runtime。
+请保留同目录的代理、scripts、native-menu-icons 和 licenses，不要只移动主程序。
+
+这是独立桌面程序，不依赖开发服务器。授权、额度查询、模型请求和代理订阅仍需要对应服务的网络连接。
+
+检查更新只访问维护者的 wu798998264-crypto/juling 仓库，使用聚灵独立签名验证 NSIS 安装包。本次覆盖完成首次信任迁移，后续版本号高于 1.3.73 时才提示更新；没有新版本时显示已是最新版本。
+
+本地程序升级不重写账号和 API 配置。账号数据保存在 Windows 用户目录，兼容历史位置，并非程序文件夹。历史原版可能共用账号目录，避免同时操作同一客户端。降级程序不等于回滚账号数据。
+
+Google/Gemini/Antigravity 自有 OAuth 配置尚未提供；Mihomo 不随包；真实账号链路需用户在自己的配置下验证。Windows EXE 未做 Authenticode 签名，可能出现安全提醒。详见发行说明与 NOTICE.txt。

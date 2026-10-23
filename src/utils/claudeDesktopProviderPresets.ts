@@ -1,8 +1,10 @@
+import { localProviderPresentation } from './providerPresentation';
 import type {
   ClaudeDesktopGatewayConnectionMode,
   ClaudeDesktopGatewayModelMapping,
 } from '../types/claude';
 import {
+  APIKEY_FUN_DIRECT_ENDPOINT,
   APIKEY_FUN_GLOBAL_ENDPOINT,
   APIKEY_FUN_REGISTER_URL,
   APIKEY_FUN_SOURCE_TAG,
@@ -115,14 +117,14 @@ function repeatedMappedRoute(
   return brandedRoutes(upstreamModel, upstreamModel, upstreamModel, options);
 }
 
-export const CLAUDE_DESKTOP_GATEWAY_PROVIDER_PRESETS: readonly ClaudeDesktopGatewayProviderPreset[] = [
+export const CLAUDE_DESKTOP_GATEWAY_PROVIDER_PRESETS: readonly ClaudeDesktopGatewayProviderPreset[] = ([
   {
     id: CLAUDE_DESKTOP_GATEWAY_APIKEY_FUN_PROVIDER_ID,
-    name: 'APIKEY.FUN',
-    baseUrls: [APIKEY_FUN_GLOBAL_ENDPOINT, 'https://slb.apikey.fun'],
+    name: 'JIULING.FUN',
+    baseUrls: [APIKEY_FUN_GLOBAL_ENDPOINT, APIKEY_FUN_DIRECT_ENDPOINT],
     authScheme: 'bearer',
     connectionMode: 'direct',
-    website: 'https://apikey.fun',
+    website: 'https://apikey.fan',
     apiKeyUrl: APIKEY_FUN_REGISTER_URL,
     isPartner: true,
     sourceTag: APIKEY_FUN_SOURCE_TAG,
@@ -733,10 +735,10 @@ export const CLAUDE_DESKTOP_GATEWAY_PROVIDER_PRESETS: readonly ClaudeDesktopGate
     apiKeyUrl: 'https://code.pipellm.ai/login?ref=uvw650za',
     modelMappings: directRoutes(),
   },
-];
+] satisfies ClaudeDesktopGatewayProviderPreset[]).map(localProviderPresentation);
 
 export function getDefaultClaudeDesktopGatewayProviderPresetId(): string {
-  return CLAUDE_DESKTOP_GATEWAY_APIKEY_FUN_PROVIDER_ID;
+  return CLAUDE_DESKTOP_GATEWAY_PROVIDER_CUSTOM_ID;
 }
 
 export function findClaudeDesktopGatewayProviderPresetById(

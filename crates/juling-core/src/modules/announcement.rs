@@ -610,65 +610,13 @@ fn filter_top_right_ads(
 }
 
 async fn fetch_remote_announcements() -> Result<AnnouncementResponse, String> {
-    logger::log_info("[Announcement] 从远端拉取公告");
-
-    let client = reqwest::Client::builder()
-        .user_agent("Juling")
-        .timeout(std::time::Duration::from_secs(10))
-        .build()
-        .map_err(|e| format!("创建公告 HTTP 客户端失败: {}", e))?;
-
-    let url = format!("{}?t={}", ANNOUNCEMENT_URL, Utc::now().timestamp_millis());
-
-    let response = client
-        .get(url)
-        .header("Cache-Control", "no-cache")
-        .header("Pragma", "no-cache")
-        .send()
-        .await
-        .map_err(|e| format!("拉取远端公告失败: {}", e))?;
-
-    if !response.status().is_success() {
-        return Err(format!("远端公告接口返回异常状态: {}", response.status()));
-    }
-
-    response
-        .json()
-        .await
-        .map_err(|e| format!("解析远端公告失败: {}", e))
+    // No requests, including forced refresh and cache fallback paths.
+    Ok(serde_json::from_str("{}").expect("empty local announcements"))
 }
 
 async fn load_announcements_raw() -> Result<AnnouncementResponse, String> {
-    if let Some(local_data) = load_local_announcements()? {
-        return Ok(local_data);
-    }
-
-    if let Some(cache) = load_cache()? {
-        let age_ms = Utc::now().timestamp_millis() - cache.time;
-        if age_ms < CACHE_TTL_MS {
-            logger::log_info("[Announcement] 使用本地缓存公告");
-            return Ok(cache.data);
-        }
-    }
-
-    match fetch_remote_announcements().await {
-        Ok(payload) => {
-            if let Err(err) = save_cache(&payload) {
-                logger::log_warn(&format!("[Announcement] 保存公告缓存失败: {}", err));
-            }
-            Ok(payload)
-        }
-        Err(err) => {
-            logger::log_warn(&format!(
-                "[Announcement] 拉取远端公告失败，尝试回退缓存: {}",
-                err
-            ));
-            if let Some(cache) = load_cache()? {
-                return Ok(cache.data);
-            }
-            Err(err)
-        }
-    }
+    // Ignore legacy cached/local promotional payloads too.
+    fetch_remote_announcements().await
 }
 
 pub async fn get_announcement_state() -> Result<AnnouncementState, String> {

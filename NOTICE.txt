@@ -1,0 +1,21 @@
+聚灵修改版来源与许可说明
+
+修改维护者：wu798998264-crypto
+发行与源码：https://github.com/wu798998264-crypto/juling
+上游项目：Cockpit Tools，jlcodes99/cockpit-tools
+来源版本：v1.3.73
+来源提交：5330f75ae6b3c39fbd72f528ac2188207047d49a
+来源：https://github.com/jlcodes99/cockpit-tools/tree/v1.3.73
+
+本修改版变更了品牌、界面皮肤、广告与推广策略、反馈入口以及更新仓库，
+并保留了用户配置兼容。不是上游官方发行版，不表示获得上游作者背书。
+
+上游 README 声明采用 CC BY-NC-SA 4.0：
+https://creativecommons.org/licenses/by-nc-sa/4.0/
+本修改版保留该许可及其署名、非商业、相同方式共享要求。
+商业用途需另行取得权利人的相应授权。
+
+CLIProxyAPI 使用 MIT License，完整通知见 licenses/CLIProxyAPI-LICENSE.txt。
+其他第三方项目的归属、声明和许可保留在配套源码及其 README 中。
+
+此文件仅为离线来源与许可声明，不是应用广告、赞助入口或自动联网请求。

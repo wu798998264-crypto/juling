@@ -81,27 +81,7 @@ pub fn get_default_cursor_user_data_dir() -> Result<PathBuf, String> {
 }
 
 pub fn get_default_instances_root_dir() -> Result<PathBuf, String> {
-    #[cfg(target_os = "macos")]
-    {
-        let home = dirs::home_dir().ok_or("无法获取用户主目录")?;
-        return Ok(home.join(".antigravity_cockpit/instances/cursor"));
-    }
-
-    #[cfg(target_os = "windows")]
-    {
-        let appdata =
-            std::env::var("APPDATA").map_err(|_| "无法获取 APPDATA 环境变量".to_string())?;
-        return Ok(PathBuf::from(appdata).join(".antigravity_cockpit\\instances\\cursor"));
-    }
-
-    #[cfg(target_os = "linux")]
-    {
-        let home = dirs::home_dir().ok_or("无法获取用户主目录")?;
-        return Ok(home.join(".antigravity_cockpit/instances/cursor"));
-    }
-
-    #[allow(unreachable_code)]
-    Err("Cursor 应用多开仅支持 macOS、Windows 和 Linux".to_string())
+    crate::modules::data_paths::managed_instances_root_dir("cursor")
 }
 
 pub fn get_instance_defaults() -> Result<InstanceDefaults, String> {
@@ -509,7 +489,7 @@ fn is_helper_process(name: &str, args_line: &str) -> bool {
 }
 
 fn command_trace_enabled() -> bool {
-    if let Ok(value) = std::env::var("COCKPIT_COMMAND_TRACE") {
+    if let Ok(value) = std::env::var("JULING_COMMAND_TRACE") {
         match value.trim().to_ascii_lowercase().as_str() {
             "1" | "true" | "yes" | "on" => return true,
             "0" | "false" | "no" | "off" => return false,

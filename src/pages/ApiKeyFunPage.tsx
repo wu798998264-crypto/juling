@@ -6,6 +6,7 @@ import {
   Eye,
   EyeOff,
   KeyRound,
+  Play,
   Trash2,
   Copy,
   Pencil,
@@ -18,20 +19,16 @@ import {
   type ModelProviderUsageSummary,
 } from '../services/modelProviderUsageService';
 import {
-  APIKEY_FUN_GLOBAL_ENDPOINT,
-  APIKEY_FUN_PROVIDER_BASE_URL,
   APIKEY_FUN_SOURCE_TAG,
-  buildApiKeyFunProviderBaseUrl,
 } from '../utils/apikeyFunLinks';
-import {
-  CLAUDE_APIKEY_FUN_BASE_URL,
-} from '../utils/claudeProviderPresets';
 import {
   dispatchApiKeyFunPrefillEvent,
   getApiKeyFunPrefillPage,
   type ApiKeyFunPrefillTarget,
 } from '../utils/apiKeyFunPrefill';
 import julingCoreLogo from '../assets/branding/juling-core-master.png';
+import { ApiKeyFunKeyConfigModal } from '../components/apiKeyFun/ApiKeyFunKeyConfigModal';
+import { LOCAL_RELAY_ENDPOINT_KEY, normalizeLocalRelayUrl } from '../utils/localRelayConfig';
 import './ApiKeyFunPage.css';
 
 type ManagedApiKey = {
@@ -139,6 +136,8 @@ function isClaudeModelId(value: string): boolean {
 
 export function ApiKeyFunPage() {
   const { t } = useTranslation();
+  const [providerBaseUrl, setProviderBaseUrl] = useState(() => normalizeLocalRelayUrl(window.localStorage.getItem(LOCAL_RELAY_ENDPOINT_KEY) ?? ''));
+  const [endpointDraft, setEndpointDraft] = useState(providerBaseUrl);
   const [apiKey, setApiKey] = useState('');
   const [showApiKey, setShowApiKey] = useState(false);
   const [usage, setUsage] = useState<ModelProviderUsageSummary | null>(null);
@@ -162,10 +161,13 @@ export function ApiKeyFunPage() {
 
   // 复制状态
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [configKey, setConfigKey] = useState<ManagedApiKey | null>(null);
+  const [configModels, setConfigModels] = useState<string[]>([]);
+  const [configModelsLoading, setConfigModelsLoading] = useState(false);
 
-  const providerBaseUrl = useMemo(
-    () => buildApiKeyFunProviderBaseUrl(APIKEY_FUN_GLOBAL_ENDPOINT),
-    [],
+  const claudeBaseUrl = useMemo(
+    () => providerBaseUrl.replace(/\/+$/, '').replace(/\/v1$/i, ''),
+    [providerBaseUrl],
   );
   const maskedApiKey = useMemo(() => maskKey(apiKey), [apiKey]);
   const currentKey = apiKey.trim();
@@ -185,7 +187,7 @@ export function ApiKeyFunPage() {
   const canAddCurrentKeyToClaude = apiKeyFunModelCatalog.some(isClaudeModelId);
   const canShowTargetActions = canAddCurrentKeyToCodex || canAddCurrentKeyToClaude;
   const canPrefillCurrentKey =
-    Boolean(currentSavedKey) && !queryingModels && apiKeyFunModelCatalog.length > 0;
+    Boolean(currentSavedKey) && Boolean(providerBaseUrl) && !queryingModels && apiKeyFunModelCatalog.length > 0;
 
   useEffect(() => {
     if (initialManagedKeySelectedRef.current) return;
@@ -210,7 +212,7 @@ export function ApiKeyFunPage() {
   // 自动额度查询
   useEffect(() => {
     const key = apiKey.trim();
-    if (!key) {
+    if (!key || !providerBaseUrl) {
       setUsage(null);
       setUsageError(null);
       setQueryingUsage(false);
@@ -381,7 +383,7 @@ export function ApiKeyFunPage() {
         apiKey: key,
         apiKeyName: item.name || buildManagedKeyName(key),
         providerName: 'JIULING.FUN',
-        baseUrl: target === 'codex' ? APIKEY_FUN_PROVIDER_BASE_URL : CLAUDE_APIKEY_FUN_BASE_URL,
+        baseUrl: target === 'codex' ? providerBaseUrl : claudeBaseUrl,
         sourceTag: APIKEY_FUN_SOURCE_TAG,
         modelCatalog: apiKeyFunModelCatalog,
       });
@@ -394,7 +396,29 @@ export function ApiKeyFunPage() {
         target: targetName,
       }),
     });
-  }, [apiKeyFunModelCatalog, setManagedKeyAction, t]);
+  }, [apiKeyFunModelCatalog, claudeBaseUrl, providerBaseUrl, setManagedKeyAction, t]);
+
+  /** 「使用密钥」：按这把 Key 真实返回的模型渲染配置弹窗（只读 + 复制）。 */
+  const handleOpenKeyConfig = useCallback(async (item: ManagedApiKey) => {
+    if (!providerBaseUrl) {
+      setUsageError('请先确认服务地址，再查询或使用密钥。');
+      return;
+    }
+    setConfigKey(item);
+    setConfigModels([]);
+    setConfigModelsLoading(true);
+    try {
+      const { models } = await listModelProviderModels({
+        baseUrl: providerBaseUrl,
+        apiKey: item.key,
+      });
+      setConfigModels([...new Set(models.map((model) => model.id.trim()).filter(Boolean))]);
+    } catch {
+      setConfigModels([]);
+    } finally {
+      setConfigModelsLoading(false);
+    }
+  }, [providerBaseUrl]);
 
   // 切换密钥
   const handleUseManagedKey = useCallback((item: ManagedApiKey) => {
@@ -496,6 +520,23 @@ export function ApiKeyFunPage() {
             </div>
 
             <div className="apikey-fun-form-grid apikey-fun-form-grid-single">
+              <label className="apikey-fun-field apikey-fun-field-wide">
+                <span>服务地址 · OpenAI 兼容 Base URL</span>
+                <input
+                  value={endpointDraft}
+                  placeholder="https://你的服务地址/v1"
+                  onChange={(event) => setEndpointDraft(event.target.value)}
+                />
+                <button type="button" className="btn btn-secondary"
+                  disabled={!normalizeLocalRelayUrl(endpointDraft) || normalizeLocalRelayUrl(endpointDraft) === providerBaseUrl}
+                  onClick={() => {
+                    const endpoint = normalizeLocalRelayUrl(endpointDraft);
+                    if (!endpoint) return;
+                    window.localStorage.setItem(LOCAL_RELAY_ENDPOINT_KEY, endpoint);
+                    setProviderBaseUrl(endpoint);
+                  }}>确认地址</button>
+                <small>仅向你确认的地址查询额度与模型；聚灵不内置推广线路。更换地址前请核对密钥归属。</small>
+              </label>
               <label className="apikey-fun-field apikey-fun-field-wide">
                 <span>{t('apiKeyFun.apiKeyLabel', 'API Key')}</span>
                 <div className="apikey-fun-secret-input">
@@ -776,6 +817,17 @@ export function ApiKeyFunPage() {
                         <button
                           type="button"
                           className="apikey-fun-key-copy"
+                          title={t('apiKeyFun.keyManager.useKey', '使用密钥')}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            void handleOpenKeyConfig(item);
+                          }}
+                        >
+                          <Play size={14} />
+                        </button>
+                        <button
+                          type="button"
+                          className="apikey-fun-key-copy"
                           onClick={(e) => handleCopyToClipboard(item.key, item.id, e)}
                           title={t('apiKeyFun.copyKey', '复制密钥')}
                         >
@@ -806,6 +858,16 @@ export function ApiKeyFunPage() {
           </section>
         </aside>
       </div>
+      {configKey && (
+        <ApiKeyFunKeyConfigModal
+          keyName={configKey.name}
+          apiKey={configKey.key}
+          baseUrl={providerBaseUrl}
+          models={configModels}
+          modelsLoading={configModelsLoading}
+          onClose={() => setConfigKey(null)}
+        />
+      )}
     </div>
   );
 }

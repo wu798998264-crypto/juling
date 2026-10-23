@@ -366,7 +366,7 @@ async function writeStatus(status, extra = {}, webContents = null, options = {})
   if (authenticated) {
     writeJsonAtomic(exportFile, {
       version: 1,
-      source: 'cockpit-claude-desktop-auth-helper',
+      source: 'juling-claude-desktop-auth-helper',
       exportedAt: payload.exportedAt,
       userDataDir,
       cookies,

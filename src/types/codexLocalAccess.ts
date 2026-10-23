@@ -3,7 +3,8 @@ export type CodexLocalAccessScope = "localhost" | "lan";
 export type CodexLocalAccessClientBaseUrlHost = "localhost" | "127.0.0.1";
 export type CodexLocalAccessImageGenerationMode =
   "enabled" | "images_only" | "disabled";
-export type CodexLocalAccessGatewayMode = "legacy" | "sidecar";
+export type CodexLocalAccessGatewayMode = "legacy" | "sidecar" | "native";
+
 export type CodexLocalAccessRequestKind =
   "text" | "image_generation" | "image_edit" | "other";
 export type CodexLocalAccessImageGenerationStatus =
@@ -12,6 +13,38 @@ export type CodexLocalAccessImageGenerationPolicy =
   | "inherit"
   | "enabled"
   | "disabled";
+
+export const CODEX_CAPABILITY_IDS = [
+  'function', 'custom', 'namespace', 'tool_search_client', 'tool_search', 'web_search',
+  'image_generation', 'file_search', 'code_interpreter', 'computer_use', 'mcp',
+  'programmatic_tool_calling', 'image_input', 'file_input', 'audio_input', 'video_input', 'compact',
+] as const;
+export type CodexCapabilityId = typeof CODEX_CAPABILITY_IDS[number];
+export type CodexCapabilityDeclaration = 'supported' | 'unsupported';
+export interface CodexCapabilityOverride {
+  accountId: string;
+  /** '*' is an explicit declaration covering every model on this account. */
+  model: string;
+  capabilities: Partial<Record<CodexCapabilityId, CodexCapabilityDeclaration>>;
+}
+export interface CodexCapabilityFallbackConfig {
+  enabled: boolean;
+  accountIds: string[];
+  overrides: CodexCapabilityOverride[];
+}
+export interface CodexMultiAgentConfig {
+  optimize: boolean;
+  orphanDelegation: boolean;
+  compatModels: { accountId: string; model: string }[];
+}
+export interface CodexCapabilityFallbackTrace {
+  reason: 'preflight' | 'upstream_unsupported';
+  capabilities: string[];
+  fromAccountId: string;
+  fromModel: string;
+  toAccountId: string;
+  toModel: string;
+}
 
 export type CodexLocalAccessRoutingStrategy =
   | "auto"
@@ -35,6 +68,8 @@ export interface CodexLocalAccessCustomRoutingRule {
 export interface CodexLocalAccessOAuthQuotaReserve {
   hourlyPercent: number;
   weeklyPercent: number;
+  strict?: boolean;
+  safetyMarginPercent?: number;
 }
 
 export interface CodexLocalAccessAccountModelRule {
@@ -55,6 +90,7 @@ export interface CodexLocalAccessModelPricing {
   outputUsdPerMillion: number;
   cachedInputUsdPerMillion?: number | null;
   standardLongInputUsdPerMillion?: number | null;
+  standardLongPriceOverride?: boolean;
   standardLongOutputUsdPerMillion?: number | null;
   standardLongCachedInputUsdPerMillion?: number | null;
   priorityInputUsdPerMillion?: number | null;
@@ -113,6 +149,7 @@ export interface CodexLocalAccessTimeoutPreset {
 }
 
 export interface CodexLocalAccessCollection {
+  multiAgent?: CodexMultiAgentConfig;
   enabled: boolean;
   port: number;
   apiKey: string;
@@ -120,21 +157,34 @@ export interface CodexLocalAccessCollection {
   accessScope: CodexLocalAccessScope;
   clientBaseUrlHost: CodexLocalAccessClientBaseUrlHost;
   imageGenerationMode: CodexLocalAccessImageGenerationMode;
+  imageGenerationModel: string;
+  imageGenerationModels?: string[];
+  imageGenerationDeletedModels?: string[];
+  imageGenerationMainModel?: string | null;
   imageGenerationAccountPolicies: Record<
     string,
     CodexLocalAccessImageGenerationPolicy
   >;
+  /** 生图转发账号池：生图与图片编辑请求交给这些 OAuth 或图片 API 来源执行。 */
+  imageGenerationAccountIds?: string[];
+  imageGenerationAccountModels?: Record<string, string>;
   gatewayMode: CodexLocalAccessGatewayMode;
+  nativeGatewayDefaultMigrated?: boolean;
   upstreamProxyUrl?: string | null;
   routingStrategy: CodexLocalAccessRoutingStrategy;
+  capabilityFallback?: CodexCapabilityFallbackConfig;
   customRoutingRules: CodexLocalAccessCustomRoutingRule[];
   accountModelRules: CodexLocalAccessAccountModelRule[];
   modelAliases: CodexLocalAccessModelAlias[];
   modelPricingVersion: number;
   modelPricings: CodexLocalAccessModelPricing[];
   debugLogs: boolean;
+  /** Request bodies are recorded locally only when explicitly enabled. */
+  requestPayloadLogging?: boolean;
   immediateSseResponse: boolean;
   maxConcurrentImageRequests: number;
+  maxAccountConcurrency: number;
+  accountConcurrencyWaitMs: number;
   excludedModels: string[];
   sessionAffinity: boolean;
   sessionAffinityTtlMs: number;
@@ -150,6 +200,12 @@ export interface CodexLocalAccessCollection {
   boundOauthAccountId?: string | null;
   boundOauthQuotaReserve?: CodexLocalAccessOAuthQuotaReserve | null;
   accountIds: string[];
+  /** Paused service members retain their scopes and scheduling preferences. */
+  pausedAccountIds?: string[];
+  /** Display-only ownership; it never grants access to a credential. */
+  officialAccountSourceIds?: Record<string, string>;
+  /** Active official credential per original service member; never a member ID. */
+  officialAccountBindings?: Record<string, string>;
   createdAt: number;
   updatedAt: number;
 }
@@ -202,6 +258,13 @@ export interface CodexLocalAccessStatsWindow {
   accounts: CodexLocalAccessAccountStats[];
   models: CodexLocalAccessModelStats[];
   apiKeys: CodexLocalAccessApiKeyStats[];
+  trend: CodexLocalAccessUsageTrendPoint[];
+  trendHourly: boolean;
+}
+
+export interface CodexLocalAccessUsageTrendPoint {
+  bucketStart: number;
+  usage: CodexLocalAccessUsageStats;
 }
 
 export interface CodexLocalAccessAccountWindowQuery {
@@ -244,26 +307,50 @@ export interface CodexTokenBreakdown {
   unclassified_tokens: number;
 }
 
+export interface CodexLocalAccessProxyRoute {
+  kind: "node" | "proxy" | "direct" | "unknown";
+  name: string;
+}
+
 export interface CodexLocalAccessUsageEvent {
+  authorizationRoute?: 'official' | 'local_gateway' | null;
+  /** Recorded fallback evidence; absent for older logs or pending diagnostics. */
+  authorizationFallback?: CodexAuthorizationFallbackTrace | null;
   timestamp: number;
   requestId: string;
   accountId: string;
   email: string;
+  /** 请求执行时记录的代理快照；旧日志不按当前账号绑定回填。 */
+  proxyRoute?: CodexLocalAccessProxyRoute | null;
   apiKeyId: string;
   apiKeyLabel: string;
-  /** 多开实例目录 ID（x-cockpit-instance-id） */
+  /** 多开实例目录 ID（x-juling-instance-id） */
   clientInstanceId?: string;
   modelId: string;
+  /** 客户端请求的模型（保留路由命名空间前缀）。 */
+  requestedModel?: string;
+  /** 实际发送给上游的模型；与请求模型相同时前端只展示一行。 */
+  upstreamModel?: string;
   gatewayMode?: CodexLocalAccessGatewayMode | null;
   requestKind: CodexLocalAccessRequestKind;
   serviceTier?: string | null;
-  /** Request reasoning effort (e.g. low/medium/high/xhigh), when present. */
+  /** Final outbound field (auto when omitted); absent for historical records. */
+  requestedServiceTier?: string | null;
+  /** Explicit adaptation on the final sent attempt; never inferred from feedback. */
+  serviceTierAdaptation?: CodexServiceTierAdaptation | null;
+  /** Upstream feedback, preserved verbatim (including default). */
+  responseServiceTier?: string | null;
+  /** Request reasoning effort (e.g. low/medium/high/xhigh/max), when present. */
   reasoningEffort?: string | null;
   success: boolean;
   httpStatus?: number | null;
   errorCategory: string;
   errorMessage: string;
   latencyMs: number;
+  /** Time to the first upstream response fragment; absent on older records. */
+  firstResponseMs?: number | null;
+  /** Observed streaming window for this successful upstream attempt; never inferred for older logs. */
+  outputGenerationMs?: number | null;
   inputTokens: number;
   outputTokens: number;
   totalTokens: number;
@@ -296,6 +383,92 @@ export interface CodexLocalAccessUsageEventPage {
   page: number;
   pageSize: number;
   totalPages: number;
+}
+
+export interface CodexAuthorizationFallbackTrace {
+  reason: string;
+  /** Missing on legacy records, which describe an upstream rejection. */
+  triggerStage?: string;
+  fromAccountId: string;
+  toAccountId: string;
+  fromRoute: string;
+  toRoute: string;
+  status?: number | null;
+  errorCode?: string | null;
+  errorMessage?: string | null;
+}
+
+export interface CodexServiceTierAdaptation {
+  requestedTier: string;
+  sentTier: 'default';
+  reason: 'official_default_only';
+}
+
+export interface CodexLocalAccessRequestAttempt {
+  serviceTierAdaptation?: CodexServiceTierAdaptation | null;
+  authorizationRoute?: 'official' | 'local_gateway' | null;
+  authorizationFallback?: CodexAuthorizationFallbackTrace | null;
+  upstreamRequestId?: string | null;
+  sequence: number;
+  transportError?: string | null;
+  transportPoolRetired?: boolean | null;
+  upstreamHttpVersion?: string | null;
+  accountId: string;
+  accountEmail?: string | null;
+  modelId: string;
+  transport: string;
+  startedAtMs: number;
+  latencyMs: number;
+  status?: number | null;
+  success: boolean;
+  errorCategory?: string | null;
+  errorMessage?: string | null;
+  failurePhase?: string | null;
+  capabilityFallback?: CodexCapabilityFallbackTrace | null;
+  /** Actual headers prepared for this upstream attempt, independent of body recording. */
+  upstreamIdentityCaptured?: boolean;
+  upstreamSessionId?: string | null;
+  upstreamThreadId?: string | null;
+  /** Additional headers were observed separately from legacy Session/Thread capture. */
+  upstreamIdentityMetadataCaptured?: boolean;
+  upstreamInstallationId?: string | null;
+  upstreamChatgptAccountId?: string | null;
+  /** Local selected-account snapshot, not proof that any header was sent. */
+  accountIdentity?: {
+    version: number;
+    scope: string;
+    installationId: string;
+    revision: number;
+  } | null;
+}
+
+export interface CodexLocalAccessRequestPayload {
+  stage: string;
+  attemptSequence?: number | null;
+  transport: string;
+  contentType: string;
+  headers?: Record<string, string>;
+  body: string;
+  truncated: boolean;
+  originalBytes: number;
+  sha256: string;
+}
+
+export interface CodexLocalAccessRequestDetail {
+  requestId: string;
+  firstResponseMs?: number | null;
+  failurePhase?: string | null;
+  /** Absent/false on historical records; never inferred from body or requestId. */
+  clientIdentityCaptured?: boolean;
+  clientSessionId?: string | null;
+  clientThreadId?: string | null;
+  clientIdentityMetadataCaptured?: boolean;
+  clientInstallationId?: string | null;
+  clientChatgptAccountId?: string | null;
+  attempts: CodexLocalAccessRequestAttempt[];
+  payloads: CodexLocalAccessRequestPayload[];
+  capturedAtMs: number;
+  truncated: boolean;
 }
 
 export interface CodexLocalAccessRequestLogQuery {
@@ -340,6 +513,8 @@ export interface CodexLocalAccessAccountHealth {
 }
 
 export interface CodexLocalAccessAccountPoolHealth {
+  /** Absent for diagnostic snapshots from older hosts. */
+  requestId?: string;
   apiKeyId: string;
   apiKeyLabel: string;
   provider: string;
@@ -356,7 +531,15 @@ export interface CodexLocalAccessAccountPoolHealth {
   quotaReservedAuths: number;
   imagePolicyBlockedAuths: number;
   accountStatuses: CodexLocalAccessAccountPoolMemberHealth[];
+  /** 账号范围/候选筛选诊断；不表示账号凭据或健康状态异常。 */
+  scopeDiagnostics?: CodexLocalAccessAccountPoolScopeDiagnostic[];
   lastFailureAt: number;
+}
+
+export interface CodexLocalAccessAccountPoolScopeDiagnostic {
+  accountId: string;
+  accountEmail: string;
+  reasonCode: string;
 }
 
 export interface CodexLocalAccessAccountPoolMemberHealth {
@@ -387,14 +570,30 @@ export interface CodexLocalAccessQuotaReserveStatus {
   effectiveWindow: "hourly" | "weekly" | null;
   effectiveRemainingPercent: number | null;
   effectiveReservePercent: number | null;
+  strict?: boolean;
+  safetyMarginPercent?: number;
+  inFlight?: number;
+  awaitingConfirmation?: boolean;
+}
+
+export interface CodexServiceMemberAccess {
+  sourceAccountId: string;
+  accountId: string;
+  mode: 'codex' | 'official';
+  paused: boolean;
 }
 
 export interface CodexLocalAccessState {
   collection: CodexLocalAccessCollection | null;
+  /** Logical source identity is separate from the credential endpoint. */
+  serviceMembers?: CodexServiceMemberAccess[];
   running: boolean;
   preparing: boolean;
   preparationTotal: number;
   preparationCompleted: number;
+  recovering?: boolean;
+  recoveryAttempt?: number;
+  recoveryTotal?: number;
   refreshingAccounts: boolean;
   accountRefreshTotal: number;
   accountRefreshCompleted: number;
@@ -409,6 +608,8 @@ export interface CodexLocalAccessState {
   stats: CodexLocalAccessStats;
   accountHealth: CodexLocalAccessAccountHealth[];
   accountPoolHealth: CodexLocalAccessAccountPoolHealth[];
+  /** 手动恢复后仍在抑制窗口内的账号：异常列表里临时隐藏这些账号的行。 */
+  recoverySuppressedAccountIds?: string[];
   quotaReserveStatus: CodexLocalAccessQuotaReserveStatus | null;
 }
 
@@ -416,8 +617,6 @@ export interface CodexLocalAccessAppendAccountSkipped {
   accountId: string;
   reason:
     | "not_found"
-    | "chat_completions_api_key"
-    | "deepseek_unsupported"
     | "free_restricted"
     | "pending_oauth"
     | "web_session_quota_only";
@@ -482,4 +681,38 @@ export type CodexLocalAccessChatStreamEvent =
 export interface CodexLocalAccessPortCleanupResult {
   killedCount: number;
   state: CodexLocalAccessState;
+}
+
+export type CodexInstanceGatewayKind =
+  | "providerGateway"
+  | "mixedModel"
+  | "boundOauth";
+
+export type CodexInstanceGatewayStatus =
+  | "running"
+  | "unreachable"
+  | "portConflict"
+  | "stopped"
+  | "notStarted";
+
+/** 实例级本地网关的运行态快照，仅用于只读展示。 */
+export interface CodexInstanceGatewayView {
+  id: string;
+  kind: CodexInstanceGatewayKind;
+  runtimeId: string;
+  profileDir: string;
+  instanceId: string;
+  instanceName: string;
+  isDefault: boolean;
+  accountId: string | null;
+  accountLabel: string | null;
+  bindHost: string;
+  port: number | null;
+  baseUrl: string | null;
+  wireApi: string | null;
+  upstreamModels: string[];
+  status: CodexInstanceGatewayStatus;
+  managed: boolean;
+  logApiKeyId: string;
+  lastError: string | null;
 }

@@ -9,6 +9,7 @@ const PLATFORM_PATTERNS = {
     /\.msi\.zip(?:\.sig)?$/i,
     /-setup\.exe(?:\.sig)?$/i,
     /-setup\.nsis\.zip(?:\.sig)?$/i,
+    /[_-]x64-portable\.zip(?:\.sig)?$/i,
   ],
   macos: [/\.dmg$/i, /\.app\.tar\.gz(?:\.sig)?$/i],
   linux: [/\.AppImage(?:\.sig)?$/, /\.deb(?:\.sig)?$/i, /\.rpm(?:\.sig)?$/i],
@@ -57,9 +58,12 @@ function listFilesRecursive(rootDir) {
 function normalizeReleaseAssetName(fileName) {
   return fileName
     .trim()
+    .replace(/^聚灵(?=[_.\s-]|$)/, 'Juling')
+    .replace(/^Juling\.Tools(?=[_.\s-]|$)/i, 'Juling')
     .replace(/\s+/g, '.')
     .replace(/[()[\]{}]/g, '.')
     .replace(/\.{2,}/g, '.')
+    .replace(/^Juling\.Tools(?=[_.\s-]|$)/i, 'Juling')
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '');
 }

@@ -1,3 +1,5 @@
+import { localProviderPresentation } from './providerPresentation';
+
 export interface CodexApiProviderPreset {
   id: string;
   name: string;
@@ -17,14 +19,23 @@ export interface CodexApiProviderPreset {
 }
 
 export const CODEX_API_PROVIDER_CUSTOM_ID = "custom";
-export const COCKPIT_API_PROVIDER_ID = "cockpit_api";
-export const COCKPIT_API_PROVIDER_NAME = "Juling Api";
-export const COCKPIT_API_BASE_URL = "https://chongcodex.cn/v1";
+export const JULING_API_PROVIDER_ID = "juling_api";
+export const JULING_API_PROVIDER_NAME = "Juling Api";
+export const JULING_API_BASE_URL = "https://chongcodex.cn/v1";
 export const DEEPSEEK_API_PROVIDER_ID = "deepseek";
 export const DEEPSEEK_API_BASE_URL = "https://api.deepseek.com";
 export const DEEPSEEK_CODEX_MODEL_CATALOG = [
-  "deepseek-v4-flash",
+  "deepseek-flash",
   "deepseek-v4-pro",
+] as const;
+/**
+ * DeepSeek's image-capable models. `deepseek-v4-flash` 与官方新名 `deepseek-flash`
+ * 都由 V4.1 Flash 承接并支持识图，Pro 仍为纯文本。用户可在模型列表里逐条开关。
+ */
+export const DEEPSEEK_CODEX_VISION_MODEL_CATALOG = [
+  "deepseek-flash",
+  "deepseek-v4-flash",
+  "deepseek-v4-flash-vision-exp",
 ] as const;
 export const OPENCODE_GO_API_PROVIDER_ID = "opencode_go";
 export const OPENCODE_GO_API_BASE_URL = "https://opencode.ai/zen/go/v1";
@@ -66,7 +77,7 @@ export const OPENCODE_GO_CODEX_MODEL_CATALOG = [
   "grok-4.5",
 ] as const;
 
-const COCKPIT_API_HIDDEN_BASE_URLS = [COCKPIT_API_BASE_URL] as const;
+const JULING_API_HIDDEN_BASE_URLS = [JULING_API_BASE_URL] as const;
 
 export const CODEX_API_PROVIDER_PRESETS: readonly CodexApiProviderPreset[] = [
   {
@@ -84,6 +95,15 @@ export const CODEX_API_PROVIDER_PRESETS: readonly CodexApiProviderPreset[] = [
     website:
       "https://learn.microsoft.com/en-us/azure/ai-foundry/openai/how-to/codex",
     isOfficial: true,
+  },
+  {
+    id: DEEPSEEK_API_PROVIDER_ID,
+    name: "DeepSeek",
+    baseUrls: [DEEPSEEK_API_BASE_URL, `${DEEPSEEK_API_BASE_URL}/v1`],
+    modelCatalog: [...DEEPSEEK_CODEX_MODEL_CATALOG],
+    visionModelCatalog: [...DEEPSEEK_CODEX_VISION_MODEL_CATALOG],
+    website: "https://platform.deepseek.com/",
+    apiKeyUrl: "https://platform.deepseek.com/api_keys",
   },
   {
     id: "packycode",
@@ -225,14 +245,6 @@ export const CODEX_API_PROVIDER_PRESETS: readonly CodexApiProviderPreset[] = [
     website: "https://www.crazyrouter.com",
     apiKeyUrl: "https://www.crazyrouter.com/register?aff=OZcm&ref=cc-switch",
     isPartner: true,
-  },
-  {
-    id: DEEPSEEK_API_PROVIDER_ID,
-    name: "DeepSeek",
-    baseUrls: [DEEPSEEK_API_BASE_URL, `${DEEPSEEK_API_BASE_URL}/v1`],
-    modelCatalog: [...DEEPSEEK_CODEX_MODEL_CATALOG],
-    website: "https://platform.deepseek.com/",
-    apiKeyUrl: "https://platform.deepseek.com/api_keys",
   },
   {
     id: "moonshot",
@@ -407,7 +419,7 @@ export const CODEX_API_PROVIDER_PRESETS: readonly CodexApiProviderPreset[] = [
     baseUrls: ["https://api.therouter.ai/v1"],
     website: "https://therouter.ai/",
   },
-];
+].map(localProviderPresentation);
 
 function normalizeCodexProviderBaseUrl(value: string): string | null {
   const trimmed = value.trim();
@@ -448,7 +460,7 @@ export function findCodexApiProviderPresetByBaseUrl(
 export function isJulingApiProviderBaseUrl(rawBaseUrl: string): boolean {
   const normalized = normalizeCodexProviderBaseUrl(rawBaseUrl);
   if (!normalized) return false;
-  return COCKPIT_API_HIDDEN_BASE_URLS.some(
+  return JULING_API_HIDDEN_BASE_URLS.some(
     (baseUrl) => normalizeCodexProviderBaseUrl(baseUrl) === normalized,
   );
 }

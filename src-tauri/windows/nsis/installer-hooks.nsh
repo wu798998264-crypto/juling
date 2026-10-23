@@ -1,4 +1,4 @@
-; Clean up historical desktop / start-menu shortcut names during manual installs.
+; Only manage this product's shortcuts; never alter the original installation.
 ; Tauri skips shortcut creation in /UPDATE mode, so updater runs must preserve
 ; every existing shortcut. The current product-name shortcut is managed by Tauri.
 
@@ -22,13 +22,6 @@ Var ShortcutRepairRequired
     Pop $R9
   ${EndIf}
 
-  ${If} $UpdateMode != 1
-    ; Historical / alternate display names that may have left shortcuts behind
-    Delete "$DESKTOP\Antigravity Cockpit Tools.lnk"
-    Delete "$DESKTOP\Antigravity Cockpit.lnk"
-    Delete "$SMPROGRAMS\Antigravity Cockpit Tools.lnk"
-    Delete "$SMPROGRAMS\Antigravity Cockpit.lnk"
-  ${EndIf}
 !macroend
 
 !macro NSIS_HOOK_POSTINSTALL

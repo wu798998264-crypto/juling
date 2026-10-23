@@ -1,9 +1,16 @@
 import { create } from 'zustand';
 import type { SponsorModuleState } from '../types/sponsor';
-import { forceRefreshSponsorModuleState, getSponsorModuleState } from '../services/sponsorService';
-
-const EMPTY_STATE: SponsorModuleState = {
-  sponsorModule: null,
+// Local workspace only: no advertising feed and no automatic route rewrites.
+export const LOCAL_RELAY_STATE: SponsorModuleState = {
+  sponsorModule: {
+    enabled: true,
+    entryVisible: true,
+    title: 'JIULING.FUN',
+    subtitle: '本地接入与密钥管理',
+    targetVersions: '*',
+    createdAt: '',
+    sponsors: [],
+  },
 };
 
 interface SponsorStoreState {
@@ -13,23 +20,9 @@ interface SponsorStoreState {
   fetchState: (force?: boolean) => Promise<SponsorModuleState>;
 }
 
-export const useSponsorStore = create<SponsorStoreState>((set) => ({
-  state: EMPTY_STATE,
+export const useSponsorStore = create<SponsorStoreState>(() => ({
+  state: LOCAL_RELAY_STATE,
   loading: false,
-  initialized: false,
-
-  fetchState: async (force = false) => {
-    set({ loading: true });
-    try {
-      const nextState = force
-        ? await forceRefreshSponsorModuleState()
-        : await getSponsorModuleState();
-      set({ state: nextState, loading: false, initialized: true });
-      return nextState;
-    } catch (error) {
-      console.error('加载赞助商模块失败:', error);
-      set({ state: EMPTY_STATE, loading: false, initialized: true });
-      return EMPTY_STATE;
-    }
-  },
+  initialized: true,
+  fetchState: async () => LOCAL_RELAY_STATE,
 }));

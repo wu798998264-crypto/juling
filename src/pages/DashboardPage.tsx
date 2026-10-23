@@ -1,3 +1,4 @@
+import { resolveCodexAccountDisplayName } from "../utils/codexAccountDisplayName";
 import React, { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccountStore } from '../stores/useAccountStore';
@@ -74,7 +75,7 @@ import {
 } from '../types/codex';
 import { isDeepSeekAccount } from '../utils/codexDeepSeekAccess';
 import './DashboardPage.css';
-import apiKeyFunIcon from '../assets/icons/apikey-fun.png';
+import apiKeyFunIcon from '../assets/branding/juling-core-master.png';
 import { RobotIcon } from '../components/icons/RobotIcon';
 import { CodexIcon } from '../components/icons/CodexIcon';
 import { WindsurfIcon } from '../components/icons/WindsurfIcon';
@@ -2332,8 +2333,8 @@ export function DashboardPage({
         <div className={`account-mini-card codex-api-mini-card ${account.api_provider_id ? "sponsor-api-account" : ""}`}>
           <div className="account-mini-header">
             <div className="account-info-row">
-              <span className="account-email" title={account.account_name || account.email || account.id}>
-                {account.account_name || account.email || account.id}
+              <span className="account-email" title={resolveCodexAccountDisplayName(account, t("common.apiKeyAccount"))}>
+                {resolveCodexAccountDisplayName(account, t("common.apiKeyAccount"))}
               </span>
               <span className="tier-badge sponsor-api">
                 {(account.api_provider_name || 'API_KEY').toUpperCase()}
@@ -2346,7 +2347,7 @@ export function DashboardPage({
               {usageMode === 'new_api' ? (
                 <div className="mini-quota-row-stacked">
                   <div className="mini-quota-header">
-                    <span className="model-name">{t('codex.cockpitApi.balance', '额度')}</span>
+                    <span className="model-name">{t('codex.julingApi.balance', '额度')}</span>
                     <span className="model-pct high">
                       {isUnlimited
                         ? t('codex.newApi.quota.unlimited', '不限量')

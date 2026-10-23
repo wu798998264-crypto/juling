@@ -1,4 +1,4 @@
-// cockpit-core Trae 账号：Platform identity, encrypted storage and account index lifecycle。
+// juling-core Trae 账号：Platform identity, encrypted storage and account index lifecycle。
 // 通过 include! 保持原模块作用域和平台调用路径。
 use aes::Aes128;
 use base64::{engine::general_purpose::STANDARD as BASE64_STANDARD, Engine as _};

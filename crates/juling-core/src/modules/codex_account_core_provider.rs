@@ -1,4 +1,4 @@
-// cockpit-core Codex 账号：Provider identity, account-check parsing and quick config。
+// juling-core Codex 账号：Provider identity, account-check parsing and quick config。
 // 通过 include! 保持原模块作用域和凭据调用路径。
 use crate::models::codex::{
     CodexAccount, CodexAccountIndex, CodexAccountSummary, CodexApiProviderMode, CodexAuthFile,
@@ -35,21 +35,31 @@ const CODEX_CONFIG_MODEL_PROVIDERS_KEY: &str = "model_providers";
 const CODEX_CONFIG_MODEL_CONTEXT_WINDOW_KEY: &str = "model_context_window";
 const CODEX_CONFIG_MODEL_AUTO_COMPACT_TOKEN_LIMIT_KEY: &str = "model_auto_compact_token_limit";
 const CODEX_DEFAULT_OPENAI_BASE_URL: &str = "https://api.openai.com/v1";
-const CODEX_COCKPIT_API_PROVIDER_ID: &str = "cockpit_api";
+const CODEX_JULING_API_PROVIDER_ID: &str = "juling_api";
 const CODEX_OPENAI_PROVIDER_ID: &str = "openai";
 const CODEX_RUNTIME_MODEL_PROVIDER_ID: &str = "codex_local_access";
 const CODEX_LEGACY_API_KEY_OPENAI_PROVIDER_ID: &str = "openai_api_key";
 const CODEX_PROVIDER_WIRE_API: &str = "responses";
 const CODEX_CONTEXT_WINDOW_1M_VALUE: i64 = 1_000_000;
 const CODEX_AUTO_COMPACT_DEFAULT_LIMIT: i64 = 900_000;
+/// 统一口径：上下文窗口与压缩阈值必须成对，压缩阈值固定取窗口的 90%。
+const CODEX_AUTO_COMPACT_RATIO_PERCENT: i64 = 90;
+
+/// 按统一口径派生压缩阈值：`context_window * 90 / 100`（整数除法，向下取整）。
+fn derived_auto_compact_token_limit(context_window: i64) -> i64 {
+    if context_window <= 0 {
+        return 0;
+    }
+    context_window.saturating_mul(CODEX_AUTO_COMPACT_RATIO_PERCENT) / 100
+}
 #[cfg(target_os = "macos")]
 const CODEX_KEYCHAIN_SERVICE: &str = "Codex Auth";
 const CODEX_AUTO_SWITCH_ACCOUNT_SCOPE_ALL: &str = "all_accounts";
 const CODEX_AUTO_SWITCH_ACCOUNT_SCOPE_SELECTED: &str = "selected_accounts";
 const DISK_FULL_ERROR_CODE: &str = "DISK_FULL";
 const CODEX_TOKEN_SOURCE_MANAGED: &str = "managed";
-const CODEX_AUTH_PROJECTION_FILE_NAME: &str = ".cockpit_codex_auth.json";
-const CODEX_AUTH_PROJECTION_WRITER: &str = "cockpit";
+const CODEX_AUTH_PROJECTION_FILE_NAME: &str = ".juling_codex_auth.json";
+const CODEX_AUTH_PROJECTION_WRITER: &str = "juling";
 
 #[allow(dead_code)]
 #[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
@@ -666,13 +676,20 @@ fn write_quick_config_to_config_toml(
     };
 
     if context_window_1m {
-        let compact_limit = auto_compact_token_limit.unwrap_or(CODEX_AUTO_COMPACT_DEFAULT_LIMIT);
-        if compact_limit <= 0 {
-            return Err("自动压缩阈值必须大于 0".to_string());
+        // 统一口径：启用 1M 上下文时必须同时写入压缩阈值；调用方没给阈值时按 90%
+        // 派生，并且显式给出的阈值必须严格小于上下文窗口。
+        let compact_limit = auto_compact_token_limit
+            .filter(|value| *value > 0)
+            .unwrap_or_else(|| {
+                derived_auto_compact_token_limit(CODEX_CONTEXT_WINDOW_1M_VALUE)
+            });
+        if compact_limit >= CODEX_CONTEXT_WINDOW_1M_VALUE {
+            return Err("自动压缩阈值必须小于上下文窗口".to_string());
         }
         doc[CODEX_CONFIG_MODEL_CONTEXT_WINDOW_KEY] = value(CODEX_CONTEXT_WINDOW_1M_VALUE);
         doc[CODEX_CONFIG_MODEL_AUTO_COMPACT_TOKEN_LIMIT_KEY] = value(compact_limit);
     } else {
+        // 跟随官方：两个键必须一起移除，不允许留下孤立的压缩阈值。
         let _ = doc.remove(CODEX_CONFIG_MODEL_CONTEXT_WINDOW_KEY);
         let _ = doc.remove(CODEX_CONFIG_MODEL_AUTO_COMPACT_TOKEN_LIMIT_KEY);
     }
@@ -838,7 +855,7 @@ fn write_api_provider_to_config_toml(
 fn collect_managed_api_key_provider_ids() -> HashSet<String> {
     HashSet::from([
         CODEX_RUNTIME_MODEL_PROVIDER_ID.to_string(),
-        CODEX_COCKPIT_API_PROVIDER_ID.to_string(),
+        CODEX_JULING_API_PROVIDER_ID.to_string(),
         CODEX_LEGACY_API_KEY_OPENAI_PROVIDER_ID.to_string(),
     ])
 }
@@ -876,22 +893,22 @@ fn write_api_key_provider_to_config_toml(
     write_api_provider_to_config_toml(base_dir, &builtin_openai_config)
 }
 
-/// 旧版数据目录（~/Library/Application Support/com.antigravity.cockpit-tools/）
+/// 旧版数据目录（~/Library/Application Support/com.antigravity.juling/）
 fn get_old_codex_data_dir() -> PathBuf {
     #[cfg(test)]
-    if let Some(data_dir) = std::env::var_os("COCKPIT_TOOLS_DATA_DIR") {
+    if let Some(data_dir) = std::env::var_os("JULING_TOOLS_DATA_DIR") {
         return PathBuf::from(data_dir).join("legacy-codex-data");
     }
 
     dirs::data_local_dir()
         .unwrap_or_else(|| dirs::home_dir().expect("无法获取用户目录"))
-        .join("com.antigravity.cockpit-tools")
+        .join("com.antigravity.juling")
 }
 
 /// 将旧目录中的 codex 数据迁移到新目录（一次性，迁移成功后删除旧文件）
 fn migrate_codex_data_if_needed(new_data_dir: &PathBuf) {
     #[cfg(test)]
-    if std::env::var_os("COCKPIT_TOOLS_DATA_DIR").is_some() {
+    if std::env::var_os("JULING_TOOLS_DATA_DIR").is_some() {
         // Test guards use an explicit data root; never migrate the user's legacy files.
         return;
     }
@@ -962,4 +979,3 @@ fn migrate_codex_data_if_needed(new_data_dir: &PathBuf) {
         }
     }
 }
-

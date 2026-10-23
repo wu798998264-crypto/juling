@@ -579,7 +579,7 @@ fn copy_dir_atomic(source: &Path, target: &Path) -> Result<(), String> {
         )
     })?;
     let temp = parent.join(format!(
-        ".cockpit-session-tmp-{}-{}",
+        ".juling-session-tmp-{}-{}",
         std::process::id(),
         operation_id()
     ));
@@ -605,13 +605,13 @@ fn replace_dir_atomic(source: &Path, target: &Path) -> Result<(), String> {
         .ok_or_else(|| format!("无法定位目标目录: {}", target.display()))?;
     fs::create_dir_all(parent).map_err(|error| format!("创建目标目录失败: {}", error))?;
     let temp = parent.join(format!(
-        ".cockpit-session-replace-{}-{}",
+        ".juling-session-replace-{}-{}",
         std::process::id(),
         operation_id()
     ));
     copy_dir_recursive(source, &temp)?;
     let old = parent.join(format!(
-        ".cockpit-session-old-{}-{}",
+        ".juling-session-old-{}-{}",
         std::process::id(),
         operation_id()
     ));
@@ -789,7 +789,7 @@ mod tests {
         fn new() -> Self {
             let id = TEST_COUNTER.fetch_add(1, AtomicOrdering::Relaxed);
             let path = std::env::temp_dir().join(format!(
-                "cockpit-codebuddy-session-transfer-{}-{}-{}",
+                "juling-codebuddy-session-transfer-{}-{}-{}",
                 std::process::id(),
                 operation_id(),
                 id

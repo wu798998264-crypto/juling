@@ -12,6 +12,7 @@ import (
 	"sync"
 
 	"github.com/gin-gonic/gin"
+	"github.com/router-for-me/CLIProxyAPI/v7/internal/codex/historyprojection"
 	"github.com/router-for-me/CLIProxyAPI/v7/internal/config"
 	"github.com/router-for-me/CLIProxyAPI/v7/internal/home"
 	"github.com/router-for-me/CLIProxyAPI/v7/internal/registry"
@@ -26,6 +27,7 @@ const (
 	codexCollaborationNamespace           = "collaboration"
 	codexOptimizedCollaborationNamespace  = "collaboration-optimize"
 	codexOptimizedCollaborationNamePrefix = codexOptimizedCollaborationNamespace + "__"
+	codexOptimizedCollaborationDotPrefix  = codexOptimizedCollaborationNamespace + "."
 )
 
 // CodexMultiAgentV2ToolsPreparedContextKey marks a request whose collaboration
@@ -63,19 +65,52 @@ func RewriteCodexSpawnAgentDescription(ctx context.Context, headers http.Header,
 }
 
 // RewriteCodexMultiAgentV2Input converts official Codex multi-agent input into
-// standard Responses API messages when multi-agent v2 optimization is enabled.
-func RewriteCodexMultiAgentV2Input(ctx context.Context, headers http.Header, payload []byte, cfg *config.Config) []byte {
+// standard Responses API messages when multi-agent v2 optimization or model
+// compatibility mode is enabled. When isCompat is true, it converts agent_message
+// items to portable message/user input and proactively removes non-standard metadata
+// fields (author, recipient, internal_chat_message_metadata_passthrough).
+func RewriteCodexMultiAgentV2Input(ctx context.Context, headers http.Header, payload []byte, cfg *config.Config, isCompat ...bool) []byte {
+	compatMode := len(isCompat) > 0 && isCompat[0]
+	optimizeEnabled := compatMode || (cfg != nil && cfg.Codex.OptimizeMultiAgentV2 && isCodexMultiAgentClient(codexClientUserAgent(ctx, headers)))
+	if !compatMode && !optimizeEnabled {
+		return payload
+	}
+	return rewriteCodexAgentMessageInput(payload, optimizeEnabled, compatMode)
+}
+
+// RewriteCodexAgentMessagesForCompatibility adapts private message items for a
+// confirmed third-party endpoint, independently of optional client optimizations.
+func RewriteCodexAgentMessagesForCompatibility(payload []byte) []byte {
+	payload = removeCodexCollaborationMessageEncryption(payload, codexCollaborationMessageToolPaths(payload))
+	return rewritePortableCodexAgentMessageInput(payload)
+}
+
+// RewriteCodexPortableGatewayInput keeps the existing generic provider gateway's
+// metadata-preserving projection distinct from Codex model compatibility mode.
+func RewriteCodexPortableGatewayInput(ctx context.Context, headers http.Header, payload []byte, cfg *config.Config) []byte {
 	if !codexMultiAgentV2Enabled(ctx, headers, cfg) {
 		return payload
 	}
-	return rewriteCodexAgentMessageInput(payload)
+	return RewriteCodexAgentMessagesForCompatibility(payload)
+}
+
+// RewriteCodexOrphanDelegationInputForConfig applies RewriteCodexOrphanDelegationInput
+// based on cfg.Codex.OrphanDelegationCompatibility and the X-Openai-Subagent header.
+func RewriteCodexOrphanDelegationInputForConfig(ctx context.Context, headers http.Header, payload []byte, cfg *config.Config) []byte {
+	if cfg == nil || !cfg.Codex.OrphanDelegationCompatibility {
+		return payload
+	}
+	return RewriteCodexOrphanDelegationInput(ctx, headers, payload, true)
 }
 
 // TranslateRequestWithCodexMultiAgentV2 normalizes official Codex multi-agent
 // input before translating it to a non-Codex target protocol.
 func TranslateRequestWithCodexMultiAgentV2(ctx context.Context, headers http.Header, cfg *config.Config, from, to sdktranslator.Format, model string, payload []byte, stream bool) []byte {
-	if from == sdktranslator.FormatOpenAIResponse && to != sdktranslator.FormatCodex && to != sdktranslator.FormatOpenAIResponse {
-		payload = RewriteCodexMultiAgentV2Input(ctx, headers, payload, cfg)
+	if from == sdktranslator.FormatOpenAIResponse {
+		payload = RewriteCodexOrphanDelegationInputForConfig(ctx, headers, payload, cfg)
+		if to != sdktranslator.FormatCodex && to != sdktranslator.FormatOpenAIResponse {
+			payload = RewriteCodexMultiAgentV2Input(ctx, headers, payload, cfg)
+		}
 	}
 	return sdktranslator.TranslateRequest(from, to, model, payload, stream)
 }
@@ -112,6 +147,8 @@ func OptimizeCodexMultiAgentV2Request(ctx context.Context, headers http.Header, 
 	if !codexMultiAgentV2Enabled(ctx, headers, cfg) {
 		return payload, false
 	}
+	// CPA v8.0.32 retypes message content only when this optimizer is enabled.
+	// This preserves the literal bytes; it does not decrypt ciphertext.
 	updated := rewriteCodexAgentMessageContent(payload)
 	if codexMultiAgentV2ToolsPrepared(ctx) {
 		updated = removeCodexCollaborationMessageEncryption(updated, codexCollaborationMessageToolPaths(updated))
@@ -181,7 +218,8 @@ func IsCodexClientUserAgent(userAgent string) bool {
 	return strings.HasPrefix(userAgent, "Codex Desktop/") ||
 		strings.HasPrefix(userAgent, "codex-tui/") ||
 		userAgent == "codex_cli_rs" ||
-		strings.HasPrefix(userAgent, "codex_cli_rs/")
+		strings.HasPrefix(userAgent, "codex_cli_rs/") ||
+		strings.HasPrefix(userAgent, "codex_exec/")
 }
 
 func isCodexMultiAgentClient(userAgent string) bool {
@@ -240,7 +278,7 @@ func loadCodexCatalogTemplates() (map[string]map[string]any, map[string]any, uin
 			continue
 		}
 		templates[modelID] = model
-		if modelID == "gpt-5.5" {
+		if defaultTemplate == nil || modelID == "gpt-5.5" {
 			defaultTemplate = model
 		}
 	}
@@ -387,7 +425,7 @@ func codexSpawnAgentModelsFromSources(availableModels []map[string]any, catalogJ
 			continue
 		}
 		templates[modelID] = model
-		if modelID == "gpt-5.5" {
+		if defaultTemplate == nil || modelID == "gpt-5.5" {
 			defaultTemplate = model
 		}
 	}
@@ -652,7 +690,7 @@ func codexToolsHaveOptimizedCollaborationConflict(tools gjson.Result) bool {
 	}
 	for _, tool := range tools.Array() {
 		name := strings.TrimSpace(tool.Get("name").String())
-		if name == codexOptimizedCollaborationNamespace || strings.HasPrefix(name, codexOptimizedCollaborationNamePrefix) {
+		if name == codexOptimizedCollaborationNamespace || strings.HasPrefix(name, codexOptimizedCollaborationNamePrefix) || strings.HasPrefix(name, codexOptimizedCollaborationDotPrefix) {
 			return true
 		}
 		if strings.TrimSpace(tool.Get("type").String()) == "namespace" && codexToolsHaveOptimizedCollaborationConflict(tool.Get("tools")) {
@@ -731,6 +769,13 @@ func restoreCodexCollaborationValue(value any) bool {
 			case name == codexOptimizedCollaborationNamespace && itemType == "namespace":
 				typed["name"] = codexCollaborationNamespace
 				changed = true
+			case isToolCall && strings.HasPrefix(name, codexOptimizedCollaborationDotPrefix):
+				toolName := strings.TrimPrefix(name, codexOptimizedCollaborationDotPrefix)
+				if toolName != "" {
+					typed["namespace"] = codexCollaborationNamespace
+					typed["name"] = toolName
+					changed = true
+				}
 			case isToolCall && strings.HasPrefix(name, codexOptimizedCollaborationNamePrefix):
 				typed["name"] = codexCollaborationNamespace + "__" + strings.TrimPrefix(name, codexOptimizedCollaborationNamePrefix)
 				changed = true
@@ -748,7 +793,55 @@ func restoreCodexCollaborationValue(value any) bool {
 	return changed
 }
 
-func rewriteCodexAgentMessageInput(payload []byte) []byte {
+func rewriteCodexAgentMessageInput(payload []byte, optimizeEnabled bool, compatMode bool) []byte {
+	input := gjson.GetBytes(payload, "input")
+	if !input.IsArray() {
+		return payload
+	}
+
+	updated := payload
+	if optimizeEnabled {
+		updated = rewriteCodexAgentMessageContent(payload)
+	}
+	for itemIndex, item := range input.Array() {
+		itemType := strings.TrimSpace(item.Get("type").String())
+		itemPath := fmt.Sprintf("input.%d", itemIndex)
+		if itemType == "agent_message" && optimizeEnabled {
+			var errSet error
+			updated, errSet = sjson.SetBytes(updated, itemPath+".role", "user")
+			if errSet != nil {
+				return payload
+			}
+			updated, errSet = sjson.SetBytes(updated, itemPath+".type", "message")
+			if errSet != nil {
+				return payload
+			}
+		}
+		if compatMode {
+			var errDelete error
+			if item.Get("author").Exists() {
+				if updated, errDelete = sjson.DeleteBytes(updated, itemPath+".author"); errDelete != nil {
+					return payload
+				}
+			}
+			if item.Get("recipient").Exists() {
+				if updated, errDelete = sjson.DeleteBytes(updated, itemPath+".recipient"); errDelete != nil {
+					return payload
+				}
+			}
+			if item.Get("internal_chat_message_metadata_passthrough").Exists() {
+				if updated, errDelete = sjson.DeleteBytes(updated, itemPath+".internal_chat_message_metadata_passthrough"); errDelete != nil {
+					return payload
+				}
+			}
+		}
+	}
+	return updated
+}
+
+// rewritePortableCodexAgentMessageInput retains the separate Grok adapter
+// contract, including its readable routing metadata. Codex uses CPA semantics.
+func rewritePortableCodexAgentMessageInput(payload []byte) []byte {
 	input := gjson.GetBytes(payload, "input")
 	if !input.IsArray() {
 		return payload
@@ -768,6 +861,34 @@ func rewriteCodexAgentMessageInput(payload []byte) []byte {
 		updated, errSet = sjson.SetBytes(updated, itemPath+".type", "message")
 		if errSet != nil {
 			return payload
+		}
+		// Agent routing metadata is not part of a standard Responses message.
+		// Preserve it as text, rather than forwarding unknown top-level fields.
+		metadata := make(map[string]json.RawMessage)
+		for _, key := range []string{"author", "recipient", "id", "internal_chat_message_metadata_passthrough"} {
+			if value := item.Get(key); value.Exists() {
+				metadata[key] = json.RawMessage(value.Raw)
+				updated, errSet = sjson.DeleteBytes(updated, itemPath+"."+key)
+				if errSet != nil {
+					return payload
+				}
+			}
+		}
+		if len(metadata) > 0 {
+			encoded, err := json.Marshal(metadata)
+			if err != nil {
+				return payload
+			}
+			content := gjson.GetBytes(updated, itemPath+".content")
+			if !content.IsArray() {
+				return payload
+			}
+			updated, errSet = sjson.SetBytes(updated, itemPath+".content.-1", map[string]string{
+				"type": "input_text", "text": "Agent routing metadata: " + string(encoded),
+			})
+			if errSet != nil {
+				return payload
+			}
 		}
 	}
 	return updated
@@ -985,4 +1106,168 @@ func removeCodexSpawnAgentModelSections(description string) (string, string) {
 		}
 	}
 	return cleaned.String(), headingIndent
+}
+
+// flatCollaborationToolPrefixes lists the flat namespace spellings third-party
+// models produce when they collapse Codex's collaboration namespace into the
+// function name instead of keeping the namespace field.
+var flatCollaborationToolPrefixes = []string{
+	codexCollaborationNamespace + "::",
+	codexCollaborationNamespace + ".",
+	codexCollaborationNamespace + "__",
+	codexOptimizedCollaborationNamespace + "::",
+	codexOptimizedCollaborationNamespace + ".",
+	codexOptimizedCollaborationNamespace + "__",
+}
+
+// RestoreCodexCollaborationFlatToolNames rewrites flat collaboration tool names
+// into the structured {name, namespace} shape Codex clients register. Models
+// that do not understand Responses namespaces often emit
+// `collaboration::spawn_agent`, `collaboration.spawn_agent` or
+// `collaboration__spawn_agent`; without this normalization the client rejects
+// the call as unsupported.
+func RestoreCodexCollaborationFlatToolNames(payload []byte) []byte {
+	if len(payload) == 0 || !gjson.ValidBytes(payload) {
+		return payload
+	}
+	decoder := json.NewDecoder(bytes.NewReader(payload))
+	decoder.UseNumber()
+	var value any
+	if errDecode := decoder.Decode(&value); errDecode != nil {
+		return payload
+	}
+	if !restoreFlatCollaborationToolNameValue(value) {
+		return payload
+	}
+	restored, errMarshal := json.Marshal(value)
+	if errMarshal != nil {
+		return payload
+	}
+	return restored
+}
+
+func restoreFlatCollaborationToolNameValue(value any) bool {
+	changed := false
+	switch typed := value.(type) {
+	case []any:
+		for _, item := range typed {
+			if restoreFlatCollaborationToolNameValue(item) {
+				changed = true
+			}
+		}
+	case map[string]any:
+		itemType := strings.TrimSpace(mapString(typed, "type"))
+		isToolCall := itemType == "function_call" || itemType == "custom_tool_call"
+		isToolOutput := itemType == "function_call_output" || itemType == "custom_tool_call_output"
+		if isToolCall {
+			if name, ok := typed["name"].(string); ok {
+				if tool, okSplit := splitFlatCollaborationToolName(name); okSplit {
+					typed["name"] = tool
+					typed["namespace"] = codexCollaborationNamespace
+					changed = true
+				}
+			}
+		}
+		for key, child := range typed {
+			if isToolCall && (key == "arguments" || key == "input") {
+				continue
+			}
+			if isToolOutput && key == "output" {
+				continue
+			}
+			if restoreFlatCollaborationToolNameValue(child) {
+				changed = true
+			}
+		}
+	}
+	return changed
+}
+
+func splitFlatCollaborationToolName(name string) (string, bool) {
+	name = strings.TrimSpace(name)
+	for _, prefix := range flatCollaborationToolPrefixes {
+		if !strings.HasPrefix(name, prefix) {
+			continue
+		}
+		tool := strings.TrimSpace(strings.TrimPrefix(name, prefix))
+		if tool == "" || strings.Contains(tool, ":") || strings.Contains(tool, ".") {
+			continue
+		}
+		return tool, true
+	}
+	return "", false
+}
+
+// collaborationArgumentToolNames lists collaboration tools whose arguments are
+// replayed to Codex clients as strictly typed JSON.
+var collaborationArgumentToolNames = map[string]struct{}{
+	"spawn_agent":     {},
+	"send_message":    {},
+	"followup_task":   {},
+	"interrupt_agent": {},
+	"list_agents":     {},
+	"wait_agent":      {},
+	"send_input":      {},
+	"resume_agent":    {},
+	"close_agent":     {},
+}
+
+// NormalizeCodexCollaborationArguments rewrites integer-valued floating point
+// numbers inside collaboration tool arguments (for example
+// `{"timeout_ms":180000.0}`) into integers. Codex clients deserialize these
+// schemas as i64 and reject float payloads produced by some third-party models.
+func NormalizeCodexCollaborationArguments(payload []byte) []byte {
+	if len(payload) == 0 || !gjson.ValidBytes(payload) {
+		return payload
+	}
+	decoder := json.NewDecoder(bytes.NewReader(payload))
+	decoder.UseNumber()
+	var value any
+	if errDecode := decoder.Decode(&value); errDecode != nil {
+		return payload
+	}
+	if !normalizeCollaborationArgumentValue(value) {
+		return payload
+	}
+	normalized, errMarshal := json.Marshal(value)
+	if errMarshal != nil {
+		return payload
+	}
+	return normalized
+}
+
+func normalizeCollaborationArgumentValue(value any) bool {
+	changed := false
+	switch typed := value.(type) {
+	case []any:
+		for _, item := range typed {
+			if normalizeCollaborationArgumentValue(item) {
+				changed = true
+			}
+		}
+	case map[string]any:
+		itemType := strings.TrimSpace(mapString(typed, "type"))
+		if itemType == "function_call" {
+			name := strings.TrimSpace(mapString(typed, "name"))
+			namespace := strings.TrimSpace(mapString(typed, "namespace"))
+			_, isCollaborationTool := collaborationArgumentToolNames[name]
+			if isCollaborationTool || namespace == codexCollaborationNamespace {
+				if raw, ok := typed["arguments"].(string); ok {
+					if normalized := historyprojection.NormalizeIntegralNumbersInArguments(raw); normalized != raw {
+						typed["arguments"] = normalized
+						changed = true
+					}
+				}
+			}
+		}
+		for key, child := range typed {
+			if key == "arguments" || key == "input" {
+				continue
+			}
+			if normalizeCollaborationArgumentValue(child) {
+				changed = true
+			}
+		}
+	}
+	return changed
 }

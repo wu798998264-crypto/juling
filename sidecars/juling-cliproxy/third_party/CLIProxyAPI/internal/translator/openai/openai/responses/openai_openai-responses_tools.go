@@ -3,6 +3,7 @@ package responses
 import (
 	"strings"
 
+	"github.com/router-for-me/CLIProxyAPI/v7/internal/codex/collaboration"
 	translatorcommon "github.com/router-for-me/CLIProxyAPI/v7/internal/translator/common"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
@@ -298,6 +299,36 @@ func resolveResponsesQualifiedToolIdentity(root gjson.Result, qualifiedName stri
 	return name, namespace, found
 }
 
+// canonicalResponsesToolName restores an omitted namespace only when the current
+// request declares exactly one matching local name. Exact emitted names win;
+// ambiguous names remain unresolved rather than being dispatched to another tool.
+func canonicalResponsesToolName(requestRawJSON []byte, name string) string {
+	root := gjson.ParseBytes(requestRawJSON)
+	if _, _, found := resolveResponsesQualifiedToolIdentity(root, name); found {
+		return name
+	}
+	seen := make(map[string]struct{})
+	candidate := ""
+	ambiguous := false
+	walkResponsesToolDeclarations(root, func(declaration responsesToolDeclaration) bool {
+		if _, duplicate := seen[declaration.chatName]; duplicate {
+			return true
+		}
+		seen[declaration.chatName] = struct{}{}
+		if declaration.localName == name {
+			if candidate != "" {
+				ambiguous = true
+			}
+			candidate = declaration.chatName
+		}
+		return true
+	})
+	if candidate != "" && !ambiguous {
+		return candidate
+	}
+	return name
+}
+
 func splitResponsesQualifiedFunctionCallFromRequest(requestRawJSON []byte, qualifiedName string) (name, namespace string) {
 	qualifiedName = strings.TrimSpace(qualifiedName)
 	if qualifiedName == "" {
@@ -322,5 +353,6 @@ func pickRequestJSON(originalRequestRawJSON, requestRawJSON []byte) []byte {
 
 func applyResponsesFunctionCallNamespaceFields(item []byte, requestRawJSON []byte, qualifiedName string, itemPath string) []byte {
 	name, namespace := splitResponsesQualifiedFunctionCallFromRequest(requestRawJSON, qualifiedName)
-	return translatorcommon.SetResponsesToolCallIdentity(item, name, namespace, itemPath)
+	item = translatorcommon.SetResponsesToolCallIdentity(item, name, namespace, itemPath)
+	return collaboration.MarkPlaintextCalls(item)
 }

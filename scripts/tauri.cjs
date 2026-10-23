@@ -5,11 +5,13 @@ const path = require('node:path');
 
 const repoRoot = path.resolve(__dirname, '..');
 const goBinPath = 'C:\\Program Files\\Go\\bin';
+const cargoBinPath = path.join(os.homedir(), '.cargo', 'bin');
 
-function withGoPath(options = {}) {
+function withToolchainPaths(options = {}) {
   const currentPath = process.env.PATH || '';
-  const pathValue = fs.existsSync(goBinPath)
-    ? `${goBinPath}${path.delimiter}${currentPath}`
+  const extraPaths = [cargoBinPath, goBinPath].filter((dir) => fs.existsSync(dir));
+  const pathValue = extraPaths.length > 0
+    ? `${extraPaths.join(path.delimiter)}${path.delimiter}${currentPath}`
     : currentPath;
 
   return {
@@ -27,7 +29,7 @@ function run(command, args, options = {}) {
     cwd: repoRoot,
     stdio: 'inherit',
     shell: false,
-    ...withGoPath(options),
+    ...withToolchainPaths(options),
   });
 
   if (result.error) {
@@ -40,12 +42,24 @@ function run(command, args, options = {}) {
 }
 
 function runFinal(command, args, options = {}) {
-  const result = spawnSync(command, args, {
-    cwd: repoRoot,
-    stdio: 'inherit',
-    shell: false,
-    ...withGoPath(options),
-  });
+  const isMacBuild = process.platform === 'darwin' && ['build', 'bundle'].includes(process.argv[2]);
+  const mounts = isMacBuild ? require('./release/dmg-mounts.cjs').createDmgMounts() : null;
+  if (mounts) {
+    mounts.watchBuildImages(path.resolve(repoRoot, process.env.CARGO_TARGET_DIR || 'target'));
+    mounts.installExitHandlers();
+  }
+  let result;
+  try {
+    result = spawnSync(command, args, {
+      cwd: repoRoot,
+      stdio: 'inherit',
+      shell: false,
+      ...withToolchainPaths(options),
+    });
+  } finally {
+    // Also clean Tauri's writable scratch image when the bundler fails.
+    mounts?.cleanup();
+  }
 
   if (result.error) {
     throw result.error;
@@ -64,14 +78,21 @@ if (process.platform !== 'win32') {
   runFinal('npx', ['tauri', ...process.argv.slice(2)]);
 }
 
-const vcvars64Path = 'C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat';
+const vcvarsCandidates = [
+  'C:\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat',
+  'C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Auxiliary\\Build\\vcvars64.bat',
+  'C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat',
+  'C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Auxiliary\\Build\\vcvars64.bat',
+  'C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Auxiliary\\Build\\vcvars64.bat',
+];
+const vcvars64Path = vcvarsCandidates.find((candidate) => fs.existsSync(candidate)) || '';
 
-if (!fs.existsSync(vcvars64Path)) {
+if (!vcvars64Path) {
   console.warn('vcvars64.bat not found, falling back to the existing shell environment.');
   runTauriDirect();
 }
 
-const tempScriptPath = path.join(os.tmpdir(), `cockpit-tools-tauri-${process.pid}.cmd`);
+const tempScriptPath = path.join(os.tmpdir(), `juling-tauri-${process.pid}.cmd`);
 const tauriCliPath = path.join(repoRoot, 'node_modules', '.bin', 'tauri.cmd');
 const tauriArgs = process.argv.slice(2);
 
@@ -88,7 +109,7 @@ const quotedArgs = tauriArgs.map((arg) => {
 });
 const scriptBody = [
   '@echo off',
-  `set "PATH=${goBinPath};%PATH%"`,
+  `set "PATH=${cargoBinPath};${goBinPath};%PATH%"`,
   `call "${vcvars64Path}"`,
   'if errorlevel 1 exit /b %errorlevel%',
   'call npm.cmd run sync-version',

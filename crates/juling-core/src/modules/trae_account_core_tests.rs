@@ -1,4 +1,4 @@
-// cockpit-core Trae 账号测试：平台导入、加密存储和刷新行为。
+// juling-core Trae 账号测试：平台导入、加密存储和刷新行为。
 // 测试作为原 tests 模块内部实现被 include。
     use super::*;
     use crate::models::trae::TraeAccount;

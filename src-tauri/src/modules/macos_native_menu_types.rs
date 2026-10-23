@@ -31,7 +31,7 @@
         back_to_current: String,
         switch_to_viewed: String,
         refresh: String,
-        open_cockpit_tools: String,
+        open_juling_tools: String,
         open_details: String,
         view_all_accounts: String,
         settings: String,

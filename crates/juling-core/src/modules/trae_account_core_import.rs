@@ -1,4 +1,4 @@
-// cockpit-core Trae 账号：Import/export payload parsing and account mutation APIs。
+// juling-core Trae 账号：Import/export payload parsing and account mutation APIs。
 // 通过 include! 保持原模块作用域和平台调用路径。
 fn storage_object_value(root: &Value, key: &str) -> Option<Value> {
     root.as_object()

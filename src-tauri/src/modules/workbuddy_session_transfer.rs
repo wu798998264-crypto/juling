@@ -364,7 +364,7 @@ mod tests {
         fn new() -> Self {
             let id = TEST_COUNTER.fetch_add(1, Ordering::Relaxed);
             let path = std::env::temp_dir().join(format!(
-                "cockpit-workbuddy-session-transfer-{}-{}-{}",
+                "juling-workbuddy-session-transfer-{}-{}-{}",
                 std::process::id(),
                 operation_id(),
                 id

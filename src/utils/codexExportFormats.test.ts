@@ -44,7 +44,7 @@ function jwt(payload: Record<string, unknown>): string {
 test('Juling export preserves portable Agent Identity credentials', () => {
   const raw = JSON.stringify([agentIdentityAccount()]);
   const exported = JSON.parse(
-    transformCodexExportJson(raw, 'cockpit_tools'),
+    transformCodexExportJson(raw, 'juling_tools'),
   ) as Array<Record<string, unknown>>;
   const account = exported[0];
   const identity = account.agent_identity as Record<string, unknown>;
@@ -203,12 +203,68 @@ test('regular token accounts keep their existing Juling export shape', () => {
     last_used: 1,
   };
   const exported = JSON.parse(
-    transformCodexExportJson(JSON.stringify([account]), 'cockpit_tools'),
+    transformCodexExportJson(JSON.stringify([account]), 'juling_tools'),
   ) as Array<Record<string, unknown>>;
 
   assert.equal(exported[0].access_token, 'access-token-fixture');
   assert.equal(exported[0].refresh_token, 'refresh-token-fixture');
   assert.equal(exported[0].agent_identity, undefined);
+  assert.equal(exported[0].tags, undefined);
+  assert.equal(exported[0].group, undefined);
+});
+
+test('聚灵 export carries tags, account name and group for sharing', () => {
+  const account: CodexAccount = {
+    id: 'codex-tagged-fixture',
+    email: 'tagged@example.com',
+    account_id: 'account-tagged',
+    account_name: 'Team A',
+    account_structure: 'workspace',
+    tags: ['  Plus  ', 'finance', ''],
+    tokens: {
+      id_token: 'id-token-fixture',
+      access_token: 'access-token-fixture',
+      refresh_token: 'refresh-token-fixture',
+    },
+    created_at: 1,
+    last_used: 1,
+  };
+  const exported = JSON.parse(
+    transformCodexExportJson(JSON.stringify([account]), 'juling_tools', {
+      accountGroupNames: { 'codex-tagged-fixture': ' 财务分组 ' },
+    }),
+  ) as Array<Record<string, unknown>>;
+
+  assert.deepEqual(exported[0].tags, ['Plus', 'finance']);
+  assert.equal(exported[0].account_name, 'Team A');
+  assert.equal(exported[0].account_structure, 'workspace');
+  assert.equal(exported[0].group, '财务分组');
+});
+
+test('CPA export stays free of 聚灵 sharing metadata', () => {
+  const account: CodexAccount = {
+    id: 'codex-tagged-fixture',
+    email: 'tagged@example.com',
+    account_id: 'account-tagged',
+    account_name: 'Team A',
+    tags: ['plus'],
+    tokens: {
+      id_token: 'id-token-fixture',
+      access_token: 'access-token-fixture',
+      refresh_token: 'refresh-token-fixture',
+    },
+    created_at: 1,
+    last_used: 1,
+  };
+  const exported = JSON.parse(
+    transformCodexExportJson(JSON.stringify([account]), 'cpa', {
+      accountGroupNames: { 'codex-tagged-fixture': '财务分组' },
+    }),
+  ) as Record<string, unknown>;
+
+  assert.equal(exported.tags, undefined);
+  assert.equal(exported.group, undefined);
+  assert.equal(exported.account_name, undefined);
 });
 
 test('sub2api OAuth export preserves official expiry and login-provider fields', () => {

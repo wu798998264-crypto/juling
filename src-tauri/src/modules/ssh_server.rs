@@ -389,11 +389,11 @@ pub async fn test_connection(server_id: &str) -> Result<String, String> {
     let output = run_ssh(
         &server,
         TEST_COMMAND_TIMEOUT_SECS,
-        &["printf", "cockpit-tools-ssh-ok"],
+        &["printf", "juling-ssh-ok"],
         None,
     )
     .await?;
-    if output.trim() == "cockpit-tools-ssh-ok" {
+    if output.trim() == "juling-ssh-ok" {
         Ok(output)
     } else {
         Err("ssh_connection_failed: unexpected SSH test output".to_string())
@@ -409,13 +409,13 @@ case "$codex_home" in
 esac
 target="$codex_home/config.toml"
 if [ -f "$target" ]; then
-  printf '__COCKPIT_EXISTS__\n'
+  printf '__JULING_EXISTS__\n'
   cat "$target"
 elif [ -e "$target" ]; then
   printf 'config.toml is not a regular file\n' >&2
   exit 3
 else
-  printf '__COCKPIT_MISSING__\n'
+  printf '__JULING_MISSING__\n'
 fi
 "#;
     let output = run_ssh(
@@ -426,10 +426,10 @@ fi
     )
     .await
     .map_err(|e| format!("ssh_remote_read_failed: {}", sanitize_error(e)))?;
-    if let Some(rest) = output.strip_prefix("__COCKPIT_EXISTS__\n") {
+    if let Some(rest) = output.strip_prefix("__JULING_EXISTS__\n") {
         return Ok(Some(rest.to_string()));
     }
-    if output.trim() == "__COCKPIT_MISSING__" {
+    if output.trim() == "__JULING_MISSING__" {
         return Ok(None);
     }
     Err("ssh_remote_read_failed: unexpected remote read response".to_string())
@@ -458,16 +458,16 @@ case "$codex_home" in
 esac
 mkdir -p "$codex_home"
 chmod 700 "$codex_home" 2>/dev/null || true
-tmp_dir="$codex_home/.cockpit-codex-sync.$$"
+tmp_dir="$codex_home/.juling-codex-sync.$$"
 rm -rf "$tmp_dir"
 mkdir -p "$tmp_dir"
 cleanup() {{ rm -rf "$tmp_dir"; }}
 trap cleanup EXIT INT TERM
-cat <<'__COCKPIT_CODEX_PAYLOAD__' | while IFS='	' read -r rel mode expected encoded; do
-{payload}__COCKPIT_CODEX_PAYLOAD__
+cat <<'__JULING_CODEX_PAYLOAD__' | while IFS='	' read -r rel mode expected encoded; do
+{payload}__JULING_CODEX_PAYLOAD__
   [ -n "$rel" ] || continue
   case "$rel" in
-    auth.json|config.toml|.cockpit_codex_auth.json) ;;
+    auth.json|config.toml|.juling_codex_auth.json) ;;
     *) printf 'invalid relative path: %s\n' "$rel" >&2; exit 4 ;;
   esac
   tmp="$tmp_dir/$rel"
@@ -826,8 +826,8 @@ mod tests {
     #[tokio::test]
     #[ignore]
     async fn live_ssh_own_syncs_current_codex_account() {
-        if std::env::var("COCKPIT_LIVE_SSH_OWN_SYNC").ok().as_deref() != Some("1") {
-            eprintln!("set COCKPIT_LIVE_SSH_OWN_SYNC=1 to run the live own SSH sync test");
+        if std::env::var("JULING_LIVE_SSH_OWN_SYNC").ok().as_deref() != Some("1") {
+            eprintln!("set JULING_LIVE_SSH_OWN_SYNC=1 to run the live own SSH sync test");
             return;
         }
 

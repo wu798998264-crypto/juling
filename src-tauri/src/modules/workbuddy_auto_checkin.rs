@@ -765,7 +765,7 @@ mod tests {
             .as_nanos();
         std::env::temp_dir()
             .join(format!(
-                "cockpit-workbuddy-auto-checkin-{}-{}-{}",
+                "juling-workbuddy-auto-checkin-{}-{}-{}",
                 test_name,
                 std::process::id(),
                 unique

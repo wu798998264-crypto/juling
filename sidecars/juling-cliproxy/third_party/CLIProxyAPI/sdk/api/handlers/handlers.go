@@ -6,6 +6,7 @@ package handlers
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -46,6 +47,9 @@ type ErrorDetail struct {
 
 	// Code is a short code identifying the error, if applicable.
 	Code string `json:"code,omitempty"`
+
+	// Retryable optionally indicates whether a retry might fix the issue automatically.
+	Retryable *bool `json:"retryable,omitempty"`
 }
 
 const idempotencyKeyMetadataKey = "idempotency_key"
@@ -61,6 +65,13 @@ const (
 // BuildErrorResponseBody builds an OpenAI-compatible JSON error response body.
 // If errText is already valid JSON, it is returned as-is to preserve upstream error payloads.
 func BuildErrorResponseBody(status int, errText string) []byte {
+	return BuildErrorResponseBodyWithError(status, errText, nil)
+}
+
+// BuildErrorResponseBodyWithError builds an OpenAI-compatible JSON error response body,
+// preserving structured classifications (such as terminal upstream auth failures and retryable flags)
+// present in err.
+func BuildErrorResponseBodyWithError(status int, errText string, err error) []byte {
 	if status <= 0 {
 		status = http.StatusInternalServerError
 	}
@@ -69,6 +80,45 @@ func BuildErrorResponseBody(status int, errText string) []byte {
 	}
 
 	trimmed := strings.TrimSpace(errText)
+
+	if coreauth.IsTerminalAuthError(err) {
+		errType, code := "authentication_error", "upstream_authentication_required"
+		message := errText
+		if trimmed != "" && json.Valid([]byte(trimmed)) {
+			var parsed map[string]any
+			if errUnmarshal := json.Unmarshal([]byte(trimmed), &parsed); errUnmarshal == nil {
+				if msg, ok := parsed["message"].(string); ok && msg != "" {
+					message = msg
+				} else if errMap, ok := parsed["error"].(map[string]any); ok {
+					if msg, ok := errMap["message"].(string); ok && msg != "" {
+						message = msg
+					}
+				}
+			}
+		}
+		// Juling uses the terminal marker for explicitly paused service scopes
+		// so WS clients see the rejection instead of silently reconnecting. This
+		// host policy must not ask the user to repair otherwise valid credentials.
+		var authErr *coreauth.Error
+		if errors.As(err, &authErr) && authErr.Code == "account_paused" {
+			errType, code = "invalid_request_error", "account_paused"
+			message = authErr.Message
+		}
+		r := false
+		payload, errMarshal := json.Marshal(ErrorResponse{
+			Error: ErrorDetail{
+				Message:   message,
+				Type:      errType,
+				Code:      code,
+				Retryable: &r,
+			},
+		})
+		if errMarshal != nil {
+			return []byte(fmt.Sprintf(`{"error":{"message":%q,"type":%q,"code":%q,"retryable":false}}`, message, errType, code))
+		}
+		return payload
+	}
+
 	if trimmed != "" && json.Valid([]byte(trimmed)) {
 		return []byte(trimmed)
 	}
@@ -95,20 +145,20 @@ func BuildErrorResponseBody(status int, errText string) []byte {
 		}
 	}
 
-	payload, err := json.Marshal(ErrorResponse{
+	payload, errMarshal := json.Marshal(ErrorResponse{
 		Error: ErrorDetail{
 			Message: errText,
 			Type:    errType,
 			Code:    code,
 		},
 	})
-	if err != nil {
+	if errMarshal != nil {
 		return []byte(fmt.Sprintf(`{"error":{"message":%q,"type":"server_error","code":"internal_server_error"}}`, errText))
 	}
 	return payload
 }
 
-// StreamingKeepAliveInterval returns the SSE keep-alive interval for this server.
+// StreamingKeepAliveInterval returns the streaming keep-alive interval for this server (SSE heartbeats and WebSocket Ping frames).
 // Returning 0 disables keep-alives (default when unset).
 func StreamingKeepAliveInterval(cfg *config.SDKConfig) time.Duration {
 	seconds := defaultStreamingKeepAliveSeconds

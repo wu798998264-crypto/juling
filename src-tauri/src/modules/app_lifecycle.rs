@@ -47,19 +47,20 @@ pub fn install_system_shutdown_listener() -> Result<(), String> {
 
     let (shutdown_tx, shutdown_rx) = sync_channel::<()>(1);
     std::thread::Builder::new()
-        .name("cockpit-system-shutdown-cleanup".to_string())
+        .name("juling-system-shutdown-cleanup".to_string())
         .spawn(move || {
             if shutdown_rx.recv().is_ok() {
                 crate::modules::logger::log_info(
                     "[Lifecycle] Windows 正在关闭，停止后台注入并禁止创建新子进程",
                 );
                 crate::modules::codex_app_injection::stop_all();
+                crate::modules::codex_proxy_engine::shutdown_all();
             }
         })
         .map_err(|error| format!("启动 Windows 关机清理线程失败: {}", error))?;
 
     std::thread::Builder::new()
-        .name("cockpit-system-shutdown-listener".to_string())
+        .name("juling-system-shutdown-listener".to_string())
         .spawn(move || {
             if let Err(error) = run_windows_shutdown_message_loop(shutdown_tx) {
                 crate::modules::logger::log_warn(&format!(

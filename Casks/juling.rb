@@ -1,28 +1,27 @@
 cask "juling" do
-  version "1.3.34"
-  sha256 "874c3dc301d1a16d59c692904d5cb5a2ac2741fbe3846d1adf6cdc6997698e67"
+  version "1.3.72"
+  sha256 "9adbda4758488487eeffd47cce6b6998680dcfc53369ce6606203a0586e4faca"
 
-  url "https://github.com/wu798998264-crypto/juling/releases/download/v#{version}/Juling_#{version}_universal.dmg",
-      verified: "github.com/wu798998264-crypto/juling/"
-  name "Juling"
-  desc "Local account manager for AI IDEs (Antigravity and Codex)"
+  url "https://github.com/wu798998264-crypto/juling/releases/download/v#{version}/Juling_#{version}_universal.dmg"
+  name "聚灵"
+  desc "Account manager for AI IDEs (Antigravity and Codex)"
   homepage "https://github.com/wu798998264-crypto/juling"
 
   auto_updates true
 
-  postflight do
-    system_command "/usr/bin/xattr",
-                   args: ["-cr", "#{appdir}/聚灵.app"],
-                   sudo: true
-  end
-
   app "聚灵.app"
 
+  postflight_steps do
+    run "/usr/bin/xattr",
+        args: ["-cr", "{{appdir}}/聚灵.app"],
+        sudo: true
+  end
+
   zap trash: [
-    "~/Library/Application Support/com.jlcodes.cockpit-tools",
-    "~/Library/Caches/com.jlcodes.cockpit-tools",
-    "~/Library/Preferences/com.jlcodes.cockpit-tools.plist",
-    "~/Library/Saved Application State/com.jlcodes.cockpit-tools.savedState",
+    "~/Library/Application Support/com.wu798998264.juling",
+    "~/Library/Caches/com.wu798998264.juling",
+    "~/Library/Preferences/com.wu798998264.juling.plist",
+    "~/Library/Saved Application State/com.wu798998264.juling.savedState",
   ]
 
   caveats <<~EOS

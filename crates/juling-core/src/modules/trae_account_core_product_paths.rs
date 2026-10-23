@@ -1,4 +1,4 @@
-// cockpit-core Trae 账号：Product paths, platform metadata and auth client discovery。
+// juling-core Trae 账号：Product paths, platform metadata and auth client discovery。
 // 通过 include! 保持原模块作用域和平台调用路径。
 pub fn get_default_trae_data_dir_for_platform(
     platform: TraePlatformKind,

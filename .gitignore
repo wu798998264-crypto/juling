@@ -37,7 +37,9 @@ docs/plugin-architecture-design.md
 # Runtime caches
 src-tauri/arms_cache/
 arms.biz.trace.*
-sidecars/cockpit-cliproxy/bin/
+sidecars/juling-cliproxy/bin/
+sidecars/sing-box/bin/
+sidecars/juling-cliproxy/juling-cliproxy
 src-tauri/resources/electron/*
 !src-tauri/resources/electron/.gitkeep
 
@@ -51,3 +53,13 @@ target/
 docs/plugin-architecture-proposal.md
 .aitasks
 .qoder/
+
+sidecars/mihomo/bin/
+
+# Local release credentials and private signing material (never publish).
+*.key
+*.key.pub
+*.p12
+*.pfx
+*.clixml
+.release-secrets/

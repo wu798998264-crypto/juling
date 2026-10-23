@@ -1,3 +1,4 @@
+import { resolveCodexAccountDisplayName } from "../utils/codexAccountDisplayName";
 import { useEffect, useMemo, useState } from "react";
 import {
   AlertTriangle,
@@ -14,6 +15,8 @@ import * as codexLocalAccessService from "../services/codexLocalAccessService";
 import * as codexService from "../services/codexService";
 import { requestCodexOpenAddAccount } from "../utils/codexAddAccountRequest";
 import { conciseCodexCredentialFailure } from "../utils/codexCredentialProgress";
+import { proxyEnginePrerequisiteKey } from "../utils/codexProxyEnginePrerequisite";
+import { codexLaunchErrorKey } from "../utils/codexLaunchProgress";
 import type { CodexSwitchAuthFailure } from "../utils/codexSwitchAuthFailure";
 import { parseWindowsOperationError } from "../utils/windowsOperationError";
 import "./CodexSwitchProgressModal.css";
@@ -138,8 +141,9 @@ export function CodexSwitchProgressModal() {
             ? previous
             : createProgressState(accountId);
         if (detail.type === "error") {
+          const prerequisite = proxyEnginePrerequisiteKey(detail.error) || codexLaunchErrorKey(detail.error);
           const errorText =
-            detail.error || base.error || t("common.failed", "失败");
+            prerequisite ? t(prerequisite) : detail.error || base.error || t("common.failed", "失败");
           const authFailure =
             detail.authFailure === undefined
               ? base.authFailure
@@ -262,7 +266,7 @@ export function CodexSwitchProgressModal() {
 
   const account = accounts.find((item) => item.id === state.accountId);
   const accountLabel =
-    account?.account_name || account?.email || state.accountId;
+    resolveCodexAccountDisplayName(account ?? { id: state.accountId }, t("common.apiKeyAccount"));
   const isError = state.status === "error";
   const isAuthRequired = state.status === "auth-required";
   const windowsOperationError = isError
@@ -498,7 +502,8 @@ export function CodexSwitchProgressModal() {
         launchAfterSwitch: state.launchAfterSwitch,
       });
     } catch (error) {
-      setActionError(String(error).replace(/^Error:\s*/, ""));
+      const errorKey = codexLaunchErrorKey(error);
+      setActionError(errorKey ? t(errorKey) : String(error).replace(/^Error:\s*/, ""));
     } finally {
       setRetryBusy(null);
     }
@@ -591,11 +596,11 @@ export function CodexSwitchProgressModal() {
           <div className="codex-switch-step-list">
             {state.steps.map((step) => {
               const detailLines = stepDetailLines(step);
+              const failureValue = step.details.error || state.error;
+              const failureKey = codexLaunchErrorKey(failureValue);
               const failure =
                 step.status === "error"
-                  ? conciseCodexCredentialFailure(
-                      step.details.error || state.error,
-                    )
+                  ? failureKey ? t(failureKey) : conciseCodexCredentialFailure(failureValue)
                   : null;
               const renderedDetailLines =
                 failure && !detailLines.some((line) => line.includes(failure))

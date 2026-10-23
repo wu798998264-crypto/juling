@@ -8,11 +8,11 @@ import (
 	cliproxyauth "github.com/router-for-me/CLIProxyAPI/v7/sdk/cliproxy/auth"
 )
 
-func TestCodexExecutorRefreshDefersToCockpitTokenAuthority(t *testing.T) {
+func TestCodexExecutorRefreshDefersToJulingTokenAuthority(t *testing.T) {
 	executor := NewCodexExecutor(&config.Config{})
 	auth := &cliproxyauth.Auth{
 		Metadata: map[string]any{
-			"refresh_owner": "cockpit_token_authority",
+			"refresh_owner": "juling_token_authority",
 			"refresh_token": "must-not-be-used",
 		},
 	}

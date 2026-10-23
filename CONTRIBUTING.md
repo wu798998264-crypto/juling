@@ -7,7 +7,7 @@ Thank you for your interest in contributing to Juling! This project aims to be t
 1.  **Fork** the repository on GitHub.
 2.  **Clone** your fork locally:
     ```bash
-    git clone https://github.com/YOUR_USERNAME/cockpit-tools.git
+    git clone https://github.com/YOUR_USERNAME/juling.git
     ```
 3.  **Create a branch** for your feature or bug fix:
     ```bash
@@ -29,9 +29,20 @@ This project is a Cargo Workspace:
 
 ## 🧪 Testing
 
+Run the automated checks that cover the area you changed before submitting a PR:
+
+- **TypeScript regression tests:** `npm test`
+- **Release script tests:** `npm run test:release`
+- **TypeScript typecheck:** `npm run typecheck`
+- **Core Rust library:** `npm run test:rust:core`
+- **Go sidecar:** `npm run test:go`
+
+The build matrix also runs targeted Tauri regression tests and platform builds.
+
+For manual development checks:
+
 - **GUI:** `npm run tauri dev`
 - **CLI:** `cargo run --package juling-cli -- <commands>`
-- **Core:** `cargo test --package juling-core`
 
 ## 📬 Submitting a Pull Request
 

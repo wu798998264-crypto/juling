@@ -442,7 +442,8 @@ func (e *authFallbackExecutor) Identifier() string {
 	return e.id
 }
 
-func (e *authFallbackExecutor) Execute(_ context.Context, auth *Auth, _ cliproxyexecutor.Request, _ cliproxyexecutor.Options) (cliproxyexecutor.Response, error) {
+func (e *authFallbackExecutor) Execute(ctx context.Context, auth *Auth, _ cliproxyexecutor.Request, _ cliproxyexecutor.Options) (cliproxyexecutor.Response, error) {
+	cliproxyexecutor.MarkUpstreamAttempt(ctx)
 	e.mu.Lock()
 	e.executeCalls = append(e.executeCalls, auth.ID)
 	err := e.executeErrors[auth.ID]
@@ -453,7 +454,8 @@ func (e *authFallbackExecutor) Execute(_ context.Context, auth *Auth, _ cliproxy
 	return cliproxyexecutor.Response{Payload: []byte(auth.ID)}, nil
 }
 
-func (e *authFallbackExecutor) ExecuteStream(_ context.Context, auth *Auth, _ cliproxyexecutor.Request, _ cliproxyexecutor.Options) (*cliproxyexecutor.StreamResult, error) {
+func (e *authFallbackExecutor) ExecuteStream(ctx context.Context, auth *Auth, _ cliproxyexecutor.Request, _ cliproxyexecutor.Options) (*cliproxyexecutor.StreamResult, error) {
+	cliproxyexecutor.MarkUpstreamAttempt(ctx)
 	e.mu.Lock()
 	e.streamCalls = append(e.streamCalls, auth.ID)
 	firstErr := e.streamFirstErrors[auth.ID]
@@ -1254,10 +1256,10 @@ func TestManager_MarkResult_CloudflareChallenge_On403(t *testing.T) {
 		t.Fatalf("expected StatusMessage to be 'cloudflare challenge', got %s", state.StatusMessage)
 	}
 
-	// Because Cloudflare Challenge is treated as transient (no suspension),
-	// the model should NOT be suspended in the global registry, so count > 0.
-	if count := reg.GetModelCount(model); count <= 0 {
-		t.Fatalf("expected model count > 0 for cloudflare challenge transient cooldown, got %d", count)
+	// Cloudflare Challenge sets Unavailable and NextRetryAfter on ModelState,
+	// so the model should be suspended in the global registry for this client.
+	if !reg.IsModelSuspendedForClient(auth.ID, model) {
+		t.Fatal("expected model to be suspended in registry for cloudflare challenge")
 	}
 }
 

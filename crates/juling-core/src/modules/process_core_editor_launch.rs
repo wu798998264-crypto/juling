@@ -1,4 +1,4 @@
-// cockpit-core Process：Editor/IDE startup wrappers and platform launch arguments。
+// juling-core Process：Editor/IDE startup wrappers and platform launch arguments。
 // 通过 include! 保持原模块作用域和跨平台调用路径。
 pub fn find_pids_by_port(port: u16) -> Result<Vec<u32>, String> {
     let current_pid = std::process::id();

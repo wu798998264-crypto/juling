@@ -1,4 +1,4 @@
-// cockpit-core Codex 账号：Managed runtime validation, switching and token import。
+// juling-core Codex 账号：Managed runtime validation, switching and token import。
 // 通过 include! 保持原模块作用域和凭据调用路径。
 
 async fn refresh_managed_account_locked(

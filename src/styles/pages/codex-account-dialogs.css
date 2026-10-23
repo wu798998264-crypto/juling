@@ -1,6 +1,8 @@
 /* Codex 样式分片：添加/导入/编辑弹框、表格和暗色适配。按原顺序由 codex.css 聚合。 */
 /* 通用 modal-content 样式 */
-.modal-content {
+/* 基类用 :where() 降到零优先级：组件自己的弹框类永远能覆盖这里的默认值，
+   不再依赖打包后的 CSS 加载顺序。 */
+:where(.modal-content) {
   background: var(--bg-secondary);
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
@@ -10,9 +12,9 @@
   animation: modalFadeIn 0.25s ease;
 }
 
-.cockpit-api-panel-modal {
-  --cockpit-api-accent: #0f766e;
-  --cockpit-api-accent-soft: rgba(15, 118, 110, 0.1);
+.juling-api-panel-modal {
+  --juling-api-accent: #0f766e;
+  --juling-api-accent-soft: rgba(15, 118, 110, 0.1);
   width: min(920px, calc(100vw - 48px));
   max-height: min(760px, calc(100vh - 48px));
   display: flex;
@@ -22,22 +24,22 @@
   border-color: color-mix(
     in srgb,
     var(--border) 72%,
-    var(--cockpit-api-accent)
+    var(--juling-api-accent)
   );
   border-radius: 16px;
 }
 
-.cockpit-api-panel-header {
+.juling-api-panel-header {
   padding: 18px 24px 16px;
   background: var(--bg-card);
 }
 
-.cockpit-api-panel-header h2 {
+.juling-api-panel-header h2 {
   font-size: 20px;
   line-height: 1.2;
 }
 
-.cockpit-api-panel-subtitle {
+.juling-api-panel-subtitle {
   display: block;
   margin-top: 6px;
   color: var(--text-secondary);
@@ -46,7 +48,7 @@
   letter-spacing: 0;
 }
 
-.cockpit-api-panel-body {
+.juling-api-panel-body {
   display: grid;
   gap: 14px;
   padding: 18px 24px 28px;
@@ -54,35 +56,35 @@
   background: var(--bg-secondary);
 }
 
-.cockpit-api-connection-card,
-.cockpit-api-balance-card,
-.cockpit-api-stat-card,
-.cockpit-api-panel-section {
+.juling-api-connection-card,
+.juling-api-balance-card,
+.juling-api-stat-card,
+.juling-api-panel-section {
   border: 1px solid var(--border-light);
   border-radius: 8px;
   background: var(--bg-card);
 }
 
-.cockpit-api-connection-card {
+.juling-api-connection-card {
   display: grid;
   gap: 8px;
   padding: 12px;
 }
 
-.cockpit-api-connection-row {
+.juling-api-connection-row {
   display: grid;
   grid-template-columns: 52px minmax(0, 1fr) auto;
   align-items: center;
   gap: 10px;
 }
 
-.cockpit-api-connection-row > span {
+.juling-api-connection-row > span {
   color: var(--text-secondary);
   font-size: 12px;
   font-weight: 600;
 }
 
-.cockpit-api-connection-row code {
+.juling-api-connection-row code {
   min-width: 0;
   padding: 9px 11px;
   border: 1px solid var(--border-light);
@@ -97,61 +99,61 @@
   white-space: nowrap;
 }
 
-.cockpit-api-connection-actions {
+.juling-api-connection-actions {
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
 
-.cockpit-api-icon-btn {
+.juling-api-icon-btn {
   width: 32px;
   height: 32px;
   color: var(--text-secondary);
 }
 
-.cockpit-api-summary-grid {
+.juling-api-summary-grid {
   display: grid;
   grid-template-columns: minmax(240px, 1.35fr) repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
 
-.cockpit-api-summary-grid.compact {
+.juling-api-summary-grid.compact {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-.cockpit-api-balance-card,
-.cockpit-api-stat-card {
+.juling-api-balance-card,
+.juling-api-stat-card {
   display: grid;
   align-content: space-between;
   min-height: 118px;
   padding: 14px;
 }
 
-.cockpit-api-stat-card-center {
+.juling-api-stat-card-center {
   align-content: center;
 }
 
-.cockpit-api-stat-card-center strong {
+.juling-api-stat-card-center strong {
   margin-top: 12px;
 }
 
-.cockpit-api-balance-card {
+.juling-api-balance-card {
   border-color: color-mix(
     in srgb,
-    var(--cockpit-api-accent) 30%,
+    var(--juling-api-accent) 30%,
     var(--border-light)
   );
-  background: color-mix(in srgb, var(--cockpit-api-accent) 5%, var(--bg-card));
+  background: color-mix(in srgb, var(--juling-api-accent) 5%, var(--bg-card));
 }
 
-.cockpit-api-card-label {
+.juling-api-card-label {
   color: var(--text-secondary);
   font-size: 12px;
   font-weight: 700;
 }
 
-.cockpit-api-balance-card strong,
-.cockpit-api-stat-card strong {
+.juling-api-balance-card strong,
+.juling-api-stat-card strong {
   margin-top: 8px;
   color: var(--text-primary);
   font-size: 22px;
@@ -160,14 +162,14 @@
   letter-spacing: 0;
 }
 
-.cockpit-api-stat-card small {
+.juling-api-stat-card small {
   margin-top: 10px;
   color: var(--text-secondary);
   font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
 
-.cockpit-api-balance-meta {
+.juling-api-balance-meta {
   display: block;
   margin-top: 10px;
   color: var(--text-secondary);
@@ -177,49 +179,49 @@
   font-variant-numeric: tabular-nums;
 }
 
-.cockpit-api-progress-row {
+.juling-api-progress-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 10px;
   margin-top: 12px;
-  color: var(--cockpit-api-accent);
+  color: var(--juling-api-accent);
   font-size: 12px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
-.cockpit-api-progress-track {
+.juling-api-progress-track {
   height: 7px;
   overflow: hidden;
   border-radius: 999px;
   background: color-mix(
     in srgb,
-    var(--cockpit-api-accent) 12%,
+    var(--juling-api-accent) 12%,
     var(--bg-tertiary)
   );
 }
 
-.cockpit-api-progress-bar {
+.juling-api-progress-bar {
   height: 100%;
   border-radius: inherit;
-  background: var(--cockpit-api-accent);
+  background: var(--juling-api-accent);
 }
 
-.cockpit-api-stats-grid {
+.juling-api-stats-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
 
-.cockpit-api-panel-section {
+.juling-api-panel-section {
   min-width: 0;
   overflow: visible;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
 }
 
-.cockpit-api-section-head {
+.juling-api-section-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -228,18 +230,18 @@
   border-bottom: 1px solid var(--border-light);
 }
 
-.cockpit-api-section-head strong {
+.juling-api-section-head strong {
   color: var(--text-primary);
   font-size: 14px;
 }
 
-.cockpit-api-usage-list {
+.juling-api-usage-list {
   display: grid;
   max-height: 260px;
   overflow: auto;
 }
 
-.cockpit-api-usage-card-grid {
+.juling-api-usage-card-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
@@ -248,7 +250,7 @@
   padding-bottom: 18px;
 }
 
-.cockpit-api-usage-card {
+.juling-api-usage-card {
   min-width: 0;
   display: grid;
   align-content: start;
@@ -260,9 +262,9 @@
   background: color-mix(in srgb, var(--bg-secondary) 62%, transparent);
 }
 
-.cockpit-api-usage-card strong {
+.juling-api-usage-card strong {
   min-width: 0;
-  color: var(--cockpit-api-accent);
+  color: var(--juling-api-accent);
   font-size: 17px;
   line-height: 1.15;
   font-variant-numeric: tabular-nums;
@@ -271,7 +273,7 @@
   white-space: nowrap;
 }
 
-.cockpit-api-usage-card small {
+.juling-api-usage-card small {
   display: block;
   min-width: 0;
   color: var(--text-muted);
@@ -283,7 +285,7 @@
   white-space: nowrap;
 }
 
-.cockpit-api-usage-row {
+.juling-api-usage-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
@@ -292,15 +294,15 @@
   border-bottom: 1px solid var(--border-light);
 }
 
-.cockpit-api-usage-row:last-child {
+.juling-api-usage-row:last-child {
   border-bottom: 0;
 }
 
-.cockpit-api-usage-row > div {
+.juling-api-usage-row > div {
   min-width: 0;
 }
 
-.cockpit-api-usage-name {
+.juling-api-usage-name {
   display: block;
   min-width: 0;
   overflow: hidden;
@@ -311,146 +313,146 @@
   white-space: nowrap;
 }
 
-.cockpit-api-usage-row small,
-.cockpit-api-usage-values span {
+.juling-api-usage-row small,
+.juling-api-usage-values span {
   color: var(--text-secondary);
   font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
 
-.cockpit-api-usage-values {
+.juling-api-usage-values {
   display: grid;
   gap: 4px;
   text-align: right;
   white-space: nowrap;
 }
 
-.cockpit-api-usage-values strong {
-  color: var(--cockpit-api-accent);
+.juling-api-usage-values strong {
+  color: var(--juling-api-accent);
   font-size: 13px;
   font-variant-numeric: tabular-nums;
 }
 
-.cockpit-api-empty-row,
-.cockpit-api-empty-state {
+.juling-api-empty-row,
+.juling-api-empty-state {
   padding: 18px;
   color: var(--text-secondary);
   font-size: 13px;
   text-align: center;
 }
 
-.cockpit-api-empty-state {
+.juling-api-empty-state {
   border: 1px dashed var(--border);
   border-radius: 8px;
   background: var(--bg-card);
 }
 
-.cockpit-api-panel-footer {
+.juling-api-panel-footer {
   padding: 14px 24px;
   background: var(--bg-card);
 }
 
 @media (max-width: 900px) {
-  .cockpit-api-summary-grid {
+  .juling-api-summary-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .cockpit-api-summary-grid.compact {
+  .juling-api-summary-grid.compact {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .cockpit-api-usage-card-grid {
+  .juling-api-usage-card-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .cockpit-api-balance-card {
+  .juling-api-balance-card {
     grid-column: 1 / -1;
   }
 
-  .cockpit-api-stats-grid {
+  .juling-api-stats-grid {
     grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 620px) {
-  .cockpit-api-panel-modal {
+  .juling-api-panel-modal {
     width: calc(100vw - 24px);
     max-height: calc(100vh - 24px);
   }
 
-  .cockpit-api-panel-header,
-  .cockpit-api-panel-body,
-  .cockpit-api-panel-footer {
+  .juling-api-panel-header,
+  .juling-api-panel-body,
+  .juling-api-panel-footer {
     padding-left: 16px;
     padding-right: 16px;
   }
 
-  .cockpit-api-summary-grid {
+  .juling-api-summary-grid {
     grid-template-columns: 1fr;
   }
 
-  .cockpit-api-summary-grid.compact {
+  .juling-api-summary-grid.compact {
     grid-template-columns: 1fr;
   }
 
-  .cockpit-api-usage-card-grid {
+  .juling-api-usage-card-grid {
     grid-template-columns: 1fr;
   }
 
-  .cockpit-api-connection-row {
+  .juling-api-connection-row {
     grid-template-columns: 1fr auto;
   }
 
-  .cockpit-api-connection-row > span {
+  .juling-api-connection-row > span {
     grid-column: 1 / -1;
   }
 
-  .cockpit-api-panel-footer {
+  .juling-api-panel-footer {
     flex-direction: column-reverse;
   }
 
-  .cockpit-api-panel-footer .btn {
+  .juling-api-panel-footer .btn {
     width: 100%;
   }
 }
 
-[data-theme="dark"] .cockpit-api-panel-modal {
-  --cockpit-api-accent: #2dd4bf;
-  --cockpit-api-accent-soft: rgba(45, 212, 191, 0.12);
+[data-theme="dark"] .juling-api-panel-modal {
+  --juling-api-accent: #2dd4bf;
+  --juling-api-accent-soft: rgba(45, 212, 191, 0.12);
   background: rgba(15, 23, 42, 0.98);
   border-color: rgba(45, 212, 191, 0.2);
 }
 
-[data-theme="dark"] .cockpit-api-panel-header,
-[data-theme="dark"] .cockpit-api-panel-footer {
+[data-theme="dark"] .juling-api-panel-header,
+[data-theme="dark"] .juling-api-panel-footer {
   background: rgba(15, 23, 42, 0.98);
 }
 
-[data-theme="dark"] .cockpit-api-panel-body {
+[data-theme="dark"] .juling-api-panel-body {
   background: rgba(2, 6, 23, 0.42);
 }
 
-[data-theme="dark"] .cockpit-api-connection-card,
-[data-theme="dark"] .cockpit-api-balance-card,
-[data-theme="dark"] .cockpit-api-stat-card,
-[data-theme="dark"] .cockpit-api-panel-section,
-[data-theme="dark"] .cockpit-api-empty-state {
+[data-theme="dark"] .juling-api-connection-card,
+[data-theme="dark"] .juling-api-balance-card,
+[data-theme="dark"] .juling-api-stat-card,
+[data-theme="dark"] .juling-api-panel-section,
+[data-theme="dark"] .juling-api-empty-state {
   background: rgba(15, 23, 42, 0.72);
   border-color: rgba(148, 163, 184, 0.18);
 }
 
-[data-theme="dark"] .cockpit-api-balance-card {
+[data-theme="dark"] .juling-api-balance-card {
   border-color: rgba(45, 212, 191, 0.32);
   background: rgba(20, 184, 166, 0.12);
 }
 
-[data-theme="dark"] .cockpit-api-connection-row code {
+[data-theme="dark"] .juling-api-connection-row code {
   background: rgba(2, 6, 23, 0.42);
   border-color: rgba(148, 163, 184, 0.16);
 }
 
-[data-theme="dark"] .cockpit-api-section-head,
-[data-theme="dark"] .cockpit-api-usage-row {
+[data-theme="dark"] .juling-api-section-head,
+[data-theme="dark"] .juling-api-usage-row {
   border-color: rgba(148, 163, 184, 0.16);
 }
 
@@ -519,6 +521,18 @@
   border: 1px solid color-mix(in srgb, var(--primary) 14%, var(--border));
   border-radius: var(--radius-md);
   background: color-mix(in srgb, var(--primary) 5%, var(--bg-secondary));
+}
+
+/* 重新授权上下文（目标账号 + 备注）：在官方登录等所有页签下都展示。 */
+.codex-reauth-target-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.codex-reauth-target-summary .codex-reauth-note-summary {
+  margin-top: 0;
 }
 
 .codex-pending-oauth-draft {
@@ -1313,6 +1327,13 @@
   font-weight: 600;
 }
 
+.api-model-context-window-optional {
+  margin-left: 4px;
+  color: var(--text-muted);
+  font-style: normal;
+  font-weight: 500;
+}
+
 .api-model-context-window-row span {
   overflow: hidden;
   color: var(--text-primary);
@@ -1326,6 +1347,82 @@
   min-height: 32px;
   padding: 6px 8px;
   font-size: 12px;
+}
+
+/* 模型列表的逐模型识图开关：与供应商弹框的开关保持同一套视觉语言。 */
+.api-model-context-window-panel.with-vision .api-model-context-window-head,
+.api-model-context-window-panel.with-vision .api-model-context-window-row {
+  grid-template-columns: minmax(0, 1fr) minmax(108px, 140px) 46px;
+}
+
+/* 只保留逐模型识图列时（上下文统一走启动预览的实例级管理）。 */
+.api-model-context-window-panel.no-context .api-model-context-window-head,
+.api-model-context-window-panel.no-context .api-model-context-window-row {
+  grid-template-columns: minmax(0, 1fr) 46px;
+}
+
+.api-model-vision-toggle {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.api-model-vision-toggle input {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  margin: 0;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.api-model-vision-switch {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text-muted) 24%, var(--bg-card));
+  transition:
+    background 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.api-model-vision-switch::before {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.18);
+  transition: transform 0.16s ease;
+}
+
+.api-model-vision-toggle input:checked + .api-model-vision-switch {
+  background: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 16%, transparent);
+}
+
+.api-model-vision-toggle input:checked + .api-model-vision-switch::before {
+  transform: translateX(18px);
+}
+
+.api-model-vision-toggle input:disabled {
+  cursor: not-allowed;
+}
+
+.api-model-context-window-preset {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.api-model-context-window-select {
+  width: 100%;
 }
 
 .codex-add-modal .oauth-url-section {
@@ -1579,75 +1676,6 @@
   white-space: nowrap;
 }
 
-.codex-oauth-binding-quota-overlay {
-  z-index: 10010;
-}
-
-.codex-oauth-binding-quota-modal {
-  display: flex;
-  flex-direction: column;
-  width: min(460px, calc(100vw - 32px));
-  max-height: min(520px, calc(100vh - 32px));
-  overflow: hidden;
-}
-
-.codex-oauth-binding-quota-modal .modal-body {
-  overflow-y: auto;
-}
-
-.codex-oauth-binding-quota-modal .add-section {
-  gap: 16px;
-}
-
-.codex-oauth-binding-quota-desc {
-  margin: 0;
-  color: var(--text-secondary);
-  font-size: 12px;
-  line-height: 1.55;
-}
-
-.codex-oauth-binding-quota-fields {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(108px, 1fr));
-  gap: 10px;
-}
-
-.codex-oauth-binding-quota-field {
-  display: grid;
-  gap: 4px;
-  margin: 0;
-  color: var(--text-secondary);
-  font-size: 11px;
-  font-weight: 650;
-}
-
-.codex-oauth-binding-quota-input-wrap {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 24px;
-  align-items: center;
-  gap: 4px;
-  min-width: 108px;
-}
-
-.codex-oauth-binding-quota-input-wrap .codex-account-note-input {
-  width: 100%;
-  min-width: 0;
-  height: 32px;
-  font-size: 12px;
-  font-weight: 650;
-}
-
-.codex-oauth-binding-quota-input-wrap > span {
-  color: var(--text-muted);
-  font-size: 11px;
-  text-align: center;
-}
-
-.codex-oauth-binding-quota-error {
-  max-width: none;
-  font-size: 11px;
-}
-
 .codex-oauth-binding-picker {
   display: flex;
   flex-direction: column;
@@ -1669,22 +1697,6 @@
   color: var(--text-primary);
   font-size: 13px;
   font-weight: 700;
-}
-
-.codex-oauth-binding-picker-controls {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 12px;
-  min-width: 0;
-  flex-wrap: wrap;
-}
-
-.codex-oauth-binding-quota-control {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  min-width: 0;
 }
 
 .codex-oauth-binding-gateway-toggle {
@@ -1767,18 +1779,6 @@
 .codex-oauth-binding-gateway-toggle input:disabled
   + .codex-oauth-binding-checkbox-ui {
   box-shadow: none;
-}
-
-.codex-oauth-binding-quota-edit {
-  width: 26px;
-  height: 26px;
-  min-height: 26px;
-  border-radius: 6px;
-}
-
-.codex-oauth-binding-quota-edit svg {
-  width: 12px;
-  height: 12px;
 }
 
 .codex-oauth-binding-gateway-toggle svg {
@@ -2196,9 +2196,7 @@
   }
 
   .codex-oauth-binding-modal .modal-header,
-  .codex-oauth-binding-modal .modal-body,
-  .codex-oauth-binding-quota-modal .modal-header,
-  .codex-oauth-binding-quota-modal .modal-body {
+  .codex-oauth-binding-modal .modal-body {
     padding-left: 16px;
     padding-right: 16px;
   }
@@ -2211,15 +2209,6 @@
 
   .codex-oauth-binding-gateway-toggle {
     white-space: normal;
-  }
-
-  .codex-oauth-binding-picker-controls {
-    width: 100%;
-    justify-content: flex-start;
-  }
-
-  .codex-oauth-binding-quota-fields {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .codex-oauth-binding-toolbar {
@@ -2258,9 +2247,6 @@
 }
 
 @media (max-width: 420px) {
-  .codex-oauth-binding-quota-fields {
-    grid-template-columns: 1fr;
-  }
 }
 
 .codex-add-modal .api-provider-endpoint-list,
@@ -2619,6 +2605,59 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
+}
+
+.codex-quick-config-modal .codex-quick-config-section {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 16px;
+  border: 1px solid color-mix(in srgb, var(--border) 60%, transparent);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--bg-secondary) 34%, transparent);
+}
+
+.codex-quick-config-modal .codex-quick-config-section__heading h3,
+.codex-quick-config-modal .codex-quick-config-section__heading p {
+  margin: 0;
+}
+
+.codex-quick-config-modal .codex-quick-config-section__heading h3 {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.codex-quick-config-modal .codex-quick-config-section__heading p {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--text-muted);
+}
+
+.codex-quick-config-modal .codex-context-override-editor {
+  display: grid;
+  gap: 16px;
+}
+
+.codex-quick-config-modal
+  .codex-context-override-preset
+  .single-select-dropdown-trigger {
+  min-height: 42px;
+  border-radius: 10px;
+}
+
+.codex-quick-config-modal .codex-context-override-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.codex-quick-config-modal .codex-context-override-fields label {
+  display: grid;
+  gap: 7px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .codex-quick-config-modal .codex-quick-config-field {
@@ -3284,6 +3323,14 @@
   box-shadow:
     0 24px 64px -8px rgba(14, 165, 233, 0.12),
     0 12px 24px -8px rgba(0, 0, 0, 0.06);
+}
+
+/* Codex account dialogs share the provider editor width, including the
+   platform-wide account-add class whose legacy rule is narrower. */
+.modal-content.codex-provider-modal.platform-account-add-modal,
+.modal.codex-provider-modal.platform-account-add-modal {
+  width: min(920px, calc(100vw - 48px));
+  max-width: 920px;
 }
 
 [data-theme="dark"] .codex-provider-modal {
@@ -4213,4 +4260,3 @@
 }
 
 /* Dark Mode Table Overrides */
-

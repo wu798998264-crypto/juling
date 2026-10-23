@@ -1,4 +1,4 @@
-// cockpit-core Trae 账号：Runtime injection payloads and current-account resolution。
+// juling-core Trae 账号：Runtime injection payloads and current-account resolution。
 // 通过 include! 保持原模块作用域和平台调用路径。
 fn to_store_region(raw: &str) -> String {
     match raw.trim().to_ascii_lowercase().as_str() {

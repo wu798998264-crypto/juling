@@ -23,9 +23,9 @@ import (
 )
 
 const (
-	codexUserAgent             = "codex-tui/0.146.0 (Mac OS 26.5.0; arm64) iTerm.app/3.6.10 (codex-tui; 0.146.0)"
+	codexUserAgent             = "codex-tui/0.153.4 (Mac OS 26.5.0; arm64) iTerm.app/3.6.10 (codex-tui; 0.153.4)"
 	codexOriginator            = "codex-tui"
-	codexDefaultImageToolModel = "gpt-image-2"
+	codexDefaultImageToolModel = "gpt-image-2.5"
 	codexResponsesLiteHeader   = "X-OpenAI-Internal-Codex-Responses-Lite"
 	codexResponsesLiteMetadata = "client_metadata.ws_request_header_x_openai_internal_codex_responses_lite"
 )
@@ -40,13 +40,26 @@ func translateCodexRequestPair(from, to sdktranslator.Format, model string, orig
 		}
 		return sdktranslator.TranslateRequest(from, to, model, raw, stream)
 	}
+	// OAuth translation strips unsupported tiers such as default/flex. Keep
+	// their explicit presence in the defaults-checking snapshot so a configured
+	// paid Fast default cannot silently replace a client's Standard choice.
+	preserveTierSelection := func(raw, translated []byte) []byte {
+		tier := gjson.GetBytes(raw, "service_tier")
+		if tier.Exists() && !gjson.GetBytes(translated, "service_tier").Exists() {
+			protected, errSet := sjson.SetRawBytes(append([]byte(nil), translated...), "service_tier", []byte(tier.Raw))
+			if errSet == nil {
+				return protected
+			}
+		}
+		return translated
+	}
 	if bytes.Equal(originalPayload, payload) {
 		body := translate(payload)
-		return body, body
+		return preserveTierSelection(originalPayload, body), body
 	}
 	originalTranslated := translate(originalPayload)
 	body := translate(payload)
-	return originalTranslated, body
+	return preserveTierSelection(originalPayload, originalTranslated), body
 }
 
 // PrepareRequest injects Codex credentials into the outgoing HTTP request.
@@ -65,7 +78,7 @@ func (e *CodexExecutor) PrepareRequest(req *http.Request, auth *cliproxyauth.Aut
 		attrs = auth.Attributes
 	}
 	util.ApplyCustomHeadersFromAttrs(req, attrs)
-	return nil
+	return helps.ApplyManagedIdentityRequest(req, auth)
 }
 
 // HttpRequest injects Codex credentials into the request and executes it.
@@ -81,27 +94,17 @@ func (e *CodexExecutor) HttpRequest(ctx context.Context, auth *cliproxyauth.Auth
 		return nil, err
 	}
 	httpClient := helps.NewUtlsHTTPClient(ctx, e.cfg, auth, 0)
-	return httpClient.Do(httpReq)
+	return helps.DoGuardedUpstreamHTTP(ctx, auth, httpClient, httpReq)
 }
 
 type codexIdentityConfuseState struct {
+	managedAuth             *cliproxyauth.Auth
+	managedSkipInstallation bool
 	enabled                 bool
 	authID                  string
 	originalPromptCacheKey  string
 	promptCacheKey          string
 	turnIDs                 []codexIdentityReplacement
-	fingerprintMode         string
-	originalInstallationID  string
-	installationID          string
-	originalSessionID       string
-	sessionID               string
-	originalThreadID        string
-	threadID                string
-	originalWindowID        string
-	windowID                string
-	originalParentThreadID  string
-	parentThreadID          string
-	fingerprintReplacements []codexIdentityReplacement
 }
 
 type codexIdentityReplacement struct {
@@ -113,6 +116,10 @@ func (e *CodexExecutor) cacheHelper(ctx context.Context, from sdktranslator.Form
 	var headers http.Header
 	if len(headerSets) > 0 {
 		headers = headerSets[0]
+	}
+	if cliproxyexecutor.ContinuityActive(ctx) {
+		httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(rawJSON))
+		return httpReq, rawJSON, codexIdentityConfuseState{}, err
 	}
 	var cache helps.CodexCache
 	if sourceFormatEqual(from, sdktranslator.FormatClaude) {
@@ -155,7 +162,18 @@ func (e *CodexExecutor) cacheHelper(ctx context.Context, from sdktranslator.Form
 	rawJSON = helps.SanitizeCodexInputItemIDs(rawJSON)
 	var identityState codexIdentityConfuseState
 	rawJSON, identityState = applyCodexIdentityConfuseBody(e.cfg, auth, userPayload, rawJSON)
-	rawJSON, identityState = applyCodexFingerprintBody(e.cfg, auth, userPayload, rawJSON, identityState)
+	if _, identityErr := helps.ManagedIdentityForAuth(auth); identityErr != nil {
+		return nil, nil, codexIdentityConfuseState{}, identityErr
+	}
+	identityState.managedAuth = auth
+	identityState.managedSkipInstallation = !helps.ManagedIdentityProtocolApplies(auth, url)
+	if !identityState.managedSkipInstallation {
+		var identityErr error
+		rawJSON, identityErr = helps.ApplyManagedIdentity(auth, nil, rawJSON)
+		if identityErr != nil {
+			return nil, nil, codexIdentityConfuseState{}, identityErr
+		}
+	}
 	if identityState.promptCacheKey != "" {
 		cache.ID = identityState.promptCacheKey
 	}
@@ -199,8 +217,16 @@ func applyCodexIdentityConfuseHeaders(headers http.Header, state *codexIdentityC
 	if headers == nil {
 		return
 	}
+	if state != nil && state.managedAuth != nil {
+		defer func() {
+			if state.managedSkipInstallation {
+				_ = helps.StripManagedStandaloneIdentityHeaders(state.managedAuth, headers)
+			} else {
+				_, _ = helps.ApplyManagedIdentity(state.managedAuth, headers, nil)
+			}
+		}()
+	}
 	if state == nil || !state.enabled {
-		applyCodexFingerprintHeaders(headers, state)
 		return
 	}
 
@@ -218,7 +244,6 @@ func applyCodexIdentityConfuseHeaders(headers http.Header, state *codexIdentityC
 	headers.Set("X-Client-Request-Id", state.promptCacheKey)
 	headers.Set("Thread-Id", state.promptCacheKey)
 	headers.Set("X-Codex-Window-Id", state.promptCacheKey+":0")
-	applyCodexFingerprintHeaders(headers, state)
 }
 
 func applyCodexTurnMetadataIdentityConfuse(rawTurnMetadata string, state *codexIdentityConfuseState) string {
@@ -241,7 +266,6 @@ func applyCodexTurnMetadataIdentityConfuse(rawTurnMetadata string, state *codexI
 }
 
 func applyCodexIdentityConfuseResponsePayload(payload []byte, state codexIdentityConfuseState) []byte {
-	payload = applyCodexFingerprintResponsePayload(payload, state, false)
 	payload = replaceCodexIdentityResponsePayload(payload, state.originalPromptCacheKey, state.promptCacheKey)
 	for _, turnID := range state.turnIDs {
 		payload = replaceCodexIdentityResponsePayload(payload, turnID.original, turnID.confused)
@@ -250,7 +274,6 @@ func applyCodexIdentityConfuseResponsePayload(payload []byte, state codexIdentit
 }
 
 func applyCodexIdentityExposeResponsePayload(payload []byte, state codexIdentityConfuseState) []byte {
-	payload = applyCodexFingerprintResponsePayload(payload, state, true)
 	payload = replaceCodexIdentityResponsePayload(payload, state.promptCacheKey, state.originalPromptCacheKey)
 	for _, turnID := range state.turnIDs {
 		payload = replaceCodexIdentityResponsePayload(payload, turnID.confused, turnID.original)
@@ -305,6 +328,61 @@ func applyCodexHeaders(r *http.Request, auth *cliproxyauth.Auth, token string, s
 	applyCodexHeadersFromSources(r, auth, token, stream, cfg, ginHeaders)
 }
 
+const codexRoutingHintHeader = "X-Codex-Routing-Hint"
+
+// applyCodexRoutingHint sends the routing hint native Codex attaches to every
+// ChatGPT-backend Responses request: "model=<slug>" plus ";tier=<service_tier>"
+// when the body requests a tier (openai/codex rust-v0.155.0,
+// codex-rs/core/src/client.rs build_routing_hint_header). Without it, a
+// translated request carries service_tier=priority only in the body. Whether
+// the backend needs the header to grant priority is undocumented.
+//
+// The model is the resolved model written to the upstream body, while the tier
+// is read from the final body so payload rules cannot make the hint stale. A
+// hint forwarded by a native client names its original model and is replaced.
+// Operator configuration keeps precedence: when an auth "header:" rule for the
+// hint resolves to a value (static, or a "$Header" reference the request
+// carries), that value is sent, and callers apply models.json override_header
+// afterwards. A rule that resolves to nothing falls back to the derived hint.
+// API-key requests are not touched, matching native Codex, which sends no hint
+// to API-key providers.
+func applyCodexRoutingHint(ctx context.Context, headers http.Header, auth *cliproxyauth.Auth, baseModel string, upstreamBody []byte, clientHeaders http.Header) {
+	if headers == nil || codexAuthUsesAPIKey(auth) || codexUseSIWC(auth) {
+		return
+	}
+	deleteHeaderCaseInsensitive(headers, codexRoutingHintHeader)
+	if operatorHint := codexOperatorHeaderValue(ctx, auth, clientHeaders, codexRoutingHintHeader); operatorHint != "" {
+		headers.Set(codexRoutingHintHeader, operatorHint)
+		return
+	}
+	model := strings.TrimSpace(baseModel)
+	if model == "" {
+		return
+	}
+	hint := "model=" + model
+	if tier := gjson.GetBytes(upstreamBody, "service_tier"); tier.Type == gjson.String {
+		if value := strings.TrimSpace(tier.String()); value != "" {
+			hint += ";tier=" + value
+		}
+	}
+	headers.Set(codexRoutingHintHeader, hint)
+}
+
+// codexOperatorHeaderValue returns the value the auth's "header:" rules
+// resolve to for name, using the same resolver that applied them to the
+// request, so dynamic references that resolve to nothing report "".
+func codexOperatorHeaderValue(ctx context.Context, auth *cliproxyauth.Auth, clientHeaders http.Header, name string) string {
+	if auth == nil || len(auth.Attributes) == 0 {
+		return ""
+	}
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	resolved := (&http.Request{Header: http.Header{}}).WithContext(ctx)
+	util.ApplyCustomHeadersFromAttrs(resolved, auth.Attributes, clientHeaders)
+	return strings.TrimSpace(resolved.Header.Get(name))
+}
+
 // applyModelHeaderOverrides forces models.json config.override_header onto upstream headers.
 func applyModelHeaderOverrides(headers http.Header, modelName string) {
 	if headers == nil {
@@ -334,6 +412,10 @@ func applyCodexDirectImageHeaders(r *http.Request, auth *cliproxyauth.Auth, toke
 		ginHeaders.Del("User-Agent")
 	}
 	applyCodexHeadersFromSources(r, auth, token, stream, cfg, ginHeaders)
+	// Direct image endpoints use the official Codex identity even for API-key
+	// passthrough; retain other client headers such as Version separately.
+	r.Header.Set("User-Agent", codexUserAgent)
+	r.Header.Set("Originator", codexOriginator)
 }
 
 func applyCodexHeadersFromSources(r *http.Request, auth *cliproxyauth.Auth, token string, stream bool, cfg *config.Config, ginHeaders http.Header) {
@@ -358,8 +440,19 @@ func applyCodexHeadersFromSources(r *http.Request, auth *cliproxyauth.Auth, toke
 		r.Header.Set(codexResponsesLiteHeaderName, ginHeaders.Get(codexResponsesLiteHeaderName))
 	}
 
-	cfgUserAgent, _ := codexHeaderDefaults(cfg, auth)
-	ensureHeaderWithConfigPrecedence(r.Header, ginHeaders, "User-Agent", cfgUserAgent, codexUserAgent)
+	isAPIKey := codexAuthUsesAPIKey(auth)
+	if isAPIKey {
+		// API-key passthrough must retain the downstream client's identity. The
+		// OAuth cloaking fallback can make a newer client look like 0.146.0 and
+		// trigger strict_passthrough_client_version_unsupported upstream.
+		ensureHeaderWithPriority(r.Header, ginHeaders, "User-Agent", "", "")
+		if r.Header.Get("User-Agent") == "" {
+			r.Header.Set("User-Agent", codexUserAgent)
+		}
+	} else {
+		cfgUserAgent, _ := codexHeaderDefaults(cfg, auth)
+		ensureHeaderWithConfigPrecedence(r.Header, ginHeaders, "User-Agent", cfgUserAgent, codexUserAgent)
+	}
 
 	if stream {
 		r.Header.Set("Accept", "text/event-stream")
@@ -368,7 +461,7 @@ func applyCodexHeadersFromSources(r *http.Request, auth *cliproxyauth.Auth, toke
 	}
 	r.Header.Set("Connection", "Keep-Alive")
 
-	isAPIKey := codexAuthUsesAPIKey(auth)
+	// isAPIKey is also used for Originator and account binding below.
 	if originator := strings.TrimSpace(ginHeaders.Get("Originator")); originator != "" {
 		r.Header.Set("Originator", originator)
 	} else if !isAPIKey {
@@ -386,43 +479,37 @@ func applyCodexHeadersFromSources(r *http.Request, auth *cliproxyauth.Auth, toke
 		attrs = auth.Attributes
 	}
 	util.ApplyCustomHeadersFromAttrs(r, attrs, ginHeaders)
-	applyCodexCloakingHeaders(r.Header, cfg)
+	applyCodexCloakingHeaders(r.Header, cfg, isAPIKey)
 }
 
-func applyCodexCloakingHeaders(headers http.Header, cfg *config.Config) {
-	if headers == nil || cfg == nil || cfg.Codex.DisableCodexCloaking {
+func applyCodexCloakingHeaders(headers http.Header, cfg *config.Config, isAPIKey bool) {
+	if headers == nil || cfg == nil || cfg.Codex.DisableCodexCloaking || isAPIKey {
 		return
 	}
 	headers.Set("User-Agent", codexUserAgent)
 	headers.Set("Originator", codexOriginator)
 }
 
-func normalizeCodexInstructions(body []byte, model ...string) []byte {
+func normalizeCodexInstructions(body []byte, nativeRequest ...bool) []byte {
+	// Preserve the host's legacy ID repair independently of CPA's instruction policy.
+	body = normalizeCodexCallIDs(body)
+	if len(nativeRequest) > 0 && nativeRequest[0] {
+		return body
+	}
 	instructions := gjson.GetBytes(body, "instructions")
-	if !instructions.Exists() || instructions.Type == gjson.Null || strings.TrimSpace(instructions.String()) == "" {
-		value := ""
-		if len(model) > 0 {
-			value = registry.CodexClientModelBaseInstructions(model[0])
-		}
-		body, _ = sjson.SetBytes(body, "instructions", value)
+	if !instructions.Exists() || instructions.Type == gjson.Null {
+		body, _ = sjson.SetBytes(body, "instructions", "")
 	}
 	return body
 }
 
-func normalizeCodexInputNamespaces(body []byte, auth *cliproxyauth.Auth, compact bool) []byte {
-	items := gjson.GetBytes(body, "input")
-	if !items.IsArray() {
-		return body
-	}
-	apiKey := codexAuthUsesAPIKey(auth)
-	for index, item := range items.Array() {
-		itemType := item.Get("type").String()
-		keep := !apiKey && !compact && (itemType == "function_call" || itemType == "custom_tool_call" || itemType == "tool_call" || itemType == "mcp_tool_call")
-		if !keep {
-			body, _ = sjson.DeleteBytes(body, fmt.Sprintf("input.%d.namespace", index))
-		}
-	}
-	return body
+// NormalizeCodexCallIDs repairs missing tool call IDs for Responses replay.
+func NormalizeCodexCallIDs(body []byte) []byte {
+	return cliproxyexecutor.NormalizeResponsesCallIDs(body)
+}
+
+func normalizeCodexCallIDs(body []byte) []byte {
+	return cliproxyexecutor.NormalizeResponsesCallIDs(body)
 }
 
 var imageGenToolJSON = []byte(`{"type":"image_generation","output_format":"png"}`)

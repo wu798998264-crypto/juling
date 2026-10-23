@@ -19,7 +19,7 @@ const CODEX_SHARED_RULES_DIR_NAME: &str = "rules";
 const CODEX_SHARED_AGENTS_FILE_NAME: &str = "AGENTS.md";
 const CODEX_SHARED_VENDOR_IMPORTS_SKILLS_DIR: &str = "vendor_imports/skills";
 #[cfg(target_os = "windows")]
-const CODEX_SHARED_COPY_MARKER_FILE_NAME: &str = ".cockpit-tools-shared-copy";
+const CODEX_SHARED_COPY_MARKER_FILE_NAME: &str = ".juling-shared-copy";
 #[cfg(target_os = "windows")]
 const CODEX_WINDOWS_APP_DATA_DIR_NAME: &str = "codex-app-data";
 #[cfg(target_os = "windows")]
@@ -111,17 +111,9 @@ pub fn get_default_codex_home() -> Result<PathBuf, String> {
 }
 
 pub fn get_default_instances_root_dir() -> Result<PathBuf, String> {
-    #[cfg(target_os = "macos")]
+    #[cfg(any(target_os = "macos", target_os = "windows"))]
     {
-        let home = dirs::home_dir().ok_or("无法获取用户主目录")?;
-        return Ok(home.join(".antigravity_cockpit/instances/codex"));
-    }
-
-    #[cfg(target_os = "windows")]
-    {
-        let appdata =
-            std::env::var("APPDATA").map_err(|_| "无法获取 APPDATA 环境变量".to_string())?;
-        return Ok(PathBuf::from(appdata).join(".antigravity_cockpit\\instances\\codex"));
+        return crate::modules::data_paths::managed_instances_root_dir("codex");
     }
 
     #[allow(unreachable_code)]
@@ -244,7 +236,7 @@ fn prepare_directory_copy_fallback_target(target: &Path) -> Result<(), String> {
 fn mark_directory_copy_fallback(target: &Path) -> Result<(), String> {
     fs::write(
         target.join(CODEX_SHARED_COPY_MARKER_FILE_NAME),
-        "cockpit-tools-shared-copy-v1\n",
+        "juling-shared-copy-v1\n",
     )
     .map_err(|e| format!("写入目录复制 fallback 标记失败: {}", e))
 }

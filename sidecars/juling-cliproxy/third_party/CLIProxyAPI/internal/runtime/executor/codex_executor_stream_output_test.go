@@ -117,7 +117,7 @@ func TestCodexExecutorExecuteSurfacesTerminalStreamError(t *testing.T) {
 	if got := statusCodeFromTestError(t, err); got != http.StatusBadRequest {
 		t.Fatalf("status code = %d, want %d; err=%v", got, http.StatusBadRequest, err)
 	}
-	assertCodexErrorCode(t, err.Error(), "invalid_request_error", "context_too_large")
+	assertCodexErrorCode(t, err.Error(), "invalid_request_error", "context_length_exceeded")
 	if !strings.Contains(err.Error(), "Your input exceeds the context window") {
 		t.Fatalf("error message missing upstream context text: %v", err)
 	}
@@ -203,8 +203,8 @@ func TestCodexExecutorExecuteMissingCompletionIsRequestScoped(t *testing.T) {
 	if err == nil {
 		t.Fatal("expected missing-completion error, got nil")
 	}
-	if got := statusCodeFromTestError(t, err); got != http.StatusRequestTimeout {
-		t.Fatalf("status code = %d, want %d; err=%v", got, http.StatusRequestTimeout, err)
+	if got := statusCodeFromTestError(t, err); got != http.StatusBadGateway {
+		t.Fatalf("status code = %d, want %d; err=%v", got, http.StatusBadGateway, err)
 	}
 	assertRequestScopedTestError(t, err)
 }
@@ -242,8 +242,8 @@ func TestCodexExecutorExecuteStreamMissingCompletionIsRequestScoped(t *testing.T
 	if streamErr == nil {
 		t.Fatal("expected missing-completion stream error, got nil")
 	}
-	if got := statusCodeFromTestError(t, streamErr); got != http.StatusRequestTimeout {
-		t.Fatalf("status code = %d, want %d; err=%v", got, http.StatusRequestTimeout, streamErr)
+	if got := statusCodeFromTestError(t, streamErr); got != http.StatusBadGateway {
+		t.Fatalf("status code = %d, want %d; err=%v", got, http.StatusBadGateway, streamErr)
 	}
 	assertRequestScopedTestError(t, streamErr)
 }
@@ -384,8 +384,8 @@ func TestCodexExecutorTransportFailureBeforeTerminalIsRequestScoped(t *testing.T
 			if terminalErr == nil {
 				t.Fatal("expected transport failure before terminal event")
 			}
-			if got := statusCodeFromTestError(t, terminalErr); got != http.StatusRequestTimeout {
-				t.Fatalf("status code = %d, want %d; err=%v", got, http.StatusRequestTimeout, terminalErr)
+			if got := statusCodeFromTestError(t, terminalErr); got != http.StatusBadGateway {
+				t.Fatalf("status code = %d, want %d; err=%v", got, http.StatusBadGateway, terminalErr)
 			}
 			assertRequestScopedTestError(t, terminalErr)
 		})
@@ -503,7 +503,7 @@ func TestCodexExecutorExecuteStreamSurfacesTerminalStreamError(t *testing.T) {
 	if got := statusCodeFromTestError(t, streamErr); got != http.StatusBadRequest {
 		t.Fatalf("status code = %d, want %d; err=%v", got, http.StatusBadRequest, streamErr)
 	}
-	assertCodexErrorCode(t, streamErr.Error(), "invalid_request_error", "context_too_large")
+	assertCodexErrorCode(t, streamErr.Error(), "invalid_request_error", "context_length_exceeded")
 }
 
 func TestCodexTerminalStreamContextLengthErrFromResponseFailed(t *testing.T) {
@@ -514,7 +514,7 @@ func TestCodexTerminalStreamContextLengthErrFromResponseFailed(t *testing.T) {
 	if got := statusCodeFromTestError(t, err); got != http.StatusBadRequest {
 		t.Fatalf("status code = %d, want %d; err=%v", got, http.StatusBadRequest, err)
 	}
-	assertCodexErrorCode(t, err.Error(), "invalid_request_error", "context_too_large")
+	assertCodexErrorCode(t, err.Error(), "invalid_request_error", "context_length_exceeded")
 }
 
 func TestCodexTerminalStreamContextLengthErrFromTopLevelError(t *testing.T) {
@@ -525,7 +525,7 @@ func TestCodexTerminalStreamContextLengthErrFromTopLevelError(t *testing.T) {
 	if got := statusCodeFromTestError(t, err); got != http.StatusBadRequest {
 		t.Fatalf("status code = %d, want %d; err=%v", got, http.StatusBadRequest, err)
 	}
-	assertCodexErrorCode(t, err.Error(), "invalid_request_error", "context_too_large")
+	assertCodexErrorCode(t, err.Error(), "invalid_request_error", "context_length_exceeded")
 	if !strings.Contains(err.Error(), "Your input exceeds the context window") {
 		t.Fatalf("error message missing upstream context text: %v", err)
 	}

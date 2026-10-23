@@ -23,9 +23,12 @@ const EXTENSION_SECRET_STORAGE_KEYS: [&str; 2] = [
     "antigravity.autoTrigger.credentials",
     "antigravity.autoTrigger.credential",
 ];
-const EXTENSION_SECRET_STORAGE_EXTENSION_IDS: [&str; 2] = [
+// External extension IDs are protocol compatibility identifiers, not UI branding.
+const EXTENSION_SECRET_STORAGE_EXTENSION_IDS: [&str; 4] = [
     "jlcodes.antigravity-cockpit",
     "jlcodes99.antigravity-cockpit",
+    "jlcodes.antigravity-juling",
+    "jlcodes99.antigravity-juling",
 ];
 
 #[derive(Debug, Deserialize)]

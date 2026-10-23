@@ -17,7 +17,7 @@ Uma **ferramenta universal de gerenciamento de contas para IDEs de IA**, atualme
 
 🇺🇸 English · 🇨🇳 简体中文 · 繁體中文 · 🇯🇵 日本語 · 🇩🇪 Deutsch · 🇪🇸 Español · 🇫🇷 Français · 🇮🇹 Italiano · 🇰🇷 한국어 · 🇧🇷 Português · 🇷🇺 Русский · 🇹🇷 Türkçe · 🇵🇱 Polski · 🇨🇿 Čeština · 🇸🇦 العربية · 🇻🇳 Tiếng Việt · 🇮🇩 Bahasa Indonesia
 
-**Plataformas oficialmente suportadas**: macOS, Windows e Linux.
+**Esta versão**: Windows 10/11 x64. O código para macOS/Linux permanece disponível, mas esta versão não publica pacotes para essas plataformas. Consulte [as notas](docs/releases/v1.3.73.md) e [NOTICE.txt](NOTICE.txt).
 
 ---
 
@@ -220,9 +220,11 @@ Estas são as perguntas de segurança mais comuns respondidas diretamente:
 
 - **Esta é uma ferramenta para desktop local**: ela não requer uma conta de nuvem separada para este projeto e não depende do armazenamento em nuvem hospedado pelo projeto.
 - **Os dados são armazenados principalmente em sua máquina**:
-  - `~/.antigravity_cockpit`: Contas do Antigravity IDE, configurações, status do WebSocket, etc.
+  - `~/.juling_tools`: contas de todas as plataformas, configurações compartilhadas, registros, cópias de segurança e configurações de instâncias; o ambiente de desenvolvimento usa `~/.juling_tools_dev`, e `JULING_TOOLS_DATA_DIR` permite definir um diretório personalizado
+  - Instalações existentes recebem automaticamente, em segundo plano, uma entrada com o novo nome por meio de um link simbólico no Unix ou uma junção de diretórios no Windows para `~/.antigravity_juling` / `~/.antigravity_juling_dev`. Não é necessária migração manual. O diretório físico antigo e os caminhos das instâncias existentes são preservados, e ambas as entradas acessam os mesmos dados. A sessão atual mantém o caminho original; as próximas inicializações usam a nova entrada. Se a criação do link falhar, o diretório antigo continua em uso. Se os dois nomes corresponderem a diretórios independentes, o antigo permanece em uso, sem mesclar ou sobrescrever dados automaticamente
+  - As instâncias gerenciadas ficam, por padrão, em `instances/<plataforma>` no diretório compartilhado. No Windows, algumas plataformas usam `%APPDATA%\.juling_tools\instances\<plataforma>`, com a mesma compatibilidade automática para diretórios antigos. Diretórios personalizados permanecem inalterados
   - `~/.codex`: Arquivo `auth.json` de login atual do Codex
-  - Pasta de dados do aplicativo local em `com.antigravity.cockpit-tools`: Dados de índice de múltiplas contas do Codex / GitHub Copilot / Windsurf / Kiro / Cursor / CodeBuddy / CodeBuddy CN / Qoder / Trae / Zed, etc.
+  - Dados do aplicativo no sistema em `com.wu798998264.juling`: estado do WebView do aplicativo e dados relacionados; os diretórios históricos `com.antigravity.juling` são usados apenas para importar dados antigos
 - **O WebSocket é somente local por padrão**: vincula-se a `127.0.0.1`, porta padrão `19528`; você pode desativá-lo ou alterar a porta em Configurações.
 - **Quando ocorre acesso à rede**: login OAuth, atualização de token, obtenção de cota, verificações de atualização e outras solicitações oficiais da API.
 **Solicitações de permissão de privacidade do macOS**: após iniciar o Codex/agente a partir do Juling, se um comando do shell executado pelo agente acessar pastas protegidas, como Área de Trabalho, Documentos, Downloads ou Fotos, o macOS poderá exibir a solicitação como "O Juling gostaria de acessar...". Isso ocorre porque esses comandos são processos filhos iniciados pelo Juling, portanto, o macOS atribui a solicitação ao aplicativo host; isso não significa, por si só, que o processo principal do Juling esteja ativamente verificando essas pastas. Conceda acesso somente se você confiar na tarefa atual do agente e nos comandos que ela executará. Em caso de dúvida, negue a solicitação ou execute o projeto a partir de um diretório de trabalho normal primeiro.
@@ -370,17 +372,9 @@ npm run tauri build
 
 ---
 
-## Comunidade
-
-Grupo de bate-papo no Telegram recém-criado: [Junte-se ao grupo](https://t.me/+Y8gMv4SlZUU2MWY1)
 
 ---
 
-## Patrocínio
-
-Se você achar este projeto útil, considere apoiá-lo aqui: [☕ Doar](docs/DONATE.pt-br.md)
-
-Toda contribuição ajuda a manter o desenvolvimento de código aberto. Obrigado!
 
 ---
 

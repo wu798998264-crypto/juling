@@ -1,4 +1,4 @@
-// cockpit-core Codex 账号：Official authority synchronization and projection persistence。
+// juling-core Codex 账号：Official authority synchronization and projection persistence。
 // 通过 include! 保持原模块作用域和凭据调用路径。
 #[derive(Debug, Clone)]
 struct LocalCodexOAuthSnapshot {

@@ -346,8 +346,8 @@ pub fn is_backup_file_name(file_name: &str) -> bool {
     if trimmed != file_name || trimmed.contains('/') || trimmed.contains('\\') {
         return false;
     }
-    let matches_prefix = trimmed.starts_with("cockpit_auto_backup_")
-        || trimmed.starts_with("cockpit_manual_backup_");
+    let matches_prefix = trimmed.starts_with("juling_auto_backup_")
+        || trimmed.starts_with("juling_manual_backup_");
     let matches_suffix = trimmed.ends_with(".json") || trimmed.ends_with(".zip");
     matches_prefix && matches_suffix
 }
@@ -473,8 +473,8 @@ mod tests {
             "https://dav.jianguoyun.com/dav/"
         );
         assert_eq!(
-            normalize_remote_dir(" /cockpit-tools/ ").unwrap(),
-            "cockpit-tools"
+            normalize_remote_dir(" /juling/ ").unwrap(),
+            "juling"
         );
     }
 }

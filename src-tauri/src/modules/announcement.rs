@@ -163,6 +163,9 @@ pub struct SponsorIntegration {
     pub integration_type: String,
     #[serde(default)]
     pub base_url: String,
+    /// 已废弃的历史线路；命中时自动改写为当前 `base_url`。
+    #[serde(default)]
+    pub base_url_aliases: Vec<String>,
     #[serde(default)]
     pub wire_api: Option<String>,
     #[serde(default)]
@@ -945,32 +948,8 @@ fn filter_sponsor_module(
 }
 
 async fn fetch_remote_announcements() -> Result<AnnouncementResponse, String> {
-    logger::log_info("[Announcement] 从远端拉取公告");
-
-    let client = reqwest::Client::builder()
-        .user_agent("Juling")
-        .timeout(std::time::Duration::from_secs(10))
-        .build()
-        .map_err(|e| format!("创建公告 HTTP 客户端失败: {}", e))?;
-
-    let url = format!("{}?t={}", ANNOUNCEMENT_URL, Utc::now().timestamp_millis());
-
-    let response = client
-        .get(url)
-        .header("Cache-Control", "no-cache")
-        .header("Pragma", "no-cache")
-        .send()
-        .await
-        .map_err(|e| format!("拉取远端公告失败: {}", e))?;
-
-    if !response.status().is_success() {
-        return Err(format!("远端公告接口返回异常状态: {}", response.status()));
-    }
-
-    response
-        .json()
-        .await
-        .map_err(|e| format!("解析远端公告失败: {}", e))
+    // No requests, including forced refresh and cache fallback paths.
+    Ok(serde_json::from_str("{}").expect("empty local announcements"))
 }
 
 fn should_force_refresh_for_version(payload: &AnnouncementResponse, current_version: &str) -> bool {
@@ -1039,60 +1018,8 @@ async fn try_load_force_refreshed_announcements(
 }
 
 async fn load_announcements_raw() -> Result<AnnouncementResponse, String> {
-    if let Some(local_data) = load_local_announcements()? {
-        return Ok(local_data);
-    }
-
-    let current_version = env!("CARGO_PKG_VERSION");
-    let cached = load_cache()?;
-    let cache_is_fresh = cached
-        .as_ref()
-        .map(|cache| Utc::now().timestamp_millis() - cache.time < CACHE_TTL_MS)
-        .unwrap_or(false);
-
-    let external_network_enabled =
-        crate::modules::config::get_user_config().external_network_enabled;
-
-    // #1104: when external network is disabled, never hit remote announcement URLs.
-    if !external_network_enabled {
-        if let Some(cache) = cached {
-            logger::log_info("[Announcement] 外连已关闭，使用本地缓存公告");
-            return Ok(cache.data);
-        }
-        return Err("外连已关闭，无法拉取远端公告".to_string());
-    }
-
-    if let Some(payload) =
-        try_load_force_refreshed_announcements(current_version, cache_is_fresh).await?
-    {
-        return Ok(payload);
-    }
-
-    if let Some(cache) = cached {
-        if cache_is_fresh {
-            logger::log_info("[Announcement] 使用本地缓存公告");
-            return Ok(cache.data);
-        }
-    }
-
-    match fetch_remote_announcements().await {
-        Ok(payload) => {
-            if let Err(err) = save_cache(&payload) {
-                logger::log_warn(&format!("[Announcement] 保存公告缓存失败: {}", err));
-            }
-            Ok(payload)
-        }
-        Err(err) => {
-            logger::log_warn(&format!(
-                "[Announcement] 拉取远端公告失败，尝试回退缓存: {}",
-                err
-            ));
-            if let Some(cache) = load_cache()? {
-                return Ok(cache.data);
-            }
-            Err(err)
-        }
-    }
+    // Ignore legacy cached/local promotional payloads too.
+    fetch_remote_announcements().await
 }
 
 pub async fn get_announcement_state() -> Result<AnnouncementState, String> {
@@ -1108,21 +1035,20 @@ pub async fn get_top_right_ad_state() -> Result<TopRightAdState, String> {
 }
 
 pub async fn get_sponsor_module_state() -> Result<SponsorModuleState, String> {
-    let current_version = env!("CARGO_PKG_VERSION");
-    let locale = config::get_user_config().language.to_lowercase();
-    let raw_payload = load_announcements_raw().await?;
-    if !raw_payload.api_relay_enabled {
-        return Ok(SponsorModuleState {
-            sponsor_module: None,
-        });
-    }
-    let sponsor_module =
-        filter_sponsor_module(raw_payload.sponsor_module, current_version, &locale);
-    Ok(SponsorModuleState { sponsor_module })
+    let module = serde_json::from_value(serde_json::json!({
+        "enabled": true, "entryVisible": true, "title": "JIULING.FUN",
+        "subtitle": "本地接入与密钥管理", "sponsors": []
+    })).map_err(|error| error.to_string())?;
+    Ok(SponsorModuleState { sponsor_module: Some(module) })
+}
+
+pub async fn sync_sponsor_routes_from_announcements(
+) -> Result<crate::modules::sponsor_route_sync::SponsorRouteSyncSummary, String> {
+    // Never let a promotional feed rewrite saved accounts or endpoints.
+    Ok(Default::default())
 }
 
 pub async fn force_refresh_sponsor_module() -> Result<SponsorModuleState, String> {
-    remove_cache()?;
     get_sponsor_module_state().await
 }
 

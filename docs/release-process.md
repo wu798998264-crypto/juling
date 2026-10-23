@@ -1,14 +1,22 @@
-# Release Process (Open Source, No Code Signing)
+# Release Process
 
-> 适用于聚灵当前开源发布流程（未接入代码签名）。
+## 聚灵 Windows 独立发布（2026-10-24 起）
 
-## 1. 目标
+当前公开发行仅 Windows x64。完整多平台 workflow 改为手动触发，不会在推送标签时抢占本地组装的 Release；需要全部平台时才在 v* 标签上显式运行。
 
-- 保证每次发布可复现、可验证、可追溯。
-- 让用户可以通过哈希校验确认安装包未被篡改。
-- 单引擎误报（如 VirusTotal 1/72）时，可快速说明和处理。
+1. 提升 package.json 的真实版本并运行 `npm run sync-version`，不要只改 UI 的 S1.0 展示。
+2. 使用维护者独立的 `TAURI_SIGNING_PRIVATE_KEY` 和密码构建 `node scripts/tauri.cjs build --bundles nsis --ci`。私钥不入源码、不同步，仓库 Actions secrets 已有独立签名配置。
+3. 用 `stage_release_assets.cjs` 规范化安装包及 `.sig` 文件名，使用 `build_target_latest_json.cjs --targets windows-x86_64-nsis` 生成目标清单，再运行 `build_windows_latest_json.cjs <清单目录>` 生成 Windows 别名和兼容 latest.json。便携 ZIP 仅用于手动下载，不能代替 updater 安装包。
+4. 源码提交推送后创建 draft Release，上传完整包、签名、清单与 SHA256SUMS，核对后发布为 latest。
+5. 执行 `verify_published_updater_manifests.cjs --version <版本> --repo wu798998264-crypto/juling --targets windows-x86_64-nsis --legacy`，并下载安装包验证哈希及签名。
 
-## 2. 发布前检查（Preflight）
+不要用其他项目的密钥或广告清单。首次迁移必须覆盖安装含新公钥的版本，此后保持同一签名信任。没有 Authenticode 商业证书时，不得承诺 Windows 不提示风险。
+
+下文为保留的完整多平台流程；仅在显式选择全平台发布时适用。
+
+本文档描述仓库当前由 `.github/workflows/release.yml` 执行的发布流程。发布行为以 workflow 和 `scripts/release/` 下的脚本为准；如果两者与本文不一致，应先修正文档或 workflow，再发版。
+
+## 1. 发布前检查
 
 在仓库根目录执行：
 
@@ -16,126 +24,147 @@
 npm run release:preflight
 ```
 
-该命令会依次执行：
+当前 preflight 依次执行：
 
 1. `node scripts/check_locales.cjs`
-2. `npm run typecheck`
-3. `npm run build`
-4. `cargo check`（在 `src-tauri` 下）
+2. `node scripts/check_modal_sizing.cjs --strict`
+3. `npm run typecheck`
+4. `npm run build`
+5. `cargo check`（`src-tauri`）
+6. `cargo test --lib`（`src-tauri`，`RUST_TEST_THREADS=1`）
 
-可选跳过参数（排障用，不建议正式发布时使用）：
-
-```bash
-node scripts/release/preflight.cjs --skip-locales --skip-typecheck --skip-build --skip-cargo
-```
-
-## 3. 打包产物（macOS / Windows；Homebrew 推荐）
-
-官方发布目标仅包含 macOS 与 Windows，不再构建或上传 Linux/Ubuntu 安装包。macOS 当前推荐使用 `universal` 安装包（同时兼容 Apple Silicon / Intel），并在上传 GitHub Release 后同步更新 Homebrew cask。
-
-推荐一键脚本（会执行 `universal.dmg` 构建、上传 GitHub Release 资产、更新 `Casks/juling.rb`）：
+排障时可以跳过单项：
 
 ```bash
-npm run release:github-and-cask
+node scripts/release/preflight.cjs \
+  --skip-locales \
+  --skip-typecheck \
+  --skip-build \
+  --skip-cargo \
+  --skip-cargo-test
 ```
 
-若你已提前手动构建过 `universal.dmg`，可跳过构建步骤：
+正式发布不应为了绕过失败而随意使用 skip 参数。
 
-```bash
-npm run release:github-and-cask -- --skip-build
-```
+## 2. 版本与标签
 
-脚本前置条件：
-
-1. 已安装并登录 GitHub CLI（`gh auth status` 通过）
-2. 本机可执行 macOS Tauri 构建
-3. 已安装 Rust Intel target（首次需要）：
-
-```bash
-rustup target add x86_64-apple-darwin
-```
-
-## 4. 生成 SHA256 校验文件
-
-默认扫描 `src-tauri/target/release/bundle` 和 `dist`，输出到 `release-artifacts/SHA256SUMS.txt`：
-
-```bash
-npm run release:checksums
-```
-
-如果本次发布使用 `universal` 产物（Homebrew 场景，默认如此），建议显式指定 `universal` bundle 目录，确保 `*_universal.dmg` 被写入校验文件：
-
-```bash
-node scripts/release/gen_checksums.cjs \
-  --input src-tauri/target/universal-apple-darwin/release/bundle \
-  --input dist \
-  --output release-artifacts/SHA256SUMS.txt
-```
-
-也可按需指定其他输入目录和输出文件：
-
-```bash
-node scripts/release/gen_checksums.cjs \
-  --input src-tauri/target/release/bundle \
-  --output release-artifacts/SHA256SUMS.txt
-```
-
-## 5. Release 发布内容规范
-
-每次发布建议至少包含：
-
-1. 下载文件列表（macOS / Windows；macOS/Homebrew 场景建议包含 `*_universal.dmg`）
-2. `SHA256SUMS.txt`
-3. 更新日志（中英文）
-4. VirusTotal 链接（可选但推荐）
-5. 已知误报说明（如有）
-
-补充说明（Homebrew 自维护 Tap）：
-
-1. 先上传 GitHub Release 资产，再推送 `Casks/juling.rb` 更新，避免 cask 链接短暂 404。
-2. `Casks/juling.rb` 中的 `version`、`sha256` 必须与 Release 中实际 `*_universal.dmg` 一致。
-
-## 6. VirusTotal 单引擎误报处理
-
-当出现 `1/72` 这类结果时：
-
-1. 先在 Release 明确“仅单引擎命中，其他未检出”。
-2. 要求用户只从官方 Release 下载并核对 SHA256。
-3. 对命中厂商提交误报（附 hash、下载链接、仓库地址）。
-4. 误报修复后在 issue/release 回帖同步结果。
-
-## 7. Git 发版流程（远端完成）
-
-正式发版按“Git 远端完成”判定，建议顺序如下：
-
-1. 更新版本与更新日志（`package.json`、`CHANGELOG.md`、`CHANGELOG.zh-CN.md`）。
-2. 执行版本同步：
+`package.json.version` 是发布 workflow 读取的版本。创建发布标签前先执行：
 
 ```bash
 npm run sync-version
 ```
 
-3. 执行发布预检（阻断）：
+然后确认版本同步后的文件与 changelog 已提交。发布标签必须严格匹配：
+
+```text
+v<package.json.version>
+```
+
+例如 `package.json.version` 为 `1.3.40` 时，标签必须是 `v1.3.40`。workflow 会在版本或标签不一致时直接失败。
+
+## 3. GitHub Actions 发布目标
+
+当前 release workflow 构建并上传：
+
+- Windows
+- macOS Apple Silicon (`aarch64`)
+- macOS Intel (`x86_64`)
+- macOS Universal
+- Linux `x86_64`
+- Linux `aarch64`
+
+Linux release 同时包含 AppImage、deb 和 rpm updater targets。macOS Universal DMG 还会用于后续 Homebrew Cask 更新。
+
+依赖缓存由 `.github/actions/host-build-cache` 统一配置。CI 在可信的 `main` push 上构建并保存缓存，后续 tag 可读取默认分支缓存；不同 tag 之间不能互读各自生成的缓存。CI 与 release 按相同平台标识使用 `shared-key`，Rust 工具链、依赖与环境仍参与键计算，workspace 指向仓库根目录的 `target`，不缓存宿主业务 crate。Windows/Linux 缓存实际的 Tauri 工具目录；macOS 的 create-dmg 脚本随 bundler 写入 `target/.../bundle/share`，不再缓存不存在的 `~/Library/Caches/tauri`。首次启用或工具链变化仍可能冷编译，实际提速需由后续远端构建确认。
+
+Universal 不再从源码重编两套宿主。ARM 和 Intel release job 在本轮构建后通过 `scripts/release/macos-universal.cjs --mode stage` 上传宿主与 Go sidecar 的薄二进制，附带版本、commit、workflow run ID 和 SHA-256。Universal job 等待这两个 job 完成，使用同一 run 的具名 artifact；`--mode merge` 校验身份、文件哈希、实际架构，合并宿主和 sidecar，并逐片提取比对原始内容，再运行官方 `tauri bundle --target universal-apple-darwin`，沿用签名、资源和 DMG 流程。缺失或不匹配直接失败，不回退到其他版本或旧产物。CI matrix 中的 Universal 源码构建仍保留，用于独立兼容性验证。
+
+ARM 和 Intel job 执行 `tauri build`，Universal job 执行 `tauri bundle`；三个 job 随后都会执行 `scripts/release/inject-dmg-readme.cjs`，用 `hdiutil` 重建 DMG（保留 `.app` 原样）并写入 `安装与常见问题.txt`，同时固定窗口中三个图标的位置：聚灵 与 Applications 保持同一行（`180,150` / `480,150`），保证“把图标拖到右侧安装”的动线不变；说明文件单独放在下一行（`330,330`），窗口尺寸随之调整为 660×490、图标 112px、文字 14pt。Tauri bundler 没有“向 DMG 追加文件”的配置项，因此这里重建的是 bundler 产物本身，而不是在打包阶段插文件；重建后 DMG 文件名与 Tauri 约定一致（`<productName>_<version>_<arch>.dmg`），供 `stage_release_assets.cjs` 正常规范化。说明文案模板位于 `scripts/release/assets/dmg-readme.txt`，修改后需与 `README.md` / `README.en.md` 的 Gatekeeper 排查章节保持一致。
+
+macOS 构建使用 `npm run tauri -- build ...` 或 `node scripts/tauri.cjs build ...`（正式 workflow 同样使用后者），在构建结束或失败时清理本轮新增的 Tauri `bundle/macos/rw.*.dmg` 临时挂载，不碰构建前已有的卷及最终 DMG。直接使用 `npx tauri build` 会绕过这层清理。
+
+DMG 重建与验证共用 `scripts/release/dmg-mounts.cjs` 管理本次创建的挂载。正常完成、验证失败及可处理的 `SIGINT` / `SIGTERM` 退出都会尝试卸载；仅卸载本次挂载，不强制推出用户磁盘。卸载失败时打包必须失败，并保留镜像和临时目录供排查，禁止带着挂载删除临时文件。系统强制结束进程（如 `SIGKILL`）或断电无法保证执行清理。
+
+本地测试包统一使用以下入口打包已构建的 `.app`，不需要另写临时挂载脚本：
 
 ```bash
+node scripts/release/package-local-dmg.cjs \
+  --app "target/release/bundle/macos/聚灵.app" \
+  --output ".tmp/local-packages/Juling-Tools_<version>_arm64_test.dmg"
+```
+
+该入口保留原 App 签名，校验镜像、挂载后逐文件比较内容和符号链接，并验证 App 签名；全部通过且卸载完成后才替换输出文件并写入 `.sha256`。`--stage <directory>` 可替代 `--app`，用于复用已核验的完整暂存目录。脚本不会代替宿主构建、签名或 Apple 公证，也不会自动推出用户安装时另行打开的 DMG。
+
+Tauri release build 使用仓库配置的 updater signing secrets：
+
+- `TAURI_SIGNING_PRIVATE_KEY`
+- `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`
+
+这里的 signing 指 Tauri updater artifact 签名；不要把它描述成已经完成 Apple notarization 或 Windows Authenticode，除非 workflow 另外明确实现了这些步骤。
+
+## 4. Release assets 与 updater manifests
+
+Windows、macOS Apple Silicon/Intel 和 Linux 构建 job 会先通过 `scripts/release/stage_release_assets.cjs` 规范化允许上传的 release assets，再用 `scripts/release/build_target_latest_json.cjs` 生成各 updater target 的 manifest。macOS Universal job 只规范化并上传 Universal DMG，不生成 updater manifest；该 DMG 供后续 Homebrew Cask 更新使用。
+
+所有平台完成后，`finalize-legacy-latest` job 会下载 release assets，并用：
+
+```bash
+node scripts/release/build_merged_latest_json.cjs
+```
+
+生成完整 legacy `latest.json`。workflow 会检查其中至少包含：
+
+- `darwin-aarch64`
+- `darwin-x86_64`
+- `windows-x86_64`
+- `windows-x86_64-nsis`
+- Linux x86_64 / aarch64 的 AppImage、deb、rpm targets
+
+随后会通过 `scripts/release/verify_published_updater_manifests.cjs` 对公开 updater 状态做端到端验证。
+
+## 5. SHA256SUMS
+
+`upload-checksums` job 会重新下载该版本的 release assets，对文件逐个计算 SHA-256，并上传：
+
+```text
+SHA256SUMS.txt
+```
+
+不要依赖文档中不存在的 `npm run release:checksums` 命令。当前 checksum 的权威实现位于 release workflow 本身；`scripts/release/gen_checksums.cjs` 是可单独调用的脚本，但不是 `package.json` 中的标准 npm script。
+
+## 6. Homebrew Cask
+
+release workflow 会下载已发布的 Universal DMG，计算 SHA-256，然后更新：
+
+```text
+Casks/juling.rb
+```
+
+该更新通过自动创建的 PR 提交，而不是本地 `npm run release:github-and-cask`。当前 `package.json` 没有这个 npm script，因此不要按旧文档中的本地一键脚本操作。
+
+## 7. 推荐发版顺序
+
+1. 更新 `package.json` 版本。
+2. 更新 `CHANGELOG.md` 与 `CHANGELOG.zh-CN.md`，确保存在对应版本段落。
+3. 执行：
+
+```bash
+npm run sync-version
 npm run release:preflight
 ```
 
-4. 提交发布改动。
-5. 创建与版本一致的标签（例如 `v0.9.2`）。
-6. 先推送分支，再推送标签：
+4. 提交并合并发布所需改动。
+5. 从期望发布的 commit 创建 `v<version>` 标签，先推送分支，再推送标签。
+6. 检查 GitHub Actions 的 release workflow 完整成功。
+7. 检查 GitHub Release 的平台 assets、target manifests、`latest.json` 和 `SHA256SUMS.txt`。
+8. 检查 Homebrew Cask 自动 PR 的版本和 SHA-256 是否与 Universal DMG 一致。
 
-```bash
-git push origin <branch> && git push origin v<major>.<minor>.<patch>
-```
+按项目 `AGENTS.md`，发布动作以远端分支和对应版本标签均更新为完成条件。安装包构建、GitHub Release、updater manifests、checksums 与 Homebrew Cask 更新属于后置异步流程；报告时必须区分“分支与标签已发布”和“安装包已公开可下载”，不得把仍在构建的产物描述为已经可用。
 
-完成判定（阻断）：
+## 8. 草稿发布与公开校验
 
-1. 远端分支已更新（通常 `origin/main`）。
-2. 远端版本标签已存在，且与 `package.json.version` 一致。
-3. 满足以上两项即视为发版完成。
+当前 workflow 先创建 draft Release。全部平台构建、完整 manifests、checksums 和草稿资产校验完成后，`publish-release` 才公开 Release 并设置为 latest，随后检查公共下载地址；公开发布后不再补齐缺失平台来绕过校验。
 
-补充说明：
+GitHub 公共 latest 路由可能晚于 Release 状态变更。如果公开校验仍返回旧版本，应核对 Release API、公共下载重定向与本轮清单内容，保留版本、签名和资产归属校验；确认传播完成后可单独重跑发布校验 job。
 
-1. GitHub Actions、GitHub Release 资产上传、`SHA256SUMS.txt`、Homebrew Cask 更新属于后置异步流程，不作为发版完成的阻断条件。
-2. 若需要，可在发版完成后继续观察 Actions 与 Release 资产状态。
+同版本撤回重发必须经用户明确授权，先核对并清理旧同版本 Release 和标签，再从新提交重建标签。发布后应额外比较公开清单与新 Release 资产的内容哈希，避免同版本旧缓存仅凭版本号通过检查。已安装同版本的用户需要重新下载安装，不会因同版本号重发而自动升级。

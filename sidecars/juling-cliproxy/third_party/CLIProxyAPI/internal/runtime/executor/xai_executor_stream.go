@@ -16,6 +16,7 @@ import (
 )
 
 func (e *XAIExecutor) ExecuteStream(ctx context.Context, auth *cliproxyauth.Auth, req cliproxyexecutor.Request, opts cliproxyexecutor.Options) (_ *cliproxyexecutor.StreamResult, err error) {
+	ctx = helps.EnsureSessionContext(ctx, opts, req.Payload)
 	if opts.Alt == "responses/compact" {
 		return nil, statusErr{code: http.StatusBadRequest, msg: "streaming not supported for /responses/compact"}
 	}
@@ -37,6 +38,7 @@ func (e *XAIExecutor) ExecuteStream(ctx context.Context, auth *cliproxyauth.Auth
 	reporter.SetTranslatedReasoningEffort(prepared.body, e.Identifier())
 
 	url := strings.TrimSuffix(baseURL, "/") + "/responses"
+	prepared.body = prepared.finalizePayload(prepared.body)
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(prepared.body))
 	if err != nil {
 		return nil, err
@@ -63,7 +65,7 @@ func (e *XAIExecutor) ExecuteStream(ctx context.Context, auth *cliproxyauth.Auth
 		}
 		helps.AppendAPIResponseChunk(ctx, e.cfg, data)
 		helps.LogWithRequestID(ctx).Debugf("request error, error status: %d, error message: %s", httpResp.StatusCode, helps.SummarizeErrorBody(httpResp.Header.Get("Content-Type"), data))
-		return nil, xaiStatusErr(httpResp.StatusCode, data)
+		return nil, cliproxyexecutor.UpstreamRequestRejected(xaiStatusErr(httpResp.StatusCode, data))
 	}
 
 	out := make(chan cliproxyexecutor.StreamChunk)
@@ -81,6 +83,9 @@ func (e *XAIExecutor) ExecuteStream(ctx context.Context, auth *cliproxyauth.Auth
 		outputItemsByIndex := make(map[int64][]byte)
 		var outputItemsFallback [][]byte
 		responseFilter := newXAIInternalXSearchResponseFilter(prepared.filterInternalXSearch, prepared.clientDeclaredTools)
+		namespaceRestorer := newXAINamespaceRestorer(prepared.namespaceTools)
+		applyPatchRestorer := newXAIApplyPatchRestorer(prepared.restoreApplyPatch)
+		toolSearchRestorer := helps.NewXAIClientToolSearchRestorer(prepared.clientToolSearch)
 		var pendingEventLine []byte
 		emitTranslatedLine := func(translatedLine []byte) bool {
 			chunks := helps.TranslateStreamWithClaudeInputTokens(ctx, prepared.to, prepared.responseFormat, req.Model, prepared.originalPayload, prepared.body, translatedLine, &param, claudeInputTokens)
@@ -106,10 +111,45 @@ func (e *XAIExecutor) ExecuteStream(ctx context.Context, auth *cliproxyauth.Auth
 			}
 
 			if bytes.HasPrefix(line, xaiDataTag) {
-				eventDataList := xaiNormalizeReasoningSummaryDataEvents(bytes.TrimSpace(line[len(xaiDataTag):]))
+				var eventDataList [][]byte
+				for _, eventData := range xaiNormalizeReasoningSummaryDataEvents(bytes.TrimSpace(line[len(xaiDataTag):])) {
+					eventDataList = append(eventDataList, namespaceRestorer.restoreStream(eventData)...)
+				}
 				hasPendingEventLine := pendingEventLine != nil
+				if len(eventDataList) == 0 {
+					pendingEventLine = nil
+				}
 				for i, eventData := range eventDataList {
-					eventData = restoreXAINamespaceToolCalls(eventData, prepared.namespaceTools)
+					var errRestore error
+					eventData, errRestore = toolSearchRestorer.Apply(eventData)
+					if errRestore != nil {
+						errRestore = statusErr{code: http.StatusBadGateway, msg: errRestore.Error()}
+						helps.RecordAPIResponseError(ctx, e.cfg, errRestore)
+						reporter.PublishFailure(ctx, errRestore)
+						select {
+						case out <- cliproxyexecutor.StreamChunk{Err: errRestore}:
+						case <-ctx.Done():
+						}
+						return
+					}
+					eventData = applyPatchRestorer.applyStream(eventData)
+					if applyPatchRestorer != nil && applyPatchRestorer.err != nil {
+						errPatch := statusErr{code: http.StatusBadGateway, msg: applyPatchRestorer.err.Error()}
+						reporter.PublishFailure(ctx, errPatch)
+						select {
+						case out <- cliproxyexecutor.StreamChunk{Err: errPatch}:
+						case <-ctx.Done():
+						}
+						return
+					}
+					if len(eventData) == 0 {
+						if hasPendingEventLine && i == 0 {
+							pendingEventLine = nil
+						}
+						continue
+					}
+					eventData = helps.NormalizeXAICollaborationToolCalls(eventData)
+					eventData = restoreXAIClientWebSearchName(eventData, prepared.webSearchAlias)
 					eventData = responseFilter.apply(eventData)
 					if len(eventData) == 0 {
 						if hasPendingEventLine && i == 0 {
@@ -126,6 +166,7 @@ func (e *XAIExecutor) ExecuteStream(ctx context.Context, auth *cliproxyauth.Auth
 							reporter.Publish(ctx, detail)
 						}
 						eventData = xaiPatchCompletedOutput(eventData, outputItemsByIndex, outputItemsFallback)
+						eventData = applyPatchRestorer.restore(eventData)
 						eventData = xaiNormalizeReasoningSummaryData(eventData)
 						if normalizedEventName == "response.completed" {
 							// A truncated turn carries no replayable terminal state, so only a
@@ -170,6 +211,15 @@ func (e *XAIExecutor) ExecuteStream(ctx context.Context, auth *cliproxyauth.Auth
 			reporter.PublishFailure(ctx, errScan)
 			select {
 			case out <- cliproxyexecutor.StreamChunk{Err: errScan}:
+			case <-ctx.Done():
+			}
+			return
+		}
+		if errPatch := applyPatchRestorer.finish(); errPatch != nil {
+			errPatch = statusErr{code: http.StatusBadGateway, msg: errPatch.Error()}
+			reporter.PublishFailure(ctx, errPatch)
+			select {
+			case out <- cliproxyexecutor.StreamChunk{Err: errPatch}:
 			case <-ctx.Done():
 			}
 		}

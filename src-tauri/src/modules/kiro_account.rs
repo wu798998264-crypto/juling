@@ -1589,7 +1589,7 @@ mod tests {
 
     fn create_cache_fixture(name: &str) -> PathBuf {
         let path = std::env::temp_dir().join(format!(
-            "cockpit-tools-kiro-idc-{}-{}",
+            "juling-kiro-idc-{}-{}",
             name,
             std::process::id()
         ));

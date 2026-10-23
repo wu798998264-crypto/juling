@@ -8,7 +8,6 @@ import (
 	"net/url"
 	"strings"
 
-	xaiauth "github.com/router-for-me/CLIProxyAPI/v7/internal/auth/xai"
 	"github.com/router-for-me/CLIProxyAPI/v7/internal/runtime/executor/helps"
 	cliproxyauth "github.com/router-for-me/CLIProxyAPI/v7/sdk/cliproxy/auth"
 	cliproxyexecutor "github.com/router-for-me/CLIProxyAPI/v7/sdk/cliproxy/executor"
@@ -24,16 +23,15 @@ func (e *XAIExecutor) executeImages(ctx context.Context, auth *cliproxyauth.Auth
 	reporter := helps.NewExecutorUsageReporter(ctx, e, model, auth)
 	defer reporter.TrackFailure(ctx, &err)
 
-	token, baseURL := xaiCreds(auth)
-	if baseURL == "" {
-		baseURL = xaiauth.DefaultAPIBaseURL
-	}
+	token, _ := xaiCreds(auth)
+	baseURL := xaiChatBaseURL(auth)
 	logXAIResolvedBaseURL(ctx, baseURL)
 	if endpointPath == "" {
 		endpointPath = xaiDefaultImageEndpointPath
 	}
 
 	payload := normalizeXAIImageRefs(req.Payload)
+	payload = helps.NewXAIPayloadFinalizer(e.cfg, model, "openai", opts.SourceFormat.String(), req.Payload, req, opts)(payload)
 	url := strings.TrimSuffix(baseURL, "/") + endpointPath
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(payload))
 	if err != nil {
@@ -81,13 +79,12 @@ func (e *XAIExecutor) executeVideos(ctx context.Context, auth *cliproxyauth.Auth
 	reporter := helps.NewExecutorUsageReporter(ctx, e, model, auth)
 	defer reporter.TrackFailure(ctx, &err)
 
-	token, baseURL := xaiCreds(auth)
-	if baseURL == "" {
-		baseURL = xaiauth.DefaultAPIBaseURL
-	}
+	token, _ := xaiCreds(auth)
+	baseURL := xaiChatBaseURL(auth)
 	logXAIResolvedBaseURL(ctx, baseURL)
 
 	payload := normalizeXAIImageRefs(req.Payload)
+	payload = helps.NewXAIPayloadFinalizer(e.cfg, model, "openai", opts.SourceFormat.String(), req.Payload, req, opts)(payload)
 	method := http.MethodPost
 	endpointPath := xaiVideosGenerationsPath
 	var body io.Reader = bytes.NewReader(payload)

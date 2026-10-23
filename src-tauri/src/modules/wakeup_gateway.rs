@@ -518,7 +518,7 @@ mod configured_antigravity_root_tests {
     impl RootTestDir {
         fn new(name: &str) -> Self {
             let path = std::env::temp_dir().join(format!(
-                "cockpit-tools-wakeup-antigravity-root-{}-{}",
+                "juling-wakeup-antigravity-root-{}-{}",
                 std::process::id(),
                 name
             ));

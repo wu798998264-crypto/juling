@@ -443,7 +443,7 @@
                 &[],
             ),
             refresh: modules::i18n::translate(lang, "common.refresh", &[]),
-            open_cockpit_tools: modules::i18n::translate(
+            open_juling_tools: modules::i18n::translate(
                 lang,
                 "floatingCard.actions.openJulingTools",
                 &[],
@@ -530,7 +530,7 @@
                     open_main_window_page(platform.nav_target());
                 }
             }
-            "open_cockpit_tools" => {
+            "open_juling_tools" => {
                 open_main_window();
             }
             "settings" => {

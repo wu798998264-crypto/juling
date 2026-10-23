@@ -47,7 +47,7 @@ function normalizeError(error: unknown): string {
   const msg = String(error).replace(/^Error:\s*/, '');
   // 针对坚果云等 WebDAV 服务的祖先目录不存在报错进行友好提示
   if (msg.includes('AncestorsNotFound') || msg.includes('The ancestors of this location does not found')) {
-    return `${msg}\n\n提示：检测到祖先目录不存在。如果您使用坚果云 WebDAV，坚果云限制了不能在根目录下直接创建文件夹，请确认您的“远端目录”是否填写正确。例如应填写为已存在的同步文件夹路径，如“我的坚果云/cockpit-tools”；或者先在坚果云网页端创建一个名为“cockpit-tools”的同步文件夹，然后在这里将远端目录填为“cockpit-tools”。`;
+    return `${msg}\n\n提示：检测到祖先目录不存在。如果您使用坚果云 WebDAV，坚果云限制了不能在根目录下直接创建文件夹，请确认您的“远端目录”是否填写正确。例如应填写为已存在的同步文件夹路径，如“我的坚果云/juling”；或者先在坚果云网页端创建一个名为“juling”的同步文件夹，然后在这里将远端目录填为“juling”。`;
   }
   return msg;
 }
@@ -101,7 +101,7 @@ export function SettingsWebdavSyncSection() {
   const [username, setUsername] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [clearPassword, setClearPassword] = useState(false);
-  const [remoteDir, setRemoteDir] = useState('cockpit-tools');
+  const [remoteDir, setRemoteDir] = useState('juling');
   const [retentionInput, setRetentionInput] = useState('15');
   const [remoteFiles, setRemoteFiles] = useState<WebdavBackupFileEntry[]>([]);
   const [showAllRemote, setShowAllRemote] = useState(false);
