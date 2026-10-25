@@ -4,6 +4,9 @@ const TOKEN_URL: &str = "https://oauth2.googleapis.com/token";
 const USERINFO_URL: &str = "https://www.googleapis.com/oauth2/v2/userinfo";
 const AUTH_URL: &str = "https://accounts.google.com/o/oauth2/v2/auth";
 const DEFAULT_OAUTH_CLIENT_KEY: &str = "antigravity_enterprise";
+const TOKEN_REFRESH_SKEW_SECONDS: i64 = 900;
+// Use the native OAuth header without probing external version services.
+const NATIVE_OAUTH_USER_AGENT: &str = "vscode/1.X.X (Antigravity/4.3.0)";
 const ANTIGRAVITY_CLIENT_ID_ENV: &str = "JULING_ANTIGRAVITY_GOOGLE_CLIENT_ID";
 const ANTIGRAVITY_CLIENT_SECRET_ENV: &str = "JULING_ANTIGRAVITY_GOOGLE_CLIENT_SECRET";
 const EMBEDDED_ANTIGRAVITY_CLIENT_ID: Option<&str> =
@@ -100,6 +103,10 @@ pub fn get_auth_url(redirect_uri: &str, state: Option<&str>) -> String {
     let Ok((client_id, _, _)) = oauth_client_config(None) else {
         return String::new();
     };
+    build_auth_url(redirect_uri, state, &client_id)
+}
+
+fn build_auth_url(redirect_uri: &str, state: Option<&str>, client_id: &str) -> String {
     let scopes = vec![
         "openid",
         "https://www.googleapis.com/auth/cloud-platform",
@@ -112,12 +119,13 @@ pub fn get_auth_url(redirect_uri: &str, state: Option<&str>) -> String {
     .join(" ");
 
     let mut params = vec![
-        ("client_id", client_id.as_str()),
+        ("client_id", client_id),
         ("redirect_uri", redirect_uri),
         ("response_type", "code"),
         ("scope", &scopes),
         ("access_type", "offline"),
         ("prompt", "consent"),
+        ("include_granted_scopes", "true"),
     ];
 
     if let Some(state) = state.filter(|value| !value.trim().is_empty()) {
@@ -144,6 +152,7 @@ pub async fn exchange_code(code: &str, redirect_uri: &str) -> Result<TokenRespon
 
     let response = client
         .post(TOKEN_URL)
+        .header(reqwest::header::USER_AGENT, NATIVE_OAUTH_USER_AGENT)
         .form(&params)
         .send()
         .await
@@ -192,7 +201,16 @@ pub async fn refresh_access_token_with_client(
     oauth_client_key: Option<&str>,
 ) -> Result<TokenResponse, String> {
     let client = crate::utils::http::create_client(15);
-    let (client_id, client_secret, client_key) = oauth_client_config(oauth_client_key)?;
+    let credentials = oauth_client_config(oauth_client_key)?;
+    refresh_access_token_at(&client, TOKEN_URL, refresh_token, credentials).await
+}
+
+async fn refresh_access_token_at(
+    client: &reqwest::Client,
+    token_url: &str,
+    refresh_token: &str,
+    (client_id, client_secret, client_key): (String, String, String),
+) -> Result<TokenResponse, String> {
 
     let params = [
         ("client_id", client_id.as_str()),
@@ -201,25 +219,34 @@ pub async fn refresh_access_token_with_client(
         ("grant_type", "refresh_token"),
     ];
 
-    let response = client
-        .post(TOKEN_URL)
-        .form(&params)
-        .send()
-        .await
-        .map_err(|e| format!("刷新请求失败: {}", e))?;
-
-    if response.status().is_success() {
-        let mut token_data = response
-            .json::<TokenResponse>()
+    for attempt in 0..2 {
+        let response = client
+            .post(token_url)
+            .header(reqwest::header::USER_AGENT, NATIVE_OAUTH_USER_AGENT)
+            .form(&params)
+            .send()
             .await
-            .map_err(|e| format!("刷新数据解析失败: {}", e))?;
-        token_data.oauth_client_key = Some(client_key);
+            .map_err(|e| format!("刷新请求失败: {}", e))?;
 
-        Ok(token_data)
-    } else {
+        if response.status().is_success() {
+            let mut token_data = response.json::<TokenResponse>().await
+                .map_err(|e| format!("刷新数据解析失败: {}", e))?;
+            token_data.oauth_client_key = Some(client_key);
+            return Ok(token_data);
+        }
         let error_text = response.text().await.unwrap_or_default();
-        Err(format!("刷新失败: {}", error_text))
+        let invalid_grant = serde_json::from_str::<serde_json::Value>(&error_text)
+            .ok()
+            .and_then(|value| value.get("error").and_then(|e| e.as_str()).map(str::to_owned))
+            .as_deref() == Some("invalid_grant");
+        if attempt == 0 && invalid_grant {
+            crate::modules::logger::log_warn("OAuth invalid_grant，短暂退避后再次确认");
+            tokio::time::sleep(std::time::Duration::from_millis(500)).await;
+            continue;
+        }
+        return Err(format!("刷新失败: {}", error_text));
     }
+    unreachable!("OAuth refresh attempts are bounded")
 }
 
 /// 获取用户信息
@@ -250,7 +277,7 @@ pub async fn ensure_fresh_token(
 ) -> Result<crate::models::TokenData, String> {
     let now = chrono::Local::now().timestamp();
 
-    if current_token.expiry_timestamp > now + 300 {
+    if !token_needs_refresh(current_token.expiry_timestamp, now) {
         return Ok(current_token.clone());
     }
 
@@ -276,3 +303,11 @@ pub async fn ensure_fresh_token(
     token.is_gcp_tos = current_token.is_gcp_tos;
     Ok(token)
 }
+
+fn token_needs_refresh(expiry_timestamp: i64, now: i64) -> bool {
+    expiry_timestamp <= now + TOKEN_REFRESH_SKEW_SECONDS
+}
+
+#[cfg(test)]
+#[path = "../../../../src-tauri/src/modules/oauth_tests.rs"]
+mod tests;

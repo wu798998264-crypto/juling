@@ -76,8 +76,9 @@ if (!process.versions.electron) {
       assert.equal(result.header.state.nativePatchState, 'unsupported');
       assert.equal(result.header.state.nativePatchReason, 'module-preload-failed');
       assert.equal(result.header.name, 'fixture-original-name');
-      assert.equal(result.unsupported.prepared.ok, false);
-      assert.equal(result.unsupported.fixture.access, null, 'unsupported quota must not activate partial Fast patches');
+      assert.equal(result.unsupported.prepared.ok, true);
+      assert.equal(result.unsupported.prepared.mode, 'fast-only');
+      assert.equal(result.unsupported.fixture.access, null, 'preparing Fast-only must not mutate the live module before handoff');
       assert.equal(result.unsupported.fixture.dictation, true, 'native dictation stays available even if quota adaptation is unsupported');
       assert.equal(result.unsupported.temporaryElements, 0);
       assert.equal(result.unsupported.name, 'fixture-original-name');
@@ -301,8 +302,8 @@ window.fixturePrimary={importUrl:import.meta.url};`;
     return {fixture:window.fixtureResult,state:window.__julingEnhancements,name:window.name};})()`);
   await evaluate("window.__julingNativeFast.cancelHandoff('header-nonce')");
   await send('Page.removeScriptToEvaluateOnNewDocument', { identifier: headerRegistration.identifier });
-  // Unsupported quota adaptation must leave the entire native module intact,
-  // including its dictation capability, rather than install a partial mode.
+  // v1.3.74 can prepare independently validated Fast when quota is unsupported.
+  // Preparation alone must leave the live module and dictation intact.
   const unsupportedMessagesStart = messages.length;
   headerCsp = false;
   files.set('/assets/app-primary-fixture.js', ['text/javascript', primaryModule.replace('submitDisabled:disabled', 'unsupportedDisabled:disabled')]);
@@ -310,7 +311,8 @@ window.fixturePrimary={importUrl:import.meta.url};`;
   await waitForModule();
   await evaluate(`window.name='fixture-original-name';${bootstrap}`);
   const unsupportedPrepared = await evaluate("window.__julingNativeFast.prepareHandoff('unsupported-nonce')");
-  assert.equal(unsupportedPrepared.ok, false, JSON.stringify(unsupportedPrepared));
+  assert.equal(unsupportedPrepared.ok, true, JSON.stringify(unsupportedPrepared));
+  assert.equal(unsupportedPrepared.mode, 'fast-only');
   const unsupported = await evaluate(`({fixture:window.fixtureResult,
     state:window.__julingEnhancements,name:window.name,
     temporaryElements:document.querySelectorAll('script[type=importmap],link[rel=modulepreload]').length})`);
