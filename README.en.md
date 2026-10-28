@@ -17,7 +17,7 @@ A **universal AI IDE account management tool**, currently supporting **Antigravi
 
 🇺🇸 English · 🇨🇳 简体中文 · 繁體中文 · 🇯🇵 日本語 · 🇩🇪 Deutsch · 🇪🇸 Español · 🇫🇷 Français · 🇮🇹 Italiano · 🇰🇷 한국어 · 🇧🇷 Português · 🇷🇺 Русский · 🇹🇷 Türkçe · 🇵🇱 Polski · 🇨🇿 Čeština · 🇸🇦 العربية · 🇻🇳 Tiếng Việt · 🇮🇩 Bahasa Indonesia
 
-**This release**: Windows 10/11 x64. macOS/Linux sources remain available, but no corresponding packages are published in this release. See [release notes](docs/releases/v1.3.74.md) for limitations and [NOTICE.txt](NOTICE.txt) for upstream attribution and licensing.
+**This release**: Windows 10/11 x64, functional baseline 1.3.75. Adds background settings, quota-expiry hints and Terra compatibility. See [release notes](docs/releases/v1.3.75.md) for limitations and [NOTICE.txt](NOTICE.txt) for upstream attribution and licensing. macOS/Linux sources remain available; this release only provides Windows packages.
 
 ---
 

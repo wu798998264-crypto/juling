@@ -1,0 +1,4 @@
+/* Endpoint decoration inherits the existing Juling card design. */
+.codex-accounts-page .codex-account-card.codex-card-skin-juling {
+  --provider-skin-accent: var(--primary);
+}

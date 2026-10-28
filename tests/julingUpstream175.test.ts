@@ -4,16 +4,20 @@ import test from 'node:test';
 
 const source = (path: string) => readFileSync(new URL('../' + path, import.meta.url), 'utf8');
 
-test('1.3.74 metadata is consistent without changing Juling update trust or identity', () => {
+test('1.3.75 metadata is consistent without changing Juling update trust or identity', () => {
   const pkg = JSON.parse(source('package.json'));
   const lock = JSON.parse(source('package-lock.json'));
   const config = JSON.parse(source('src-tauri/tauri.conf.json'));
-  assert.equal(pkg.version, '1.3.74');
+  assert.equal(pkg.version, '1.3.75');
   assert.equal(lock.version, pkg.version);
   assert.equal(lock.packages[''].version, pkg.version);
   assert.equal(config.version, pkg.version);
   assert.equal(config.mainBinaryName, '聚灵');
   assert.equal(config.identifier, 'com.wu798998264.juling');
+  assert.deepEqual(config.plugins.updater.endpoints, [
+    'https://github.com/wu798998264-crypto/juling/releases/latest/download/latest-{{target}}.json',
+    'https://github.com/wu798998264-crypto/juling/releases/latest/download/latest.json',
+  ]);
   assert.equal(config.plugins.updater.pubkey, 'dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDMwNEE4RDcwRDkyMzREMwpSV1RUTkpJTjE2Z0VBOXFuMXBDd3BIVDRZMjlzY3Y4MDRaajR5Z3JvRW5zSXhVZXdnYXd1Wk95MAo=');
 });
 
