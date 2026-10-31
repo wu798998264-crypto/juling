@@ -13,6 +13,7 @@ test('builds a portable archive with the executable, resources and loader DLL', 
   fs.mkdirSync(path.join(releaseDir, 'resources', 'scripts'), { recursive: true });
   fs.writeFileSync(path.join(releaseDir, 'juling_tools.exe'), 'exe');
   fs.writeFileSync(path.join(releaseDir, 'WebView2Loader.dll'), 'dll');
+  fs.writeFileSync(path.join(releaseDir, 'juling-cliproxy.exe'), 'retired Go engine');
   fs.writeFileSync(path.join(releaseDir, 'resources', 'sidecar.exe'), 'sidecar');
   fs.writeFileSync(path.join(releaseDir, 'resources', 'scripts', 'helper.cjs'), 'helper');
 
@@ -36,7 +37,7 @@ test('builds a portable archive with the executable, resources and loader DLL', 
   assert.match(archive, /Juling_1\.2\.3_x64-portable\/README\.txt/);
 });
 
-test('portable keeps current Tauri root-level mapped resources and the new proxy', () => {
+test('portable keeps mapped resources and excludes the retired Go proxy', () => {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'juling-resource-layout-'));
   fs.mkdirSync(path.join(root, 'native-menu-icons'), {recursive:true});
   fs.mkdirSync(path.join(root, 'scripts'), {recursive:true});
@@ -45,7 +46,7 @@ test('portable keeps current Tauri root-level mapped resources and the new proxy
   }
   const files = collectPortableFiles({releaseDir:root, executablePath:path.join(root,'juling.exe')});
   assert.deepEqual(files.map(file=>file.archivePath), [
-    'juling-cliproxy.exe', 'juling.exe', 'native-menu-icons/codex.svg', 'scripts/claude-desktop-auth-helper.cjs',
+    'juling.exe', 'native-menu-icons/codex.svg', 'scripts/claude-desktop-auth-helper.cjs',
   ]);
 });
 
@@ -58,6 +59,7 @@ test('portable includes attribution and upgrade notes without obsolete sidecars'
   const names = collectPortableFiles({ releaseDir: root, executablePath: path.join(root, '聚灵.exe') }).map(file => file.archivePath);
   for (const expected of ['聚灵.exe', 'NOTICE.txt', '升级说明.md', 'licenses/CLIProxyAPI-LICENSE.txt']) assert.ok(names.includes(expected));
   assert.ok(!names.includes('cockpit-cliproxy.exe'));
+  assert.ok(!names.includes('juling-cliproxy.exe'));
 });
 
 test('ZIP marks Chinese filenames as UTF-8 in both headers', () => {

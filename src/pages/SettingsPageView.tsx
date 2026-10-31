@@ -11,6 +11,7 @@ import type { PlatformId } from '../types/platform';
 import type { useSettingsPageController } from "./SettingsPage";
 import { SettingsGeneralPanel } from "./SettingsGeneralPanel";
 import { useEscClose } from '../hooks/useEscClose';
+import { RemoteReleaseStatus } from '../components/RemoteReleaseStatus';
 
 
 export type SettingsPageViewProps = ReturnType<typeof useSettingsPageController>;
@@ -34,6 +35,7 @@ export function SettingsPageView(props: SettingsPageViewProps) {
     handleCloseReleaseHistory,
     handleConfirmMenuBarQuotaModal,
     handleDownloadReleaseVersion,
+    loadReleaseHistory,
     handleSaveNetworkConfig,
     menuBarQuotaDraftPlatform,
     menuBarQuotaDraftShowPrefix,
@@ -417,7 +419,7 @@ export function SettingsPageView(props: SettingsPageViewProps) {
               <div className="app-info">
                 <h2>{t('settings.about.appName')}</h2>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div className="version-tag" title={`内部构建 ${appVersion}`}>S1.0</div>
+                  <div className="version-tag" title={`内部构建 ${appVersion}`}>S1.0.1</div>
                   <button 
                     className="btn btn-sm btn-ghost"
                     onClick={handleCheckUpdate}
@@ -619,24 +621,12 @@ export function SettingsPageView(props: SettingsPageViewProps) {
               </button>
             </div>
             <div className="modal-body settings-release-history-body">
-              {releaseHistoryLoading && (
-                <div className="settings-release-history-state">
-                  <RefreshCw size={14} className="spin" />
-                  <span>{t('settings.about.releaseHistoryLoading', '加载中...')}</span>
-                </div>
-              )}
-              {!releaseHistoryLoading && releaseHistoryError && (
-                <div className="settings-release-history-state settings-release-history-state-error">
-                  {t('settings.about.releaseHistoryLoadFailed', '加载失败：{{error}}', {
-                    error: releaseHistoryError,
-                  })}
-                </div>
-              )}
-              {!releaseHistoryLoading && !releaseHistoryError && releaseHistoryItems.length === 0 && (
-                <div className="settings-release-history-state">
-                  {t('settings.about.releaseHistoryEmpty', '暂无更新记录')}
-                </div>
-              )}
+              <RemoteReleaseStatus
+                loading={releaseHistoryLoading}
+                error={releaseHistoryError}
+                empty={releaseHistoryItems.length === 0}
+                onRetry={loadReleaseHistory}
+              />
               {!releaseHistoryLoading &&
                 !releaseHistoryError &&
                 releaseHistoryItems.map((item, itemIndex) => (
@@ -645,7 +635,7 @@ export function SettingsPageView(props: SettingsPageViewProps) {
                     className="settings-release-history-item"
                   >
                     <div className="settings-release-history-item-head">
-                      <span className="settings-release-history-version">{itemIndex === 0 ? 'S1.0' : `v${item.version}`}</span>
+                      <span className="settings-release-history-version">{itemIndex === 0 ? 'S1.0.1' : `v${item.version}`}</span>
                       <div className="settings-release-history-item-meta">
                         {item.date ? (
                           <span className="settings-release-history-date">{item.date}</span>

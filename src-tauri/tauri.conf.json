@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "聚灵",
-  "version": "1.3.75",
+  "version": "1.3.76",
   "identifier": "com.wu798998264.juling",
   "build": {
     "beforeDevCommand": "node scripts/prepare-tauri.cjs && npm run dev",
@@ -50,9 +50,6 @@
     "active": true,
     "targets": "all",
     "createUpdaterArtifacts": true,
-    "externalBin": [
-      "../sidecars/juling-cliproxy/bin/juling-cliproxy"
-    ],
     "windows": {
       "nsis": {
         "installMode": "currentUser",
@@ -78,9 +75,6 @@
       "icons/icon.ico"
     ],
     "resources": {
-      "../NOTICE.txt": "NOTICE.txt",
-      "../docs/windows-usage.md": "升级说明.md",
-      "../sidecars/juling-cliproxy/third_party/CLIProxyAPI/LICENSE": "licenses/CLIProxyAPI-LICENSE.txt",
       "../scripts/claude-desktop-auth-helper.cjs": "scripts/claude-desktop-auth-helper.cjs",
       "../src/assets/icons/antigravity-menu.png": "native-menu-icons/antigravity-menu.png",
       "../src/assets/icons/claude.png": "native-menu-icons/claude.png",
@@ -97,10 +91,14 @@
       "../src/assets/icons/windsurf.svg": "native-menu-icons/windsurf.svg",
       "../src/assets/icons/workbuddy.png": "native-menu-icons/workbuddy.png",
       "../src/assets/icons/zed.png": "native-menu-icons/zed.png",
-      "../src/assets/icons/zcode.png": "native-menu-icons/zcode.png"
+      "../src/assets/icons/zcode.png": "native-menu-icons/zcode.png",
+      "../NOTICE.txt": "NOTICE.txt",
+      "../docs/windows-usage.md": "升级说明.md",
+      "../resources/codex/LICENSE.CLIProxyAPI": "licenses/CLIProxyAPI-LICENSE.txt"
     },
     "macOS": {
       "bundleName": "聚灵",
+      "hardenedRuntime": true,
       "infoPlist": "Info.plist"
     }
   },

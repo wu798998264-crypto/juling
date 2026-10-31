@@ -100,8 +100,7 @@ function collectPortableFiles({ releaseDir, executablePath }) {
   for (const entry of fs.readdirSync(path.dirname(executablePath), { withFileTypes: true })) {
     if (
       entry.isFile() &&
-      (entry.name.toLowerCase().endsWith('.dll') ||
-        /^juling-cliproxy(?:[-_].*)?\.exe$/i.test(entry.name))
+      entry.name.toLowerCase().endsWith('.dll')
     ) {
       files.push({
         sourcePath: path.join(path.dirname(executablePath), entry.name),

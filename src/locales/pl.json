@@ -1667,13 +1667,20 @@
       "center": "Środek",
       "top": "Góra",
       "bottom": "Dół",
-      "localHint": "Zmiany są widoczne od razu i zapisywane automatycznie na tym urządzeniu. Obrazy nie są wysyłane. Przywrócenie usuwa zapisany obraz.",
+      "localHint": "Zmiany są stosowane od razu. Obraz i ustawienia każdego motywu są zapisywane osobno na tym urządzeniu; obrazy nie są wysyłane. Przywrócenie ustawień domyślnych zachowuje Twoje motywy.",
       "restore": "Przywróć",
       "imageType": "Wybierz obraz JPG, PNG lub WebP.",
       "imageSize": "Wybierz obraz mniejszy niż 10 MB.",
       "imageRead": "Nie można odczytać obrazu. Spróbuj innego pliku.",
       "storage": "Nie można wczytać lub zapisać tła. Spróbuj ponownie; poprzednie tło zostaje zachowane.",
-      "saveFailed": "Tło jest widoczne, ale nie zostało zapisane. Spróbuj ponownie; poprzednio zapisane tło pozostaje zachowane."
+      "saveFailed": "Zmiany są widoczne, ale nie udało się ich zapisać. Spróbuj ponownie; wcześniej zapisane motywy zostały zachowane.",
+      "builtInSkins": "Wbudowane motywy",
+      "mySkins": "Moje motywy",
+      "addSkin": "Dodaj",
+      "rename": "Zmień nazwę",
+      "skinName": "Nazwa motywu",
+      "manageSkin": "Zarządzaj motywem: {{name}}",
+      "deleteSkinConfirm": "Usunąć „{{name}}”? Usunięcie aktywnego motywu przywróci domyślne tło."
     }
   },
   "appPath": {
@@ -2399,6 +2406,14 @@
       "windowHint": "Progi zależą od rzeczywistego okresu: tydzień lub dłużej używa progu tygodniowego. Konta tylko z limitem tygodniowym sprawdzają wyłącznie ten limit. Bez okresu pozostaje mapowanie okna głównego i dodatkowego.",
       "rule": "Pozostało krótkookresowo <= {{shortCycle}}% lub tygodniowo <= {{weekly}}%"
     },
+    "launchConfirmation": {
+      "title": "Start niepotwierdzony",
+      "description": "Wysłano żądanie uruchomienia, ale stan klienta nie jest potwierdzony. Może być już otwarty. Nie uruchamiaj go ponownie.",
+      "check": "Sprawdź stan",
+      "notRunning": "Nie wykryto jeszcze docelowej instancji. Sprawdź później lub zamknij to okno przed ponowną próbą uruchomienia.",
+      "checkFailed": "Nie można odczytać stanu działania. Sprawdź ponownie później.",
+      "maintenanceDeferred": "Część prac jest niedokończona. Historia została zachowana; spróbuj ponownie w zarządzaniu sesjami."
+    },
     "launchErrors": {
       "sessionRestoreFailed": "Naprawa sesji nie powiodła się, a przywracanie kopii jest niepełne. Uruchamianie zatrzymane; przed ponowną próbą sprawdź dzienniki i kopie zapasowe.",
       "sessionCheckTimeout": "Przekroczono czas sprawdzania sesji. Uruchamianie zatrzymane; spróbuj ponownie lub sprawdź dzienniki.",
@@ -2736,6 +2751,7 @@
       "apiKey": "Klucz",
       "statusRunning": "Uruchomiono",
       "statusStopped": "Zatrzymano",
+      "internalSchedulerLabel": "Harmonogram wewnętrzny",
       "statusDisabled": "Wyłączono",
       "emptyMembers": "W tej kolekcji nie ma jeszcze kont",
       "footerHint": "Zakres dostępu: {{scope}}",
@@ -2826,6 +2842,9 @@
       "summaryMeta": "{{count}} kont · {{scope}}",
       "summaryMetaUnconfigured": "Nie skonfigurowano · {{scope}}",
       "memberTitle": "Członkowie kolekcji",
+      "memberPlatformLabel": "Platforma",
+      "memberPlatformAll": "Wszystkie platformy",
+      "memberPlatformGrok": "Konta platformy Grok",
       "imagePolicy": {
         "label": "Zasady obrazów",
         "inherit": "Obraz: Automatycznie",
@@ -2916,6 +2935,29 @@
       "apiPortUrl": "URL portu API",
       "modelId": "ID modelu",
       "modelIdPlaceholder": "Wybierz ID modelu",
+      "imageAccounts": {
+        "upstreamModel": "Model dostawcy",
+        "chooseModel": "Wybierz model",
+        "modelRequired": "Wybierz obsługiwany model.",
+        "sourceUnavailable": "Wybrane źródło nie obsługuje bieżącego modelu obrazów lub nie ma prawidłowych danych API albo adresu żądania.",
+        "loadFailed": "Nie udało się wczytać ustawień obrazów. Spróbuj ponownie.",
+        "missingModels": "Wybierz model dla {{count}} wybranych źródeł.",
+        "locateModel": "Znajdź źródło"
+      },
+      "imageGenerationModel": {
+        "manage": "Zarządzaj modelami",
+        "deleteSelected": "Model w użyciu. Najpierw zmień i zapisz.",
+        "invalid": "ID modelu nie może zawierać białych znaków ani znaków sterujących i może mieć najwyżej 200 znaków.",
+        "syncFailed": "Nie udało się wykryć modeli obrazów. Spróbuj ponownie.",
+        "label": "Model obrazu",
+        "custom": "Niestandardowy",
+        "save": "Zapisz model",
+        "placeholder": "Wpisz niestandardowe ID modelu",
+        "description": "Używany dla /v1/images/generations i /v1/images/edits; domyślnie gpt-image-2.5.",
+        "required": "Wpisz nazwę modelu obrazu",
+        "tooLong": "Nazwa modelu obrazu jest za długa",
+        "saveSuccess": "Zaktualizowano model obrazu"
+      },
       "modelIdViewOnly": "Tylko podgląd",
       "quotaPool": {
         "title": "Pula limitów",
@@ -2940,7 +2982,6 @@
         "quotaReserveInvalid": "Wpisz liczbę całkowitą od 1 do 100.",
         "strictReserve": "Ścisła ochrona",
         "strictReserveDesc": "Rezerwę limitu automatycznie chroni margines bezpieczeństwa. Blisko progu dozwolone jest jedno żądanie na konto, po którym potwierdzany jest aktualny limit. Użycie innych klientów nie jest ograniczane.",
-        "strictNativeOnly": "Ścisła ochrona wymaga silnika Rust. Wyłącz ją przed przejściem na Go.",
         "safetyMargin": "Margines zapasu",
         "safetyMarginUnit": "punktów procentowych",
         "safetyMarginInvalid": "Wpisz liczbę całkowitą od 1 do 20.",
@@ -3003,6 +3044,8 @@
       "requestLogSuccess": "Sukces",
       "requestLogFailed": "Błąd",
       "requestLogTokens": "{{value}} tokenów",
+      "imageForwardLabel": "Włącz obrazy",
+      "imageForwardHint": "API Key wymaga Images API i wyboru rzeczywistego modelu w wierszu konta; OAuth obsługuje tylko natywne modele GPT.",
       "imageGenerationMode": {
         "enabled": "Włączone",
         "imagesOnly": "Tylko obrazy",
@@ -3021,6 +3064,8 @@
       "gatewayModeNewLabel": "Usluga API-Nowa",
       "gatewayModeOldLabel": "Usluga API-Stara",
       "gatewayModeSaveSuccess": "Zaktualizowano tryb bramy uslugi API",
+      "gatewayEngineRequestsBusy": "Żądania są nadal przetwarzane. Spróbuj ponownie po ich zakończeniu.",
+      "gatewayEngineStopped": "Usługa API została zatrzymana. Uruchom ją ponownie przed kolejną próbą.",
       "gatewayGuideTitle": "Tutaj zmienisz brame",
       "gatewayGuideDesc": "Domyślna jest nowa brama. Przy problemach ze zgodnością lub błędach żądań klienta możesz tutaj wrócić do starej bramy.",
       "gatewayGuideAction": "Rozumiem",
@@ -3108,47 +3153,6 @@
       "testChatModelRequired": "Wybierz ID modelu",
       "testChatEmptyResponse": "Pusta odpowiedź",
       "removeAction": "Usuń z API",
-      "internalSchedulerLabel": "Harmonogram wewnętrzny",
-      "memberPlatformLabel": "Platforma",
-      "memberPlatformAll": "Wszystkie platformy",
-      "memberPlatformGrok": "Konta platformy Grok",
-      "imageAccounts": {
-        "upstreamModel": "Model dostawcy",
-        "chooseModel": "Wybierz model",
-        "modelRequired": "Wybierz obsługiwany model.",
-        "sourceUnavailable": "Wybrane źródło nie obsługuje bieżącego modelu obrazów lub nie ma prawidłowych danych API albo adresu żądania.",
-        "loadFailed": "Nie udało się wczytać ustawień obrazów. Spróbuj ponownie.",
-        "missingModels": "Wybierz model dla {{count}} wybranych źródeł.",
-        "locateModel": "Znajdź źródło"
-      },
-      "imageGenerationModel": {
-        "manage": "Zarządzaj modelami",
-        "deleteSelected": "Model w użyciu. Najpierw zmień i zapisz.",
-        "invalid": "ID modelu nie może zawierać białych znaków ani znaków sterujących i może mieć najwyżej 200 znaków.",
-        "syncFailed": "Nie udało się wykryć modeli obrazów. Spróbuj ponownie.",
-        "label": "Model obrazu",
-        "custom": "Niestandardowy",
-        "save": "Zapisz model",
-        "placeholder": "Wpisz niestandardowe ID modelu",
-        "description": "Używany dla /v1/images/generations i /v1/images/edits; domyślnie gpt-image-2.5.",
-        "required": "Wpisz nazwę modelu obrazu",
-        "tooLong": "Nazwa modelu obrazu jest za długa",
-        "saveSuccess": "Zaktualizowano model obrazu"
-      },
-      "imageForwardLabel": "Włącz obrazy",
-      "imageForwardHint": "API Key wymaga Images API i wyboru rzeczywistego modelu w wierszu konta; OAuth obsługuje tylko natywne modele GPT.",
-      "gatewayEngineNative": "Rust natywny",
-      "gatewayEngineSidecar": "Go (obecny)",
-      "gatewayEngineHint": "Rust jest silnikiem domyślnym. Pierwsza aktualizacja przełącza na Rust; późniejsze wybory są zachowywane. Przełączenie uruchamia ponownie usługę API i może przerwać aktywne żądania; okna Codex pozostają otwarte.",
-      "gatewayEngineSwitching": "Zmiana silnika…",
-      "gatewayEngineSwitchFailed": "Nie udało się zmienić silnika: {{error}}",
-      "gatewayEngineReadbackFailed": "Nie można potwierdzić bieżącego silnika. Odśwież stan przed ponowieniem: {{error}}",
-      "gatewayEngineReadbackTimeout": "Przekroczono czas odświeżania stanu",
-      "gatewayEngineRequestsBusy": "Żądania są nadal przetwarzane. Spróbuj ponownie po ich zakończeniu.",
-      "gatewayEngineOperationBusy": "Trwa inna operacja usługi. Spróbuj ponownie za chwilę.",
-      "gatewayEngineSwitchRestored": "Zmiana nie powiodła się. Przywrócono poprzedni silnik.",
-      "gatewayEngineRestoreFailed": "Zmiana i przywrócenie silnika nie powiodły się. Sprawdź stan usługi przed ponowieniem.",
-      "gatewayEngineStopped": "Usługa API została zatrzymana. Uruchom ją ponownie przed kolejną próbą.",
       "imageGenerationMainModel": {
         "label": "Główny model obrazów",
         "notice": "Nie zmieniaj głównego modelu obrazów podczas zwykłego użycia.",
@@ -3633,9 +3637,9 @@
         "providerLoadFailed": "Nie udało się wczytać providerów: {{error}}",
         "modeTitle": "Tryb naprawy",
         "modeQuick": "Szybka naprawa",
-        "modeQuickDesc": "Normalizuje dostawców w oficjalnej bazie i indeksach sesji. Zachowuje pliki rollout. Do zwykłych zmian konta.",
+        "modeQuickDesc": "Naprawia indeksy i bieżące przypisania w krótkim limicie czasu. Zamknij instancję przed zapisem danych projektów.",
         "modeDeep": "Pełna naprawa",
-        "modeDeepDesc": "Naprawia historycznych dostawców, katalogi, obszary robocze i indeksy podagentów. Zachowuje pliki rollout. Najpierw zamknij instancję docelową.",
+        "modeDeepDesc": "Obejmuje szybką naprawę, odzyskiwanie projektów z kopii i naprawę indeksów rozmów. Najpierw zamknij instancję.",
         "scopeTitle": "Zakres sesji",
         "scopeAll": "Wszystkie sesje",
         "scopeAllDesc": "Napraw {{count}} sesji z bieżącej listy.",
@@ -3667,7 +3671,7 @@
         "previewFailedWithError": "Podgląd naprawy sesji nie powiódł się: {{error}}",
         "confirmRepair": "Potwierdź naprawę",
         "title": "Napraw historię",
-        "description": "Normalizuje dostawców w indeksach SQLite, katalogu sesji i obszarach roboczych. Pliki rollout zachowują wszystkie oryginalne bajty; poprawiane są tylko znaczniki czasu. Najpierw powstaje lokalna kopia zapasowa.",
+        "description": "Szybka naprawa poprawia indeksy widoczności i bieżące przypisania projektów. Pełna korzysta też ze starszych kopii i naprawia indeksy rozmów. Przed zapisem powstaje kopia lokalna; treść dzienników zostaje zachowana.",
         "stopInstanceHint": "Przed pełną naprawą całkowicie zamknij wybraną instancję Codex App/ChatGPT. Nadal możesz najpierw wyświetlić podgląd zmian.",
         "encryptedContentWarning": "Wykryto historię zaszyfrowaną przez innego dostawcę lub konto. Metadane można przenieść, ale kontynuowanie lub kompaktowanie tych sesji może się nie udać; wróć do pierwotnego dostawcy/konta albo rozpocznij nową sesję.",
         "modeHistory": "Edycja/gałęzie",
@@ -3680,7 +3684,13 @@
         "historyFailed": "Naprawa indeksów historii nie została ukończona: {{error}}",
         "historyChanged": "Dane czatu zmieniły się podczas naprawy. Ta naprawa nie została zastosowana. Spróbuj ponownie za chwilę.",
         "historyScan": "Sprawdzanie indeksów historii ({{current}}/{{total}})…",
-        "historyReset": "Tworzenie kopii i resetowanie nieprawidłowych indeksów…"
+        "historyReset": "Tworzenie kopii i resetowanie nieprawidłowych indeksów…",
+        "projectsChanged": "Dane projektów uległy zmianie. Odśwież podgląd i spróbuj ponownie.",
+        "projectsFailed": "Nie udało się przywrócić projektów lokalnych: {{error}}",
+        "projectsPreview": "Podgląd: {{projects}} projektów, {{assignments}} przypisań; pominięto {{skipped}} projektów i {{ambiguous}} niejednoznacznych rozmów.",
+        "projectsSuccess": "Przywrócono: {{projects}} projektów, {{assignments}} przypisań; pominięto {{skipped}} projektów i {{ambiguous}} niejednoznacznych rozmów.",
+        "projectsPending": "Przywracanie przerwano. Zamknij instancję i uruchom pełną naprawę, aby odtworzyć niedokończone zapisy.",
+        "projectsDeferred": "Część danych odłożono. Zamknij instancję i ponów szybką naprawę albo użyj pełnej."
       },
       "importModal": {
         "title": "Importuj sesje",
@@ -4104,7 +4114,9 @@
         "chatCompletions": "Protokół Chat Completions",
         "deepseekResponsesHint": "Uruchom DeepSeek, wybierz bramę lub oficjalne połączenie bezpośrednie, a następnie wybierz Flash lub Pro. Brama pokazuje modele w Codex; połączenie bezpośrednie pomija bramę.",
         "deepseekChatHint": "DeepSeek Chat Completions używa lokalnego mostu bramy dla starszych ścieżek. Wybierz Responses, gdy potrzebujesz oficjalnego zachowania narzędzi Codex.",
-        "deepseekThirdPartyHint": "Ten adres nie jest oficjalnym endpointem DeepSeek, dlatego będzie traktowany jako zgodny endpoint strony trzeciej; w katalogu modeli podaj rzeczywiste identyfikatory modeli z upstreamu, a nie nazwy oficjalne."
+        "deepseekThirdPartyHint": "Ten adres nie jest oficjalnym endpointem DeepSeek, dlatego będzie traktowany jako zgodny endpoint strony trzeciej; w katalogu modeli podaj rzeczywiste identyfikatory modeli z upstreamu, a nie nazwy oficjalne.",
+        "anthropic": "Protokół Anthropic",
+        "gatewayRequired": "Ten protokół wymaga lokalnej bramy. Wybierz tutaj model startowy."
       },
       "selectSavedProvider": "Zapisani dostawcy",
       "selectSavedApiKey": "Zapisane klucze API",
@@ -4337,7 +4349,22 @@
       "importConfigPlaceholder": "Użyj „Kopiuj konfigurację” na karcie i wklej treść tutaj",
       "importConfigAction": "Importuj konfigurację",
       "importConfigFromClipboard": "Czytaj schowek",
-      "settingsRestartHint": "Zaktualizowano ustawienia dostawcy. Aby je zastosować, uruchom ponownie działające instancje Codex lub usługę API korzystającą z tego dostawcy."
+      "settingsRestartHint": "Zaktualizowano ustawienia dostawcy. Aby je zastosować, uruchom ponownie działające instancje Codex lub usługę API korzystającą z tego dostawcy.",
+      "anthropic": {
+        "auth": "Uwierzytelnianie",
+        "hint": "Połącz bramę Anthropic Messages. Pobierz modele lub wpisz je ręcznie.",
+        "fetch": "Pobierz modele",
+        "fetching": "Pobieranie…",
+        "fetchFailed": "Nie udało się pobrać modeli. Spróbuj ponownie lub wpisz ich identyfikatory.",
+        "import": "Importuj ustawienia",
+        "importFailed": "Nie znaleziono prawidłowej konfiguracji Claude Code ani Desktop Gateway."
+      },
+      "editor": {
+        "modelScope": "Zakres modeli",
+        "providerDefault": "Domyślne dostawcy",
+        "sharedSettings": "Lista modeli i ich możliwości dotyczą wybranego zakresu. Protokół, uwierzytelnianie i adres są wspólne dla dostawcy.",
+        "saveScope": "Zapis aktualizuje dostawcę i powiązane konta. Jeśli dotyczy bieżącego konta, aktualizuje też lokalną konfigurację i dane logowania Codex. Klient nie uruchamia się automatycznie."
+      }
     },
     "quickSwitch": {
       "action": "Szybka zmiana dostawcy",
@@ -5768,6 +5795,14 @@
       }
     },
     "requestDiagnostics": {
+      "requestSizeTitle": "Rozmiar żądania",
+      "requestSizeHint": "Rozmiar rozpakowanego JSON klienta; pola w bajtach zwartego JSON. Zapisywane są tylko rozmiary.",
+      "requestBytes": "Żądanie",
+      "historyBytes": "Historia",
+      "toolsBytes": "Narzędzia",
+      "instructionsBytes": "Instrukcje",
+      "overloadRetry": "Ponowienia przy przeciążeniu",
+      "overloadRecovery": "Czas odzyskiwania",
       "recordPayloads": "Zapisuj treść żądań",
       "recordPayloadsHint": "Domyślnie wyłączone. Ograniczone kopie żądań klienta i serwera są zapisywane lokalnie. Wyłączenie zatrzymuje nowe zapisy; zapisane treści można usunąć osobno.",
       "privacyHint": "Pola uwierzytelniania są maskowane, ale tajne dane w rozmowie mogą pozostać. Sprawdź przed kopiowaniem lub udostępnieniem.",
@@ -5934,14 +5969,6 @@
       "description": "Bez uruchamiania usługi API. Aktywne konta lokalne są odświeżane co 5–30 sekund; zmiany plików sesji wyzwalają dodatkowe sprawdzenie. Odczytywane są tylko bieżące metadane plików, bez treści rozmów. Wykluczenia kont, filtry planów i zasady grup nadal obowiązują. Domyślnie wyłączone.",
       "error": "Nie udało się wczytać lub zapisać ustawienia. Spróbuj ponownie."
     },
-    "launchConfirmation": {
-      "title": "Start niepotwierdzony",
-      "description": "Wysłano żądanie uruchomienia, ale stan klienta nie jest potwierdzony. Może być już otwarty. Nie uruchamiaj go ponownie.",
-      "check": "Sprawdź stan",
-      "notRunning": "Nie wykryto jeszcze docelowej instancji. Sprawdź później lub zamknij to okno przed ponowną próbą uruchomienia.",
-      "checkFailed": "Nie można odczytać stanu działania. Sprawdź ponownie później.",
-      "maintenanceDeferred": "Sprawdzanie sesji jest chwilowo niedostępne. Historia została zachowana, a ten krok konserwacji pominięty."
-    },
     "pathRecovery": {
       "title": "Ustaw ścieżkę do Codex",
       "description": "Nie znaleziono prawidłowej ścieżki do klienta Codex. Wybierz aplikację lub otwórz Codex ręcznie i uruchom wykrywanie.",
@@ -5957,6 +5984,21 @@
       "saveWithoutLaunch": "Zapisz i kontynuuj",
       "saveOnly": "Tylko zapisz",
       "validationBusy": "Sprawdzanie poprzedniej ścieżki nadal trwa. Spróbuj ponownie za chwilę."
+    },
+    "openaiUsage": {
+      "monthCost": "Koszt w miesiącu",
+      "scope": "Koszty organizacji; żądania i tokeny tylko tekstowych API. Dane według UTC.",
+      "loading": "Pobieranie użycia OpenAI…",
+      "pending": "Oczekiwanie na użycie OpenAI",
+      "permissionRequired": "Klucz nie ma prawa do odczytu użycia organizacji (api.usage.read).",
+      "permissionGuide": "Użyj klucza administratora: Admin keys → Restricted → Usage API Scope → Read. Udostępnia koszty i użycie, bez pozostałego salda.",
+      "openAdminKeys": "Uprawnienia użycia",
+      "invalidKey": "Klucz jest nieprawidłowy lub wygasł. Sprawdź bieżący klucz API.",
+      "networkFailed": "Brak połączenia ze statystykami OpenAI. Odśwież później.",
+      "queryFailed": "Nie udało się pobrać użycia OpenAI. Spróbuj później."
+    },
+    "officialApi": {
+      "hint": "Konto z oficjalnym kluczem API OpenAI, rozpoznane na podstawie rzeczywistego adresu połączenia."
     }
   },
   "githubCopilot": {
@@ -8029,7 +8071,7 @@
     "model": "Model testowy",
     "selectModel": "Wybierz model",
     "verifyHint": "Wybrany model służy tylko do testu połączenia i nie ogranicza innych dostępnych modeli. Weryfikacja wysyła jedno krótkie żądanie i zużywa niewielką część limitu subskrypcji.",
-    "serviceHint": "Dodanie do bieżącej puli nie uruchamia usługi API. Ta wersja wymaga silnika natywnego.",
+    "serviceHint": "Dodanie konta do bieżącej puli nie uruchamia usługi API.",
     "verify": "Tylko test",
     "verifyAndJoin": "Testuj i dodaj",
     "remove": "Usuń z usługi",
@@ -8089,8 +8131,6 @@
       "verify": "Żądanie do modelu nie zostało ukończone. Powtórz test.",
       "usage": "Użycie planu lub aplikacji jest ograniczone. Sprawdź użycie w ustawieniach ChatGPT.",
       "usageUnavailable": "Oficjalna usługa nie może teraz potwierdzić użycia. Spróbuj później; nie oznacza to wyczerpania limitu planu.",
-      "native": "Dostęp do planu wymaga silnika natywnego. Najpierw zmień silnik w usłudze API.",
-      "nativeSwitch": "Usuń konta z planem z usługi API przed zmianą silnika.",
       "browser": "Nie można otworzyć przeglądarki. Skopiuj link logowania i otwórz go ręcznie.",
       "configuration": "Dane rejestracji autoryzacji nie pasują. Spróbuj ponownie się zalogować lub połącz plan od nowa.",
       "notVerified": "Zweryfikuj plan przed dodaniem go do usługi API.",
@@ -8270,7 +8310,6 @@
     "title": "Rezerwa funkcji",
     "hint": "Gdy konto nie obsługuje wymaganej funkcji, próbuj kont rezerwowych w tej kolejności z istniejącymi mapowaniami modeli.",
     "consent": "Przełączenie wysyła tę rozmowę do konta zapasowego i zużywa jego limit lub powoduje naliczenie odpowiednich opłat.",
-    "nativeOnly": "Ten silnik nie obsługuje rezerwy funkcji. Włącz ją w silniku natywnym; zapisane ustawienia można wyłączyć.",
     "backups": "Konta rezerwowe",
     "addBackup": "Dodaj rezerwę",
     "backupEmpty": "Przed włączeniem wybierz rezerwę z bieżącej puli usługi API.",

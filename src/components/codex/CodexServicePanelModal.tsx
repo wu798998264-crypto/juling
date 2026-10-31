@@ -129,7 +129,7 @@ export function CodexServicePanelModal({
             {connectionExtra}
           </section>
 
-          <section className="juling-api-summary-grid compact">
+          {coreMetrics.length > 0 && <section className="juling-api-summary-grid compact">
             {coreMetrics.map((item) => (
               <div
                 className="juling-api-stat-card juling-api-stat-card-center"
@@ -140,7 +140,7 @@ export function CodexServicePanelModal({
                 {item.meta ? <small>{item.meta}</small> : null}
               </div>
             ))}
-          </section>
+          </section>}
 
           <section className="juling-api-panel-section">
             <div className="juling-api-section-head">

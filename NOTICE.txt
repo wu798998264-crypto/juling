@@ -3,9 +3,9 @@
 修改维护者：wu798998264-crypto
 发行与源码：https://github.com/wu798998264-crypto/juling
 上游项目：Cockpit Tools，jlcodes99/cockpit-tools
-来源版本：v1.3.74
-来源提交：054867e5d6f15ba03c48796bc97cdb2cd359247e
-来源：https://github.com/jlcodes99/cockpit-tools/tree/v1.3.74
+来源版本：v1.3.76
+来源提交：1e00a230a6f0a2a5a4fb3471f9c3c8a58c4dd394
+来源：https://github.com/jlcodes99/cockpit-tools/tree/v1.3.76
 
 本修改版变更了品牌、界面皮肤、广告与推广策略、反馈入口以及更新仓库，
 并保留了用户配置兼容。不是上游官方发行版，不表示获得上游作者背书。

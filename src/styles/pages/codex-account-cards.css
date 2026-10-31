@@ -126,6 +126,10 @@
   border-radius: var(--radius-full);
 }
 
+.codex-account-card .card-top > .tier-badge {
+  margin-left: auto;
+}
+
 .codex-account-card .tier-badge,
 .pelican-account-summary .tier-badge,
 .codex-accounts-page .account-table .tier-badge,
