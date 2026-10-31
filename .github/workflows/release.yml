@@ -33,7 +33,7 @@ jobs:
       - name: ⚙️ Node.js setup
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: 📖 Read app version
         id: app_version
@@ -169,7 +169,7 @@ jobs:
       - name: ⚙️ Node.js setup
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: "npm"
 
       - name: 📦 Install frontend dependencies
@@ -275,7 +275,7 @@ jobs:
       - name: ⚙️ Node.js setup
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: "npm"
 
       - name: 📦 Install frontend dependencies
@@ -421,7 +421,7 @@ jobs:
       - name: ⚙️ Node.js setup
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: "npm"
 
       - name: 📦 Install frontend dependencies
@@ -564,7 +564,7 @@ jobs:
       - name: ⚙️ Node.js setup
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: "npm"
 
       - name: 📦 Install frontend dependencies
@@ -702,7 +702,7 @@ jobs:
       - name: ⚙️ Node.js setup
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
           cache: "npm"
 
       - name: 📦 Install frontend dependencies
@@ -792,7 +792,7 @@ jobs:
       - name: ⚙️ Node.js setup
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: 📥 Download release metadata
         uses: actions/download-artifact@v4
@@ -878,7 +878,7 @@ jobs:
       - name: ⚙️ Node.js setup
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: 📥 Download release assets
         env:
@@ -933,7 +933,7 @@ jobs:
       - name: ⚙️ Node.js setup
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: 🚀 Publish release
         env:
