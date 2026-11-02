@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const { TARGET_SPECS } = require('./build_target_latest_json.cjs');
 
 function parseArgs(argv) {
   const args = {};
@@ -105,7 +106,7 @@ function main() {
 
   const darwinAarch64Tar = findAsset(assets, /_aarch64\.app\.tar\.gz$/, 'darwin-aarch64');
   const darwinX64Tar = findAsset(assets, /_x64\.app\.tar\.gz$/, 'darwin-x86_64');
-  const windowsMsi = findAsset(assets, /_x64_en-US\.msi$/, 'windows-x86_64-msi');
+  const windowsMsi = findAsset(assets, TARGET_SPECS['windows-x86_64-msi'], 'windows-x86_64-msi');
   const windowsNsis = findAsset(assets, /_x64-setup\.exe$/, 'windows-x86_64-nsis');
   const linuxX64AppImage = findAsset(assets, /_amd64\.AppImage$/, 'linux-x86_64-appimage');
   const linuxArmAppImage = findAsset(assets, /_aarch64\.AppImage$/, 'linux-aarch64-appimage');

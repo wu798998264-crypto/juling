@@ -7,7 +7,7 @@ const { normalizeReleaseAssetName } = require("./stage_release_assets.cjs");
 const TARGET_SPECS = {
   "darwin-aarch64-app": /_aarch64\.app\.tar\.gz$/,
   "darwin-x86_64-app": /_x64\.app\.tar\.gz$/,
-  "windows-x86_64-msi": /_x64_en-US\.msi$/,
+  "windows-x86_64-msi": /_x64_(?:zh-CN|en-US)\.msi$/,
   "windows-x86_64-nsis": /_x64-setup\.exe$/,
   "linux-x86_64-appimage": /_amd64\.AppImage$/,
   "linux-x86_64-deb": /_amd64\.deb$/,

@@ -51,6 +51,9 @@
     "targets": "all",
     "createUpdaterArtifacts": true,
     "windows": {
+      "wix": {
+        "language": "zh-CN"
+      },
       "nsis": {
         "installMode": "currentUser",
         "installerHooks": "./windows/nsis/installer-hooks.nsh"

@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
+const { execFileSync } = require('node:child_process');
 
 const { buildTargetManifests } = require('./build_target_latest_json.cjs');
 const { stageReleaseAssets } = require('./stage_release_assets.cjs');
@@ -145,7 +146,7 @@ test('supports every staged release target', () => {
   const assetsByTarget = {
     'darwin-aarch64-app': 'Juling_1.2.3_aarch64.app.tar.gz',
     'darwin-x86_64-app': 'Juling_1.2.3_x64.app.tar.gz',
-    'windows-x86_64-msi': 'Juling_1.2.3_x64_en-US.msi',
+    'windows-x86_64-msi': 'Juling_1.2.3_x64_zh-CN.msi',
     'windows-x86_64-nsis': 'Juling_1.2.3_x64-setup.exe',
     'linux-x86_64-appimage': 'Juling_1.2.3_amd64.AppImage',
     'linux-x86_64-deb': 'Juling_1.2.3_amd64.deb',
@@ -180,4 +181,22 @@ test('supports every staged release target', () => {
     );
     assert.match(manifest.url, new RegExp(assetsByTarget[target].replaceAll('.', '\\.')));
   }
+  const mergedPath = path.join(outputDir, 'latest.json');
+  execFileSync(process.execPath, [path.join(__dirname, 'build_merged_latest_json.cjs'),
+    '--version', '1.2.3', '--repo', 'wu798998264-crypto/juling',
+    '--assets-dir', assetsDir, '--notes-file', notesFile,
+    '--published-at', '2026-07-10T12:00:00Z', '--output', mergedPath]);
+  const merged = JSON.parse(fs.readFileSync(mergedPath, 'utf8'));
+  assert.match(merged.platforms['windows-x86_64-msi'].url, /_x64_zh-CN\.msi$/);
+  fs.renameSync(path.join(assetsDir, assetsByTarget['windows-x86_64-msi']), path.join(assetsDir, 'Juling_1.2.3_x64_en-US.msi'));
+  fs.renameSync(path.join(assetsDir, `${assetsByTarget['windows-x86_64-msi']}.sig`), path.join(assetsDir, 'Juling_1.2.3_x64_en-US.msi.sig'));
+  const [legacyMsiPath] = buildTargetManifests({ version: '1.2.3', repo: 'wu798998264-crypto/juling',
+    assetsDir, notesFile, publishedAt: '2026-07-10T12:00:00Z', outputDir, targets: ['windows-x86_64-msi'] });
+  assert.match(JSON.parse(fs.readFileSync(legacyMsiPath, 'utf8')).url, /_x64_en-US\.msi$/);
+});
+
+test('Chinese Windows product and resource names use a Chinese MSI locale', () => {
+  const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../../src-tauri/tauri.conf.json'), 'utf8'));
+  assert.equal(config.bundle.windows.wix.language, 'zh-CN');
+  assert.equal(config.identifier, 'com.wu798998264.juling');
 });

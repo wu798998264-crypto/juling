@@ -190,7 +190,7 @@ jobs:
           JULING_GEMINI_GOOGLE_CLIENT_SECRET: ${{ secrets.JULING_GEMINI_GOOGLE_CLIENT_SECRET }}
         run: |
           set -euo pipefail
-          npx tauri build --ci
+          npx tauri build --ci --verbose
 
       - name: 📦 Build Windows portable archive
         shell: bash

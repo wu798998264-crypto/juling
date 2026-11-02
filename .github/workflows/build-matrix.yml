@@ -222,7 +222,7 @@ jobs:
           JULING_GEMINI_GOOGLE_CLIENT_SECRET: ${{ secrets.JULING_GEMINI_GOOGLE_CLIENT_SECRET }}
         run: |
           set -euo pipefail
-          npx tauri build --ci --config src-tauri/tauri.ci.conf.json ${{ matrix.args }} 2>&1 | tee "build-${{ matrix.label }}.log"
+          npx tauri build --ci --verbose --config src-tauri/tauri.ci.conf.json ${{ matrix.args }} 2>&1 | tee "build-${{ matrix.label }}.log"
 
       - name: 📜 Print unsigned build logs on failure
         if: failure() && (github.event_name == 'pull_request' || steps.signing.outputs.available != 'true')
@@ -248,7 +248,7 @@ jobs:
           JULING_GEMINI_GOOGLE_CLIENT_SECRET: ${{ secrets.JULING_GEMINI_GOOGLE_CLIENT_SECRET }}
         run: |
           set -euo pipefail
-          npx tauri build --ci ${{ matrix.args }} 2>&1 | tee "build-${{ matrix.label }}.log"
+          npx tauri build --ci --verbose ${{ matrix.args }} 2>&1 | tee "build-${{ matrix.label }}.log"
 
       - name: 📜 Print signed build logs on failure
         if: failure() && github.event_name != 'pull_request' && steps.signing.outputs.available == 'true'
