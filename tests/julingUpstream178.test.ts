@@ -7,11 +7,11 @@ import { resolveCodexAccountCardSkin } from '../src/utils/codexAccountCardSkin.t
 
 const source = (path: string) => readFileSync(new URL('../' + path, import.meta.url), 'utf8');
 
-test('1.3.76 metadata is consistent without changing Juling update trust or identity', () => {
+test('1.3.78 metadata is consistent without changing Juling update trust or identity', () => {
   const pkg = JSON.parse(source('package.json'));
   const lock = JSON.parse(source('package-lock.json'));
   const config = JSON.parse(source('src-tauri/tauri.conf.json'));
-  assert.equal(pkg.version, '1.3.76');
+  assert.equal(pkg.version, '1.3.78');
   assert.equal(lock.version, pkg.version);
   assert.equal(lock.packages[''].version, pkg.version);
   assert.equal(config.version, pkg.version);
@@ -48,7 +48,31 @@ test('Rust-only packaging retains the third-party license and visible S1.0.1 ide
   assert.equal(config.bundle.resources['../resources/codex/LICENSE.CLIProxyAPI'], 'licenses/CLIProxyAPI-LICENSE.txt');
   assert.doesNotMatch(source('src-tauri/build.rs'), /Command::new\("go"\)|fn build_go_sidecar/);
   assert.match(source('src/pages/SettingsPageView.tsx'), />S1\.0\.1</);
-  assert.match(source('src-tauri/src/modules/update_checker_remote.rs'), /api\.github\.com\/repos\/wu798998264-crypto\/juling\/releases/);
+});
+
+test('1.3.78 release history uses bundled notes and independently trusted updater notes', () => {
+  const local = source('src-tauri/src/modules/update_checker_local.rs');
+  assert.match(local, /include_str!\("\.\.\/\.\.\/\.\.\/CHANGELOG\.md"\)/);
+  assert.match(local, /include_str!\("\.\.\/\.\.\/\.\.\/CHANGELOG\.zh-CN\.md"\)/);
+  assert.match(local, /pending_update_notes\.json/);
+  assert.doesNotMatch(local, /reqwest|https?:\/\//);
+  assert.match(source('src-tauri/src/commands/update.rs'), /update_checker::get_local_release_history/);
+  assert.match(source('src/services/localUpdateNotes.ts'), /invoke\('save_pending_update_notes'/);
+  const settings = source('src/pages/SettingsPageView.tsx');
+  assert.match(settings, /onClick=\{handleOpenReleaseHistory\}/);
+  assert.doesNotMatch(settings, /RemoteReleaseStatus/);
+  assert.doesNotMatch(source('src/pages/SettingsPage.tsx'), /useRemoteReleaseHistory/);
+  assert.match(source('src/utils/updaterReleaseNotes.ts'), /github\.com\/wu798998264-crypto\/juling\/releases\/tag\/v/);
+});
+
+test('1.3.78 account UI includes device restrictions and remote service details without promotional skins', () => {
+  const renderers = source('src/pages/useCodexAccountsRenderers.tsx');
+  assert.match(renderers, /<CodexDeviceRestrictionBadge accountId=\{account\.id\}/);
+  assert.match(renderers, /<CodexRemoteServiceDetails/);
+  assert.match(renderers, /isCodexApiUsableReauthNotice\(account\)/);
+  assert.match(renderers, /const displayPlanClass = officialApi \? planClass/);
+  assert.match(renderers, /const displayPlanLabel = officialApi \? presentation\.planLabel/);
+  assert.doesNotMatch(renderers, /"APIKEY\.FUN"|codex-card-skin-apikey-fun/);
 });
 
 test('native and core OAuth upgrades retain own credentials and bounded refresh behavior', () => {

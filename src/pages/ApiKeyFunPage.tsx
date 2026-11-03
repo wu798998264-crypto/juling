@@ -490,13 +490,13 @@ export function ApiKeyFunPage() {
           </div>
           <div className="apikey-fun-brand-text">
             <div className="apikey-fun-eyebrow-container">
-              <span className="apikey-fun-eyebrow">{t('apiKeyFun.eyebrow', '中转站')}</span>
+              <span className="apikey-fun-eyebrow">{t('apiKeyFun.eyebrow', '本地配置')}</span>
             </div>
-            <h1>{t('apiKeyFun.title', 'JIULING.FUN 接入中枢')}</h1>
+            <h1>{t('apiKeyFun.title', '聚灵 · API')}</h1>
             <p>
               {t(
                 'apiKeyFun.description',
-                '把常用模型接入、密钥保存和用量观测收拢到一个本地控制台。支持 Claude、OpenAI、Gemini 等主流协议，并可将配置快速写入已支持的开发工具。',
+                '在本地管理你自行配置的 API 地址与密钥，查询所选服务支持的模型和用量，并将配置传递给 Codex 或 Claude。',
               )}
             </p>
           </div>
@@ -543,7 +543,7 @@ export function ApiKeyFunPage() {
                   <input
                     value={apiKey}
                     type={showApiKey ? 'text' : 'password'}
-                    placeholder={t('apiKeyFun.apiKeyPlaceholder', '粘贴 JIULING.FUN 控制台创建的 API Key')}
+                    placeholder={t('apiKeyFun.apiKeyPlaceholder', '粘贴你选择的服务提供的 API Key。')}
                     onChange={(event) => {
                       setApiKey(event.target.value);
                       setUsageError(null);

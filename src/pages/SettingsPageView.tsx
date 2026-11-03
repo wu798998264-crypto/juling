@@ -4,14 +4,13 @@ import { SettingsAccountTransferSection } from '../components/SettingsAccountTra
 import { SettingsWebdavSyncSection } from '../components/SettingsWebdavSyncSection';
 import { SettingsInstanceCleanupSection } from '../components/SettingsInstanceCleanupSection';
 import './settings/Settings.css';
-import { Github, User, Save, AlertCircle, RefreshCw, Heart, MessageSquare, Download, X } from 'lucide-react';
+import { Github, User, Save, AlertCircle, RefreshCw, Heart, MessageSquare, Download, FileText, X } from 'lucide-react';
 import sponsorQrCode from '../assets/branding/juling-sponsor-qrcode.png';
 import julingCoreLogo from '../assets/branding/juling-core-master.png';
 import type { PlatformId } from '../types/platform';
 import type { useSettingsPageController } from "./SettingsPage";
 import { SettingsGeneralPanel } from "./SettingsGeneralPanel";
 import { useEscClose } from '../hooks/useEscClose';
-import { RemoteReleaseStatus } from '../components/RemoteReleaseStatus';
 
 
 export type SettingsPageViewProps = ReturnType<typeof useSettingsPageController>;
@@ -35,7 +34,7 @@ export function SettingsPageView(props: SettingsPageViewProps) {
     handleCloseReleaseHistory,
     handleConfirmMenuBarQuotaModal,
     handleDownloadReleaseVersion,
-    loadReleaseHistory,
+    handleOpenReleaseHistory,
     handleSaveNetworkConfig,
     menuBarQuotaDraftPlatform,
     menuBarQuotaDraftShowPrefix,
@@ -437,6 +436,21 @@ export function SettingsPageView(props: SettingsPageViewProps) {
                       {updateChecking ? t('settings.about.checking') : t('settings.about.checkUpdate')}
                     </>
                   </button>
+                  <button
+                    className="btn btn-sm btn-ghost"
+                    onClick={handleOpenReleaseHistory}
+                    disabled={releaseHistoryLoading}
+                    style={{
+                      fontSize: '12px',
+                      padding: '4px 10px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                    }}
+                  >
+                    <FileText size={14} />
+                    {t('settings.about.viewReleaseHistory', '更新记录')}
+                  </button>
                 </div>
                 {updateCheckMessage && (
                   <div
@@ -621,12 +635,24 @@ export function SettingsPageView(props: SettingsPageViewProps) {
               </button>
             </div>
             <div className="modal-body settings-release-history-body">
-              <RemoteReleaseStatus
-                loading={releaseHistoryLoading}
-                error={releaseHistoryError}
-                empty={releaseHistoryItems.length === 0}
-                onRetry={loadReleaseHistory}
-              />
+              {releaseHistoryLoading && (
+                <div className="settings-release-history-state">
+                  <RefreshCw size={14} className="spin" />
+                  <span>{t('settings.about.releaseHistoryLoading', '加载中...')}</span>
+                </div>
+              )}
+              {!releaseHistoryLoading && releaseHistoryError && (
+                <div className="settings-release-history-state settings-release-history-state-error">
+                  {t('settings.about.releaseHistoryLoadFailed', '加载失败：{{error}}', {
+                    error: releaseHistoryError,
+                  })}
+                </div>
+              )}
+              {!releaseHistoryLoading && !releaseHistoryError && releaseHistoryItems.length === 0 && (
+                <div className="settings-release-history-state">
+                  {t('settings.about.releaseHistoryEmpty', '暂无更新记录')}
+                </div>
+              )}
               {!releaseHistoryLoading &&
                 !releaseHistoryError &&
                 releaseHistoryItems.map((item, itemIndex) => (

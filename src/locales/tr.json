@@ -158,6 +158,15 @@
     "providerClear": "Seçimi temizle"
   },
   "common": {
+    "networkErrors": {
+      "upstream": "üst hizmet",
+      "proxyConnection": "“{{proxy}}” proxy’si üzerinden {{target}} bağlantısı başarısız oldu. Proxy veya ağ sorunu olabilir. Proxy’yi denetleyin ya da başka bir düğüm deneyin.",
+      "proxyTimeout": "“{{proxy}}” proxy’si üzerinden {{target}} bağlantısı zaman aşımına uğradı. Proxy veya ağ sorunu olabilir. Proxy’yi denetleyin ya da başka bir düğüm deneyin.",
+      "proxyAuth": "“{{proxy}}” proxy’sinde kimlik doğrulama başarısız oldu. Proxy kullanıcı adını veya parolasını denetleyin.",
+      "localProxyUnavailable": "Yerel “{{proxy}}” proxy’sine bağlanılamıyor. Proxy hizmetinin çalıştığını denetleyin.",
+      "directConnection": "{{target}} bağlantısı başarısız oldu. Ağı denetleyip yeniden deneyin.",
+      "directTimeout": "{{target}} bağlantısı zaman aşımına uğradı. Ağı denetleyip yeniden deneyin."
+    },
     "codexUsage": {
       "title": "Kota ve kullanım",
       "session": "Geçerli sohbet",
@@ -378,7 +387,11 @@
           "statusSkipped": "Atlandı",
           "statusPending": "İçe aktarım bekleniyor"
         },
-        "invalidJson": "Geçersiz JSON. Dosyayı veya yapıştırılan içeriği kontrol edin."
+        "invalidJson": "Geçersiz JSON. Dosyayı veya yapıştırılan içeriği kontrol edin.",
+        "empty": "İçe aktarılacak veri boş.",
+        "sizeLimit": "Dosya {{limit}} MiB boyutunu aşamaz.",
+        "countLimit": "Bir defada en fazla {{count}} hesap içe aktarılabilir.",
+        "itemFailed": "Öğe {{index}}: {{error}}"
       },
       "externalImport": {
         "bundleInvalidJson": "İçe aktarma paketi geçerli JSON değil",
@@ -489,6 +502,8 @@
         "title": "Hesap Genel Bakışı"
       },
       "quota": {
+        "usageWithUnit": "Kullanım ({{unit}})",
+        "usage": "Kullanım",
         "noData": "Kota verisi yok",
         "queryFailed": "Kota sorgusu başarısız",
         "resetDone": "Sıfırlandı",
@@ -583,14 +598,71 @@
         "shortWindow": "Gözlenen çıkış aralığı 100 ms altında."
       }
     },
-    "networkErrors": {
-      "upstream": "üst hizmet",
-      "proxyConnection": "“{{proxy}}” proxy’si üzerinden {{target}} bağlantısı başarısız oldu. Proxy veya ağ sorunu olabilir. Proxy’yi denetleyin ya da başka bir düğüm deneyin.",
-      "proxyTimeout": "“{{proxy}}” proxy’si üzerinden {{target}} bağlantısı zaman aşımına uğradı. Proxy veya ağ sorunu olabilir. Proxy’yi denetleyin ya da başka bir düğüm deneyin.",
-      "proxyAuth": "“{{proxy}}” proxy’sinde kimlik doğrulama başarısız oldu. Proxy kullanıcı adını veya parolasını denetleyin.",
-      "localProxyUnavailable": "Yerel “{{proxy}}” proxy’sine bağlanılamıyor. Proxy hizmetinin çalıştığını denetleyin.",
-      "directConnection": "{{target}} bağlantısı başarısız oldu. Ağı denetleyip yeniden deneyin.",
-      "directTimeout": "{{target}} bağlantısı zaman aşımına uğradı. Ağı denetleyip yeniden deneyin."
+    "profileRestoreBusy": "Oturum durumu geri yükleniyor. Biraz sonra yeniden deneyin.",
+    "profileRestoreInvalid": "Oturum yedeğinin yolu geçersiz. Hesabı yeniden içe aktarın.",
+    "profileRestoreRecoveryFailed": "Oturum geri yüklenemedi. Yedek korundu: {{detail}}",
+    "dataQueryBusy": "Veriler işleniyor. Lütfen biraz sonra tekrar deneyin.",
+    "apiBudget": {
+      "keyScope": "Bu anahtar",
+      "upgradeRequired": "İstatistikleri ve istek geçmişini görmek için ağ geçidi bilgisayarındaki 聚灵 uygulamasını güncelleyin.",
+      "gatewayName": "Juling Ağ Geçidi",
+      "accountingNote": "Kayıtlı kesintiler fiyatlar yeniden hesaplandığında değişmez; tahminler farklı olabilir. Bütçeler UTC’ye göre sıfırlanır.",
+      "preparing": "Geçmiş istatistikler arka planda hazırlanıyor. Biraz sonra yeniden deneyin.",
+      "settled": "Kayıtlı kesintiler",
+      "unrecorded": "Kayıt yok",
+      "unmeteredShort": "Ölçülmedi",
+      "rangeLimit": "Bugüne kadar geçerli tarihler seçin; en fazla 93 gün.",
+      "partialCharges": "{{count}} istekte kesinti kaydı veya ölçüm yok. Kesinti istatistikleri yalnızca kayıtlı tutarları içerir.",
+      "retention": "Geçmiş başlangıcı: {{time}}; yalnızca ağ geçidinde saklanan günlükler dahildir.",
+      "logFiltersNote": "Filtreler yalnızca aşağıdaki ayrıntıları etkiler. İstatistikler ve grafikler seçilen tarihleri kullanır.",
+      "timeout": "Zaman aşımı",
+      "textRequests": "Metin",
+      "imageEdits": "Görsel düzenleme",
+      "budget": "Kullanım bütçesi",
+      "period": "Dönem",
+      "lifetime": "Tek seferlik",
+      "daily": "Günlük",
+      "weekly": "Haftalık",
+      "monthly": "Aylık",
+      "dailyLimit": "Günlük sınır",
+      "concurrency": "Eşzamanlı istek",
+      "dailyImages": "Görsel isteği/gün",
+      "invalid": "İzin verilen aralıkta pozitif bir sayı girin.",
+      "hint": "Ayarlanan fiyatlarla hesaplanır. Fiyatı olmayan modeller kullanılamaz. Dönem UTC ile sıfırlanır ve devretmez. Süren istekler sınırı aşabilir.",
+      "unmetered": "Kullanım veya fiyat bilgisi olmayan istekler tutara dahil edilmez.",
+      "remote": "Uzak Juling",
+      "active": "Etkin",
+      "disabled": "Devre dışı",
+      "service_disabled": "Hizmet durdu",
+      "token_limit_reached": "Token sınırı doldu",
+      "budget_limit_reached": "Bütçe tükendi",
+      "images": "Görseller",
+      "consumed": "Kullanılan",
+      "resetsAt": "Sıfırlanma",
+      "offline": "Çevrimdışı · önbellek"
+    },
+    "deviceRestriction": {
+      "title": "Cihaz kısıtlama kayıtları",
+      "badge": "Cihaz kısıtlı",
+      "paused": "Açık bir cihaz kısıtlaması algılandı. Bu işlem için otomatik denemeler duraklatıldı. Hesap sayfasındaki yerel kaydı inceleyin.",
+      "note": "Bunlar yerel gözlemlerdir, OpenAI cihaz kontenjanları değildir. Hesapları veya yerel kimlik bilgilerini silmek sunucudaki cihaz sınırını kaldırmayı garanti etmez.",
+      "retryNote": "Yeniden denemeye izin vermek kısıtlamayı çözülmüş olarak işaretlemez. Yeni bir açık ret, denemeleri tekrar duraklatır.",
+      "desktop": "Masaüstü girişi",
+      "quota": "Kota sorgusu",
+      "api": "API istekleri",
+      "oauth": "OAuth girişi",
+      "token": "Belirteç yenileme",
+      "recovered": "İşlem düzeldi",
+      "pausedLabel": "Denemeler duraklatıldı",
+      "retryEnabled": "Yeniden deneme açık",
+      "observed": "İlk: {{first}} · Son: {{last}} · {{count}} gözlem",
+      "check": "Yeniden kontrol et",
+      "allowRetry": "Denemeye izin ver",
+      "help": "Resmî yardım",
+      "support": "Desteğe ulaş",
+      "failed": "İşlem tamamlanamadı. Son bilinen durum korundu. Yeniden deneyin.",
+      "loginAttempt": "Hesabı belirlenemeyen giriş",
+      "removed": "Silinmiş yerel hesap"
     }
   },
   "nav": {
@@ -1013,6 +1085,8 @@
       "data": "Veri Yönetimi"
     },
     "general": {
+      "errorReporting": "Tanılama",
+      "errorReportingDesc": "Etkinleştirildiğinde, hassas veriler temizlendikten sonra başlangıç ve arayüz tanılamaları gönderilir. Kapatıldığında gönderim durur.",
       "appearance": "Görünüm",
       "language": "Dil",
       "languageDesc": "Arayüz dilini seçin",
@@ -1092,6 +1166,7 @@
       "codexAppUiInjectionPoolLabel": "Hesaplar",
       "codexAppUiInjectionWeeklyLabel": "Hafta",
       "codexAppUiInjectionFiveHourLabel": "5 sa",
+      "codexAppUiInjectionMissingLabel": "—",
       "codexWslConfigDir": "WSL Codex dizini",
       "codexWslConfigDirDesc": "WSL içindeki .codex dizinini girin. \\\\wsl.localhost\\ yolları desteklenir.",
       "codexWslConfigDirPlaceholder": "Örnek: \\\\wsl.localhost\\Ubuntu-24.04\\home\\user\\.codex",
@@ -1106,6 +1181,11 @@
       "commonTitle": "Genel",
       "antigravitySettingsTitle": "Antigravity IDE Ayarları",
       "codexSettingsTitle": "Codex Ayarları",
+      "codexContextManagement": "experimental_mode = true ayarını aç (deneysel bağlam yönetimi)",
+      "codexContextManagementDesc": "Varsayılan olarak kapalıdır. Yalnızca mevcut profil için resmi Codex deneysel bağlam yönetimi anahtarını yazar; uygulamak için Codex'i tamamen yeniden başlatın. Bağlam penceresini, sıkıştırma eşiğini veya API Service'i değiştirmez.",
+      "codexContextManagementLoadFailed": "Resmi bağlam yönetimi anahtarı okunamadı: {{error}}",
+      "codexContextManagementSaveSuccess": "Resmi bağlam yönetimi anahtarı kaydedildi",
+      "codexContextManagementSaveFailed": "Resmi bağlam yönetimi anahtarı kaydedilemedi: {{error}}",
       "codexOAuthAppVersion": "OAuth istemci sürümü",
       "codexOAuthAppVersionDesc": "Uzak varsayılan {{version}} değerini kullanmak için boş bırakın; girilen değer yalnızca OAuth yetkilendirme URL’lerindeki sürüm alanını değiştirir.",
       "codexOAuthAppVersionPlaceholder": "{{version}} kullanmak için boş bırakın",
@@ -1308,14 +1388,6 @@
       "menuBarQuotaConfirmEnable": "Etkinleştir",
       "codexHideRelayQuota": "Relay kotasını gizle",
       "codexHideRelayQuotaDesc": "Codex hesap özetinde relay / New API kota panellerini gizler.",
-      "errorReporting": "Tanılama",
-      "errorReportingDesc": "Etkinleştirildiğinde, hassas veriler temizlendikten sonra başlangıç ve arayüz tanılamaları gönderilir. Kapatıldığında gönderim durur.",
-      "codexAppUiInjectionMissingLabel": "—",
-      "codexContextManagement": "experimental_mode = true ayarını aç (deneysel bağlam yönetimi)",
-      "codexContextManagementDesc": "Varsayılan olarak kapalıdır. Yalnızca mevcut profil için resmi Codex deneysel bağlam yönetimi anahtarını yazar; uygulamak için Codex'i tamamen yeniden başlatın. Bağlam penceresini, sıkıştırma eşiğini veya API Service'i değiştirmez.",
-      "codexContextManagementLoadFailed": "Resmi bağlam yönetimi anahtarı okunamadı: {{error}}",
-      "codexContextManagementSaveSuccess": "Resmi bağlam yönetimi anahtarı kaydedildi",
-      "codexContextManagementSaveFailed": "Resmi bağlam yönetimi anahtarı kaydedilemedi: {{error}}",
       "floatingCardStyle": "Yüzen görünüm",
       "floatingCardStyleDesc": "Tüm yüzen pencerelerde ortak kullanılır. Pencereden de değiştirilebilir.",
       "floatingCardFull": "Tam kart",
@@ -1329,8 +1401,6 @@
       "codexPreserveExternalBridge": "Harici köprüyü koru",
       "codexPreserveExternalBridgeDesc": "OAuth hesabı değiştirirken yerel kayıtlarla doğrulanan Codex Web GPT köprüsünü korur. Varsayılan olarak kapalıdır.",
       "codexEnhancements": {
-        "nativeFast": "Yerleşik Fast seçimi",
-        "nativeFastDesc": "API Key hesaplarında istemcinin yerleşik hız menüsünü açar ve modelin desteklediği kademeleri gösterir. Kullanılabilirlik ve ücretler API sağlayıcısına bağlıdır.",
         "quotaCompat": "Karma mod kota uyumu",
         "quotaCompatDesc": "Gerçek OAuth oturumu ve harici API yolu birlikte kullanıldığında abonelik kotasının yerel API mesajlarını engellemesini önler. Gerçek kullanım ve görsel kotaları değişmez.",
         "restartHint": "Varsayılan olarak açıktır. Değişiklikten sonra ilgili Codex örneklerini yeniden başlatın ve 聚灵 açık kalsın. Yerel dikte, istemcinin yeteneklerine ve ayarlarına bağlıdır; Juling bu işlevi devralmaz veya zorla etkinleştirmez.",
@@ -2643,14 +2713,8 @@
       "unsupportedCountryRegion": "Geçerli ağ bölgesi Codex yetkilendirmesini yenilemeyi desteklemiyor. OpenAI yetkilendirme servisi bu ağ çıkışını reddetti. Desteklenen bir bölgeye geçip yeniden deneyin."
     },
     "switchAuth": {
-      "apiOnlyTitle": "İstemci girişi gerekli",
       "reauthorizeTitle": "Codex yetkilendirmesi sona erdi",
-      "apiOnlyDescription": "Geçerli istemci giriş sayfasına yönlendirildi. İstemciyi geri yüklemek için yeniden yetkilendirin; API hizmeti şimdilik kullanılmaya devam edilebilir.",
-      "observationStatus": "Giriş sayfasına yönlendirme algılandı",
-      "observationTime": "Son kontrol: {{time}}",
-      "loginRedirectTime": "Son giriş sayfası yönlendirmesi: {{time}}",
       "observationInstance": "Gözlemlenen örnek: {{instance}}",
-      "launchTime": "Örneğin başlatılma zamanı: {{time}}",
       "reauthorizeDescription": "Giriş bilgileri yenilenemedi ve access_token artık API hizmetinde kullanılamıyor. Devam etmek için hesabı yeniden yetkilendirin.",
       "idTokenUnavailable": "İstemci kimliği sona erdi ve otomatik yenileme geçerli bir id_token döndürmedi.",
       "reasonLabel": "Neden",
@@ -2663,10 +2727,7 @@
       "startingInstanceAfterReauth": "Yetkilendirme güncellendi. Örnek yeniden başlatılıyor...",
       "startInstanceAfterReauthFailed": "Yetkilendirme güncellendi ancak örnek başlatılamadı: {{error}}",
       "reauthorizedAndStartedInstance": "Yeniden yetkilendirildi ve örnek başlatıldı",
-      "apiOnlyBadge": "Giriş gerekli",
-      "clearClientAuth": "Uyarıyı temizle",
-      "clearClientAuthSuccess": "İstemci uyarısı temizlendi",
-      "clearClientAuthFailed": "İstemci uyarısı temizlenemedi: {{error}}"
+      "apiTokenUsableDescription": "Bazı giriş bilgileri yeniden yetkilendirme gerektiriyor. Mevcut erişim belirteci API hizmetinde kullanılmaya devam edebilir."
     },
     "current": "Geçerli",
     "empty": {
@@ -4266,7 +4327,7 @@
       },
       "sponsorRecommended": "Aktarım önerisi",
       "builtinProviders": "Yerleşik Sağlayıcılar",
-      "sponsorHint": "Özel aktarım servisinin URL’si dolduruldu. API Key girdikten sonra kart bakiye ve kullanımı otomatik sorgular.",
+      "sponsorHint": "Desteklenen kullanım bilgilerini sorgulamadan önce seçtiğiniz hizmet adresini ve API Key değerini doğrulayın.",
       "integration": {
         "sub2api": "Sub2API uyumlu",
         "newApi": "New API uyumlu"
@@ -4718,6 +4779,8 @@
         "allKinds": "Tüm türler",
         "allStatuses": "Tüm durumlar",
         "allGatewayModes": "Tum modlar",
+        "sessionFilter": "Oturum",
+        "sessionPlaceholder": "Oturum kimliği",
         "modelFilter": "Model adı",
         "modelPlaceholder": "Model ID​",
         "accountFilter": "Hesap",
@@ -5500,7 +5563,7 @@
         "subscriptionUrl": "Abonelik URL’si",
         "nodeLinks": "Düğüm bağlantıları veya yapılandırma",
         "import": "İçe aktar",
-        "importNotice": "URL ve kimlik bilgileri yerelde şifrelenir. Abonelik istekleri sağlayıcıya hesap Token bilgisi olmadan gönderilir.",
+        "importNotice": "Yapılandırma ve kaynak anlık görüntüleri şifreli saklanır ve ayrı bir çalışma klasöründe çözülür. Abonelik ve kaynak istekleri hesap belirteçlerini içermez.",
         "intro": "Abonelikleri veya düğümleri içe aktarın ve test edin; ardından hesap listesinden seçip bağlayın.",
         "emptyTitle": "İlk proxy’yi ekleyin",
         "emptyHint": "Abonelikler, düğüm bağlantıları ve HTTP / SOCKS5 desteklenir. Hesap eklemeden içe aktarabilir ve test edebilirsiniz.",
@@ -5545,7 +5608,7 @@
         "unsupported": "Desteklenmiyor",
         "invalidInput": "Ad ve geçerli URL, düğüm bağlantısı veya proxy yapılandırması girin.",
         "downloadFailed": "Abonelik indirilemedi. Ağ ve proxy ayarlarını kontrol edip tekrar deneyin.",
-        "downloadRedirect": "Farklı kökene yönlendirme veya çok fazla yönlendirme nedeniyle abonelik indirmesi durduruldu.",
+        "downloadRedirect": "Abonelik yönlendirmesi geçersiz veya yönlendirme sınırı aşıldı.",
         "downloadDenied": "Abonelik sunucusu erişimi reddetti (HTTP 401/403). Bağlantıyı ve geçerlilik süresini kontrol edin.",
         "downloadTls": "Abonelik bağlantısında TLS el sıkışması veya sertifika doğrulaması başarısız. Ağ ve proxy ayarlarını kontrol edin.",
         "timeout": "İşlem zaman aşımına uğradı. Yeniden denemeden önce sonucu yenileyerek doğrulayın.",
@@ -5563,6 +5626,7 @@
         "loadBalanceGroup": "Yük dengeleme",
         "reasonStrategy": "Bu grup stratejisi desteklenmiyor. Kullanılabilir bir düğüm seçmek için genişletin.",
         "reasonOptions": "Henüz desteklenmeyen bir protokol veya yapılandırma seçeneği içeriyor.",
+        "reasonProviderConfig": "Bu sağlayıcının kaynağı, filtresi veya dönüştürme ayarı desteklenmiyor.",
         "reasonProvider": "Bu grup, henüz yüklenmemiş harici düğüm sağlayıcıları gerektiriyor.",
         "reasonMembers": "Grup üyeleri doğrulamayı geçemedi. Her üyenin nedenini inceleyin.",
         "reasonInvalid": "Gerekli ayarlar eksik veya geçersiz.",
@@ -5584,6 +5648,14 @@
         "defaultProtocol": "Belirtilmeyen protokol",
         "credentialFormat": "Kimlik bilgisi biçimi",
         "recognizing": "Tanınıyor…",
+        "nativePreview": "İçe aktarırken Mihomo yapılandırmayı doğrudan işler ve kaynakları yükler. Önizleme dosyalara veya ağa erişmez.",
+        "resourceDirectory": "Kaynak klasörü",
+        "browseResources": "Klasör seç",
+        "resourceDirectoryHint": "Yerel dosyalar için aboneliğin kaynak klasörünü seçin. İçerik özel bir çalışma klasörüne kopyalanır ve şifreli anlık görüntüler olarak kaydedilir.",
+        "resourceDirectoryRequired": "Bu aboneliğin yerel kaynak klasörünü seçin.",
+        "resourceMissing": "Yerel kaynaklar kullanılamıyor. Klasörü kontrol edin veya yeniden içe aktarın.",
+        "rulesName": "Abonelik kuralları",
+        "pendingProviders": "{{count}} uzak düğüm kaynağı algılandı. İçe aktarmadan önce yerel dosyalar veya satır içi kaynaklarla değiştirin.",
         "previewCount": "Geçerli {{valid}} · Kontrol {{invalid}} · Yinelenen {{duplicates}}",
         "line": "Satır {{line}}",
         "ambiguous": "Biçim belirsiz. Kimlik bilgisi biçimini seçin veya tam proxy URL’sini kullanın.",
@@ -6489,8 +6561,9 @@
       "desc": "Kiro erişim belirtecinizi veya dışa aktarılan JSON verilerinizi yapıştırın."
     },
     "import": {
-      "localDesc": "Kiro hesap verilerini yerel Kiro istemcisinden veya bir JSON dosyasından içe aktarın.",
-      "localClient": "Yerel Kiro'dan ithalat"
+      "localDesc": "Yerel istemciden veya JSON’dan içe aktarın. JSON hesapları önce kaydedilir, ardından oturum bilgileri ve kotalar arka planda yenilenir.",
+      "localClient": "Yerel Kiro'dan ithalat",
+      "invalidCredentials": "Kimlik bilgisi alanları eksik veya desteklenmiyor. Hesabı yeniden dışa aktarın."
     },
     "injectToVSCode": "Kiro'ya geç"
   },
@@ -7532,17 +7605,17 @@
     "modelsEmpty": "Uzakta sabit model listesi yapılandırılmamış. Kaydettikten sonra Codex servis yeteneklerini kullanabilir."
   },
   "apiKeyFun": {
-    "eyebrow": "Ara geçiş",
-    "title": "JIULING.FUN relay",
-    "description": "Juling resmi iş ortağı ara geçiş hizmeti, büyük model API erişimi için kararlı, açık ve yüksek fiyat-performanslı bir çözüm sunar. Claude, ChatGPT, Grok, Gemini, Zhipu GLM, Kimi, DeepSeek gibi ana akım modelleri destekler; Codex, Gemini CLI, Claude Code ve diğer geliştirici araçlarında tek tip yapılandırma için uygundur. Juling özel bağlantısıyla kaydolarak yüklemelerde kalıcı olarak %5’e varan indirim alabilirsiniz.",
+    "eyebrow": "Yerel ayarlar",
+    "title": "Juling API yönetimi",
+    "description": "Kendi API adreslerinizi ve anahtarlarınızı yerel olarak yönetin. Seçtiğiniz hizmetin desteklediği modelleri ve kullanımı sorgulayın, ayarları Codex veya Claude’a aktarın.",
     "register": "Özel kayıt linki",
     "docs": "Resmi doküman",
     "viewNow": "Hemen bak",
     "queryTitle": "Anahtar kotası",
-    "queryDesc": "Kotayı otomatik sorgulamak için JIULING.FUN API Key girin.",
+    "queryDesc": "Seçtiğiniz hizmetin API Key değerini yapıştırın.",
     "keyNotSet": "Anahtar yok",
     "apiKeyLabel": "API anahtarı",
-    "apiKeyPlaceholder": "JIULING.FUN konsolunda oluşturulan API Key’i yapıştırın",
+    "apiKeyPlaceholder": "Seçtiğiniz hizmetin API Key değerini yapıştırın.",
     "hideKey": "Gizle",
     "showKey": "Göster",
     "endpointLabel": "Bağlantı noktası",
@@ -7553,7 +7626,7 @@
     "saving": "Yazılıyor",
     "saveSuccess": "Codex Provider’a yazıldı: {{name}}",
     "toolsTitle": "İstemci config yaz",
-    "toolsDesc": "JIULING.FUN dokümanına ve CC Switch dosya yapısına göre yerel istemci yapılandırma dosyalarını doğrudan yazar.",
+    "toolsDesc": "Seçtiğiniz hizmetin ayarlarını desteklenen yerel istemcilere yazın.",
     "endpoint": {
       "global": "Küresel hat",
       "globalDesc": "Çoğu ağ ortamı için resmi varsayılan API Base.",
@@ -7654,7 +7727,7 @@
       "useKey": "Anahtarı kullan"
     },
     "prefill": {
-      "claudeDesktopReady": "JIULING.FUN ayarları dolduruldu. Claude’a eklemek için onaylayın."
+      "claudeDesktopReady": "Seçtiğiniz hizmetin ayarları yüklendi. Claude’a eklemeden önce doğrulayın."
     },
     "copyKey": "Copy Key​",
     "clearKey": "Clear input​",

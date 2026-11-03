@@ -29,6 +29,9 @@ use super::{
 pub struct Options {
     /// Preserve client protocol IDs when disabled; continuity checks still apply.
     pub session_identity_mapping_enabled: bool,
+    /// Authenticated API keys may continue explicitly supplied response references.
+    /// This does not share identity namespaces, key permissions or usage accounting.
+    pub shared_continuation_references: bool,
     /// usize::MAX leaves conversation request sizes unrestricted by the gateway.
     pub max_body_bytes: usize,
     /// Per uploaded image file, rather than the sum of a multipart request.
@@ -51,6 +54,7 @@ impl Default for Options {
     fn default() -> Self {
         Self {
             session_identity_mapping_enabled: true,
+            shared_continuation_references: false,
             max_body_bytes: usize::MAX,
             max_upload_bytes: 64 * 1024 * 1024,
             max_response_bytes: usize::MAX,
@@ -107,6 +111,10 @@ impl AppState {
     }
 
     pub async fn authorize(&self, headers: &HeaderMap) -> Result<Caller, ServiceError> {
+        self.authorize_for(headers, false).await
+    }
+
+    pub(super) async fn authorize_for(&self, headers: &HeaderMap, management: bool) -> Result<Caller, ServiceError> {
         let bearer = headers
             .get(header::AUTHORIZATION)
             .and_then(|v| v.to_str().ok())
@@ -118,9 +126,10 @@ impl AppState {
                 ServiceError::new(401, "invalid_api_key", "A valid Bearer API key is required")
             })?;
         let mut stop = self.stop.clone();
+        let authorization = if management { self.host.authorize_management(bearer) } else { self.host.authorize(bearer) };
         tokio::select! {
             _ = stop.wait() => Err(stopping_error()),
-            result = tokio::time::timeout(self.options.request_timeout, self.host.authorize(bearer)) =>
+            result = tokio::time::timeout(self.options.request_timeout, authorization) =>
                 result.map_err(|_| ServiceError::new(504, "authorization_timeout", "API key validation timed out"))?,
         }
     }
@@ -247,6 +256,7 @@ pub async fn start(
     let addr = listener.local_addr().map_err(|error| error.to_string())?;
     let activity = Arc::new(Activity::default());
     identity.set_session_identity_mapping_enabled(options.session_identity_mapping_enabled);
+    identity.set_shared_continuation_references(options.shared_continuation_references);
     let identity = Arc::new(identity);
     let state = Arc::new(AppState {
         anthropic_search: Default::default(),
@@ -260,27 +270,6 @@ pub async fn start(
     let mut router = Router::new()
         .route("/v1/models", get(models))
         .route("/models", get(models))
-        .route("/v1/juling/quota", get(super::diagnostics::management))
-        .route(
-            "/v1/juling/diagnostics/config",
-            post(super::diagnostics::management),
-        )
-        .route(
-            "/v1/juling/diagnostics/events",
-            get(super::diagnostics::management),
-        )
-        .route(
-            "/v1/juling/auth/reset",
-            post(super::diagnostics::management),
-        )
-        .route(
-            "/v1/juling/accounts/reset-scheduler",
-            post(super::diagnostics::management),
-        )
-        .route(
-            "/v1/juling/service-tier-default",
-            post(super::diagnostics::management),
-        )
         .route("/v1/messages", post(super::compat_http::handle))
         .route(
             "/v1/messages/count_tokens",
@@ -321,6 +310,15 @@ pub async fn start(
             "/v1/chat/completions/v1/responses/compact",
             post(super::http::compact),
         );
+    // Keep existing Juling clients working while speaking the upstream LAN protocol.
+    for prefix in ["/v1/juling", "/v1/cockpit"] {
+        for resource in ["quota", "connection", "usage", "stats", "requests", "session", "diagnostics/events"] {
+            router = router.route(&format!("{prefix}/{resource}"), get(super::diagnostics::management));
+        }
+        for resource in ["diagnostics/config", "auth/reset", "accounts/reset-scheduler", "service-tier-default"] {
+            router = router.route(&format!("{prefix}/{resource}"), post(super::diagnostics::management));
+        }
+    }
     for path in [
         "/v1/alpha/search",
         "/backend-api/codex/alpha/search",
@@ -517,6 +515,7 @@ pub(super) fn outbound_headers(headers: &HeaderMap) -> HeaderMap {
         .iter()
         .filter(|(name, _)| {
             !name.as_str().starts_with("x-juling-")
+                && !name.as_str().starts_with("x-cockpit-")
                 && !matches!(
                     name.as_str(),
                     "chatgpt-account-id"
@@ -546,6 +545,31 @@ pub(super) fn outbound_headers(headers: &HeaderMap) -> HeaderMap {
         })
         .map(|(name, value)| (name.clone(), value.clone()))
         .collect()
+}
+
+pub(super) fn forward_remote_scope_headers(incoming: &HeaderMap, route: &super::contract::Route, outgoing: &mut HeaderMap) {
+    let Some(key) = route.headers.get(header::AUTHORIZATION).and_then(|h| h.to_str().ok()).and_then(|h| h.strip_prefix("Bearer ")) else { return; };
+    if !crate::modules::codex_remote_service::is_known(&route.base_url, key) { return; }
+    // Public correlation only: never restore either distribution's routing/admin headers.
+    for name in ["x-cockpit-instance-id", "x-juling-instance-id", "x-codex-instance-id", "x-client-instance-id", "x-codex-installation-id"] {
+        outgoing.remove(name);
+    }
+    let public_value = |name: &str| {
+        let connection_scoped = incoming.get_all(header::CONNECTION).iter()
+            .filter_map(|value| value.to_str().ok())
+            .flat_map(|value| value.split(','))
+            .any(|field| field.trim().eq_ignore_ascii_case(name));
+        incoming.get(name).filter(|value| !connection_scoped && value.to_str().ok()
+            .is_some_and(|value| !value.is_empty() && value.len() <= 128 && !value.chars().any(char::is_control)))
+    };
+    // Emit the same identity in both dialects; an explicit upstream identity wins.
+    if let Some(value) = public_value("x-cockpit-instance-id").or_else(|| public_value("x-juling-instance-id")) {
+        outgoing.insert("x-cockpit-instance-id", value.clone());
+        outgoing.insert("x-juling-instance-id", value.clone());
+    }
+    for name in ["x-codex-instance-id", "x-client-instance-id", "x-codex-installation-id"] {
+        if let Some(value) = public_value(name) { outgoing.insert(name, value.clone()); }
+    }
 }
 
 pub(super) fn downstream_response(status: StatusCode, headers: &HeaderMap, body: Body) -> Response {
@@ -603,6 +627,18 @@ mod shutdown_handoff_tests {
     use super::*;
     use futures_util::future::BoxFuture;
     use serde_json::Value;
+
+    #[test]
+    fn outbound_headers_strip_both_distribution_private_namespaces() {
+        let mut headers = HeaderMap::new();
+        for name in ["x-juling-instance-id", "x-cockpit-instance-id", "x-juling-account-id", "x-cockpit-account-id", "x-juling-management-key", "x-cockpit-management-key", "x-juling-future-private", "x-cockpit-future-private"] {
+            headers.insert(name, HeaderValue::from_static("private"));
+        }
+        headers.insert("x-request-id", HeaderValue::from_static("public"));
+        let outgoing = outbound_headers(&headers);
+        assert_eq!(outgoing.len(), 1);
+        assert_eq!(outgoing["x-request-id"], "public");
+    }
 
     struct UnusedHost;
 

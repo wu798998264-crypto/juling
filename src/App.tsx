@@ -30,6 +30,7 @@ import { CodexInstanceLaunchProgressModal } from './components/CodexInstanceLaun
 import { CodexPelicanHost } from './components/codex/pelican/CodexPelicanHost';
 import { AnnouncementHost } from './components/AnnouncementCenter';
 import type { QuickSettingsType } from './components/QuickSettingsPopover';
+import { requestCodexRequestLogsNavigation } from './utils/codexRequestLogsNavigation';
 import { isMainWindowNavigablePage, type Page } from './types/navigation';
 import { useAutoRefresh } from './hooks/useAutoRefresh';
 import { useCodexQuotaSync } from './hooks/useCodexQuotaSync';
@@ -64,8 +65,9 @@ import type {
 import type { RemoteUpdatePromptMode } from './types/remoteConfig';
 import type { Update as UpdaterUpdate } from '@tauri-apps/plugin-updater';
 import {
-  resolveUpdaterDownloadUrl,
+  parseUpdaterReleaseNotes, resolveUpdaterDownloadUrl,
 } from './utils/updaterReleaseNotes';
+import { savePendingUpdateNotes } from './services/localUpdateNotes';
 import { FloatingCardWindow } from './pages/FloatingCardWindow';
 import { CodexWakeupConfirmation } from './components/CodexWakeupConfirmation';
 import { initWakeupNotificationListener } from './utils/wakeupNotificationListener';
@@ -1201,11 +1203,13 @@ function MainApp() {
   }, [writeUpdateLog]);
 
   const prepareUpdateNotificationInfo = useCallback(async (update: UpdaterUpdate): Promise<UpdateInfo> => {
+    const { releaseNotes, releaseNotesZh } = parseUpdaterReleaseNotes(update.body);
     const currentVersion = update.currentVersion || (await getVersion());
     return {
       current_version: currentVersion,
       latest_version: update.version,
       download_url: resolveUpdaterDownloadUrl(update.version, update.rawJson),
+      release_notes: releaseNotes, release_notes_zh: releaseNotesZh,
     };
   }, []);
 
@@ -1638,6 +1642,7 @@ function MainApp() {
             activeUpdateDownloadRef.current = candidate;
 
             const candidateVersion = candidate.version;
+            savePendingUpdateNotes(candidateVersion, candidate.body);
             const trackProgress = createUpdaterDownloadProgress();
             await candidate.download((event) => {
               if (!acceptingProgress || updateCancelRequestedRef.current
@@ -3202,7 +3207,9 @@ function MainApp() {
       .then((target) => {
         if (!target) return;
         const page = String(target);
-        if (isMainWindowNavigablePage(page)) {
+        if (requestCodexRequestLogsNavigation(page)) {
+          setPage('codex-api-service');
+        } else if (isMainWindowNavigablePage(page)) {
           setPage(page);
         }
       })
@@ -3216,7 +3223,9 @@ function MainApp() {
 
         listen<string>('tray:navigate', (event) => {
           const target = String(event.payload || '');
-          if (isMainWindowNavigablePage(target)) {
+          if (requestCodexRequestLogsNavigation(target)) {
+            setPage('codex-api-service');
+          } else if (isMainWindowNavigablePage(target)) {
             setPage(target);
           }
         }).then((fn) => { unlisten = fn; });

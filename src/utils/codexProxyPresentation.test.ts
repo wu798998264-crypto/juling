@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFileSync } from 'node:fs';
-import { detectProxyInputKind, emptyProxyForm, proxyFormUrl, proxySummary } from './codexProxyPresentation';
+import { detectProxyInputKind, isSafeSubscriptionUrl, emptyProxyForm, proxyFormUrl, proxySummary } from './codexProxyPresentation';
 
 test('proxy summary uses safe backend metadata only', () => {
   assert.equal(proxySummary({ protocol: 'http', server: 'localhost', port: 8080 }), 'HTTP · localhost:8080');
@@ -72,7 +72,17 @@ test('subscription detection accepts custom HTTPS ports with a subscription path
 
 test('subscription detection does not mistake multiline proxies or credential URLs for a subscription', () => {
   assert.equal(detectProxyInputKind(' https://example.test/sub?token=private '), 'subscription');
-  for (const value of ['https://user:pass@proxy.test:443', 'https://user:pass@proxy.test:8443/sub', 'https://proxy.test:8443', 'https://proxy.test:8443/', 'https://proxy.test', 'http://example.test:8080/sub', 'socks5://u:p@host:1080', 'host:1080:u:p', 'https://one.test/sub\nhttps://two.test/sub']) {
+  assert.equal(detectProxyInputKind('http://example.test:8080/sub'), 'manual');
+  assert.equal(detectProxyInputKind('https://user:pass@proxy.test:8443/sub'), 'manual');
+  for (const value of ['https://user:pass@proxy.test:443', 'https://proxy.test:8443', 'https://proxy.test:8443/', 'https://proxy.test', 'socks5://u:p@host:1080', 'host:1080:u:p', 'https://one.test/sub\nhttps://two.test/sub']) {
     assert.equal(detectProxyInputKind(value), 'manual');
+  }
+});
+
+test('explicit subscription imports reject HTTP, URL credentials, fragments and controls', () => {
+  assert.equal(isSafeSubscriptionUrl(' https://example.test:8443/?token=synthetic '), true);
+  for (const value of ['http://example.test/sub', 'https://u:p@example.test/sub', 'https://u@example.test/sub',
+    'https://example.test/sub#fragment', 'https://example.test/sub#', 'https://example.test/\nsub', 'file:///private', 'https://example.test/' + 'x'.repeat(8192)]) {
+    assert.equal(isSafeSubscriptionUrl(value), false, value);
   }
 });

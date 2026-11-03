@@ -158,6 +158,15 @@
     "providerClear": "Azzera selezione"
   },
   "common": {
+    "networkErrors": {
+      "upstream": "questo servizio a monte",
+      "proxyConnection": "Connessione a {{target}} tramite il proxy «{{proxy}}» non riuscita. Potrebbe esserci un problema del proxy o della rete. Controlla il proxy o prova un altro nodo.",
+      "proxyTimeout": "Tempo scaduto per la connessione a {{target}} tramite il proxy «{{proxy}}». Potrebbe esserci un problema del proxy o della rete. Controlla il proxy o prova un altro nodo.",
+      "proxyAuth": "Autenticazione del proxy «{{proxy}}» non riuscita. Controlla il nome utente o la password del proxy.",
+      "localProxyUnavailable": "Impossibile connettersi al proxy locale «{{proxy}}». Verifica che il servizio proxy sia in esecuzione.",
+      "directConnection": "Connessione a {{target}} non riuscita. Controlla la rete e riprova.",
+      "directTimeout": "Tempo scaduto per la connessione a {{target}}. Controlla la rete e riprova."
+    },
     "codexUsage": {
       "title": "Quota e utilizzo",
       "session": "Chat attuale",
@@ -383,7 +392,11 @@
           "statusSkipped": "Saltato",
           "statusPending": "In attesa di importazione"
         },
-        "invalidJson": "JSON non valido. Controlla il file o il contenuto incollato."
+        "invalidJson": "JSON non valido. Controlla il file o il contenuto incollato.",
+        "empty": "I dati da importare sono vuoti.",
+        "sizeLimit": "Il file non deve superare {{limit}} MiB.",
+        "countLimit": "Importa al massimo {{count}} account alla volta.",
+        "itemFailed": "Elemento {{index}}: {{error}}"
       },
       "externalImport": {
         "bundleInvalidJson": "Il pacchetto di importazione non è un JSON valido",
@@ -494,6 +507,8 @@
         "title": "Panoramica Account"
       },
       "quota": {
+        "usageWithUnit": "Utilizzo ({{unit}})",
+        "usage": "Utilizzo",
         "noData": "Nessun dato quota",
         "queryFailed": "Query quota non riuscita",
         "resetDone": "Reimpostato",
@@ -583,14 +598,71 @@
         "shortWindow": "La finestra di output osservata è inferiore a 100 ms."
       }
     },
-    "networkErrors": {
-      "upstream": "questo servizio a monte",
-      "proxyConnection": "Connessione a {{target}} tramite il proxy «{{proxy}}» non riuscita. Potrebbe esserci un problema del proxy o della rete. Controlla il proxy o prova un altro nodo.",
-      "proxyTimeout": "Tempo scaduto per la connessione a {{target}} tramite il proxy «{{proxy}}». Potrebbe esserci un problema del proxy o della rete. Controlla il proxy o prova un altro nodo.",
-      "proxyAuth": "Autenticazione del proxy «{{proxy}}» non riuscita. Controlla il nome utente o la password del proxy.",
-      "localProxyUnavailable": "Impossibile connettersi al proxy locale «{{proxy}}». Verifica che il servizio proxy sia in esecuzione.",
-      "directConnection": "Connessione a {{target}} non riuscita. Controlla la rete e riprova.",
-      "directTimeout": "Tempo scaduto per la connessione a {{target}}. Controlla la rete e riprova."
+    "profileRestoreBusy": "Ripristino della sessione in corso. Riprova tra poco.",
+    "profileRestoreInvalid": "Il percorso della copia della sessione non è valido. Importa di nuovo l’account.",
+    "profileRestoreRecoveryFailed": "Ripristino della sessione non riuscito. Il backup è stato conservato: {{detail}}",
+    "dataQueryBusy": "Elaborazione dei dati in corso. Riprova tra poco.",
+    "apiBudget": {
+      "keyScope": "Questa chiave",
+      "upgradeRequired": "Aggiorna 聚灵 sul computer gateway per visualizzare statistiche e cronologia delle richieste.",
+      "gatewayName": "Gateway Juling",
+      "accountingNote": "Gli addebiti registrati non cambiano ricalcolando i prezzi; le stime possono differire. I budget si azzerano in UTC.",
+      "preparing": "Preparazione delle statistiche storiche in background. Riprova tra poco.",
+      "settled": "Addebiti registrati",
+      "unrecorded": "Non registrato",
+      "unmeteredShort": "Non misurato",
+      "rangeLimit": "Scegli date valide fino a oggi, per un massimo di 93 giorni.",
+      "partialCharges": "{{count}} richieste senza addebito registrato o misurazione. Le statistiche includono solo gli importi registrati.",
+      "retention": "Cronologia dal {{time}}; sono inclusi solo i registri conservati dal gateway.",
+      "logFiltersNote": "I filtri riguardano solo i dettagli sotto. Statistiche e grafici usano le date scelte.",
+      "timeout": "Tempo scaduto",
+      "textRequests": "Testo",
+      "imageEdits": "Modifica immagini",
+      "budget": "Budget di utilizzo",
+      "period": "Periodo",
+      "lifetime": "Una tantum",
+      "daily": "Giornaliero",
+      "weekly": "Settimanale",
+      "monthly": "Mensile",
+      "dailyLimit": "Limite giornaliero",
+      "concurrency": "Richieste simultanee",
+      "dailyImages": "Richieste immagini/giorno",
+      "invalid": "Inserisci un numero positivo entro i limiti consentiti.",
+      "hint": "Calcolo ai prezzi configurati. I modelli senza prezzo non sono disponibili. Ripristino in UTC senza riporto. Le richieste in corso possono superare il limite.",
+      "unmetered": "Le richieste senza dati di utilizzo o prezzo sono escluse dal totale.",
+      "remote": "Juling remoto",
+      "active": "Attivo",
+      "disabled": "Disattivato",
+      "service_disabled": "Servizio fermo",
+      "token_limit_reached": "Limite token raggiunto",
+      "budget_limit_reached": "Budget esaurito",
+      "images": "Immagini",
+      "consumed": "Utilizzato",
+      "resetsAt": "Ripristino",
+      "offline": "Offline · dati in cache"
+    },
+    "deviceRestriction": {
+      "title": "Restrizioni del dispositivo",
+      "badge": "Dispositivo limitato",
+      "paused": "È stata rilevata una restrizione esplicita del dispositivo. I tentativi automatici per questa operazione sono sospesi. Consulta il registro nella pagina degli account.",
+      "note": "Sono osservazioni locali, non posti dispositivo OpenAI. Eliminare account o credenziali locali non garantisce la rimozione del limite sul server.",
+      "retryNote": "Consentire nuovi tentativi non indica che la restrizione sia risolta. Un nuovo rifiuto esplicito li sospende di nuovo.",
+      "desktop": "Accesso desktop",
+      "quota": "Lettura quota",
+      "api": "Richieste API",
+      "oauth": "Accesso OAuth",
+      "token": "Rinnovo token",
+      "recovered": "Operazione ripristinata",
+      "pausedLabel": "Tentativi sospesi",
+      "retryEnabled": "Tentativi consentiti",
+      "observed": "Prima: {{first}} · Ultima: {{last}} · {{count}} osservazioni",
+      "check": "Ricontrolla",
+      "allowRetry": "Consenti tentativi",
+      "help": "Guida ufficiale",
+      "support": "Contatta assistenza",
+      "failed": "Operazione non completata. L’ultimo stato noto è conservato. Riprova.",
+      "loginAttempt": "Accesso senza account identificato",
+      "removed": "Account locale rimosso"
     }
   },
   "nav": {
@@ -1013,6 +1085,8 @@
       "data": "Gestione dati"
     },
     "general": {
+      "errorReporting": "Diagnostica",
+      "errorReportingDesc": "Se attivata, invia dati diagnostici di avvio e interfaccia dopo la rimozione dei dati sensibili. Disattivandola si interrompe l’invio.",
       "appearance": "Aspetto",
       "language": "Lingua",
       "languageDesc": "Seleziona la lingua dell'interfaccia",
@@ -1088,6 +1162,7 @@
       "codexAppUiInjectionPoolLabel": "Account",
       "codexAppUiInjectionWeeklyLabel": "Settimana",
       "codexAppUiInjectionFiveHourLabel": "5 h",
+      "codexAppUiInjectionMissingLabel": "—",
       "codexWslConfigDir": "Directory Codex WSL",
       "codexWslConfigDirDesc": "Inserisci la directory .codex in WSL. I percorsi \\\\wsl.localhost\\ sono supportati.",
       "codexWslConfigDirPlaceholder": "Esempio: \\\\wsl.localhost\\Ubuntu-24.04\\home\\user\\.codex",
@@ -1102,6 +1177,11 @@
       "commonTitle": "Generale",
       "antigravitySettingsTitle": "Impostazioni Antigravity IDE",
       "codexSettingsTitle": "Impostazioni Codex",
+      "codexContextManagement": "Attiva experimental_mode = true (gestione sperimentale del contesto)",
+      "codexContextManagementDesc": "Disattivata per impostazione predefinita. Scrive solo l’opzione ufficiale sperimentale di gestione del contesto Codex per il profilo corrente; riavvia completamente Codex per applicarla. Non modifica la finestra di contesto, la soglia di compressione o API Service.",
+      "codexContextManagementLoadFailed": "Impossibile leggere l’opzione ufficiale di gestione del contesto: {{error}}",
+      "codexContextManagementSaveSuccess": "Opzione ufficiale di gestione del contesto salvata",
+      "codexContextManagementSaveFailed": "Impossibile salvare l’opzione ufficiale di gestione del contesto: {{error}}",
       "codexOAuthAppVersion": "Versione client OAuth",
       "codexOAuthAppVersionDesc": "Lascia vuoto per seguire il valore predefinito remoto {{version}}; un valore sovrascrive solo il campo versione negli URL di autorizzazione OAuth.",
       "codexOAuthAppVersionPlaceholder": "Lascia vuoto per usare {{version}}",
@@ -1308,14 +1388,6 @@
       "menuBarQuotaConfirmEnable": "Attiva",
       "codexHideRelayQuota": "Nascondi quota relay",
       "codexHideRelayQuotaDesc": "Nasconde i pannelli quota relay / New API nella panoramica account Codex.",
-      "errorReporting": "Diagnostica",
-      "errorReportingDesc": "Se attivata, invia dati diagnostici di avvio e interfaccia dopo la rimozione dei dati sensibili. Disattivandola si interrompe l’invio.",
-      "codexAppUiInjectionMissingLabel": "—",
-      "codexContextManagement": "Attiva experimental_mode = true (gestione sperimentale del contesto)",
-      "codexContextManagementDesc": "Disattivata per impostazione predefinita. Scrive solo l’opzione ufficiale sperimentale di gestione del contesto Codex per il profilo corrente; riavvia completamente Codex per applicarla. Non modifica la finestra di contesto, la soglia di compressione o API Service.",
-      "codexContextManagementLoadFailed": "Impossibile leggere l’opzione ufficiale di gestione del contesto: {{error}}",
-      "codexContextManagementSaveSuccess": "Opzione ufficiale di gestione del contesto salvata",
-      "codexContextManagementSaveFailed": "Impossibile salvare l’opzione ufficiale di gestione del contesto: {{error}}",
       "floatingCardStyle": "Stile flottante",
       "floatingCardStyleDesc": "Vale per tutte le finestre flottanti. Modificabile anche dalla finestra.",
       "floatingCardFull": "Scheda completa",
@@ -1329,8 +1401,6 @@
       "codexPreserveExternalBridge": "Mantieni ponte esterno",
       "codexPreserveExternalBridgeDesc": "Mantieni il ponte Codex Web GPT verificato dai dati locali quando cambi account OAuth. Disattivato per impostazione predefinita.",
       "codexEnhancements": {
-        "nativeFast": "Selettore Fast nativo",
-        "nativeFastDesc": "Attiva il menu di velocità nativo del client per gli account API Key, mostrando i livelli supportati dal modello. Disponibilità e prezzi dipendono dal fornitore API.",
         "quotaCompat": "Quote in modalità mista",
         "quotaCompatDesc": "Con accesso OAuth reale e un percorso API esterno, evita che la quota dell’abbonamento blocchi i messaggi API locali. Consumi reali e quote immagini restano invariati.",
         "restartHint": "Attivato per impostazione predefinita. Riavvia ogni istanza Codex interessata dopo le modifiche e tieni 聚灵 aperto. La dettatura nativa dipende dalle funzionalità e impostazioni del client; Juling non la sostituisce né ne forza l’attivazione.",
@@ -2643,14 +2713,8 @@
       "unsupportedCountryRegion": "La regione di rete attuale non supporta l’aggiornamento dell’autorizzazione Codex. Il servizio di autorizzazione OpenAI ha rifiutato questa uscita di rete. Passa a una regione supportata e riprova."
     },
     "switchAuth": {
-      "apiOnlyTitle": "Accesso client richiesto",
       "reauthorizeTitle": "Autorizzazione Codex scaduta",
-      "apiOnlyDescription": "Il client corrente ha raggiunto la pagina di accesso. Autorizzalo di nuovo per ripristinarne l'uso; il servizio API resta utilizzabile per ora.",
-      "observationStatus": "Rilevato un reindirizzamento alla pagina di accesso",
-      "observationTime": "Ultimo controllo: {{time}}",
-      "loginRedirectTime": "Ultimo reindirizzamento alla pagina di accesso: {{time}}",
       "observationInstance": "Istanza osservata: {{instance}}",
-      "launchTime": "Ora di avvio dell’istanza: {{time}}",
       "reauthorizeDescription": "Non è stato possibile aggiornare le credenziali e access_token non è più disponibile per il servizio API. Autorizza di nuovo l’account per continuare.",
       "idTokenUnavailable": "L’identità del client è scaduta e l’aggiornamento automatico non ha restituito un id_token valido.",
       "reasonLabel": "Motivo",
@@ -2663,10 +2727,7 @@
       "startingInstanceAfterReauth": "Autorizzazione aggiornata. Riavvio dell’istanza...",
       "startInstanceAfterReauthFailed": "Autorizzazione aggiornata, ma l’istanza non è stata avviata: {{error}}",
       "reauthorizedAndStartedInstance": "Riautorizzato e istanza avviata",
-      "apiOnlyBadge": "Accesso richiesto",
-      "clearClientAuth": "Cancella avviso",
-      "clearClientAuthSuccess": "Avviso del client cancellato",
-      "clearClientAuthFailed": "Impossibile cancellare l’avviso del client: {{error}}"
+      "apiTokenUsableDescription": "Alcune credenziali richiedono una nuova autorizzazione. Il token di accesso attuale è ancora utilizzabile dal servizio API."
     },
     "current": "Attuale",
     "empty": {
@@ -4266,7 +4327,7 @@
       },
       "sponsorRecommended": "Relay consigliato",
       "builtinProviders": "Provider integrati",
-      "sponsorHint": "L’URL del servizio relay esclusivo è stata compilata. Dopo aver inserito l’API Key, la scheda consulterà automaticamente saldo e utilizzo.",
+      "sponsorHint": "Verifica l’indirizzo del servizio scelto e l’API Key prima di consultare i dati di utilizzo disponibili.",
       "integration": {
         "sub2api": "Compatibile Sub2API",
         "newApi": "Compatibile New API"
@@ -4718,6 +4779,8 @@
         "allKinds": "Tutti i tipi",
         "allStatuses": "Tutti gli stati",
         "allGatewayModes": "Tutte le modalita",
+        "sessionFilter": "Sessione",
+        "sessionPlaceholder": "ID sessione",
         "modelFilter": "Modello",
         "modelPlaceholder": "ID modello",
         "accountFilter": "Account​",
@@ -5500,7 +5563,7 @@
         "subscriptionUrl": "URL abbonamento",
         "nodeLinks": "Link dei nodi o configurazione",
         "import": "Importa",
-        "importNotice": "URL e credenziali sono cifrati in locale. Le richieste vanno al fornitore senza Token degli account.",
+        "importNotice": "Le istantanee di configurazione e risorse sono salvate cifrate e decifrate in una cartella di esecuzione separata. Le richieste di abbonamenti e risorse non includono token dell’account.",
         "intro": "Importa e verifica abbonamenti o nodi, poi selezionali e assegnali dall’elenco degli account.",
         "emptyTitle": "Aggiungi il primo proxy",
         "emptyHint": "Supporta abbonamenti, link dei nodi e HTTP / SOCKS5. Puoi importare e testare anche senza account.",
@@ -5545,7 +5608,7 @@
         "unsupported": "Non supportato",
         "invalidInput": "Inserisci un nome e un URL, link di nodo o configurazione proxy validi.",
         "downloadFailed": "Download dell’abbonamento non riuscito. Controlla la rete e le impostazioni del proxy, poi riprova.",
-        "downloadRedirect": "Download interrotto per un reindirizzamento verso un’altra origine o troppi reindirizzamenti.",
+        "downloadRedirect": "Il reindirizzamento dell’abbonamento non è valido o supera il limite consentito.",
         "downloadDenied": "Il server dell’abbonamento ha negato l’accesso (HTTP 401/403). Controlla il link e la sua validità.",
         "downloadTls": "Negoziazione TLS o verifica del certificato dell’abbonamento non riuscita. Controlla la rete e le impostazioni del proxy.",
         "timeout": "Tempo scaduto. Aggiorna per verificare il risultato prima di riprovare.",
@@ -5563,6 +5626,7 @@
         "loadBalanceGroup": "Bilanciamento",
         "reasonStrategy": "Questa strategia di gruppo non è supportata. Espandi per scegliere un nodo disponibile.",
         "reasonOptions": "Contiene un protocollo o un’opzione di configurazione non ancora supportati.",
+        "reasonProviderConfig": "La fonte, il filtro o la trasformazione di questo fornitore non è supportata.",
         "reasonProvider": "Questo gruppo richiede fornitori di nodi esterni non ancora caricati.",
         "reasonMembers": "I membri del gruppo non hanno superato la convalida. Consulta i singoli motivi.",
         "reasonInvalid": "Mancano impostazioni necessarie o non sono valide.",
@@ -5584,6 +5648,14 @@
         "defaultProtocol": "Protocollo se omesso",
         "credentialFormat": "Formato credenziali",
         "recognizing": "Riconoscimento…",
+        "nativePreview": "Durante l’importazione, Mihomo interpreta direttamente la configurazione e carica le risorse. L’anteprima non accede ai file né alla rete.",
+        "resourceDirectory": "Cartella risorse",
+        "browseResources": "Scegli cartella",
+        "resourceDirectoryHint": "Per i file locali, seleziona la cartella delle risorse dell’abbonamento. Il contenuto viene copiato in una cartella di esecuzione privata e salvato in istantanee cifrate.",
+        "resourceDirectoryRequired": "Seleziona la cartella delle risorse locali per questo abbonamento.",
+        "resourceMissing": "Risorse locali non disponibili. Controlla la cartella o importa di nuovo.",
+        "rulesName": "Regole abbonamento",
+        "pendingProviders": "Rilevate {{count}} fonti remote di nodi. Sostituiscile con file locali o fonti integrate prima di importare.",
         "previewCount": "Validi {{valid}} · Da verificare {{invalid}} · Duplicati {{duplicates}}",
         "line": "Riga {{line}}",
         "ambiguous": "Formato ambiguo. Scegli un formato o usa un URL proxy completo.",
@@ -6489,8 +6561,9 @@
       "desc": "Incolla il token di accesso Kiro o i dati JSON esportati."
     },
     "import": {
-      "localDesc": "Importa i dati dell'account Kiro dal client Kiro locale o da un file JSON.",
-      "localClient": "Importazione da Kiro locale"
+      "localDesc": "Importa dal client locale o da JSON. Gli account JSON vengono salvati prima di aggiornare credenziali e quote in background.",
+      "localClient": "Importazione da Kiro locale",
+      "invalidCredentials": "Alcuni campi delle credenziali mancano o non sono supportati. Esporta di nuovo l’account."
     },
     "injectToVSCode": "Passa a Kiro"
   },
@@ -7532,17 +7605,17 @@
     "modelsEmpty": "Nessun elenco fisso di modelli è configurato da remoto. Dopo il salvataggio, Codex userà le capacità del servizio."
   },
   "apiKeyFun": {
-    "eyebrow": "Intermediario",
-    "title": "Relay JIULING.FUN",
-    "description": "Il relay partner ufficiale di Juling offre accesso API stabile, aperto e conveniente ai grandi modelli. Supporta modelli principali come Claude, ChatGPT, Grok, Gemini, Zhipu GLM, Kimi e DeepSeek ed è adatto a una configurazione unificata in Codex, Gemini CLI, Claude Code e altri strumenti di sviluppo. Registrandoti tramite il link esclusivo Juling, puoi ottenere uno sconto permanente fino al 5% sulle ricariche.",
+    "eyebrow": "Impostazioni locali",
+    "title": "Gestione API Juling",
+    "description": "Gestisci localmente i tuoi indirizzi API e le chiavi. Consulta i modelli e i dati di utilizzo supportati dal servizio scelto e passa le impostazioni a Codex o Claude.",
     "register": "Link esclusivo",
     "docs": "Doc ufficiali",
     "viewNow": "Vedi ora",
     "queryTitle": "Quota chiave",
-    "queryDesc": "Inserisci una API Key JIULING.FUN per controllare automaticamente la quota.",
+    "queryDesc": "Incolla l’API Key del servizio scelto.",
     "keyNotSet": "Nessuna chiave",
     "apiKeyLabel": "Chiave API",
-    "apiKeyPlaceholder": "Incolla la API Key creata nella console JIULING.FUN",
+    "apiKeyPlaceholder": "Incolla l’API Key del servizio scelto.",
     "hideKey": "Nascondi",
     "showKey": "Mostra",
     "endpointLabel": "Punto finale",
@@ -7553,7 +7626,7 @@
     "saving": "Scrittura",
     "saveSuccess": "Scritto in Codex Provider: {{name}}",
     "toolsTitle": "Scrivi config client",
-    "toolsDesc": "Scrive direttamente i file di configurazione locali seguendo la documentazione JIULING.FUN e il layout di CC Switch.",
+    "toolsDesc": "Scrivi le impostazioni del servizio scelto nei client locali supportati.",
     "endpoint": {
       "global": "Globale rete",
       "globalDesc": "API Base ufficiale predefinita per la maggior parte delle reti.",
@@ -7654,7 +7727,7 @@
       "useKey": "Usa chiave"
     },
     "prefill": {
-      "claudeDesktopReady": "La configurazione JIULING.FUN è stata compilata. Conferma per aggiungerla a Claude."
+      "claudeDesktopReady": "Le impostazioni del servizio scelto sono caricate. Confermale prima di aggiungerle a Claude."
     },
     "copyKey": "Copy Key​",
     "clearKey": "Clear input​",

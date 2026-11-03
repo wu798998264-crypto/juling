@@ -24,12 +24,21 @@ export function proxyFormUrl(form: ProxyFormDraft): string | null {
   } catch { return null; }
 }
 
-/** A hint only: users can override HTTPS subscription detection before any request. */
+/** Match the backend subscription boundary; manual proxy credentials are separate. */
+export function isSafeSubscriptionUrl(input: string): boolean {
+  if (input.length > 8192 || /[\u0000-\u001f\u007f-\u009f]/.test(input)) return false;
+  try {
+    const url = new URL(input.trim());
+    return url.protocol === 'https:' && !!url.hostname && !url.username && !url.password && !input.includes('#');
+  } catch { return false; }
+}
+
+/** A hint only; explicit subscription imports still use the same URL boundary. */
 export function detectProxyInputKind(input: string): 'subscription' | 'manual' {
   const value = input.trim();
-  if (/[\r\n]/.test(value)) return 'manual';
+  if (!isSafeSubscriptionUrl(input)) return 'manual';
   try {
     const u = new URL(value);
-    return u.protocol === 'https:' && !u.username && !u.password && (u.pathname !== '/' || !!u.search) ? 'subscription' : 'manual';
+    return u.pathname !== '/' || !!u.search ? 'subscription' : 'manual';
   } catch { return 'manual'; }
 }

@@ -89,6 +89,9 @@ jobs:
       - name: 🧪 Release script tests
         run: npm run test:release
 
+      - name: 🧪 Native client scripts and proxy archive tests
+        run: node --test src-tauri/src/modules/codex_app_enhancements/fast*.test.cjs tests/codex_app_injection_dialog.test.cjs scripts/verify-proxy-engine-archive.test.cjs
+
 
   preflight-ts-windows:
     name: "🪟 Preflight: TypeScript Tests"
@@ -173,13 +176,11 @@ jobs:
         with:
           target: ${{ matrix.cache_target }}
 
-      - name: 🧪 Test account configuration preservation
+      - name: 🧪 Test native Rust regressions
         if: matrix.label == 'ubuntu-22.04'
         working-directory: src-tauri
         run: |
-          cargo test instance_configuration_save --lib
-          cargo test quick_config_catalog_only_context_preservation --lib
-          cargo test claude_desktop_gateway --lib --locked
+          cargo test --lib --locked -- --test-threads=1
 
       - name: ⚙️ Node.js setup
         uses: actions/setup-node@v4

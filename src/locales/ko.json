@@ -158,6 +158,15 @@
     "providerClear": "선택 해제"
   },
   "common": {
+    "networkErrors": {
+      "upstream": "상위 서비스",
+      "proxyConnection": "프록시 ‘{{proxy}}’를 통한 {{target}} 연결에 실패했습니다. 프록시 또는 네트워크 문제일 수 있습니다. 프록시를 확인하거나 다른 노드로 다시 시도하세요.",
+      "proxyTimeout": "프록시 ‘{{proxy}}’를 통한 {{target}} 연결 시간이 초과되었습니다. 프록시 또는 네트워크를 확인하거나 다른 노드로 다시 시도하세요.",
+      "proxyAuth": "프록시 ‘{{proxy}}’ 인증에 실패했습니다. 프록시 사용자 이름 또는 비밀번호를 확인하세요.",
+      "localProxyUnavailable": "로컬 프록시 ‘{{proxy}}’에 연결할 수 없습니다. 프록시 서비스가 실행 중인지 확인하세요.",
+      "directConnection": "{{target}} 연결에 실패했습니다. 네트워크를 확인하고 다시 시도하세요.",
+      "directTimeout": "{{target}} 연결 시간이 초과되었습니다. 네트워크를 확인하고 다시 시도하세요."
+    },
     "codexUsage": {
       "title": "할당량 및 사용량",
       "session": "현재 대화",
@@ -383,7 +392,11 @@
           "statusSkipped": "건너뜀",
           "statusPending": "가져오기 대기"
         },
-        "invalidJson": "JSON 형식이 올바르지 않습니다. 파일이나 붙여넣은 내용을 확인하세요."
+        "invalidJson": "JSON 형식이 올바르지 않습니다. 파일이나 붙여넣은 내용을 확인하세요.",
+        "empty": "가져올 데이터가 없습니다.",
+        "sizeLimit": "파일은 {{limit}} MiB 이하여야 합니다.",
+        "countLimit": "한 번에 최대 {{count}}개 계정을 가져올 수 있습니다.",
+        "itemFailed": "항목 {{index}}: {{error}}"
       },
       "externalImport": {
         "bundleInvalidJson": "가져오기 패키지가 유효한 JSON이 아닙니다",
@@ -494,6 +507,8 @@
         "title": "계정 개요"
       },
       "quota": {
+        "usageWithUnit": "사용량 ({{unit}})",
+        "usage": "사용량",
         "noData": "쿼터 데이터 없음",
         "queryFailed": "할당량 조회 실패",
         "resetDone": "재설정됨",
@@ -583,14 +598,71 @@
         "shortWindow": "출력 관측 시간이 100밀리초 미만입니다."
       }
     },
-    "networkErrors": {
-      "upstream": "상위 서비스",
-      "proxyConnection": "프록시 ‘{{proxy}}’를 통한 {{target}} 연결에 실패했습니다. 프록시 또는 네트워크 문제일 수 있습니다. 프록시를 확인하거나 다른 노드로 다시 시도하세요.",
-      "proxyTimeout": "프록시 ‘{{proxy}}’를 통한 {{target}} 연결 시간이 초과되었습니다. 프록시 또는 네트워크를 확인하거나 다른 노드로 다시 시도하세요.",
-      "proxyAuth": "프록시 ‘{{proxy}}’ 인증에 실패했습니다. 프록시 사용자 이름 또는 비밀번호를 확인하세요.",
-      "localProxyUnavailable": "로컬 프록시 ‘{{proxy}}’에 연결할 수 없습니다. 프록시 서비스가 실행 중인지 확인하세요.",
-      "directConnection": "{{target}} 연결에 실패했습니다. 네트워크를 확인하고 다시 시도하세요.",
-      "directTimeout": "{{target}} 연결 시간이 초과되었습니다. 네트워크를 확인하고 다시 시도하세요."
+    "profileRestoreBusy": "로그인 상태를 복원 중입니다. 잠시 후 다시 시도하세요.",
+    "profileRestoreInvalid": "로그인 스냅샷 경로가 잘못되었습니다. 계정을 다시 가져오세요.",
+    "profileRestoreRecoveryFailed": "로그인 복원에 실패했습니다. 백업은 보존되었습니다: {{detail}}",
+    "dataQueryBusy": "데이터를 처리 중입니다. 잠시 후 다시 시도하세요。",
+    "apiBudget": {
+      "keyScope": "현재 Key",
+      "upgradeRequired": "통계와 요청 기록을 보려면 게이트웨이 컴퓨터의 聚灵를 업데이트하세요.",
+      "gatewayName": "Juling 게이트웨이",
+      "accountingNote": "기록된 차감액은 가격 재계산으로 바뀌지 않으며 추정액과 다를 수 있습니다. 예산은 UTC 기준으로 초기화됩니다.",
+      "preparing": "백그라운드에서 과거 통계를 준비 중입니다. 잠시 후 다시 시도하세요.",
+      "settled": "기록된 차감액",
+      "unrecorded": "기록 없음",
+      "unmeteredShort": "미계량",
+      "rangeLimit": "오늘 이전의 유효한 날짜를 선택하세요. 최대 93일입니다.",
+      "partialCharges": "요청 {{count}}건에 차감 기록이나 계량이 없습니다. 차감 통계는 기록된 금액만 포함합니다.",
+      "retention": "기록 시작: {{time}}. 게이트웨이에 보관된 로그만 포함합니다.",
+      "logFiltersNote": "필터는 아래 내역에만 적용됩니다. 통계와 그래프는 선택 기간을 사용합니다.",
+      "timeout": "시간 초과",
+      "textRequests": "텍스트",
+      "imageEdits": "이미지 편집",
+      "budget": "사용 예산",
+      "period": "주기",
+      "lifetime": "일회성",
+      "daily": "매일",
+      "weekly": "매주",
+      "monthly": "매월",
+      "dailyLimit": "일일 한도",
+      "concurrency": "동시 요청",
+      "dailyImages": "일일 이미지 요청",
+      "invalid": "허용 범위의 양수를 입력하세요.",
+      "hint": "설정된 정산 가격으로 계산합니다. 가격이 없는 모델은 사용할 수 없습니다. UTC 기준으로 초기화하며 이월하지 않습니다. 진행 중인 요청은 한도를 초과할 수 있습니다.",
+      "unmetered": "사용량이나 가격이 없는 요청은 금액에서 제외됩니다.",
+      "remote": "Juling 원격 서비스",
+      "active": "사용 가능",
+      "disabled": "비활성",
+      "service_disabled": "서비스 중지",
+      "token_limit_reached": "토큰 소진",
+      "budget_limit_reached": "예산 소진",
+      "images": "이미지 생성",
+      "consumed": "사용량",
+      "resetsAt": "다음 초기화",
+      "offline": "오프라인 · 캐시"
+    },
+    "deviceRestriction": {
+      "title": "기기 제한 기록",
+      "badge": "기기 제한됨",
+      "paused": "명확한 기기 제한이 감지되어 이 작업의 자동 시도를 중지했습니다. 계정 페이지에서 기록을 확인하세요.",
+      "note": "이 기록은 로컬 관찰 결과이며 OpenAI 기기 슬롯이 아닙니다. 계정이나 로컬 인증 정보를 삭제해도 서버의 기기 제한이 해제된다는 보장은 없습니다.",
+      "retryNote": "재시도를 허용해도 제한이 해제된 것으로 표시하지 않습니다. 명확한 제한을 다시 받으면 중지합니다.",
+      "desktop": "데스크톱 로그인",
+      "quota": "할당량 조회",
+      "api": "API 요청",
+      "oauth": "OAuth 로그인",
+      "token": "토큰 갱신",
+      "recovered": "작업 복구됨",
+      "pausedLabel": "시도 중지됨",
+      "retryEnabled": "재시도 허용됨",
+      "observed": "최초: {{first}} · 최근: {{last}} · 관찰 {{count}}회",
+      "check": "다시 확인",
+      "allowRetry": "재시도 허용",
+      "help": "공식 도움말",
+      "support": "지원 문의",
+      "failed": "작업을 완료하지 못했습니다. 마지막 상태를 유지합니다. 다시 시도하세요.",
+      "loginAttempt": "계정 미확인 로그인",
+      "removed": "삭제된 로컬 계정"
     }
   },
   "nav": {
@@ -1013,6 +1085,8 @@
       "data": "데이터 관리"
     },
     "general": {
+      "errorReporting": "진단 정보",
+      "errorReportingDesc": "활성화하면 민감 정보 제거 처리 후 시작 및 화면 진단을 전송합니다. 비활성화하면 전송을 중단합니다.",
       "appearance": "디자인",
       "language": "표시 언어",
       "languageDesc": "인터페이스 언어를 선택하십시오",
@@ -1092,6 +1166,7 @@
       "codexAppUiInjectionPoolLabel": "계정",
       "codexAppUiInjectionWeeklyLabel": "주",
       "codexAppUiInjectionFiveHourLabel": "5시간",
+      "codexAppUiInjectionMissingLabel": "—",
       "codexWslConfigDir": "WSL Codex 디렉터리",
       "codexWslConfigDirDesc": "WSL 안의 .codex 디렉터리를 입력하세요. \\\\wsl.localhost\\ 경로를 지원합니다.",
       "codexWslConfigDirPlaceholder": "예: \\\\wsl.localhost\\Ubuntu-24.04\\home\\user\\.codex",
@@ -1106,6 +1181,11 @@
       "commonTitle": "공통",
       "antigravitySettingsTitle": "Antigravity IDE 설정",
       "codexSettingsTitle": "Codex 설정",
+      "codexContextManagement": "experimental_mode = true 켜기 (실험적 컨텍스트 관리)",
+      "codexContextManagementDesc": "기본값은 꺼짐입니다. 현재 프로필의 공식 Codex 실험적 컨텍스트 관리 스위치만 기록하며, 적용하려면 Codex를 완전히 다시 시작해야 합니다. 컨텍스트 창, 압축 임계값 또는 API Service는 변경하지 않습니다.",
+      "codexContextManagementLoadFailed": "공식 컨텍스트 관리 스위치를 읽지 못했습니다: {{error}}",
+      "codexContextManagementSaveSuccess": "공식 컨텍스트 관리 스위치를 저장했습니다",
+      "codexContextManagementSaveFailed": "공식 컨텍스트 관리 스위치를 저장하지 못했습니다: {{error}}",
       "codexOAuthAppVersion": "OAuth 클라이언트 버전",
       "codexOAuthAppVersionDesc": "비워 두면 원격 기본값 {{version}}을 사용하며, 입력한 값은 OAuth 인증 URL의 버전 필드만 덮어씁니다.",
       "codexOAuthAppVersionPlaceholder": "비워 두면 {{version}} 사용",
@@ -1308,14 +1388,6 @@
       "menuBarQuotaConfirmEnable": "사용",
       "codexHideRelayQuota": "중계 한도 숨기기",
       "codexHideRelayQuotaDesc": "켜면 Codex 계정 개요에서 중계/New API 잔액 패널을 숨겨 겹침을 줄입니다.",
-      "errorReporting": "진단 정보",
-      "errorReportingDesc": "활성화하면 민감 정보 제거 처리 후 시작 및 화면 진단을 전송합니다. 비활성화하면 전송을 중단합니다.",
-      "codexAppUiInjectionMissingLabel": "—",
-      "codexContextManagement": "experimental_mode = true 켜기 (실험적 컨텍스트 관리)",
-      "codexContextManagementDesc": "기본값은 꺼짐입니다. 현재 프로필의 공식 Codex 실험적 컨텍스트 관리 스위치만 기록하며, 적용하려면 Codex를 완전히 다시 시작해야 합니다. 컨텍스트 창, 압축 임계값 또는 API Service는 변경하지 않습니다.",
-      "codexContextManagementLoadFailed": "공식 컨텍스트 관리 스위치를 읽지 못했습니다: {{error}}",
-      "codexContextManagementSaveSuccess": "공식 컨텍스트 관리 스위치를 저장했습니다",
-      "codexContextManagementSaveFailed": "공식 컨텍스트 관리 스위치를 저장하지 못했습니다: {{error}}",
       "floatingCardStyle": "플로팅 스타일",
       "floatingCardStyleDesc": "모든 플로팅 창에 적용됩니다. 창에서도 바꿀 수 있습니다.",
       "floatingCardFull": "전체 카드",
@@ -1329,8 +1401,6 @@
       "codexPreserveExternalBridge": "외부 브리지 유지",
       "codexPreserveExternalBridgeDesc": "OAuth 계정 전환 시 로컬 기록으로 검증된 Codex Web GPT 브리지를 유지합니다. 기본값은 꺼짐입니다.",
       "codexEnhancements": {
-        "nativeFast": "기본 Fast 선택기",
-        "nativeFastDesc": "API Key 계정에서 공식 속도 메뉴를 활성화하고 모델이 지원하는 단계를 표시합니다. 실제 지원 여부와 요금은 API 제공업체에 따라 다릅니다.",
         "quotaCompat": "혼합 모드 한도 호환",
         "quotaCompatDesc": "실제 OAuth 로그인과 외부 API 경로를 함께 쓸 때만 구독 한도가 로컬 API 메시지를 차단하지 않도록 합니다. 실제 사용량과 이미지 한도는 바뀌지 않습니다.",
         "restartHint": "기본적으로 켜져 있습니다. 변경 후 대상 Codex 인스턴스를 다시 시작하고 聚灵를 실행해 두세요. 기본 음성 입력은 클라이언트 기능과 설정을 따릅니다. Juling은 이를 대신 처리하거나 강제로 활성화하지 않습니다.",
@@ -2643,14 +2713,8 @@
       "unsupportedCountryRegion": "현재 네트워크 지역에서는 Codex 인증을 새로고침할 수 없습니다. OpenAI 인증 서비스가 이 네트워크 출구를 거부했습니다. 지원되는 지역으로 전환한 뒤 다시 시도하세요."
     },
     "switchAuth": {
-      "apiOnlyTitle": "클라이언트 로그인 필요",
       "reauthorizeTitle": "Codex 인증 만료",
-      "apiOnlyDescription": "현재 클라이언트가 로그인 페이지로 이동했습니다. 클라이언트를 복구하려면 다시 인증하세요. 당분간 API 서비스는 계속 사용할 수 있습니다.",
-      "observationStatus": "로그인 페이지로의 이동이 감지되었습니다",
-      "observationTime": "최근 확인: {{time}}",
-      "loginRedirectTime": "최근 로그인 페이지 리디렉션: {{time}}",
       "observationInstance": "확인된 인스턴스: {{instance}}",
-      "launchTime": "인스턴스 시작 시간: {{time}}",
       "reauthorizeDescription": "로그인 정보를 갱신할 수 없고 access_token도 API 서비스에서 사용할 수 없습니다. 계속하려면 다시 인증하세요.",
       "idTokenUnavailable": "클라이언트 ID 정보가 만료되었으며 자동 갱신 후에도 유효한 id_token을 받지 못했습니다.",
       "reasonLabel": "원인",
@@ -2663,10 +2727,7 @@
       "startingInstanceAfterReauth": "인증이 업데이트되었습니다. 인스턴스를 다시 시작합니다...",
       "startInstanceAfterReauthFailed": "인증은 업데이트되었지만 인스턴스를 시작하지 못했습니다: {{error}}",
       "reauthorizedAndStartedInstance": "재인증 후 인스턴스를 시작했습니다",
-      "apiOnlyBadge": "인증 필요",
-      "clearClientAuth": "경고 지우기",
-      "clearClientAuthSuccess": "클라이언트 경고를 지웠습니다",
-      "clearClientAuthFailed": "클라이언트 경고를 지우지 못했습니다: {{error}}"
+      "apiTokenUsableDescription": "일부 로그인 자격 증명은 재인증이 필요합니다. 현재 액세스 토큰은 API 서비스에서 계속 사용할 수 있습니다."
     },
     "current": "현재",
     "empty": {
@@ -4266,7 +4327,7 @@
       },
       "sponsorRecommended": "중계소 추천",
       "builtinProviders": "기본 공급자",
-      "sponsorHint": "전용 중계소 설정에 따라 호환 서비스 주소를 자동으로 채웠습니다. API Key를 입력하면 카드에서 잔액과 사용량을 자동 조회합니다.",
+      "sponsorHint": "사용량을 조회하기 전에 선택한 서비스 주소와 API Key를 확인하세요. 조회 가능한 정보는 서비스에 따라 다릅니다.",
       "integration": {
         "sub2api": "Sub2API 호환",
         "newApi": "New API 호환"
@@ -4718,6 +4779,8 @@
         "allKinds": "전체 유형",
         "allStatuses": "전체 상태",
         "allGatewayModes": "전체 모드",
+        "sessionFilter": "세션",
+        "sessionPlaceholder": "세션 ID",
         "modelFilter": "모델",
         "modelPlaceholder": "모델 ID",
         "accountFilter": "계정",
@@ -5500,7 +5563,7 @@
         "subscriptionUrl": "구독 URL",
         "nodeLinks": "노드 링크 또는 설정",
         "import": "가져오기",
-        "importNotice": "구독 URL과 노드 자격 증명은 로컬에 암호화해 저장합니다. 구독 요청에는 계정 Token을 보내지 않습니다.",
+        "importNotice": "설정과 리소스 스냅샷은 암호화해 저장하고 실행 시 별도 폴더에서 복호화합니다. 구독 및 리소스 요청에는 계정 토큰을 보내지 않습니다.",
         "intro": "구독이나 노드를 가져와 테스트한 뒤 계정 목록에서 선택하고 연결하세요.",
         "emptyTitle": "첫 프록시 추가",
         "emptyHint": "구독 주소, 노드 링크, HTTP / SOCKS5를 지원합니다. 계정 없이도 가져오기와 테스트가 가능합니다.",
@@ -5545,7 +5608,7 @@
         "unsupported": "지원 안 됨",
         "invalidInput": "이름과 유효한 구독 URL, 노드 링크 또는 프록시 설정을 입력하세요.",
         "downloadFailed": "구독 다운로드에 실패했습니다. 네트워크와 프록시 설정을 확인한 후 다시 시도하세요.",
-        "downloadRedirect": "다른 사이트로의 리디렉션 또는 과도한 리디렉션으로 구독 다운로드를 중단했습니다.",
+        "downloadRedirect": "구독 리디렉션이 잘못되었거나 횟수 제한을 초과했습니다.",
         "downloadDenied": "구독 서버가 접근을 거부했습니다(HTTP 401/403). 링크와 유효기간을 확인하세요.",
         "downloadTls": "구독 연결의 TLS 핸드셰이크 또는 인증서 검증에 실패했습니다. 네트워크와 프록시 설정을 확인하세요.",
         "timeout": "작업 시간이 초과되었습니다. 새로고침하여 결과를 확인한 후 재시도하세요.",
@@ -5563,6 +5626,7 @@
         "loadBalanceGroup": "부하 분산",
         "reasonStrategy": "이 그룹 방식은 지원되지 않습니다. 펼쳐서 사용 가능한 노드를 선택하세요.",
         "reasonOptions": "아직 지원되지 않는 프로토콜 또는 설정 옵션이 포함되어 있습니다.",
+        "reasonProviderConfig": "이 노드 목록의 소스, 필터 또는 변환 설정은 지원되지 않습니다.",
         "reasonProvider": "이 그룹에는 아직 불러오지 않은 외부 노드 공급자가 필요합니다.",
         "reasonMembers": "그룹 구성원이 검증을 통과하지 못했습니다. 개별 사유를 확인하세요.",
         "reasonInvalid": "필수 설정이 없거나 올바르지 않습니다.",
@@ -5584,6 +5648,14 @@
         "defaultProtocol": "프로토콜 생략 시",
         "credentialFormat": "인증 정보 형식",
         "recognizing": "인식 중…",
+        "nativePreview": "가져올 때 Mihomo가 설정을 직접 해석하고 리소스를 불러옵니다. 미리 보기에서는 파일이나 네트워크에 접근하지 않습니다.",
+        "resourceDirectory": "리소스 폴더",
+        "browseResources": "폴더 선택",
+        "resourceDirectoryHint": "로컬 파일이 있으면 구독 리소스 폴더를 선택하세요. 내용은 별도 실행 폴더에 복사되고 암호화된 스냅샷으로 저장됩니다.",
+        "resourceDirectoryRequired": "이 구독의 로컬 리소스 폴더를 선택하세요.",
+        "resourceMissing": "로컬 리소스를 사용할 수 없습니다. 폴더를 확인하거나 다시 가져오세요.",
+        "rulesName": "구독 규칙",
+        "pendingProviders": "원격 노드 목록 {{count}}개가 감지되었습니다. 가져오기 전에 로컬 파일이나 인라인 목록으로 바꾸세요.",
         "previewCount": "유효 {{valid}} · 확인 필요 {{invalid}} · 중복 {{duplicates}}",
         "line": "{{line}}번째 줄",
         "ambiguous": "형식이 모호합니다. 인증 형식을 선택하거나 전체 프록시 URL을 사용하세요.",
@@ -6489,8 +6561,9 @@
       "desc": "Kiro 액세스 토큰이나 내보낸 JSON 데이터를 붙여넣으세요."
     },
     "import": {
-      "localDesc": "로컬 Kiro 클라이언트 또는 JSON 파일에서 Kiro 계정 데이터를 가져옵니다.",
-      "localClient": "현지 키로에서 수입"
+      "localDesc": "로컬 또는 JSON에서 가져옵니다. JSON 계정을 먼저 저장한 후 백그라운드에서 로그인 상태와 사용 한도를 갱신합니다.",
+      "localClient": "현지 키로에서 수입",
+      "invalidCredentials": "인증 정보가 누락되었거나 지원되지 않습니다. 계정을 다시 내보내세요."
     },
     "injectToVSCode": "키로로 전환"
   },
@@ -7532,17 +7605,17 @@
     "modelsEmpty": "원격에 고정 모델 목록이 설정되지 않았습니다. 저장 후 Codex가 서비스 기능에 따라 사용할 수 있습니다."
   },
   "apiKeyFun": {
-    "eyebrow": "중계 서비스",
-    "title": "JIULING.FUN 릴레이",
-    "description": "Juling 공식 파트너 중계 서비스로, 안정적이고 개방적이며 비용 효율적인 대형 모델 API 접속을 제공합니다. Claude, ChatGPT, Grok, Gemini, Zhipu GLM, Kimi, DeepSeek 등 주요 모델을 지원하며 Codex, Gemini CLI, Claude Code 및 기타 개발 도구에서 통합 구성하기에 적합합니다. Juling 전용 링크로 가입하면 충전 금액에 대해 영구적으로 최대 5% 할인을 받을 수 있습니다.",
+    "eyebrow": "로컬 설정",
+    "title": "Juling API 관리",
+    "description": "직접 설정한 API 주소와 키를 로컬에서 관리합니다. 선택한 서비스가 지원하는 모델과 사용량을 조회하고 설정을 Codex 또는 Claude에 전달할 수 있습니다.",
     "register": "전용 가입 링크",
     "docs": "공식 문서",
     "viewNow": "바로 보기",
     "queryTitle": "키 잔액 조회",
-    "queryDesc": "JIULING.FUN API Key를 입력하면 잔액을 자동으로 조회합니다.",
+    "queryDesc": "선택한 서비스의 API Key를 붙여 넣으세요.",
     "keyNotSet": "키 없음",
     "apiKeyLabel": "API 키",
-    "apiKeyPlaceholder": "JIULING.FUN 콘솔에서 만든 API Key 붙여넣기",
+    "apiKeyPlaceholder": "선택한 서비스의 API Key를 붙여 넣으세요.",
     "hideKey": "숨기기",
     "showKey": "표시",
     "endpointLabel": "연결 대상",
@@ -7553,7 +7626,7 @@
     "saving": "쓰는 중",
     "saveSuccess": "Codex Provider에 기록됨: {{name}}",
     "toolsTitle": "클라이언트 설정 쓰기",
-    "toolsDesc": "JIULING.FUN 문서와 CC Switch 파일 구조에 맞춰 로컬 클라이언트 설정 파일에 직접 씁니다.",
+    "toolsDesc": "선택한 서비스의 설정을 지원되는 로컬 클라이언트에 기록합니다.",
     "endpoint": {
       "global": "글로벌 회선",
       "globalDesc": "대부분의 네트워크 환경에 적합한 공식 기본 API Base입니다.",
@@ -7654,7 +7727,7 @@
       "useKey": "키 사용"
     },
     "prefill": {
-      "claudeDesktopReady": "JIULING.FUN 설정을 채웠습니다. Claude에 추가하려면 확인하세요."
+      "claudeDesktopReady": "선택한 서비스의 설정을 불러왔습니다. 확인한 후 Claude에 추가하세요."
     },
     "copyKey": "Copy Key​",
     "clearKey": "Clear input​",

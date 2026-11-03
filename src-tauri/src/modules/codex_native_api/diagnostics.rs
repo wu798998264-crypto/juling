@@ -169,7 +169,7 @@ pub(super) fn capture_header_identity(headers: &axum::http::HeaderMap) -> Header
         .filter(|value| !value.as_bytes().is_empty())
         .or_else(|| headers.get("session_id"));
     let session = identity(session_header);
-    let thread = identity(headers.get("thread-id"));
+    let thread = identity(headers.get("thread-id").filter(|value| !value.as_bytes().is_empty()).or_else(|| headers.get("thread_id")));
     let mut snapshot = match (session, thread) {
         (Ok(session), Ok(thread)) => HeaderIdentity {
             captured: true,
@@ -220,6 +220,11 @@ pub enum ManagementRequest {
         account_ids: Vec<String>,
     },
     Quota,
+    Connection,
+    Usage { range: String },
+    KeyStats { query: crate::modules::codex_remote_service::KeyQuery },
+    KeyRequests { query: crate::modules::codex_remote_service::KeyQuery },
+    KeySession { query: crate::modules::codex_remote_service::KeyQuery },
     ServiceTier {
         speed: String,
         revision: u64,
@@ -259,6 +264,10 @@ fn invalid_request() -> ServiceError {
     ServiceError::new(400, "invalid_request", "Invalid management request")
 }
 
+fn management_resource(path: &str) -> Option<&str> {
+    path.strip_prefix("/v1/juling/").or_else(|| path.strip_prefix("/v1/cockpit/"))
+}
+
 fn parse_management(
     method: &Method,
     path: &str,
@@ -266,19 +275,24 @@ fn parse_management(
     loopback: bool,
 ) -> Result<ManagementRequest, ServiceError> {
     let post = *method == Method::POST;
-    match path {
-        "/v1/juling/diagnostics/config" if post => {
+    match management_resource(path).unwrap_or_default() {
+        "diagnostics/config" if post => {
             let input: DiagnosticsConfig =
                 serde_json::from_slice(body).map_err(|_| invalid_request())?;
             Ok(ManagementRequest::DiagnosticsConfig {
                 enabled: input.request_payload_logging,
             })
         }
-        "/v1/juling/diagnostics/events" if *method == Method::GET => {
+        "diagnostics/events" if *method == Method::GET => {
             Ok(ManagementRequest::DiagnosticsEvents)
         }
-        "/v1/juling/quota" if *method == Method::GET => Ok(ManagementRequest::Quota),
-        "/v1/juling/auth/reset" | "/v1/juling/accounts/reset-scheduler" if post => {
+        "quota" if *method == Method::GET => Ok(ManagementRequest::Quota),
+        "connection" if *method == Method::GET => Ok(ManagementRequest::Connection),
+        "usage" if *method == Method::GET => Ok(ManagementRequest::Usage { range: "week".into() }),
+        "stats" if *method == Method::GET => Ok(ManagementRequest::KeyStats { query: Default::default() }),
+        "requests" if *method == Method::GET => Ok(ManagementRequest::KeyRequests { query: Default::default() }),
+        "session" if *method == Method::GET => Ok(ManagementRequest::KeySession { query: Default::default() }),
+        "auth/reset" | "accounts/reset-scheduler" if post => {
             let input: ResetAccounts =
                 serde_json::from_slice(body).map_err(|_| invalid_request())?;
             if input.account_ids.is_empty() || input.account_ids.len() > 1024 {
@@ -300,7 +314,7 @@ fn parse_management(
                 Ok(ManagementRequest::ResetScheduler { account_ids })
             }
         }
-        "/v1/juling/service-tier-default" if post => {
+        "service-tier-default" if post => {
             let input: ServiceTier = serde_json::from_slice(body).map_err(|_| invalid_request())?;
             if input.revision == 0
                 || !matches!(input.speed.as_str(), "standard" | "fast" | "ultrafast")
@@ -321,14 +335,18 @@ fn parse_management(
     }
 }
 
-/// Register the six exact management paths with their corresponding GET/POST methods.
+/// Both distribution prefixes share the same exact methods and authorization policy.
 /// ConnectInfo comes from the accepted socket, never Forwarded/X-Forwarded-For.
 pub(super) async fn management(
     State(state): State<Arc<AppState>>,
     request: Request,
 ) -> Result<Json<Value>, ServiceError> {
     let _tracker = state.begin()?;
-    let caller = state.authorize(request.headers()).await?;
+    let readonly_self = request.method() == Method::GET
+        && matches!(management_resource(request.uri().path()), Some("connection" | "usage" | "stats" | "requests" | "session"));
+    let caller = state.authorize_for(request.headers(), readonly_self).await?;
+    let range = request.uri().query().and_then(|query| url::form_urlencoded::parse(query.as_bytes())
+        .find(|(key, _)| key == "range").map(|(_, value)| value.into_owned())).unwrap_or_else(|| "week".into());
     let loopback = request
         .extensions()
         .get::<ConnectInfo<SocketAddr>>()
@@ -342,7 +360,20 @@ pub(super) async fn management(
                 .map_err(|_| ServiceError::new(413, "request_too_large", "Management request is too large"))?
         }
     };
-    let request = parse_management(&parts.method, parts.uri.path(), &body, loopback)?;
+    let mut request = parse_management(&parts.method, parts.uri.path(), &body, loopback)?;
+    if matches!(request, ManagementRequest::KeyStats { .. } | ManagementRequest::KeyRequests { .. } | ManagementRequest::KeySession { .. }) {
+        let query: crate::modules::codex_remote_service::KeyQuery =
+            serde_urlencoded::from_str(parts.uri.query().unwrap_or_default()).map_err(|_| invalid_request())?;
+        request = if matches!(request, ManagementRequest::KeyStats { .. }) {
+            ManagementRequest::KeyStats { query }
+        } else if matches!(request, ManagementRequest::KeySession { .. }) {
+            ManagementRequest::KeySession { query }
+        } else { ManagementRequest::KeyRequests { query } };
+    }
+    if matches!(request, ManagementRequest::Usage { .. }) {
+        if !matches!(range.as_str(), "day" | "week" | "month" | "all") { return Err(invalid_request()); }
+        request = ManagementRequest::Usage { range };
+    }
     tokio::select! {
         _ = stop.wait() => Err(super::lifecycle::stopping_error()),
         result = tokio::time::timeout(state.options.request_timeout, state.host.management(&caller, request)) =>
@@ -353,6 +384,35 @@ pub(super) async fn management(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn management_brand_aliases_preserve_methods_and_privileges() {
+        for (method, resource, body) in [
+            (Method::GET, "quota", b"".as_slice()),
+            (Method::GET, "connection", b"".as_slice()),
+            (Method::GET, "usage", b"".as_slice()),
+            (Method::GET, "stats", b"".as_slice()),
+            (Method::GET, "requests", b"".as_slice()),
+            (Method::GET, "session", b"".as_slice()),
+            (Method::GET, "diagnostics/events", b"".as_slice()),
+            (Method::POST, "diagnostics/config", br#"{"requestPayloadLogging":true}"#.as_slice()),
+            (Method::POST, "auth/reset", br#"{"accountIds":["a"]}"#.as_slice()),
+            (Method::POST, "accounts/reset-scheduler", br#"{"accountIds":["a"]}"#.as_slice()),
+            (Method::POST, "service-tier-default", br#"{"speed":"fast","revision":1}"#.as_slice()),
+        ] {
+            let expected = parse_management(&method, &format!("/v1/juling/{resource}"), body, false).unwrap();
+            let upstream = parse_management(&method, &format!("/v1/cockpit/{resource}"), body, false).unwrap();
+            assert_eq!(upstream, expected);
+            assert_eq!(upstream.requires_internal_key(), expected.requires_internal_key());
+            for prefix in ["/v1/juling", "/v1/cockpit"] {
+                let wrong_method = if method == Method::GET { Method::POST } else { Method::GET };
+                assert!(parse_management(&wrong_method, &format!("{prefix}/{resource}"), body, false).is_err());
+            }
+        }
+        for path in ["connection", "/v1/other/connection", "/v1/cockpit/connection/", "/v1/juling/../cockpit/connection"] {
+            assert!(parse_management(&Method::GET, path, b"", false).is_err());
+        }
+    }
 
     #[test]
     fn management_requests_require_exact_fields_and_real_loopback() {

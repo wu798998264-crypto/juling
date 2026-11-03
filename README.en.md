@@ -17,7 +17,7 @@ A **universal AI IDE account management tool**, currently supporting **Antigravi
 
 🇺🇸 English · 🇨🇳 简体中文 · 繁體中文 · 🇯🇵 日本語 · 🇩🇪 Deutsch · 🇪🇸 Español · 🇫🇷 Français · 🇮🇹 Italiano · 🇰🇷 한국어 · 🇧🇷 Português · 🇷🇺 Русский · 🇹🇷 Türkçe · 🇵🇱 Polski · 🇨🇿 Čeština · 🇸🇦 العربية · 🇻🇳 Tiếng Việt · 🇮🇩 Bahasa Indonesia
 
-**This release**: S1.0.1 for Windows 10/11 x64, functional baseline 1.3.76. Adds Anthropic access, official API usage, project/session repair and a local skin library, with the Rust engine used exclusively. See [release notes](docs/releases/v1.3.76.md) for limitations and [NOTICE.txt](NOTICE.txt) for attribution and licensing. macOS/Linux sources remain available; this release only provides Windows packages.
+**This release**: S1.0.1 for Windows 10/11 x64, functional baseline 1.3.78. Adds LAN gateway views, key budgets and usage, client credential compatibility and native speed-control fixes. Promotions remain disabled; subscription downloads retain HTTPS and same-origin boundaries. See [release notes](docs/releases/v1.3.78.md) for limitations and [NOTICE.txt](NOTICE.txt) for attribution and licensing. macOS/Linux sources remain available; this release only provides Windows packages.
 
 ---
 

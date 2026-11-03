@@ -19,4 +19,4 @@ export const fetchReleaseNotes = (version: string) =>
   invoke<ReleaseNotes>('get_release_notes', { version });
 
 export const fetchReleaseHistory = (locale: string) =>
-  invoke<ReleaseHistoryItem[]>('get_release_history', { locale, limit: 30 });
+  invoke<ReleaseHistoryItem[]>('get_remote_release_history', { locale, limit: 30 });

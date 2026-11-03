@@ -1,6 +1,6 @@
-use super::{parse_release_history_markdown, ReleaseHistoryItem};
+use super::{parse_release_history_markdown, ReleaseHistoryItem, ReleaseNotes};
 use crate::modules::{config, logger};
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use serde_json::Value;
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex, OnceLock};
@@ -92,12 +92,6 @@ async fn fetch_release_json(url: &str) -> Result<Value, String> {
         .get_or_init(Requests::default)
         .fetch(url, REQUEST_TIMEOUT)
         .await
-}
-
-#[derive(Debug, Clone, Serialize, PartialEq)]
-pub struct ReleaseNotes {
-    pub release_notes: String,
-    pub release_notes_zh: String,
 }
 
 fn split_notes(body: &str) -> ReleaseNotes {

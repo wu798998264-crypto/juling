@@ -158,6 +158,15 @@
     "providerClear": "Bỏ chọn"
   },
   "common": {
+    "networkErrors": {
+      "upstream": "dịch vụ thượng nguồn",
+      "proxyConnection": "Không thể kết nối đến {{target}} qua proxy “{{proxy}}”. Có thể do proxy hoặc mạng. Hãy kiểm tra proxy hoặc thử nút khác.",
+      "proxyTimeout": "Kết nối đến {{target}} qua proxy “{{proxy}}” đã hết thời gian chờ. Có thể do proxy hoặc mạng. Hãy kiểm tra proxy hoặc thử nút khác.",
+      "proxyAuth": "Xác thực proxy “{{proxy}}” thất bại. Hãy kiểm tra tên người dùng hoặc mật khẩu proxy.",
+      "localProxyUnavailable": "Không thể kết nối đến proxy cục bộ “{{proxy}}”. Hãy kiểm tra dịch vụ proxy có đang chạy không.",
+      "directConnection": "Không thể kết nối đến {{target}}. Hãy kiểm tra mạng và thử lại.",
+      "directTimeout": "Kết nối đến {{target}} đã hết thời gian chờ. Hãy kiểm tra mạng và thử lại."
+    },
     "codexUsage": {
       "title": "Hạn mức và sử dụng",
       "session": "Cuộc trò chuyện này",
@@ -378,7 +387,11 @@
           "statusSkipped": "Đã bỏ qua",
           "statusPending": "Đang chờ nhập"
         },
-        "invalidJson": "JSON không hợp lệ. Kiểm tra tệp hoặc nội dung đã dán."
+        "invalidJson": "JSON không hợp lệ. Kiểm tra tệp hoặc nội dung đã dán.",
+        "empty": "Dữ liệu nhập trống.",
+        "sizeLimit": "Tệp không được vượt quá {{limit}} MiB.",
+        "countLimit": "Mỗi lần chỉ được nhập tối đa {{count}} tài khoản.",
+        "itemFailed": "Mục {{index}}: {{error}}"
       },
       "externalImport": {
         "bundleInvalidJson": "Gói nhập không phải JSON hợp lệ",
@@ -489,6 +502,8 @@
         "title": "Tổng quan tài khoản"
       },
       "quota": {
+        "usageWithUnit": "Mức sử dụng ({{unit}})",
+        "usage": "Mức sử dụng",
         "noData": "Không có dữ liệu hạn mức",
         "queryFailed": "Truy vấn hạn mức thất bại",
         "resetDone": "Đã đặt lại",
@@ -583,14 +598,71 @@
         "shortWindow": "Khoảng quan sát đầu ra dưới 100 ms."
       }
     },
-    "networkErrors": {
-      "upstream": "dịch vụ thượng nguồn",
-      "proxyConnection": "Không thể kết nối đến {{target}} qua proxy “{{proxy}}”. Có thể do proxy hoặc mạng. Hãy kiểm tra proxy hoặc thử nút khác.",
-      "proxyTimeout": "Kết nối đến {{target}} qua proxy “{{proxy}}” đã hết thời gian chờ. Có thể do proxy hoặc mạng. Hãy kiểm tra proxy hoặc thử nút khác.",
-      "proxyAuth": "Xác thực proxy “{{proxy}}” thất bại. Hãy kiểm tra tên người dùng hoặc mật khẩu proxy.",
-      "localProxyUnavailable": "Không thể kết nối đến proxy cục bộ “{{proxy}}”. Hãy kiểm tra dịch vụ proxy có đang chạy không.",
-      "directConnection": "Không thể kết nối đến {{target}}. Hãy kiểm tra mạng và thử lại.",
-      "directTimeout": "Kết nối đến {{target}} đã hết thời gian chờ. Hãy kiểm tra mạng và thử lại."
+    "profileRestoreBusy": "Đang khôi phục phiên đăng nhập. Vui lòng thử lại sau.",
+    "profileRestoreInvalid": "Đường dẫn bản lưu phiên đăng nhập không hợp lệ. Hãy nhập lại tài khoản.",
+    "profileRestoreRecoveryFailed": "Không thể khôi phục phiên đăng nhập. Bản sao lưu đã được giữ lại: {{detail}}",
+    "dataQueryBusy": "Dữ liệu đang được xử lý. Vui lòng thử lại sau ít phút.",
+    "apiBudget": {
+      "keyScope": "Khóa này",
+      "upgradeRequired": "Cập nhật 聚灵 trên máy tính cổng để xem thống kê và lịch sử yêu cầu.",
+      "gatewayName": "Cổng Juling",
+      "accountingNote": "Khoản trừ đã ghi không đổi khi tính lại giá; ước tính có thể khác. Ngân sách đặt lại theo UTC.",
+      "preparing": "Đang chuẩn bị thống kê lịch sử trong nền. Hãy thử lại sau.",
+      "settled": "Khoản trừ đã ghi",
+      "unrecorded": "Chưa ghi nhận",
+      "unmeteredShort": "Chưa đo lường",
+      "rangeLimit": "Chọn ngày hợp lệ đến hôm nay, tối đa 93 ngày.",
+      "partialCharges": "{{count}} yêu cầu thiếu khoản trừ hoặc đo lường. Thống kê khoản trừ chỉ gồm tiền đã ghi.",
+      "retention": "Lịch sử từ {{time}}; chỉ gồm nhật ký được cổng lưu giữ.",
+      "logFiltersNote": "Bộ lọc chỉ áp dụng cho chi tiết bên dưới. Thống kê và biểu đồ dùng ngày đã chọn.",
+      "timeout": "Hết thời gian",
+      "textRequests": "Văn bản",
+      "imageEdits": "Sửa ảnh",
+      "budget": "Ngân sách sử dụng",
+      "period": "Chu kỳ",
+      "lifetime": "Một lần",
+      "daily": "Hằng ngày",
+      "weekly": "Hằng tuần",
+      "monthly": "Hằng tháng",
+      "dailyLimit": "Giới hạn ngày",
+      "concurrency": "Yêu cầu đồng thời",
+      "dailyImages": "Yêu cầu ảnh/ngày",
+      "invalid": "Nhập số dương trong phạm vi cho phép.",
+      "hint": "Tính theo giá đã cấu hình. Mô hình chưa có giá không dùng được. Đặt lại theo UTC, không cộng dồn. Yêu cầu đang chạy có thể vượt giới hạn.",
+      "unmetered": "Yêu cầu thiếu dữ liệu sử dụng hoặc giá không được tính vào số tiền.",
+      "remote": "Juling từ xa",
+      "active": "Khả dụng",
+      "disabled": "Đã tắt",
+      "service_disabled": "Dịch vụ đã dừng",
+      "token_limit_reached": "Hết hạn mức token",
+      "budget_limit_reached": "Hết ngân sách",
+      "images": "Tạo ảnh",
+      "consumed": "Đã dùng",
+      "resetsAt": "Đặt lại",
+      "offline": "Ngoại tuyến · dữ liệu đã lưu"
+    },
+    "deviceRestriction": {
+      "title": "Nhật ký giới hạn thiết bị",
+      "badge": "Thiết bị bị giới hạn",
+      "paused": "Đã ghi nhận giới hạn thiết bị rõ ràng. Các lần thử tự động cho thao tác này đã tạm dừng. Hãy xem bản ghi tại trang tài khoản.",
+      "note": "Đây là quan sát cục bộ, không phải suất thiết bị của OpenAI. Xóa tài khoản hoặc thông tin đăng nhập cục bộ không đảm bảo giải phóng giới hạn trên máy chủ.",
+      "retryNote": "Cho phép thử lại không đánh dấu giới hạn là đã gỡ. Khi nhận từ chối rõ ràng lần nữa, các lần thử sẽ lại tạm dừng.",
+      "desktop": "Đăng nhập máy tính",
+      "quota": "Tra cứu hạn mức",
+      "api": "Yêu cầu API",
+      "oauth": "Đăng nhập OAuth",
+      "token": "Làm mới mã truy cập",
+      "recovered": "Thao tác đã khôi phục",
+      "pausedLabel": "Đã dừng thử",
+      "retryEnabled": "Đã cho phép thử lại",
+      "observed": "Đầu tiên: {{first}} · Gần nhất: {{last}} · {{count}} lần ghi nhận",
+      "check": "Kiểm tra lại",
+      "allowRetry": "Cho phép thử lại",
+      "help": "Trợ giúp chính thức",
+      "support": "Liên hệ hỗ trợ",
+      "failed": "Không thể hoàn tất thao tác. Trạng thái gần nhất được giữ lại. Vui lòng thử lại.",
+      "loginAttempt": "Lần đăng nhập chưa xác định tài khoản",
+      "removed": "Tài khoản cục bộ đã xóa"
     }
   },
   "nav": {
@@ -1013,6 +1085,8 @@
       "data": "Quản lý dữ liệu"
     },
     "general": {
+      "errorReporting": "Chẩn đoán",
+      "errorReportingDesc": "Khi bật, gửi thông tin chẩn đoán khởi động và giao diện sau khi xử lý dữ liệu nhạy cảm. Khi tắt, ngừng gửi.",
       "appearance": "Giao diện",
       "language": "Ngôn ngữ hiển thị",
       "languageDesc": "Chọn ngôn ngữ hiển thị giao diện",
@@ -1092,6 +1166,7 @@
       "codexAppUiInjectionPoolLabel": "Tài khoản",
       "codexAppUiInjectionWeeklyLabel": "Tuần",
       "codexAppUiInjectionFiveHourLabel": "5 giờ",
+      "codexAppUiInjectionMissingLabel": "—",
       "codexWslConfigDir": "Thư mục Codex WSL",
       "codexWslConfigDirDesc": "Nhập thư mục .codex trong WSL. Hỗ trợ đường dẫn \\\\wsl.localhost\\.",
       "codexWslConfigDirPlaceholder": "Ví dụ: \\\\wsl.localhost\\Ubuntu-24.04\\home\\user\\.codex",
@@ -1106,6 +1181,11 @@
       "commonTitle": "Chung",
       "antigravitySettingsTitle": "Cài đặt Antigravity IDE",
       "codexSettingsTitle": "Cài đặt Codex",
+      "codexContextManagement": "Bật experimental_mode = true (quản lý ngữ cảnh thử nghiệm)",
+      "codexContextManagementDesc": "Tắt theo mặc định. Chỉ ghi công tắc quản lý ngữ cảnh thử nghiệm chính thức của Codex cho hồ sơ hiện tại; hãy khởi động lại hoàn toàn Codex để áp dụng. Không thay đổi cửa sổ ngữ cảnh, ngưỡng nén hoặc API Service.",
+      "codexContextManagementLoadFailed": "Không thể đọc công tắc quản lý ngữ cảnh chính thức: {{error}}",
+      "codexContextManagementSaveSuccess": "Đã lưu công tắc quản lý ngữ cảnh chính thức",
+      "codexContextManagementSaveFailed": "Không thể lưu công tắc quản lý ngữ cảnh chính thức: {{error}}",
       "codexOAuthAppVersion": "Phiên bản máy khách OAuth",
       "codexOAuthAppVersionDesc": "Để trống để dùng giá trị mặc định từ xa {{version}}; giá trị nhập vào chỉ ghi đè trường phiên bản trong URL ủy quyền OAuth.",
       "codexOAuthAppVersionPlaceholder": "Để trống để dùng {{version}}",
@@ -1308,14 +1388,6 @@
       "menuBarQuotaConfirmEnable": "Bật",
       "codexHideRelayQuota": "Ẩn hạn mức relay",
       "codexHideRelayQuotaDesc": "Ẩn bảng hạn mức relay / New API trên tổng quan tài khoản Codex.",
-      "errorReporting": "Chẩn đoán",
-      "errorReportingDesc": "Khi bật, gửi thông tin chẩn đoán khởi động và giao diện sau khi xử lý dữ liệu nhạy cảm. Khi tắt, ngừng gửi.",
-      "codexAppUiInjectionMissingLabel": "—",
-      "codexContextManagement": "Bật experimental_mode = true (quản lý ngữ cảnh thử nghiệm)",
-      "codexContextManagementDesc": "Tắt theo mặc định. Chỉ ghi công tắc quản lý ngữ cảnh thử nghiệm chính thức của Codex cho hồ sơ hiện tại; hãy khởi động lại hoàn toàn Codex để áp dụng. Không thay đổi cửa sổ ngữ cảnh, ngưỡng nén hoặc API Service.",
-      "codexContextManagementLoadFailed": "Không thể đọc công tắc quản lý ngữ cảnh chính thức: {{error}}",
-      "codexContextManagementSaveSuccess": "Đã lưu công tắc quản lý ngữ cảnh chính thức",
-      "codexContextManagementSaveFailed": "Không thể lưu công tắc quản lý ngữ cảnh chính thức: {{error}}",
       "floatingCardStyle": "Kiểu cửa sổ nổi",
       "floatingCardStyleDesc": "Áp dụng cho mọi cửa sổ nổi. Có thể đổi ngay trong cửa sổ.",
       "floatingCardFull": "Thẻ đầy đủ",
@@ -1329,8 +1401,6 @@
       "codexPreserveExternalBridge": "Giữ cầu nối ngoài",
       "codexPreserveExternalBridgeDesc": "Giữ cầu nối Codex Web GPT đã xác minh bằng bản ghi cục bộ khi đổi tài khoản OAuth. Mặc định tắt.",
       "codexEnhancements": {
-        "nativeFast": "Bộ chọn Fast gốc",
-        "nativeFastDesc": "Bật menu tốc độ gốc của ứng dụng cho tài khoản API Key, hiển thị các mức mà mô hình hỗ trợ. Khả năng sử dụng và mức phí tùy nhà cung cấp API.",
         "quotaCompat": "Hạn mức chế độ kết hợp",
         "quotaCompatDesc": "Khi đăng nhập OAuth thật và dùng tuyến API bên ngoài, hạn mức gói đăng ký không chặn tin nhắn API cục bộ. Không đổi mức dùng thực tế hay hạn mức hình ảnh.",
         "restartHint": "Mặc định bật. Khởi động lại các phiên bản Codex liên quan sau khi đổi và giữ 聚灵 chạy. Tính năng nhập giọng nói gốc phụ thuộc vào khả năng và cài đặt của ứng dụng; Juling không thay thế hay ép bật tính năng này.",
@@ -2643,14 +2713,8 @@
       "unsupportedCountryRegion": "Khu vực mạng hiện tại không hỗ trợ làm mới ủy quyền Codex. Dịch vụ ủy quyền OpenAI đã từ chối lối ra mạng này. Hãy chuyển sang khu vực được hỗ trợ rồi thử lại."
     },
     "switchAuth": {
-      "apiOnlyTitle": "Ứng dụng cần đăng nhập",
       "reauthorizeTitle": "Ủy quyền Codex đã hết hạn",
-      "apiOnlyDescription": "Ứng dụng hiện tại đã chuyển đến trang đăng nhập. Hãy cấp quyền lại để khôi phục ứng dụng; bạn vẫn có thể tiếp tục dùng Dịch vụ API trong lúc này.",
-      "observationStatus": "Đã phát hiện chuyển hướng đến trang đăng nhập",
-      "observationTime": "Lần kiểm tra gần nhất: {{time}}",
-      "loginRedirectTime": "Lần chuyển hướng gần nhất đến trang đăng nhập: {{time}}",
       "observationInstance": "Phiên bản được kiểm tra: {{instance}}",
-      "launchTime": "Thời điểm khởi chạy phiên bản: {{time}}",
       "reauthorizeDescription": "Không thể làm mới thông tin đăng nhập và access_token không còn dùng được cho dịch vụ API. Hãy ủy quyền lại tài khoản để tiếp tục.",
       "idTokenUnavailable": "Danh tính ứng dụng đã hết hạn và quá trình làm mới tự động không trả về id_token hợp lệ.",
       "reasonLabel": "Lý do",
@@ -2663,10 +2727,7 @@
       "startingInstanceAfterReauth": "Đã cập nhật ủy quyền. Đang khởi động lại phiên...",
       "startInstanceAfterReauthFailed": "Đã cập nhật ủy quyền nhưng không thể khởi động phiên: {{error}}",
       "reauthorizedAndStartedInstance": "Đã ủy quyền lại và khởi động phiên",
-      "apiOnlyBadge": "Cần đăng nhập",
-      "clearClientAuth": "Xóa cảnh báo",
-      "clearClientAuthSuccess": "Đã xóa cảnh báo ứng dụng",
-      "clearClientAuthFailed": "Không thể xóa cảnh báo ứng dụng: {{error}}"
+      "apiTokenUsableDescription": "Một số thông tin đăng nhập cần được cấp quyền lại. Mã truy cập hiện tại vẫn có thể dùng cho dịch vụ API."
     },
     "current": "Hiện tại",
     "empty": {
@@ -4266,7 +4327,7 @@
       },
       "sponsorRecommended": "Trạm chuyển đề xuất",
       "builtinProviders": "Nhà cung cấp có sẵn",
-      "sponsorHint": "URL dịch vụ trạm chuyển riêng đã được điền. Sau khi nhập API Key, thẻ sẽ tự động truy vấn số dư và mức dùng.",
+      "sponsorHint": "Xác nhận địa chỉ dịch vụ đã chọn và API Key trước khi truy vấn dữ liệu sử dụng được hỗ trợ.",
       "integration": {
         "sub2api": "Tương thích Sub2API",
         "newApi": "Tương thích New API"
@@ -4718,6 +4779,8 @@
         "allKinds": "Mọi loại",
         "allStatuses": "Mọi trạng thái",
         "allGatewayModes": "Tat ca che do",
+        "sessionFilter": "Phiên",
+        "sessionPlaceholder": "ID phiên",
         "modelFilter": "Mô hình",
         "modelPlaceholder": "ID mô hình",
         "accountFilter": "Tài khoản",
@@ -5500,7 +5563,7 @@
         "subscriptionUrl": "URL đăng ký",
         "nodeLinks": "Liên kết nút hoặc cấu hình",
         "import": "Nhập",
-        "importNotice": "URL và thông tin xác thực được mã hóa cục bộ. Yêu cầu đăng ký gửi tới nhà cung cấp không kèm Token tài khoản.",
+        "importNotice": "Bản chụp cấu hình và tài nguyên được lưu mã hóa, rồi giải mã trong thư mục chạy riêng. Yêu cầu đăng ký và tài nguyên không kèm mã thông báo tài khoản.",
         "intro": "Nhập và kiểm tra gói đăng ký hoặc nút, sau đó chọn và liên kết từ danh sách tài khoản.",
         "emptyTitle": "Thêm proxy đầu tiên",
         "emptyHint": "Hỗ trợ đăng ký, liên kết nút và HTTP / SOCKS5. Có thể nhập và kiểm tra khi chưa có tài khoản.",
@@ -5545,7 +5608,7 @@
         "unsupported": "Chưa hỗ trợ",
         "invalidInput": "Nhập tên và URL, liên kết nút hoặc cấu hình proxy hợp lệ.",
         "downloadFailed": "Không tải được đăng ký. Kiểm tra mạng và cài đặt proxy rồi thử lại.",
-        "downloadRedirect": "Đã dừng tải đăng ký do chuyển hướng khác nguồn hoặc quá nhiều lần chuyển hướng.",
+        "downloadRedirect": "Chuyển hướng đăng ký không hợp lệ hoặc vượt quá giới hạn cho phép.",
         "downloadDenied": "Máy chủ đăng ký từ chối truy cập (HTTP 401/403). Kiểm tra liên kết và thời hạn hiệu lực.",
         "downloadTls": "Bắt tay TLS hoặc xác minh chứng chỉ của kết nối đăng ký thất bại. Kiểm tra mạng và cài đặt proxy.",
         "timeout": "Thao tác quá hạn. Làm mới để xác nhận kết quả trước khi thử lại.",
@@ -5563,6 +5626,7 @@
         "loadBalanceGroup": "Cân bằng tải",
         "reasonStrategy": "Chưa hỗ trợ chiến lược nhóm này. Mở rộng để chọn nút khả dụng.",
         "reasonOptions": "Chứa giao thức hoặc tùy chọn cấu hình chưa được hỗ trợ.",
+        "reasonProviderConfig": "Nguồn, bộ lọc hoặc cấu hình chuyển đổi của nhà cung cấp này chưa được hỗ trợ.",
         "reasonProvider": "Nhóm này cần các nhà cung cấp nút bên ngoài chưa được tải.",
         "reasonMembers": "Thành viên nhóm không vượt qua xác thực. Hãy xem lý do cụ thể.",
         "reasonInvalid": "Thiếu cài đặt bắt buộc hoặc cài đặt không hợp lệ.",
@@ -5584,6 +5648,14 @@
         "defaultProtocol": "Giao thức khi bỏ trống",
         "credentialFormat": "Định dạng đăng nhập",
         "recognizing": "Đang nhận diện…",
+        "nativePreview": "Khi nhập, Mihomo xử lý trực tiếp cấu hình và tải tài nguyên. Bản xem trước không truy cập tệp hoặc mạng.",
+        "resourceDirectory": "Thư mục tài nguyên",
+        "browseResources": "Chọn thư mục",
+        "resourceDirectoryHint": "Nếu có tệp cục bộ, hãy chọn thư mục tài nguyên của đăng ký. Nội dung được sao chép vào thư mục chạy riêng và lưu dưới dạng bản chụp mã hóa.",
+        "resourceDirectoryRequired": "Chọn thư mục tài nguyên cục bộ của đăng ký này.",
+        "resourceMissing": "Tài nguyên cục bộ không khả dụng. Kiểm tra thư mục hoặc nhập lại.",
+        "rulesName": "Quy tắc đăng ký",
+        "pendingProviders": "Phát hiện {{count}} nguồn nút từ xa. Hãy thay bằng tệp cục bộ hoặc nguồn nhúng trước khi nhập.",
         "previewCount": "Hợp lệ {{valid}} · Cần kiểm tra {{invalid}} · Trùng {{duplicates}}",
         "line": "Dòng {{line}}",
         "ambiguous": "Định dạng không rõ ràng. Chọn định dạng đăng nhập hoặc dùng URL proxy đầy đủ.",
@@ -6489,8 +6561,9 @@
       "desc": "Dán mã thông báo truy cập Kiro của bạn hoặc dữ liệu JSON đã xuất."
     },
     "import": {
-      "localDesc": "Nhập dữ liệu tài khoản Kiro từ ứng dụng khách Kiro cục bộ hoặc tệp JSON.",
-      "localClient": "Nhập khẩu từ Kiro địa phương"
+      "localDesc": "Nhập từ ứng dụng cục bộ hoặc JSON. Tài khoản JSON được lưu trước, sau đó trạng thái đăng nhập và hạn mức được cập nhật trong nền.",
+      "localClient": "Nhập khẩu từ Kiro địa phương",
+      "invalidCredentials": "Thiếu trường thông tin xác thực hoặc trường không được hỗ trợ. Hãy xuất lại tài khoản."
     },
     "injectToVSCode": "Chuyển sang Kiro"
   },
@@ -7532,17 +7605,17 @@
     "modelsEmpty": "Chưa có danh sách mô hình cố định từ xa. Sau khi lưu, Codex có thể dùng theo khả năng dịch vụ."
   },
   "apiKeyFun": {
-    "eyebrow": "Trung chuyển",
-    "title": "Relay JIULING.FUN",
-    "description": "Relay đối tác chính thức của Juling cung cấp quyền truy cập API mô hình lớn ổn định, mở và có hiệu quả chi phí cao. Nền tảng hỗ trợ các mô hình phổ biến như Claude, ChatGPT, Grok, Gemini, Zhipu GLM, Kimi và DeepSeek, phù hợp để cấu hình thống nhất trong Codex, Gemini CLI, Claude Code và các công cụ phát triển khác. Đăng ký qua liên kết độc quyền của Juling để nhận ưu đãi nạp tiền vĩnh viễn lên tới 5%.",
+    "eyebrow": "Cấu hình cục bộ",
+    "title": "Quản lý API Juling",
+    "description": "Quản lý cục bộ địa chỉ API và khóa do bạn tự cấu hình. Truy vấn mô hình và mức sử dụng mà dịch vụ đã chọn hỗ trợ, rồi chuyển cấu hình sang Codex hoặc Claude.",
     "register": "Liên kết độc quyền",
     "docs": "Tài liệu chính thức",
     "viewNow": "Xem ngay",
     "queryTitle": "Hạn mức khóa",
-    "queryDesc": "Nhập API Key JIULING.FUN để tự động kiểm tra hạn mức.",
+    "queryDesc": "Dán API Key của dịch vụ bạn đã chọn.",
     "keyNotSet": "Chưa nhập khóa",
     "apiKeyLabel": "Khóa API",
-    "apiKeyPlaceholder": "Dán API Key được tạo trong console JIULING.FUN",
+    "apiKeyPlaceholder": "Dán API Key của dịch vụ bạn đã chọn.",
     "hideKey": "Ẩn",
     "showKey": "Hiện",
     "endpointLabel": "Điểm kết nối",
@@ -7553,7 +7626,7 @@
     "saving": "Đang ghi",
     "saveSuccess": "Đã ghi vào Codex Provider: {{name}}",
     "toolsTitle": "Ghi cấu hình client",
-    "toolsDesc": "Ghi trực tiếp các tệp cấu hình cục bộ theo tài liệu JIULING.FUN và bố cục tệp của CC Switch.",
+    "toolsDesc": "Ghi cấu hình dịch vụ đã chọn vào các ứng dụng cục bộ được hỗ trợ.",
     "endpoint": {
       "global": "Tuyến toàn cầu",
       "globalDesc": "API Base mặc định chính thức, phù hợp hầu hết môi trường mạng.",
@@ -7654,7 +7727,7 @@
       "useKey": "Dùng khóa"
     },
     "prefill": {
-      "claudeDesktopReady": "Đã điền cấu hình JIULING.FUN. Hãy xác nhận để thêm vào Claude."
+      "claudeDesktopReady": "Đã tải cấu hình dịch vụ bạn chọn. Hãy xác nhận trước khi thêm vào Claude."
     },
     "copyKey": "Copy Key​",
     "clearKey": "Clear input​",

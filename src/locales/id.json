@@ -158,6 +158,15 @@
     "providerClear": "Hapus pilihan"
   },
   "common": {
+    "networkErrors": {
+      "upstream": "layanan hulu",
+      "proxyConnection": "Gagal terhubung ke {{target}} melalui proksi “{{proxy}}”. Mungkin ada masalah proksi atau jaringan. Periksa proksi atau coba simpul lain.",
+      "proxyTimeout": "Koneksi ke {{target}} melalui proksi “{{proxy}}” kehabisan waktu. Mungkin ada masalah proksi atau jaringan. Periksa proksi atau coba simpul lain.",
+      "proxyAuth": "Autentikasi proksi “{{proxy}}” gagal. Periksa nama pengguna atau kata sandi proksi.",
+      "localProxyUnavailable": "Tidak dapat terhubung ke proksi lokal “{{proxy}}”. Pastikan layanan proksi sedang berjalan.",
+      "directConnection": "Gagal terhubung ke {{target}}. Periksa jaringan dan coba lagi.",
+      "directTimeout": "Koneksi ke {{target}} kehabisan waktu. Periksa jaringan dan coba lagi."
+    },
     "codexUsage": {
       "title": "Kuota dan penggunaan",
       "session": "Chat saat ini",
@@ -390,7 +399,11 @@
           "statusSkipped": "Dilewati",
           "statusPending": "Menunggu impor"
         },
-        "invalidJson": "JSON tidak valid. Periksa file atau konten yang ditempel."
+        "invalidJson": "JSON tidak valid. Periksa file atau konten yang ditempel.",
+        "empty": "Data impor kosong.",
+        "sizeLimit": "Berkas tidak boleh melebihi {{limit}} MiB.",
+        "countLimit": "Impor maksimal {{count}} akun sekaligus.",
+        "itemFailed": "Entri {{index}}: {{error}}"
       },
       "externalImport": {
         "bundleInvalidJson": "Paket impor bukan JSON yang valid",
@@ -501,6 +514,8 @@
         "title": "Ringkasan Akun"
       },
       "quota": {
+        "usageWithUnit": "Pemakaian ({{unit}})",
+        "usage": "Pemakaian",
         "noData": "Tidak ada data kuota",
         "queryFailed": "Kueri kuota gagal",
         "resetDone": "Direset",
@@ -583,14 +598,71 @@
         "shortWindow": "Jendela keluaran yang diamati kurang dari 100 ms."
       }
     },
-    "networkErrors": {
-      "upstream": "layanan hulu",
-      "proxyConnection": "Gagal terhubung ke {{target}} melalui proksi “{{proxy}}”. Mungkin ada masalah proksi atau jaringan. Periksa proksi atau coba simpul lain.",
-      "proxyTimeout": "Koneksi ke {{target}} melalui proksi “{{proxy}}” kehabisan waktu. Mungkin ada masalah proksi atau jaringan. Periksa proksi atau coba simpul lain.",
-      "proxyAuth": "Autentikasi proksi “{{proxy}}” gagal. Periksa nama pengguna atau kata sandi proksi.",
-      "localProxyUnavailable": "Tidak dapat terhubung ke proksi lokal “{{proxy}}”. Pastikan layanan proksi sedang berjalan.",
-      "directConnection": "Gagal terhubung ke {{target}}. Periksa jaringan dan coba lagi.",
-      "directTimeout": "Koneksi ke {{target}} kehabisan waktu. Periksa jaringan dan coba lagi."
+    "profileRestoreBusy": "Status masuk sedang dipulihkan. Coba lagi sebentar.",
+    "profileRestoreInvalid": "Jalur salinan status masuk tidak valid. Impor akun kembali.",
+    "profileRestoreRecoveryFailed": "Pemulihan status masuk gagal. Cadangan tetap disimpan: {{detail}}",
+    "dataQueryBusy": "Data sedang diproses. Coba lagi sebentar lagi.",
+    "apiBudget": {
+      "keyScope": "Kunci ini",
+      "upgradeRequired": "Perbarui 聚灵 di komputer gerbang untuk melihat statistik dan riwayat permintaan.",
+      "gatewayName": "Gerbang Juling",
+      "accountingNote": "Potongan tercatat tidak berubah saat harga dihitung ulang; perkiraan dapat berbeda. Anggaran direset menurut UTC.",
+      "preparing": "Menyiapkan statistik historis di latar belakang. Coba lagi nanti.",
+      "settled": "Potongan tercatat",
+      "unrecorded": "Belum tercatat",
+      "unmeteredShort": "Belum diukur",
+      "rangeLimit": "Pilih tanggal valid hingga hari ini, maksimal 93 hari.",
+      "partialCharges": "{{count}} permintaan tanpa catatan potongan atau pengukuran. Statistik potongan hanya mencakup jumlah tercatat.",
+      "retention": "Riwayat sejak {{time}}; hanya log yang disimpan gerbang yang dihitung.",
+      "logFiltersNote": "Filter hanya memengaruhi rincian di bawah. Statistik dan grafik memakai tanggal terpilih.",
+      "timeout": "Waktu habis",
+      "textRequests": "Teks",
+      "imageEdits": "Edit gambar",
+      "budget": "Anggaran penggunaan",
+      "period": "Periode",
+      "lifetime": "Sekali pakai",
+      "daily": "Harian",
+      "weekly": "Mingguan",
+      "monthly": "Bulanan",
+      "dailyLimit": "Batas harian",
+      "concurrency": "Permintaan serentak",
+      "dailyImages": "Permintaan gambar/hari",
+      "invalid": "Masukkan angka positif dalam rentang yang diizinkan.",
+      "hint": "Dihitung dengan harga yang dikonfigurasi. Model tanpa harga tidak tersedia. Periode direset menurut UTC tanpa akumulasi. Permintaan berjalan dapat melampaui batas.",
+      "unmetered": "Permintaan tanpa data penggunaan atau harga tidak termasuk dalam jumlah.",
+      "remote": "Juling jarak jauh",
+      "active": "Aktif",
+      "disabled": "Dinonaktifkan",
+      "service_disabled": "Layanan berhenti",
+      "token_limit_reached": "Batas token tercapai",
+      "budget_limit_reached": "Anggaran habis",
+      "images": "Gambar",
+      "consumed": "Terpakai",
+      "resetsAt": "Reset berikutnya",
+      "offline": "Luring · data tersimpan"
+    },
+    "deviceRestriction": {
+      "title": "Catatan batas perangkat",
+      "badge": "Perangkat dibatasi",
+      "paused": "Batas perangkat yang jelas terdeteksi. Percobaan otomatis untuk operasi ini dijeda. Periksa catatan lokal di halaman akun.",
+      "note": "Ini pengamatan lokal, bukan slot perangkat OpenAI. Menghapus akun atau kredensial lokal tidak menjamin pembebasan batas perangkat di server.",
+      "retryNote": "Mengizinkan percobaan tidak menandai batas sebagai selesai. Penolakan jelas berikutnya akan menjeda percobaan lagi.",
+      "desktop": "Masuk aplikasi desktop",
+      "quota": "Pemeriksaan kuota",
+      "api": "Permintaan API",
+      "oauth": "Masuk melalui OAuth",
+      "token": "Pembaruan token",
+      "recovered": "Operasi pulih",
+      "pausedLabel": "Percobaan dijeda",
+      "retryEnabled": "Percobaan diizinkan",
+      "observed": "Pertama: {{first}} · Terakhir: {{last}} · {{count}} pengamatan",
+      "check": "Periksa lagi",
+      "allowRetry": "Izinkan percobaan",
+      "help": "Bantuan resmi",
+      "support": "Hubungi dukungan",
+      "failed": "Operasi tidak dapat diselesaikan. Status terakhir disimpan. Coba lagi.",
+      "loginAttempt": "Percobaan masuk tanpa akun teridentifikasi",
+      "removed": "Akun lokal dihapus"
     }
   },
   "floatingCard": {
@@ -1060,6 +1132,8 @@
       "data": "Manajemen Data"
     },
     "general": {
+      "errorReporting": "Diagnostik",
+      "errorReportingDesc": "Saat aktif, mengirim diagnostik awal aplikasi dan antarmuka setelah penyamaran data. Menonaktifkannya menghentikan pengiriman.",
       "appearance": "Tampilan",
       "language": "Bahasa",
       "languageDesc": "Pilih bahasa antarmuka",
@@ -1149,6 +1223,7 @@
       "codexAppUiInjectionPoolLabel": "Akun",
       "codexAppUiInjectionWeeklyLabel": "Minggu",
       "codexAppUiInjectionFiveHourLabel": "5 jam",
+      "codexAppUiInjectionMissingLabel": "—",
       "codexWslConfigDir": "Direktori Codex WSL",
       "codexWslConfigDirDesc": "Masukkan direktori .codex di dalam WSL. Path \\\\wsl.localhost\\ didukung.",
       "codexWslConfigDirPlaceholder": "Contoh: \\\\wsl.localhost\\Ubuntu-24.04\\home\\user\\.codex",
@@ -1163,6 +1238,11 @@
       "commonTitle": "Umum",
       "antigravitySettingsTitle": "Pengaturan Antigravity IDE",
       "codexSettingsTitle": "Pengaturan Codex",
+      "codexContextManagement": "Aktifkan experimental_mode = true (manajemen konteks eksperimental)",
+      "codexContextManagementDesc": "Nonaktif secara default. Hanya menulis sakelar manajemen konteks eksperimental resmi Codex untuk profil saat ini; mulai ulang Codex sepenuhnya untuk menerapkannya. Tidak mengubah jendela konteks, ambang kompresi, atau API Service.",
+      "codexContextManagementLoadFailed": "Gagal membaca sakelar manajemen konteks resmi: {{error}}",
+      "codexContextManagementSaveSuccess": "Sakelar manajemen konteks resmi disimpan",
+      "codexContextManagementSaveFailed": "Gagal menyimpan sakelar manajemen konteks resmi: {{error}}",
       "codexOAuthAppVersion": "Versi klien OAuth",
       "codexOAuthAppVersionDesc": "Kosongkan untuk mengikuti nilai default jarak jauh {{version}}; nilai yang diisi hanya mengganti bidang versi pada URL otorisasi OAuth.",
       "codexOAuthAppVersionPlaceholder": "Kosongkan untuk memakai {{version}}",
@@ -1355,14 +1435,6 @@
       "menuBarQuotaConfirmEnable": "Aktifkan",
       "codexHideRelayQuota": "Sembunyikan kuota relay",
       "codexHideRelayQuotaDesc": "Menyembunyikan panel kuota relay / New API di ringkasan akun Codex.",
-      "errorReporting": "Diagnostik",
-      "errorReportingDesc": "Saat aktif, mengirim diagnostik awal aplikasi dan antarmuka setelah penyamaran data. Menonaktifkannya menghentikan pengiriman.",
-      "codexAppUiInjectionMissingLabel": "—",
-      "codexContextManagement": "Aktifkan experimental_mode = true (manajemen konteks eksperimental)",
-      "codexContextManagementDesc": "Nonaktif secara default. Hanya menulis sakelar manajemen konteks eksperimental resmi Codex untuk profil saat ini; mulai ulang Codex sepenuhnya untuk menerapkannya. Tidak mengubah jendela konteks, ambang kompresi, atau API Service.",
-      "codexContextManagementLoadFailed": "Gagal membaca sakelar manajemen konteks resmi: {{error}}",
-      "codexContextManagementSaveSuccess": "Sakelar manajemen konteks resmi disimpan",
-      "codexContextManagementSaveFailed": "Gagal menyimpan sakelar manajemen konteks resmi: {{error}}",
       "floatingCardStyle": "Gaya mengambang",
       "floatingCardStyleDesc": "Berlaku untuk semua jendela mengambang. Bisa diubah juga dari jendela.",
       "floatingCardFull": "Kartu lengkap",
@@ -1376,8 +1448,6 @@
       "codexPreserveExternalBridge": "Pertahankan jembatan luar",
       "codexPreserveExternalBridgeDesc": "Pertahankan jembatan Codex Web GPT yang terverifikasi melalui catatan lokal saat berganti akun OAuth. Nonaktif secara bawaan.",
       "codexEnhancements": {
-        "nativeFast": "Pemilih Fast bawaan",
-        "nativeFastDesc": "Mengaktifkan menu kecepatan bawaan klien untuk akun API Key dan menampilkan tingkat yang didukung model. Ketersediaan dan harga bergantung pada penyedia API.",
         "quotaCompat": "Kuota mode campuran",
         "quotaCompatDesc": "Dengan login OAuth asli dan rute API eksternal, kuota langganan tidak memblokir pesan API lokal. Penggunaan nyata dan kuota gambar tidak berubah.",
         "restartHint": "Aktif secara bawaan. Mulai ulang tiap instans Codex terkait setelah perubahan dan biarkan 聚灵 berjalan. Dikte bawaan mengikuti kemampuan dan pengaturan klien; Juling tidak mengambil alih atau memaksakan pengaktifannya.",
@@ -2690,14 +2760,8 @@
       "unsupportedCountryRegion": "Wilayah jaringan saat ini tidak mendukung penyegaran otorisasi Codex. Layanan otorisasi OpenAI menolak jalur keluar jaringan ini. Beralih ke wilayah yang didukung lalu coba lagi."
     },
     "switchAuth": {
-      "apiOnlyTitle": "Klien perlu masuk",
       "reauthorizeTitle": "Otorisasi Codex kedaluwarsa",
-      "apiOnlyDescription": "Klien saat ini telah membuka halaman login. Otorisasi ulang untuk memulihkan penggunaan klien; Layanan API masih dapat digunakan untuk sementara.",
-      "observationStatus": "Terdeteksi pengalihan ke halaman masuk",
-      "observationTime": "Pemeriksaan terakhir: {{time}}",
-      "loginRedirectTime": "Pengalihan terakhir ke halaman masuk: {{time}}",
       "observationInstance": "Instans yang diamati: {{instance}}",
-      "launchTime": "Waktu mulai instans: {{time}}",
       "reauthorizeDescription": "Kredensial masuk tidak dapat diperbarui dan access_token tidak lagi tersedia untuk layanan API. Otorisasi ulang akun untuk melanjutkan.",
       "idTokenUnavailable": "Identitas klien telah kedaluwarsa dan pembaruan otomatis tidak menghasilkan id_token yang valid.",
       "reasonLabel": "Alasan",
@@ -2710,10 +2774,7 @@
       "startingInstanceAfterReauth": "Otorisasi diperbarui. Memulai ulang instance...",
       "startInstanceAfterReauthFailed": "Otorisasi diperbarui, tetapi instance gagal dimulai: {{error}}",
       "reauthorizedAndStartedInstance": "Diotorisasi ulang dan instance dimulai",
-      "apiOnlyBadge": "Perlu otorisasi",
-      "clearClientAuth": "Hapus peringatan",
-      "clearClientAuthSuccess": "Peringatan klien dihapus",
-      "clearClientAuthFailed": "Gagal menghapus peringatan klien: {{error}}"
+      "apiTokenUsableDescription": "Sebagian kredensial masuk memerlukan otorisasi ulang. Token akses saat ini masih dapat digunakan untuk layanan API."
     },
     "current": "Saat Ini",
     "account": {
@@ -4313,7 +4374,7 @@
       },
       "sponsorRecommended": "Relay pilihan",
       "builtinProviders": "Penyedia Bawaan",
-      "sponsorHint": "URL layanan relay eksklusif sudah diisi. Setelah API Key dimasukkan, kartu akan otomatis membaca saldo dan penggunaan.",
+      "sponsorHint": "Pastikan alamat layanan pilihan Anda dan API Key sudah benar sebelum memeriksa data penggunaan yang didukung.",
       "integration": {
         "sub2api": "Kompatibel Sub2API",
         "newApi": "Kompatibel New API"
@@ -4765,6 +4826,8 @@
         "allKinds": "Semua Jenis",
         "allStatuses": "Semua Status",
         "allGatewayModes": "Semua mode",
+        "sessionFilter": "Sesi",
+        "sessionPlaceholder": "ID sesi",
         "modelFilter": "Model layanan",
         "modelPlaceholder": "ID model",
         "accountFilter": "Akun",
@@ -5547,7 +5610,7 @@
         "subscriptionUrl": "URL langganan",
         "nodeLinks": "Tautan simpul atau konfigurasi",
         "import": "Impor",
-        "importNotice": "URL dan kredensial dienkripsi secara lokal. Permintaan langganan dikirim ke penyedia tanpa Token akun.",
+        "importNotice": "Snapshot konfigurasi dan sumber daya disimpan terenkripsi, lalu didekripsi di folder kerja terpisah. Permintaan langganan dan sumber daya tidak menyertakan token akun.",
         "intro": "Impor dan uji langganan atau node, lalu pilih dan tautkan dari daftar akun.",
         "emptyTitle": "Tambahkan proxy pertama",
         "emptyHint": "Mendukung langganan, tautan simpul, dan HTTP / SOCKS5. Impor dan uji bisa dilakukan tanpa akun.",
@@ -5592,7 +5655,7 @@
         "unsupported": "Tidak didukung",
         "invalidInput": "Masukkan nama dan URL, tautan simpul, atau konfigurasi proxy yang valid.",
         "downloadFailed": "Gagal mengunduh langganan. Periksa jaringan dan pengaturan proxy, lalu coba lagi.",
-        "downloadRedirect": "Unduhan langganan dihentikan karena pengalihan lintas asal atau terlalu banyak pengalihan.",
+        "downloadRedirect": "Pengalihan langganan tidak valid atau melebihi batas yang diizinkan.",
         "downloadDenied": "Server langganan menolak akses (HTTP 401/403). Periksa tautan dan masa berlakunya.",
         "downloadTls": "Negosiasi TLS atau verifikasi sertifikat koneksi langganan gagal. Periksa jaringan dan pengaturan proxy.",
         "timeout": "Waktu operasi habis. Segarkan untuk memastikan hasil sebelum mencoba lagi.",
@@ -5610,6 +5673,7 @@
         "loadBalanceGroup": "Penyeimbang beban",
         "reasonStrategy": "Strategi grup ini belum didukung. Perluas untuk memilih simpul yang tersedia.",
         "reasonOptions": "Berisi protokol atau opsi konfigurasi yang belum didukung.",
+        "reasonProviderConfig": "Sumber, filter, atau transformasi penyedia ini belum didukung.",
         "reasonProvider": "Grup ini memerlukan penyedia simpul eksternal yang belum dimuat.",
         "reasonMembers": "Anggota grup tidak lolos validasi. Periksa alasan masing-masing.",
         "reasonInvalid": "Pengaturan wajib tidak ada atau tidak valid.",
@@ -5631,6 +5695,14 @@
         "defaultProtocol": "Protokol jika kosong",
         "credentialFormat": "Format kredensial",
         "recognizing": "Mengenali…",
+        "nativePreview": "Saat impor, Mihomo memproses konfigurasi secara langsung dan memuat sumber dayanya. Pratinjau tidak mengakses berkas atau jaringan.",
+        "resourceDirectory": "Folder sumber daya",
+        "browseResources": "Pilih folder",
+        "resourceDirectoryHint": "Untuk berkas lokal, pilih folder sumber daya langganan. Isinya disalin ke folder kerja privat dan disimpan sebagai snapshot terenkripsi.",
+        "resourceDirectoryRequired": "Pilih folder sumber daya lokal untuk langganan ini.",
+        "resourceMissing": "Sumber daya lokal tidak tersedia. Periksa folder atau impor kembali.",
+        "rulesName": "Aturan langganan",
+        "pendingProviders": "Terdeteksi {{count}} sumber node jarak jauh. Ganti dengan berkas lokal atau sumber inline sebelum mengimpor.",
         "previewCount": "Valid {{valid}} · Periksa {{invalid}} · Duplikat {{duplicates}}",
         "line": "Baris {{line}}",
         "ambiguous": "Format ambigu. Pilih format kredensial atau gunakan URL proksi lengkap.",
@@ -6636,8 +6708,9 @@
       "desc": "Tempel token akses Kiro atau data JSON yang diekspor."
     },
     "import": {
-      "localDesc": "Impor data akun Kiro dari klien Kiro lokal atau berkas JSON.",
-      "localClient": "Impor dari Kiro lokal"
+      "localDesc": "Impor dari aplikasi lokal atau JSON. Akun JSON disimpan terlebih dahulu, lalu kredensial dan kuota diperbarui di latar belakang.",
+      "localClient": "Impor dari Kiro lokal",
+      "invalidCredentials": "Kolom kredensial tidak lengkap atau tidak didukung. Ekspor ulang akun."
     },
     "injectToVSCode": "Ganti ke Kiro"
   },
@@ -7532,17 +7605,17 @@
     "modelsEmpty": "Daftar model tetap belum dikonfigurasi dari jarak jauh. Setelah disimpan, Codex dapat memakai kemampuan layanan."
   },
   "apiKeyFun": {
-    "eyebrow": "Perantara",
-    "title": "Relay JIULING.FUN",
-    "description": "Relay mitra resmi Juling menyediakan akses API model besar yang stabil, terbuka, dan hemat biaya. Layanan ini mendukung model utama seperti Claude, ChatGPT, Grok, Gemini, Zhipu GLM, Kimi, dan DeepSeek, serta cocok untuk konfigurasi terpadu di Codex, Gemini CLI, Claude Code, dan alat pengembang lainnya. Dengan mendaftar melalui tautan eksklusif Juling, Anda bisa mendapatkan diskon isi ulang permanen hingga 5%.",
+    "eyebrow": "Pengaturan lokal",
+    "title": "Pengelolaan API Juling",
+    "description": "Kelola alamat API dan kunci Anda sendiri secara lokal. Periksa model dan penggunaan yang didukung layanan pilihan Anda, lalu teruskan pengaturan ke Codex atau Claude.",
     "register": "Tautan eksklusif",
     "docs": "Dokumen resmi",
     "viewNow": "Lihat sekarang",
     "queryTitle": "Kuota kunci",
-    "queryDesc": "Masukkan API Key JIULING.FUN untuk memeriksa kuota otomatis.",
+    "queryDesc": "Tempel API Key dari layanan pilihan Anda.",
     "keyNotSet": "Belum ada kunci",
     "apiKeyLabel": "Kunci API",
-    "apiKeyPlaceholder": "Tempel API Key yang dibuat di konsol JIULING.FUN",
+    "apiKeyPlaceholder": "Tempel API Key dari layanan pilihan Anda.",
     "hideKey": "Sembunyikan",
     "showKey": "Tampilkan",
     "endpointLabel": "Titik akses",
@@ -7553,7 +7626,7 @@
     "saving": "Menulis",
     "saveSuccess": "Ditulis ke Codex Provider: {{name}}",
     "toolsTitle": "Tulis config klien",
-    "toolsDesc": "Menulis file konfigurasi klien lokal sesuai dokumen JIULING.FUN dan tata letak CC Switch.",
+    "toolsDesc": "Tulis pengaturan layanan pilihan Anda ke klien lokal yang didukung.",
     "endpoint": {
       "global": "Jalur global",
       "globalDesc": "API Base resmi bawaan untuk sebagian besar jaringan.",
@@ -7654,7 +7727,7 @@
       "useKey": "Gunakan kunci"
     },
     "prefill": {
-      "claudeDesktopReady": "Konfigurasi JIULING.FUN sudah terisi. Konfirmasi untuk menambahkannya ke Claude."
+      "claudeDesktopReady": "Pengaturan layanan pilihan Anda telah dimuat. Konfirmasikan sebelum menambahkannya ke Claude."
     },
     "copyKey": "Copy Key​",
     "clearKey": "Clear input​",

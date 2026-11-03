@@ -108,6 +108,22 @@ async fn recorded(host: &Recorder) -> RequestReport {
 }
 
 #[tokio::test]
+async fn context_accepts_both_distribution_instance_headers() {
+    let (mut tracker, _host, _activity, _stop, _gate) = fixture().await;
+    for name in ["x-cockpit-instance-id", "x-juling-instance-id"] {
+        let mut headers = axum::http::HeaderMap::new();
+        headers.insert(name, axum::http::HeaderValue::from_static("instance-b"));
+        tracker.context("POST", "/v1/responses", &headers, false);
+        assert_eq!(tracker.diagnostics.as_ref().unwrap().client_instance_id.as_deref(), Some("instance-b"));
+    }
+    let mut headers = axum::http::HeaderMap::new();
+    headers.insert("x-cockpit-instance-id", axum::http::HeaderValue::from_static("upstream"));
+    headers.insert("x-juling-instance-id", axum::http::HeaderValue::from_static("local"));
+    tracker.context("POST", "/v1/responses", &headers, false);
+    assert_eq!(tracker.diagnostics.as_ref().unwrap().client_instance_id.as_deref(), Some("upstream"));
+}
+
+#[tokio::test]
 async fn native_lifecycle_quota_is_observed_before_completion_and_ignores_outgoing_headers() {
     let (mut tracker, host, _activity, _stop, _gate) = fixture().await;
     let mut headers = axum::http::HeaderMap::new();
