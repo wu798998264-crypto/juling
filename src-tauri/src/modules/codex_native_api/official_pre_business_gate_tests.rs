@@ -114,6 +114,7 @@ impl GateFixture {
         let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
         let inner = FallbackHost {
             base: format!("http://{}", listener.local_addr().unwrap()),
+            client: reqwest::Client::builder().no_proxy().build().unwrap(),
             fallback_calls: AtomicUsize::new(0),
             foreign_fallback: AtomicBool::new(false),
             fallback_disabled: AtomicBool::new(false),

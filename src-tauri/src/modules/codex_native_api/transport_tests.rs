@@ -26,6 +26,8 @@ mod go_limits_tests;
 
 struct PolicyHost {
     url: String,
+    // Construct before requests; TLS/root-store setup is not an opening attempt.
+    client: reqwest::Client,
     chatgpt: bool,
     policy: ExecutionPolicy,
     reports: Mutex<Vec<RequestReport>>,
@@ -73,7 +75,7 @@ impl Host for PolicyHost {
                 base_url: self.url.clone(),
                 model: request.model,
                 headers: HeaderMap::new(),
-                client: reqwest::Client::builder().no_proxy().build().unwrap(),
+                client: self.client.clone(),
                 proxy_url: None,
                 proxy_route: None,
                 chatgpt: self.chatgpt,
@@ -126,6 +128,7 @@ async fn start_with_chatgpt(
     });
     let host = Arc::new(PolicyHost {
         url,
+        client: client(),
         chatgpt,
         policy,
         reports: Mutex::new(Vec::new()),
@@ -285,6 +288,7 @@ async fn native_transport_bootstrap_retry_records_each_attempt() {
 #[tokio::test]
 async fn native_transport_terminal_record_survives_tracker_drop() {
     let host = Arc::new(PolicyHost {
+        client: client(),
         url: String::new(),
         chatgpt: false,
         policy: ExecutionPolicy::default(),
@@ -464,6 +468,7 @@ async fn native_transport_grok_http_and_websocket_restore_tool_namespaces() {
     });
     let host = Arc::new(GrokHost(Arc::new(PolicyHost {
         url,
+        client: client(),
         chatgpt: false,
         policy: ExecutionPolicy::default(),
         reports: Mutex::new(Vec::new()),
@@ -702,6 +707,7 @@ async fn native_transport_exhausted_stream_open_budget_can_fail_over_but_never_r
     let host = Arc::new(FailoverHost {
         inner: PolicyHost {
             url: primary_url,
+            client: client(),
             chatgpt: false,
             policy: ExecutionPolicy {
                 open_timeout: Duration::from_millis(60),

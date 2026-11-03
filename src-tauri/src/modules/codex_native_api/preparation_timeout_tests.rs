@@ -13,6 +13,8 @@ use std::{
 
 struct PreparationHost {
     base: String,
+    // Construct before requests; TLS/root-store setup is not a routing delay.
+    client: reqwest::Client,
     policy: ExecutionPolicy,
     delays: Vec<Duration>,
     body_delay: Duration,
@@ -73,7 +75,7 @@ impl Host for PreparationHost {
                 base_url: self.base.clone(),
                 model: request.model,
                 headers: HeaderMap::new(),
-                client: reqwest::Client::builder().no_proxy().build().unwrap(),
+                client: self.client.clone(),
                 proxy_url: None,
                 proxy_route: None,
                 chatgpt: self.oauth,
@@ -238,6 +240,7 @@ async fn preparation_fixture_with_oauth(
     });
     let host = Arc::new(PreparationHost {
         base,
+        client: reqwest::Client::builder().no_proxy().build().unwrap(),
         policy,
         delays,
         body_delay,

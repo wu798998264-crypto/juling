@@ -43,11 +43,13 @@ async fn slow_fixture(
     let host = Arc::new(SlowHost {
         inner: TestHost {
             base: format!("http://{address}/v1"),
+            client: client(),
             oauth,
             owner_changed: AtomicBool::new(false),
             capacity: Arc::new(tokio::sync::Semaphore::new(1)),
             selections: Mutex::new(vec![]),
             reports: Mutex::new(vec![]),
+            report_recorded: tokio::sync::Notify::new(),
             execution_policy: Mutex::new(ExecutionPolicy::default()),
         },
         policy: ExecutionPolicy {
@@ -58,10 +60,12 @@ async fn slow_fixture(
         route_delay,
     });
     let root = std::env::temp_dir().join(format!("native-aux-execution-{}", uuid::Uuid::new_v4()));
+    let identity_path = root.join("identity.sqlite");
+    initialize_identity_fixture(identity_path.clone()).await;
     let handle = start(
         "127.0.0.1:0".parse().unwrap(),
         host.clone(),
-        root.join("identity.sqlite"),
+        identity_path,
         Options {
             request_timeout: Duration::from_millis(100),
             ..Options::default()

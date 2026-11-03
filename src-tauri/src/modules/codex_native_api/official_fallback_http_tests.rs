@@ -17,6 +17,7 @@ type Captures = Arc<Mutex<Vec<(String, Value)>>>;
 
 struct FallbackHost {
     base: String,
+    client: reqwest::Client,
     fallback_calls: AtomicUsize,
     foreign_fallback: AtomicBool,
     fallback_disabled: AtomicBool,
@@ -66,7 +67,7 @@ impl FallbackHost {
             },
             model: request.model.clone(),
             headers: HeaderMap::new(),
-            client: reqwest::Client::builder().no_proxy().build().unwrap(),
+            client: self.client.clone(),
             proxy_url: None,
             proxy_route: None,
             chatgpt: route == "local" && self.local_oauth.load(Ordering::SeqCst),
@@ -321,6 +322,8 @@ impl Fixture {
         let task = tokio::spawn(async move { axum::serve(listener, router).await.unwrap() });
         let host = Arc::new(FallbackHost {
             base,
+            // Client/TLS initialization is fixture setup, not upstream opening latency.
+            client: reqwest::Client::builder().no_proxy().build().unwrap(),
             fallback_calls: AtomicUsize::new(0),
             foreign_fallback: AtomicBool::new(false),
             fallback_disabled: AtomicBool::new(false),
@@ -357,10 +360,8 @@ impl Fixture {
         }
     }
     async fn send(&self, body: Value) -> reqwest::Response {
-        reqwest::Client::builder()
-            .no_proxy()
-            .build()
-            .unwrap()
+        self.host
+            .client
             .post(format!("http://{}/v1/responses", self.handle.addr))
             .bearer_auth("mock-key")
             .json(&body)
@@ -998,8 +999,9 @@ async fn official_fallback_http_headers_timeout_never_replays_unknown_execution(
         .official_header_delay
         .store(true, Ordering::SeqCst);
     let response = fixture.send(request()).await;
-    assert_eq!(response.status(), 504);
+    let status = response.status();
     let body: Value = response.json().await.unwrap();
+    assert_eq!(status, 504, "{body}");
     assert_eq!(body["error"]["code"], "upstream_connect_timeout");
     assert_eq!(fixture.host.fallback_calls.load(Ordering::SeqCst), 0);
     assert_eq!(

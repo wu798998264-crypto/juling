@@ -7,7 +7,7 @@ mod parity22_tests;
 mod request_fault_tests;
 #[path = "auxiliary_transport_tests.rs"]
 mod transport_tests;
-use super::super::{contract::*, start, Handle, Options};
+use super::super::{contract::*, identity::IdentityStore, start, Handle, Options};
 use super::*;
 use axum::{
     extract::Multipart,
@@ -28,11 +28,13 @@ use tokio_tungstenite::tungstenite::{client::IntoClientRequest, Message as Upstr
 
 struct TestHost {
     base: String,
+    client: reqwest::Client,
     oauth: bool,
     owner_changed: AtomicBool,
     capacity: Arc<tokio::sync::Semaphore>,
     selections: Mutex<Vec<RouteRequest>>,
     reports: Mutex<Vec<RequestReport>>,
+    report_recorded: tokio::sync::Notify,
     execution_policy: Mutex<ExecutionPolicy>,
 }
 impl Host for TestHost {
@@ -96,7 +98,7 @@ impl Host for TestHost {
                     header::AUTHORIZATION,
                     HeaderValue::from_static("Bearer upstream-secret"),
                 )]),
-                client: client(),
+                client: self.client.clone(),
                 proxy_url: None,
                 proxy_route: None,
                 chatgpt: self.oauth,
@@ -115,6 +117,7 @@ impl Host for TestHost {
     fn record(&self, report: RequestReport) -> BoxFuture<'_, ()> {
         Box::pin(async move {
             self.reports.lock().unwrap().push(report);
+            self.report_recorded.notify_one();
         })
     }
     fn execution_policy(&self) -> BoxFuture<'_, Result<ExecutionPolicy, ServiceError>> {
@@ -133,23 +136,35 @@ async fn fixture(
     });
     let host = Arc::new(TestHost {
         base: format!("http://{address}/v1"),
+        // TLS/root initialization is fixture setup, not part of the opening budget.
+        client: client(),
         oauth,
         owner_changed: AtomicBool::new(false),
         capacity: Arc::new(tokio::sync::Semaphore::new(1)),
         selections: Mutex::new(vec![]),
         reports: Mutex::new(vec![]),
+        report_recorded: tokio::sync::Notify::new(),
         execution_policy: Mutex::new(ExecutionPolicy::default()),
     });
     let root = std::env::temp_dir().join(format!("native-aux-{}", uuid::Uuid::new_v4()));
+    let identity_path = root.join("identity.sqlite");
+    initialize_identity_fixture(identity_path.clone()).await;
     let handle = start(
         "127.0.0.1:0".parse().unwrap(),
         host.clone(),
-        root.join("identity.sqlite"),
+        identity_path,
         options,
     )
     .await
     .unwrap();
     (handle, host, upstream, root)
+}
+async fn initialize_identity_fixture(path: PathBuf) {
+    // Short request caps exercise transport, not cold SQLite schema creation.
+    tokio::task::spawn_blocking(move || IdentityStore::open(path).map(drop))
+        .await
+        .unwrap()
+        .unwrap();
 }
 fn client() -> reqwest::Client {
     reqwest::Client::builder().no_proxy().build().unwrap()
@@ -783,11 +798,16 @@ async fn ephemeral_session_defaults_match_go_and_credentials_are_not_cacheable()
 
 #[tokio::test]
 async fn auxiliary_timeouts_release_account_admission_and_unsupported_capabilities_remain_501() {
+    let upstream_received = Arc::new(tokio::sync::Notify::new());
+    let received = upstream_received.clone();
     let app = Router::new().route(
         "/v1/alpha/search",
-        post(|| async {
-            tokio::time::sleep(Duration::from_secs(3)).await;
-            Json(json!({"output":"late"}))
+        post(move || {
+            let received = received.clone();
+            async move {
+                received.notify_one();
+                std::future::pending::<Json<Value>>().await
+            }
         }),
     );
     let (handle, host, upstream, root) = fixture(
@@ -814,13 +834,22 @@ async fn auxiliary_timeouts_release_account_admission_and_unsupported_capabiliti
         .await
         .unwrap();
     assert_eq!(response.status(), 504);
+    tokio::time::timeout(Duration::from_secs(2), upstream_received.notified())
+        .await
+        .expect("the timeout must follow an actual upstream dispatch");
     wait_free(&host).await;
     assert_eq!(host.selections.lock().unwrap().len(), 1);
-    assert_eq!(host.reports.lock().unwrap()[0].account_id, "account-a");
-    assert_eq!(
-        host.reports.lock().unwrap()[0].error.as_deref(),
-        Some("upstream_timeout")
-    );
+    // Releasing admission and persisting its report are separate lifecycle events.
+    tokio::time::timeout(Duration::from_secs(2), host.report_recorded.notified())
+        .await
+        .expect("the dispatched timeout must persist its report");
+    {
+        let reports = host.reports.lock().unwrap();
+        assert_eq!(reports.len(), 1);
+        assert_eq!(reports[0].account_id, "account-a");
+        assert_eq!(reports[0].status, 504);
+        assert_eq!(reports[0].error.as_deref(), Some("upstream_timeout"));
+    }
     for path in [
         "/v1/realtime/transcription_sessions",
         "/v1/realtime/translations/client_secrets",
