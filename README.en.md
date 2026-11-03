@@ -19,6 +19,8 @@ A **universal AI IDE account management tool**, currently supporting **Antigravi
 
 **This release**: S1.0.1 for Windows 10/11 x64, functional baseline 1.3.78. Adds LAN gateway views, key budgets and usage, client credential compatibility and native speed-control fixes. Promotions remain disabled; subscription downloads retain HTTPS and same-origin boundaries. See [release notes](docs/releases/v1.3.78.md) for limitations and [NOTICE.txt](NOTICE.txt) for attribution and licensing. macOS/Linux sources remain available; this release only provides Windows packages.
 
+**Validation boundary**: Builds and automated regression checks passed. Full GUI, real-account sign-in and third-party service calls have not completed hands-on acceptance testing.
+
 ---
 
 
@@ -347,17 +349,17 @@ Notes:
 
 ### Option A: Manual Download (Recommended)
 
-Go to [GitHub Releases](https://github.com/wu798998264-crypto/juling/releases) to download the package for your system:
+Go to [GitHub Releases](https://github.com/wu798998264-crypto/juling/releases/tag/v1.3.78) to download this v1.3.78 release for Windows x64:
 
-*   **macOS**: `.dmg` (Apple Silicon & Intel)
-*   **Windows**: `.msi` (Recommended), `.exe`, or `x64-portable.zip` (extract and run)
+*   **Windows**: `.exe` (recommended; matches the default updater channel), Chinese `.msi`, or `x64-portable.zip` (extract and run)
 
 Extract the Windows portable archive and run the included `聚灵.exe` (or the bundled main executable). Windows 10/11 with the Microsoft Edge WebView2 Runtime is required. Accounts and settings remain in the current Windows user's data directory and are not moved with the ZIP folder.
-*   **Linux**: `.deb` (Debian/Ubuntu), `.rpm`, or `.AppImage` (Universal)
 
-### Option B: Install with Homebrew (macOS)
+This release provides no macOS/Linux packages and does not distribute v1.3.78 through Homebrew.
 
-> Homebrew is required.
+### Historical/development reference: Homebrew and macOS
+
+> The following Homebrew and macOS troubleshooting instructions are historical/development references, not a promise of packages for this release. Verify the relevant cask and version before use.
 
 ```bash
 brew tap wu798998264-crypto/juling

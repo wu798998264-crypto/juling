@@ -20,6 +20,8 @@
 
 **当前发行**：Windows 10/11 x64。macOS/Linux 源码保留，但本次未发行对应安装包。
 
+**验证边界**：本轮已通过构建与自动化回归；完整图形界面、真实账号登录及第三方服务调用尚未完成实机验收。
+
 聚灵为独立修改版，界面版本 S1.0.1，功能基线 1.3.78。合入局域网共享服务、Key 预算与用量、客户端凭据和速度控件兼容修复，统一使用 Rust 引擎；广告与推广后端保持关闭。订阅保留 HTTPS 和同源跳转限制，原生 provider 仅支持安全的本地／内嵌资源。独立更新签名及已知限制见 [发行说明](docs/releases/v1.3.78.md)，来源与许可见 [NOTICE.txt](NOTICE.txt)。
 
 ---
@@ -346,17 +348,17 @@ Grok CLI 默认实例通常直接沿用官方 `~/.grok` 目录，启动时不设
 
 ### 选项 A: 手动下载 (推荐)
 
-前往 [GitHub Releases](https://github.com/wu798998264-crypto/juling/releases) 下载对应系统的安装包：
+前往 [GitHub Releases](https://github.com/wu798998264-crypto/juling/releases/tag/v1.3.78) 下载本轮 v1.3.78 的 Windows x64 安装包：
 
-*   **macOS**: `.dmg` (Apple Silicon & Intel)
-*   **Windows**: `.msi`（推荐）、`.exe`，或 `x64-portable.zip`（解压即用，无需安装）
+*   **Windows**: `.exe`（推荐，与默认自动更新渠道一致）、中文 `.msi`，或 `x64-portable.zip`（解压即用，无需安装）
 
 Windows 便携包解压后直接运行其中的 `聚灵.exe`（或同名主程序）。系统需要 Windows 10/11 的 Microsoft Edge WebView2 Runtime；账号和配置仍按当前 Windows 用户目录保存，不会随 ZIP 文件夹自动迁移。
-*   **Linux**: `.deb` (Debian/Ubuntu)、`.rpm` 或 `.AppImage` (通用)
 
-### 选项 B: Homebrew 安装 (macOS)
+本轮不提供 macOS/Linux 安装包，也不通过 Homebrew 提供 v1.3.78。
 
-> 需要先安装 Homebrew。
+### 历史／开发参考：Homebrew 与 macOS
+
+> 以下 Homebrew 和 macOS 排障说明仅作历史／开发参考，不代表本轮提供可安装包；使用前请核实对应 cask 和版本。
 
 ```bash
 brew tap wu798998264-crypto/juling
