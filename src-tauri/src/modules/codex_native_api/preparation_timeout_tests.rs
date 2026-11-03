@@ -247,10 +247,20 @@ async fn preparation_fixture_with_oauth(
         reports: Mutex::new(vec![]),
     });
     let dir = tempfile::tempdir().unwrap();
+    let identity_path = dir.path().join("identity.sqlite");
+    let setup_path = identity_path.clone();
+    // These tests constrain request preparation, not cold schema creation.
+    // Initialize SQLite before start reuses the deliberately short read cap.
+    tokio::task::spawn_blocking(move || {
+        native::identity::IdentityStore::open(setup_path).map(drop)
+    })
+    .await
+    .unwrap()
+    .unwrap();
     let handle = native::start(
         "127.0.0.1:0".parse().unwrap(),
         host.clone(),
-        dir.path().join("identity.sqlite"),
+        identity_path,
         native::Options {
             request_timeout: Duration::from_millis(100),
             ..Default::default()

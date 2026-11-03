@@ -32,8 +32,10 @@ fn token(value: &str) -> TokenData {
         None,
     )
 }
-fn seed(id: &str) -> Account {
+fn seed(id: &str, last_used: i64) -> Account {
     let mut account = Account::new(id.into(), "legacy@example.com".into(), token("old"));
+    // Same-email matching uses recency; fixture selection must not depend on crossing a UTC second.
+    account.last_used = last_used;
     account.notes = Some("keep notes".into());
     save_account(&account).unwrap();
     let mut index = load_account_index().unwrap();
@@ -57,9 +59,9 @@ fn reimport_and_pending_edits_preserve_legacy_files_metadata_and_references() {
         .lock()
         .unwrap_or_else(|e| e.into_inner());
     let guard = DataDirGuard::new();
-    let old = seed("legacy-uuid");
+    let old = seed("legacy-uuid", 20);
     // A second historical same-email account may still be referenced elsewhere.
-    let sibling = seed("other-legacy-uuid");
+    let sibling = seed("other-legacy-uuid", 10);
     let sibling_path = get_accounts_dir()
         .unwrap()
         .join(format!("{}.json", sibling.id));
@@ -103,12 +105,37 @@ fn reimport_and_pending_edits_preserve_legacy_files_metadata_and_references() {
 }
 
 #[test]
+fn same_email_reimport_preserves_the_id_selected_by_recency() {
+    let _lock = crate::modules::test_support::env_lock()
+        .lock()
+        .expect("test environment lock");
+    let _guard = DataDirGuard::new();
+    let old = seed("legacy-uuid", 10);
+    let sibling = seed("other-legacy-uuid", 20);
+    let old_path = get_accounts_dir().unwrap().join(format!("{}.json", old.id));
+    let old_bytes = fs::read(&old_path).unwrap();
+    let mut index = load_account_index().unwrap();
+    index.current_account_id = Some(old.id.clone());
+    save_account_index(&index).unwrap();
+
+    let updated = upsert_account("legacy@example.com".into(), None, token("new")).unwrap();
+    assert_eq!(updated.id, sibling.id);
+    assert_eq!(updated.created_at, sibling.created_at);
+    assert_eq!(updated.notes, sibling.notes);
+    assert_eq!(load_account(&sibling.id).unwrap().token.refresh_token, "new");
+    assert_eq!(fs::read(&old_path).unwrap(), old_bytes);
+    let index = load_account_index().unwrap();
+    assert_eq!(index.accounts.len(), 2);
+    assert_eq!(index.current_account_id.as_deref(), Some(old.id.as_str()));
+}
+
+#[test]
 fn unreadable_existing_account_is_not_replaced_by_import_or_pending_placeholder() {
     let _lock = crate::modules::test_support::env_lock()
         .lock()
         .unwrap_or_else(|e| e.into_inner());
     let _guard = DataDirGuard::new();
-    let old = seed("legacy-uuid");
+    let old = seed("legacy-uuid", 10);
     let path = get_accounts_dir().unwrap().join(format!("{}.json", old.id));
     fs::write(&path, "corrupt account").unwrap();
     assert!(upsert_account(old.email.clone(), None, token("new")).is_err());
