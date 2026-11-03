@@ -1159,7 +1159,8 @@ mod tests {
             .unwrap_or_else(|error| error.into_inner());
         let fixture = Fixture::new();
         let _home = PublicHomeGuard::new(&fixture.0);
-        let legacy = fixture.0.join(".antigravity_juling");
+        // The historical data directory is a compatibility identity, not app branding.
+        let legacy = fixture.0.join(".antigravity_cockpit");
         let alias = fixture.0.join(".juling_tools");
         let legacy_root = legacy.join("instances/codex");
         fs::create_dir_all(legacy_root.join("profile")).unwrap();
@@ -1168,6 +1169,7 @@ mod tests {
             platform: "codex".into(),
             root: modules::data_paths::without_compatibility_alias(&alias.join("instances/codex")),
         };
+        assert_eq!(root.root, legacy_root);
         let roots = [root];
         modules::instance_directory_ownership::test_mark_created(&legacy_root.join("profile"));
         assert!(is_registered_instance_directory_owned(
@@ -1198,12 +1200,16 @@ mod tests {
             .unwrap_or_else(|error| error.into_inner());
         let fixture = Fixture::new();
         let _home = PublicHomeGuard::new(&fixture.0);
-        let legacy = fixture.0.join(".antigravity_juling");
+        let legacy = fixture.0.join(".antigravity_cockpit");
         let alias = fixture.0.join(".juling_tools");
         let outside = fixture.0.join("outside");
         fs::create_dir_all(legacy.join("instances/codex")).unwrap();
         fs::create_dir_all(outside.join("profile")).unwrap();
         std::os::unix::fs::symlink(&legacy, &alias).unwrap();
+        assert_eq!(
+            modules::data_paths::without_compatibility_alias(&alias.join("instances/codex")),
+            legacy.join("instances/codex")
+        );
         std::os::unix::fs::symlink(&outside, legacy.join("instances/codex/linked")).unwrap();
         let roots = [PlatformRoot {
             platform: "codex".into(),
@@ -1236,7 +1242,7 @@ mod tests {
             .unwrap_or_else(|error| error.into_inner());
         let fixture = Fixture::new();
         let _home = PublicHomeGuard::new(&fixture.0);
-        let legacy = fixture.0.join(".antigravity_juling");
+        let legacy = fixture.0.join(".antigravity_cockpit");
         let alias = fixture.0.join(".juling_tools");
         let outside = fixture.0.join("outside");
         fs::create_dir(&legacy).unwrap();
@@ -1274,7 +1280,7 @@ mod tests {
         let fixture = Fixture::new();
         let _home = PublicHomeGuard::new(&fixture.0);
         let root = fixture.root();
-        let fake_legacy = root.root.join(".antigravity_juling");
+        let fake_legacy = root.root.join(".antigravity_cockpit");
         let fake_alias = root.root.join(".juling_tools");
         fs::create_dir_all(&fake_legacy).unwrap();
         std::os::unix::fs::symlink(&fake_legacy, &fake_alias).unwrap();
@@ -1293,7 +1299,7 @@ mod tests {
             .unwrap_or_else(|error| error.into_inner());
         let fixture = Fixture::new();
         let _home = PublicHomeGuard::new(&fixture.0);
-        let legacy = fixture.0.join(".antigravity_juling");
+        let legacy = fixture.0.join(".antigravity_cockpit");
         let alias = fixture.0.join(".juling_tools");
         fs::create_dir_all(legacy.join("instances/codex/profile")).unwrap();
         std::os::unix::fs::symlink(&legacy, &alias).unwrap();

@@ -79,6 +79,7 @@ async fn oauth_image_request_fault_keeps_error_without_refresh_rotation_or_cooli
 
 struct ImageHost {
     base_url: String,
+    client: reqwest::Client,
     oauth: bool,
     deny: bool,
     reports: Mutex<Vec<RequestReport>>,
@@ -192,7 +193,7 @@ impl Host for ImageHost {
                     }
                     .into(),
                     headers,
-                    client: reqwest::Client::builder().no_proxy().build().unwrap(),
+                    client: self.client.clone(),
                     proxy_url: None,
                     proxy_route: None,
                     chatgpt: self.oauth,
@@ -254,6 +255,9 @@ async fn fixture(
 fn fixture_host(base_url: String, oauth: bool, deny: bool) -> Arc<ImageHost> {
     Arc::new(ImageHost {
         base_url,
+        // Keep synchronous TLS/root-store initialization outside the tiny opening
+        // budgets: these tests exercise upstream headers/retries, not client setup.
+        client: client(),
         oauth,
         deny,
         reports: Mutex::new(Vec::new()),

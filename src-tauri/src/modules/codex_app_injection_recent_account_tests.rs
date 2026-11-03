@@ -400,27 +400,48 @@ fn recent_account_rejects_account_path_escape_and_limits_configuration_bytes() {
 #[test]
 fn recent_account_profile_scope_uses_only_explicit_wire_headers() {
     let dir = tempfile::tempdir().unwrap();
-    std::fs::write(
-        dir.path().join("config.toml"),
-        r#"
+    for (instance_headers, expected) in [
+        (
+            "x-cockpit-instance-id = \"fixture-instance\"",
+            Some("fixture-instance"),
+        ),
+        (
+            "x-juling-instance-id = \"fixture-instance\"",
+            Some("fixture-instance"),
+        ),
+        (
+            "x-cockpit-instance-id = \"fixture-instance\"\nx-juling-instance-id = \"local-conflict\"",
+            Some("fixture-instance"),
+        ),
+        (
+            "x-cockpit-instance-id = \"\"\nx-juling-instance-id = \"local-conflict\"",
+            None,
+        ),
+    ] {
+        std::fs::write(
+            dir.path().join("config.toml"),
+            format!(
+                r#"
 model_provider = "gateway"
 [model_providers.gateway]
 base_url = "http://127.0.0.1:1234/v1"
 experimental_bearer_token = "fixture-key"
 [model_providers.gateway.http_headers]
-x-juling-instance-id = "fixture-instance"
+{instance_headers}
 x-codex-installation-id = "fixture-installation"
-"#,
-    )
-    .unwrap();
-    let (url, key, scope) = profile_gateway(dir.path()).unwrap().unwrap();
-    assert_eq!(url, "http://127.0.0.1:1234/v1");
-    assert_eq!(key, "fixture-key");
-    assert_eq!(scope.instance_id.as_deref(), Some("fixture-instance"));
-    assert_eq!(
-        scope.installation_id.as_deref(),
-        Some("fixture-installation")
-    );
+"#
+            ),
+        )
+        .unwrap();
+        let (url, key, scope) = profile_gateway(dir.path()).unwrap().unwrap();
+        assert_eq!(url, "http://127.0.0.1:1234/v1");
+        assert_eq!(key, "fixture-key");
+        assert_eq!(scope.instance_id.as_deref(), expected);
+        assert_eq!(
+            scope.installation_id.as_deref(),
+            Some("fixture-installation")
+        );
+    }
 }
 
 #[test]

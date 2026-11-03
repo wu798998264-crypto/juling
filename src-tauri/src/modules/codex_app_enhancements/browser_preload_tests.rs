@@ -423,9 +423,21 @@ async fn verified_configuration_change_replaces_script_and_detached_session_is_n
     mock.event
         .send(json!({"method":"Target.detachedFromTarget","params":{"sessionId":"page"}}))
         .unwrap();
-    tokio::time::sleep(Duration::from_millis(30)).await;
+    // Same CDP stream: observing this response proves the preceding detach was
+    // processed, unlike a sleep while the watch channel can win the select.
+    mock.event
+        .send(attached("detach-barrier", "worker", "app://-/index.html", false))
+        .unwrap();
+    let detached = wait_for(&mock, "Target.detachFromTarget", 1).await;
+    assert_eq!(detached[0]["params"]["sessionId"], "detach-barrier");
     source.send(Some("verified-three".into())).unwrap();
-    tokio::time::sleep(Duration::from_millis(30)).await;
+    // The ready source change is selected before this next CDP event; observing
+    // its reply also ensures any erroneous third registration was captured.
+    mock.event
+        .send(attached("update-barrier", "worker", "app://-/index.html", false))
+        .unwrap();
+    let detached = wait_for(&mock, "Target.detachFromTarget", 2).await;
+    assert_eq!(detached[1]["params"]["sessionId"], "update-barrier");
     assert_eq!(
         mock.commands
             .lock()

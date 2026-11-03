@@ -3661,6 +3661,27 @@ mod tests {
 
     #[test]
     fn version_manager_cli_dirs_include_nvm_node_bins() {
+        let _env_lock = crate::modules::test_support::env_lock().lock().unwrap();
+        struct NvmEnvGuard(Vec<(&'static str, Option<std::ffi::OsString>)>);
+        impl Drop for NvmEnvGuard {
+            fn drop(&mut self) {
+                for (key, value) in &self.0 {
+                    match value {
+                        Some(value) => std::env::set_var(key, value),
+                        None => std::env::remove_var(key),
+                    }
+                }
+            }
+        }
+        let _env = NvmEnvGuard(
+            ["NVM_DIR", "NVM_BIN"]
+                .into_iter()
+                .map(|key| (key, std::env::var_os(key)))
+                .collect(),
+        );
+        // Hosted runners can set NVM_DIR; exercise the home fallback explicitly.
+        std::env::remove_var("NVM_DIR");
+        std::env::remove_var("NVM_BIN");
         let root = std::env::temp_dir().join(format!(
             "codex-wakeup-nvm-{}-{}",
             std::process::id(),
@@ -3683,6 +3704,16 @@ mod tests {
             "expected nvm bin dir in search paths: {:?}",
             dirs
         );
+
+        // An explicit NVM_DIR takes precedence over the home fallback.
+        let custom_root = root.join("custom-nvm");
+        let custom_bin = custom_root.join("versions/node/v24.0.0/bin");
+        fs::create_dir_all(&custom_bin).expect("create custom nvm bin");
+        std::env::set_var("NVM_DIR", &custom_root);
+        dirs.clear();
+        append_version_manager_cli_dirs(&mut dirs, &root);
+        assert!(dirs.contains(&custom_bin));
+        assert!(!dirs.contains(&nvm_bin));
         let _ = fs::remove_dir_all(&root);
     }
 

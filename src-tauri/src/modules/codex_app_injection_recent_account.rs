@@ -271,6 +271,7 @@ pub(super) fn profile_gateway(
     let headers = provider.get("http_headers");
     if let Some(headers) = headers {
         for name in [
+            "x-cockpit-instance-id",
             "x-juling-instance-id",
             "x-codex-instance-id",
             "x-client-instance-id",

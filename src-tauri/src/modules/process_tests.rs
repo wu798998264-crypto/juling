@@ -437,6 +437,10 @@ mod managed_sidecar_port_cleanup_tests {
     fn normalizes_windows_process_arguments() {
         assert_eq!(
             normalized_process_argument(r#""C:\Program Files\聚灵\juling-cliproxy.exe""#),
+            "c:/program files/聚灵/juling-cliproxy.exe"
+        );
+        assert_eq!(
+            normalized_process_argument(r#""C:\Program Files\Juling Tools\juling-cliproxy.exe""#),
             "c:/program files/juling tools/juling-cliproxy.exe"
         );
     }
