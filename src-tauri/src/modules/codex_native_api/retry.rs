@@ -29,6 +29,18 @@ pub(super) fn total_timeout() -> ServiceError {
     )
 }
 
+pub(super) async fn compress_request(
+    state: &AppState,
+    execution: &super::execution::Execution,
+    request: reqwest::Request,
+    codex: bool,
+) -> Result<(reqwest::Request, Option<reqwest::Request>), ServiceError> {
+    // Retried sends renew Prepared, not the dispatch task's original scope.
+    execution
+        .run(super::http_compression::request(state, request, codex))
+        .await
+}
+
 pub(super) async fn send(
     state: &Arc<AppState>,
     prepared: &mut Prepared,
@@ -266,8 +278,8 @@ async fn send_inner(
         let request = request.map_err(|error| super::diagnostics::transport_failure(
             502, "upstream_request_invalid", "Unable to prepare the upstream request", &error,
         ))?;
-        let (request, plain_request) = super::http_compression::request(
-            state, request, codex_backend && !prepared.route.chatgpt_plan,
+        let (request, plain_request) = compress_request(
+            state, &prepared.execution, request, codex_backend && !prepared.route.chatgpt_plan,
         ).await?;
         tracker.check_quota_before_send()?;
         let mut stop = state.stop.clone();

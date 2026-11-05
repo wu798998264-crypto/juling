@@ -198,6 +198,10 @@ jobs:
         if: matrix.label == 'ubuntu-22.04'
         run: npm run test:rust:core
 
+      - name: 🛡️ Test Juling cooldown safety
+        if: matrix.label == 'ubuntu-22.04'
+        run: npm run test:juling-cooldown
+
       # Keep the private key out of PR code, dependency scripts, and third-party actions.
       - name: 🔐 Check signing availability
         if: github.event_name != 'pull_request'

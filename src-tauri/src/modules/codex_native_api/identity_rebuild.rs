@@ -524,6 +524,9 @@ pub(in crate::modules::codex_native_api) fn replay_items(items: &[Value]) -> boo
 pub(in crate::modules::codex_native_api) fn paired_tools(items: &[Value]) -> bool {
     let mut pending = HashMap::new();
     let mut seen = HashSet::new();
+    // Codex code-mode exec can yield several host result items for one completed
+    // call. Preserve every result as history, without scheduling the tool again.
+    let mut multi_output_exec = HashSet::new();
     for item in items {
         match item.get("type").and_then(Value::as_str) {
             Some(kind @ ("function_call" | "custom_tool_call" | "local_shell_call")) => {
@@ -532,6 +535,12 @@ pub(in crate::modules::codex_native_api) fn paired_tools(items: &[Value]) -> boo
                 };
                 if !seen.insert(id) {
                     return false;
+                }
+                if kind == "custom_tool_call"
+                    && item["name"] == "exec"
+                    && item["status"] == "completed"
+                {
+                    multi_output_exec.insert(id);
                 }
                 // Official LocalShellCall returns FunctionCallOutput, including
                 // the synthetic "aborted" result inserted by the client.
@@ -549,7 +558,11 @@ pub(in crate::modules::codex_native_api) fn paired_tools(items: &[Value]) -> boo
                 let Some(id) = item.get("call_id").and_then(Value::as_str) else {
                     return false;
                 };
-                if pending.remove(id) != Some(kind) {
+                if pending.remove(id) != Some(kind)
+                    && !(kind == "custom_tool_call_output"
+                        && item["name"] == "exec"
+                        && multi_output_exec.contains(id))
+                {
                     return false;
                 }
             }

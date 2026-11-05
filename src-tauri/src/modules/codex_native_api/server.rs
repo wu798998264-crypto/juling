@@ -661,6 +661,84 @@ mod shutdown_handoff_tests {
         }
     }
 
+    #[test]
+    fn juling_cooldown_retry_compression_uses_renewed_budget() {
+        use super::super::{contract::ExecutionPolicy, deadline::Deadline, execution::Execution};
+
+        tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .max_blocking_threads(1)
+            .build()
+            .unwrap()
+            .block_on(async {
+                let temp = tempfile::tempdir().unwrap();
+                let (_stop, receiver) = watch::channel(false);
+                let state = AppState {
+                    host: Arc::new(UnusedHost),
+                    identity: Arc::new(IdentityStore::open(temp.path().join("identity.sqlite")).unwrap()),
+                    options: Options::default(),
+                    stop: StopSignal(receiver),
+                    anthropic_search: Default::default(),
+                    activity: Arc::new(Activity::default()),
+                    capacity: Arc::new(Semaphore::new(1)),
+                };
+                let mut outer = Execution::from_deadline(
+                    ExecutionPolicy { open_timeout: Duration::from_secs(5), ..Default::default() },
+                    Deadline::after(Duration::from_secs(10)),
+                );
+                outer.open_deadline = tokio::time::Instant::now() - Duration::from_secs(1);
+                let renewed = outer.renew_open();
+                assert_eq!(renewed.total_deadline, outer.total_deadline);
+                assert!(renewed.prepare_deadline() > tokio::time::Instant::now());
+                let original = "compressible history ".repeat(4096);
+                let request = || {
+                    let mut request = reqwest::Request::new(
+                        reqwest::Method::POST,
+                        "https://chatgpt.com/backend-api/codex/responses".parse().unwrap(),
+                    );
+                    *request.body_mut() = Some(original.clone().into());
+                    request
+                };
+
+                outer.run(async {
+                    assert_eq!(super::super::execution::remaining_prepare_budget(), Some(Duration::ZERO));
+                    // Queue compression briefly so a zero-budget regression cannot pass
+                    // merely because a tiny blocking operation happens to finish first.
+                    let (entered, ready) = tokio::sync::oneshot::channel();
+                    let (release, released) = std::sync::mpsc::channel();
+                    let blocker = tokio::task::spawn_blocking(move || {
+                        entered.send(()).unwrap();
+                        released.recv().unwrap();
+                    });
+                    ready.await.unwrap();
+                    let release_task = tokio::spawn(async move {
+                        tokio::time::sleep(Duration::from_millis(25)).await;
+                        release.send(()).unwrap();
+                    });
+                    // This is the same helper called by send_inner; no HTTP client is executed.
+                    let result = super::super::retry::compress_request(
+                        &state, &renewed, request(), true,
+                    ).await;
+                    release_task.await.unwrap();
+                    blocker.await.unwrap();
+                    let (compressed, plain) = result.unwrap();
+                    assert_eq!(compressed.headers()[header::CONTENT_ENCODING], "zstd");
+                    let compressed = compressed.body().unwrap().as_bytes().unwrap();
+                    assert_eq!(zstd::stream::decode_all(compressed).unwrap(), original.as_bytes());
+                    assert_eq!(plain.unwrap().body().unwrap().as_bytes().unwrap(), original.as_bytes());
+                    assert_eq!(super::super::execution::remaining_prepare_budget(), Some(Duration::ZERO));
+
+                    let expired = Execution::from_deadline(
+                        renewed.policy.clone(),
+                        tokio::time::Instant::now() - Duration::from_secs(1),
+                    );
+                    let expired_renewal = expired.renew_open();
+                    assert_eq!(expired_renewal.total_deadline, expired.total_deadline);
+                    assert!(expired_renewal.prepare_deadline() < tokio::time::Instant::now());
+                }).await;
+            });
+    }
+
     #[tokio::test]
     async fn shutdown_timeout_keeps_handle_alive_until_old_work_stops() {
         let temp = tempfile::tempdir().unwrap();

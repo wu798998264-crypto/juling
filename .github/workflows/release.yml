@@ -178,6 +178,9 @@ jobs:
       - name: 🔄 Sync versions
         run: npm run sync-version
 
+      - name: 🛡️ Test Juling cooldown safety
+        run: npm run test:juling-cooldown
+
       - name: 🏗️ Build Windows app
         shell: bash
         env:

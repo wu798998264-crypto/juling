@@ -313,6 +313,16 @@ async fn prepare_excluding_inner(
             )
             .await;
         }
+        Err(error) if error.code == "account_cooling" && enabled && rebuild_plan.is_none() => {
+            // Keep the owner and its real cooldown. Never invent missing tool
+            // results or silently discard history just to make another account fit.
+            return Err(error.with_error_details(serde_json::json!({
+                "code": "account_cooling",
+                "message": "The original account is cooling and this request has no verified complete replay history. Resend complete context to use another available account, or wait for the original account; existing history was preserved.",
+                "recovery": "resend_complete_context_or_wait",
+                "automatic_account_switch": "blocked_unverified_history"
+            })));
+        }
         Err(error) => return Err(error),
     };
     if !compact

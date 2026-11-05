@@ -57,6 +57,7 @@ struct TestHost {
     oauth: AtomicBool,
     passthrough: AtomicBool,
     removed_a: AtomicBool,
+    cooling_a: AtomicBool,
     selections: Mutex<Vec<RouteRequest>>,
     failures: Mutex<Vec<(String, u16)>>,
     reports: Mutex<Vec<RequestReport>>,
@@ -78,6 +79,10 @@ impl Host for TestHost {
         Box::pin(async move {
             self.selections.lock().unwrap().push(request.clone());
             let account = if let Some(preferred) = request.preferred_account_id.as_deref() {
+                if preferred == "a" && self.cooling_a.load(Ordering::SeqCst) {
+                    return Err(ServiceError::new(503, "account_cooling", "Synthetic owner cooling")
+                        .with_retry_after(Some(Duration::from_secs(4 * 60 * 60))));
+                }
                 if preferred == "a" && self.removed_a.load(Ordering::SeqCst) {
                     return Err(ServiceError::new(
                         503,
@@ -102,6 +107,7 @@ impl Host for TestHost {
                     .into_iter()
                     .find(|candidate| {
                         !(*candidate == "a" && self.removed_a.load(Ordering::SeqCst))
+                            && !(*candidate == "a" && self.cooling_a.load(Ordering::SeqCst))
                             && !request
                                 .excluded_account_ids
                                 .iter()
@@ -358,6 +364,7 @@ impl Fixture {
             oauth: AtomicBool::new(false),
             passthrough: AtomicBool::new(false),
             removed_a: AtomicBool::new(false),
+            cooling_a: AtomicBool::new(false),
             selections: Mutex::new(vec![]),
             failures: Mutex::new(vec![]),
             reports: Mutex::new(vec![]),
@@ -1034,6 +1041,9 @@ async fn context_rebuild_upstream_websocket_overload_rebuilds_then_reuses_b_gene
 
 #[path = "context_rebuild_opaque_http_tests.rs"]
 mod opaque_tests;
+
+#[path = "context_rebuild_cooling_tests.rs"]
+mod cooling_tests;
 
 #[path = "context_rebuild_host_results_tests.rs"]
 mod host_results_tests;

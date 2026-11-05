@@ -50,5 +50,17 @@ fn main() {
         link_macos_swift_runtime_rpaths();
     }
 
-    tauri_build::build()
+    let mut attributes = tauri_build::Attributes::new();
+    if target.ends_with("-windows-msvc") {
+        // Tauri's resource compiler embeds its manifest only in application
+        // binaries. Library tests also import Common Controls v6 entrypoints.
+        // Let the linker embed the same dependency for every final target;
+        // omit only Tauri's manifest to avoid duplicate RT_MANIFEST resources.
+        attributes = attributes.windows_attributes(
+            tauri_build::WindowsAttributes::new_without_app_manifest(),
+        );
+        println!("cargo:rustc-link-arg=/MANIFEST:EMBED");
+        println!("cargo:rustc-link-arg=/MANIFESTDEPENDENCY:type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'");
+    }
+    tauri_build::try_build(attributes).expect("failed to build Tauri resources")
 }
