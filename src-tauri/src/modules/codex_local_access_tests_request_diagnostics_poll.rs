@@ -7,6 +7,7 @@ mod request_diagnostics_poll_tests {
         body_delay: Duration,
         chunked: bool,
         advertised_length: Option<usize>,
+        headers_sent: Option<tokio::sync::oneshot::Sender<()>>,
     }
 
     impl FakeDiagnosticResponse {
@@ -17,6 +18,7 @@ mod request_diagnostics_poll_tests {
                 body_delay: Duration::ZERO,
                 chunked: false,
                 advertised_length: None,
+                headers_sent: None,
             }
         }
     }
@@ -29,11 +31,13 @@ mod request_diagnostics_poll_tests {
         let task = tokio::spawn(async move {
             let mut requests = Vec::new();
             for response in responses {
-                let (mut socket, _) = listener.accept().await.unwrap();
+                let (mut socket, _) = tokio::time::timeout(Duration::from_secs(5), listener.accept())
+                    .await.expect("diagnostic fixture did not receive its expected request").unwrap();
                 let mut request = Vec::new();
                 while !request.windows(4).any(|window| window == b"\r\n\r\n") {
                     let mut bytes = [0_u8; 1024];
-                    let count = socket.read(&mut bytes).await.unwrap();
+                    let count = tokio::time::timeout(Duration::from_secs(5), socket.read(&mut bytes))
+                        .await.expect("diagnostic fixture request headers did not arrive").unwrap();
                     if count == 0 {
                         break;
                     }
@@ -52,6 +56,9 @@ mod request_diagnostics_poll_tests {
                 if socket.write_all(headers.as_bytes()).await.is_err() {
                     continue;
                 }
+                if let Some(signal) = response.headers_sent {
+                    let _ = signal.send(());
+                }
                 tokio::time::sleep(response.body_delay).await;
                 let body = if response.chunked {
                     let mut chunk = format!("{:x}\r\n", response.body.len()).into_bytes();
@@ -62,7 +69,7 @@ mod request_diagnostics_poll_tests {
                     response.body
                 };
                 // A limit/cancel/timeout test deliberately closes its client early.
-                let _ = socket.write_all(&body).await;
+                let _ = tokio::time::timeout(Duration::from_secs(5), socket.write_all(&body)).await;
             }
             requests
         });
@@ -199,30 +206,45 @@ mod request_diagnostics_poll_tests {
         let mut delayed = FakeDiagnosticResponse::json(json!({"events":[fake_detail("late")]}));
         delayed.chunked = true;
         delayed.body_delay = Duration::from_millis(150);
-        let (port, server) = fake_diagnostic_server(vec![delayed]).await;
+        let (port, server) = fake_diagnostic_server(vec![
+            FakeDiagnosticResponse::json(json!({"events":[]})), delayed,
+        ]).await;
         let client = build_localhost_http_client(REQUEST_DIAGNOSTICS_POLL_TIMEOUT, "test").unwrap();
+        // Warm this client before measuring a body-read deadline. A cold
+        // Windows connector can otherwise time out before the fixture accepts.
+        pull_request_diagnostics_from_port(&client, port, REQUEST_DIAGNOSTICS_POLL_TIMEOUT)
+            .await.unwrap();
         let started = Instant::now();
         let error = pull_request_diagnostics_from_port(&client, port, Duration::from_millis(40))
             .await
             .unwrap_err();
         assert!(error.contains("超时"));
         assert!(started.elapsed() < Duration::from_millis(500));
-        server.await.unwrap();
+        let requests = server.await.unwrap();
+        assert_eq!(requests.len(), 2);
+        assert!(requests[1].starts_with("GET /v1/juling/diagnostics/events HTTP/1.1\r\n"));
 
         let mut delayed =
             FakeDiagnosticResponse::json(json!({"events":[fake_detail("cancelled")]}));
         delayed.body_delay = Duration::from_millis(150);
+        let (headers_sent, headers_ready) = tokio::sync::oneshot::channel();
+        delayed.headers_sent = Some(headers_sent);
         let (port, server) = fake_diagnostic_server(vec![delayed]).await;
         let result = pull_request_diagnostics_with_cancel(
             &client,
             port,
             REQUEST_DIAGNOSTICS_POLL_TIMEOUT,
-            tokio::time::sleep(Duration::from_millis(40)),
+            async {
+                headers_ready.await.expect("fixture response headers must arrive before cancellation");
+                tokio::time::sleep(Duration::from_millis(40)).await;
+            },
         )
         .await
         .unwrap();
         assert!(result.is_none());
-        server.await.unwrap();
+        let requests = server.await.unwrap();
+        assert_eq!(requests.len(), 1);
+        assert!(requests[0].starts_with("GET /v1/juling/diagnostics/events HTTP/1.1\r\n"));
     }
 
     #[tokio::test]
