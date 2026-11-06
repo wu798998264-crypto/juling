@@ -393,7 +393,9 @@ mod tests {
         }
         async fn wait_closed(url: &str) {
             let url = tauri::Url::parse(url).unwrap();
-            timeout(Duration::from_secs(2), async {
+            // A refused loopback connect itself can take several seconds on
+            // Windows. This observes listener closure, not the preview TTL.
+            timeout(Duration::from_secs(10), async {
                 loop {
                     if TcpStream::connect(("127.0.0.1", url.port().unwrap()))
                         .await

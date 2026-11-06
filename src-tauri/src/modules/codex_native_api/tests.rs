@@ -234,6 +234,9 @@ async fn native(
     let path =
         std::env::temp_dir().join(format!("juling-native-api-test-{}", uuid::Uuid::now_v7()));
     std::fs::create_dir_all(&path).unwrap();
+    // Warm the fixture's database independently of intentionally tiny request
+    // deadlines. The upload timeout test measures ingress, not cold disk setup.
+    drop(super::identity::IdentityStore::open(path.join("identity.json")).unwrap());
     let handle = start(
         "127.0.0.1:0".parse().unwrap(),
         host.clone(),
@@ -350,6 +353,8 @@ async fn responses_first_response_skips_transport_keepalives() {
         assert!(context.first_response_ms.unwrap() >= OUTPUT_DELAY.as_millis() as u64, "{context:?}");
     }
     upstream.abort();
+    let _ = upstream.await;
+    drop(service);
     std::fs::remove_dir_all(path).unwrap();
 }
 

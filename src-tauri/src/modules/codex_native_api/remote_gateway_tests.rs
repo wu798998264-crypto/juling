@@ -74,5 +74,7 @@ async fn remote_gateway_preserves_client_scope_and_thread_but_strips_management_
     }
     service.shutdown(Duration::from_secs(2)).await.unwrap();
     task.abort();
+    let _ = task.await;
+    drop(service);
     std::fs::remove_dir_all(path).unwrap();
 }

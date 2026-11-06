@@ -83,10 +83,17 @@ async fn https_subscription_rejects_untrusted_certificate_without_system_trust_c
     let fixture = tokio::spawn(async move {
         tokio::time::timeout(std::time::Duration::from_secs(5), async {
             let (socket, _) = listener.accept().await.unwrap();
-            assert!(tokio_rustls::TlsAcceptor::from(Arc::new(config))
-                .accept(socket)
-                .await
-                .is_err());
+            // TLS 1.3 server-side completion may precede the client's
+            // certificate rejection. Even then no HTTP request may arrive.
+            if let Ok(mut tls) = tokio_rustls::TlsAcceptor::from(Arc::new(config))
+                .accept(socket).await
+            {
+                use tokio::io::AsyncReadExt;
+                let mut byte = [0_u8; 1];
+                let result = tokio::time::timeout(std::time::Duration::from_secs(2), tls.read(&mut byte))
+                    .await.expect("rejected TLS client must close without sending HTTP");
+                assert!(!matches!(result, Ok(count) if count > 0), "untrusted certificate received application data");
+            }
         })
         .await
         .expect("untrusted certificate fixture deadline");

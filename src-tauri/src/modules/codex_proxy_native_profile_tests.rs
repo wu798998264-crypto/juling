@@ -103,10 +103,12 @@ fn native_configuration_preserves_rules_dns_options_and_isolates_ingress() {
 
 #[test]
 fn resource_relocation_never_mistakes_transport_paths_or_encoded_keys_for_files() {
+    let directory = tempfile::tempdir().unwrap();
+    let local_path = directory.path().join("local.yaml");
     let mut config = json!({"proxies":[{"name":"V","type":"vless","ws-opts":{"path":"/ws"}},
         {"name":"WG","type":"wireguard","private-key":"/encoded-key"}],
-        "proxy-providers":{"A":{"type":"file","path":"/resources/local.yaml"}}});
-    relocate_files(&mut config, Some(Path::new("/resources"))).unwrap();
+        "proxy-providers":{"A":{"type":"file","path":local_path}}});
+    relocate_files(&mut config, Some(directory.path())).unwrap();
     assert_eq!(config["proxies"][0]["ws-opts"]["path"], "/ws");
     assert_eq!(config["proxies"][1]["private-key"], "/encoded-key");
     assert_eq!(config["proxy-providers"]["A"]["path"], "local.yaml");

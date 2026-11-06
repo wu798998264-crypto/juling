@@ -49,6 +49,18 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          cargo test --locked -p juling --lib modules::codex_app_injection::usage::tests -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib modules::codex_app_injection::output_speed::tests -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib http_transport_failover_excludes_only_this_request_but_real_status_marks_account -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib remote_gateway_preserves_client_scope_and_thread_but_strips_management_headers -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib unfinished_http_upload_still_times_out_without_reaching_account_selection -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib responses_first_response_skips_transport_keepalives -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib websocket_candidate_with_no_upstream_send_has_no_failure_or_attempt_budget -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib websocket_handshake_connection_failure_keeps_code_and_context -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib browser_previews_are_sandboxed_bounded_and_expire -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib https_subscription_rejects_untrusted_certificate_without_system_trust_changes -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib modules::codex_proxy_desktop_router::tests::startup -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib resource_relocation_never_mistakes_transport_paths_or_encoded_keys_for_files -- --nocapture --test-threads=1
           cargo test --locked -p juling --lib modules::chatgpt_plan::storage::tests -- --nocapture --test-threads=1
           cargo test --locked -p juling --lib concurrent_bindings_cannot_assign_one_source_or_one_grant_twice -- --nocapture --test-threads=1
           cargo test --locked -p juling --lib initial_directory_recovery_and_later_changes_use_the_same_persistent_location -- --nocapture --test-threads=1

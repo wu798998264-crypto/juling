@@ -115,7 +115,8 @@ fn route(base_url: String) -> Route {
         base_url,
         model: "synthetic-model".into(),
         headers: HeaderMap::new(),
-        client: reqwest::Client::builder().no_proxy().build().unwrap(),
+        client: reqwest::Client::builder().no_proxy()
+            .connect_timeout(Duration::from_millis(100)).build().unwrap(),
         proxy_url: None,
         proxy_route: None,
         chatgpt: false,

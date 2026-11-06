@@ -330,6 +330,7 @@ async fn http_transport_failover_excludes_only_this_request_but_real_status_mark
         drop(selections);
         task.abort();
         let _ = task.await;
+        drop(handle);
         std::fs::remove_dir_all(root).unwrap();
     }
 }

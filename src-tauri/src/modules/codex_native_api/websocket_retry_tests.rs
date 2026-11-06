@@ -364,7 +364,8 @@ impl Host for RetryHost {
                 base_url: self.bases[usize::from(account == "b")].clone(),
                 model: request.model,
                 headers,
-                client: reqwest::Client::builder().no_proxy().build().unwrap(),
+                client: reqwest::Client::builder().no_proxy()
+                    .connect_timeout(Duration::from_millis(100)).build().unwrap(),
                 proxy_url: None,
                 proxy_route: None,
                 chatgpt: self.refreshable.load(Ordering::Acquire),

@@ -167,6 +167,25 @@ pub(super) fn binding_snapshot(profile: &Path) -> Result<Option<String>, String>
         field(&metadata.dev().to_le_bytes());
         field(&metadata.ino().to_le_bytes());
     }
+    #[cfg(windows)]
+    {
+        use std::os::windows::io::AsRawHandle;
+        use windows::Win32::{
+            Foundation::HANDLE,
+            Storage::FileSystem::{GetFileInformationByHandle, BY_HANDLE_FILE_INFORMATION},
+        };
+        // NTFS can preserve creation timestamps when replacing a filename.
+        // File identity, unlike length or modification time, remains stable
+        // across ordinary log appends and changes on database replacement.
+        let file = std::fs::File::open(&path)
+            .map_err(|error| format!("output-speed database identity unavailable: {error}"))?;
+        let mut info = BY_HANDLE_FILE_INFORMATION::default();
+        unsafe { GetFileInformationByHandle(HANDLE(file.as_raw_handle() as _), &mut info) }
+            .map_err(|error| format!("output-speed database identity unavailable: {error}"))?;
+        field(&info.dwVolumeSerialNumber.to_le_bytes());
+        field(&info.nFileIndexHigh.to_le_bytes());
+        field(&info.nFileIndexLow.to_le_bytes());
+    }
     field(format!("{:?}", metadata.created().ok()).as_bytes());
     Ok(Some(format!("{:x}", hash.finalize())))
 }

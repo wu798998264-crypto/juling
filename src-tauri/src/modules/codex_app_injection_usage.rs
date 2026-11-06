@@ -259,7 +259,10 @@ fn locate_rollout(
         ) else {
             continue;
         };
-        if db.busy_timeout(Duration::from_millis(50)).is_err() {
+        // This optional status reader has a rollout/cache fallback. Never
+        // wait behind the client's writer: Windows busy-handler sleeps can
+        // exhaust the entire read budget before that fallback gets a turn.
+        if db.busy_timeout(Duration::ZERO).is_err() {
             continue;
         }
         // A malformed/foreign schema must not turn this into a table scan.
