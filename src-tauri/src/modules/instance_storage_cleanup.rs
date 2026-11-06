@@ -527,7 +527,7 @@ fn collect_protection_with_runtime(
 
 fn protected(path: &Path, protection: &Protection) -> bool {
     let key = path_key(path);
-    if protection.paths.iter().any(|saved| overlaps(&key, saved)) {
+    if protection.paths.iter().any(|saved| overlaps(&key, &path_key(saved))) {
         return true;
     }
     // A process working in HOME (or exporting HOME) does not own every child
@@ -535,7 +535,7 @@ fn protected(path: &Path, protection: &Protection) -> bool {
     if protection
         .runtime_paths
         .iter()
-        .any(|path| path.starts_with(&key))
+        .any(|path| path_key(path).starts_with(&key))
     {
         return true;
     }

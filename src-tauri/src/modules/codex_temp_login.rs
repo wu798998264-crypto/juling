@@ -754,6 +754,14 @@ fn app_user_data_dir_for_profile(profile_dir: &Path) -> Result<PathBuf, String> 
 /// 先按 CODEX_HOME 关闭仍在使用该 profile 的官方客户端，再删除目录与钥匙串条目；
 /// 关闭失败时不删除目录，避免留下半份数据，等下次巡检重试。
 pub fn cleanup_stale_sessions() -> CodexTempLoginCleanupReport {
+    cleanup_stale_sessions_with_close(|target| {
+        process::close_codex_instances(std::slice::from_ref(&target.to_string()), CLOSE_TIMEOUT_SECS)
+    })
+}
+
+fn cleanup_stale_sessions_with_close(
+    close_client: impl Fn(&str) -> Result<(), String>,
+) -> CodexTempLoginCleanupReport {
     let mut report = CodexTempLoginCleanupReport::default();
     let root = match temp_login_root_dir() {
         Ok(root) => root,
@@ -790,9 +798,7 @@ pub fn cleanup_stale_sessions() -> CodexTempLoginCleanupReport {
         }
 
         let target = path.to_string_lossy().to_string();
-        if let Err(error) =
-            process::close_codex_instances(std::slice::from_ref(&target), CLOSE_TIMEOUT_SECS)
-        {
+        if let Err(error) = close_client(&target) {
             report.failed.push(CodexTempLoginCleanupFailure {
                 path: target,
                 error: format!("关闭官方客户端失败: {}", error),
@@ -1116,7 +1122,8 @@ mod tests {
             },
         );
 
-        let report = cleanup_stale_sessions();
+        // This directory sweep fixture must not inspect or stop real clients.
+        let report = cleanup_stale_sessions_with_close(|_| Ok(()));
         lock_sessions().remove("active-session");
 
         assert!(!leftover_dir.exists(), "leftover session should be removed");

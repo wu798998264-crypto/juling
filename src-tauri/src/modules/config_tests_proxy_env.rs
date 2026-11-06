@@ -100,9 +100,13 @@ fn check_proxy_env_restore_scenario(scenario: &str) {
             std::env::set_var(key, value);
         }
     }
+    // Windows aliases uppercase/lowercase environment names. Snapshot the
+    // values actually installed by the OS, including empty versus absent.
+    let original: Vec<_> = original.iter()
+        .map(|(key, _)| (*key, std::env::var(key).ok())).collect();
     let assert_original = || {
         for (key, value) in &original {
-            assert_eq!(std::env::var(key).ok().as_deref(), *value, "{key}");
+            assert_eq!(std::env::var(key).ok().as_deref(), value.as_deref(), "{key}");
         }
     };
 

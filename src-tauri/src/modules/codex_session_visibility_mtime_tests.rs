@@ -19,7 +19,7 @@ impl VisibilityMtimeFixture {
             Path::new("sessions/2026/10/11/rollout-01-mtime.jsonl"),
             content.as_bytes(),
         );
-        fs::File::open(&rollout)
+        fs::OpenOptions::new().write(true).open(&rollout)
             .unwrap()
             .set_modified(UNIX_EPOCH + Duration::new(1_700_000_000, 123_456_789))
             .unwrap();
@@ -145,7 +145,7 @@ fn quick_entry_skips_scan_then_append_and_never_reports_a_timestamp_change() {
                 .unwrap()
                 .write_all(appended)
                 .unwrap();
-            fs::File::open(&fixture.rollout)
+            fs::OpenOptions::new().write(true).open(&fixture.rollout)
                 .unwrap()
                 .set_modified(appended_time)
                 .unwrap();
@@ -190,7 +190,7 @@ fn timestamp_backup_restore_cannot_change_replaced_or_appended_rollouts() {
     assert_eq!(fixture.time(), appended_time);
     let replacement = fixture.dir.join("replacement.jsonl");
     fs::write(&replacement, &fixture.original).unwrap();
-    fs::File::open(&replacement)
+    fs::OpenOptions::new().write(true).open(&replacement)
         .unwrap()
         .set_modified(fixture.target_time)
         .unwrap();

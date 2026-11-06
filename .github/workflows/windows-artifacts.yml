@@ -49,6 +49,16 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          cargo test --locked -p juling --lib modules::codex_session_visibility:: -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib modules::codex_session_usage::tests -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib modules::codex_thread_sync:: -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib modules::codex_temp_login::tests -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib modules::config::tests::proxy_env_ -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib modules::instance_storage_cleanup::tests -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib modules::process::codex_linux_layout_tests -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib modules::process::codex_windows_managed_launch_tests -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib modules::process::windows_passive_exec_scan_tests -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib modules::update_checker::local::tests -- --nocapture --test-threads=1
           cargo test --locked -p juling --lib modules::codex_app_injection::usage::tests -- --nocapture --test-threads=1
           cargo test --locked -p juling --lib modules::codex_app_injection::output_speed::tests -- --nocapture --test-threads=1
           cargo test --locked -p juling --lib http_transport_failover_excludes_only_this_request_but_real_status_marks_account -- --nocapture --test-threads=1

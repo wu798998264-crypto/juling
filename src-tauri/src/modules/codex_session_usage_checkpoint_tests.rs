@@ -127,6 +127,7 @@ fn parent_index_is_bounded_and_replay_cursor_is_a_line_not_match_count() {
         ParentReplay::Matched(1)
     ));
     assert_eq!(checkpoint.replay_matched, 81);
+    drop(conn);
     fs::remove_dir_all(dir).unwrap();
 }
 
@@ -155,6 +156,7 @@ fn session_rollup_matches_report_before_and_after_backfill_and_append() {
     conn.execute("DELETE FROM session_usage_events WHERE request_id='r3'", [])
         .unwrap();
     assert_eq!(store.query(&query).unwrap().totals.request_count, 2);
+    drop(conn);
     fs::remove_dir_all(dir).unwrap();
 }
 
@@ -202,6 +204,7 @@ fn rewritten_file_keeps_previous_report_until_atomic_publication() {
             .unwrap(),
         0
     );
+    drop(conn);
     fs::remove_dir_all(dir).unwrap();
 }
 

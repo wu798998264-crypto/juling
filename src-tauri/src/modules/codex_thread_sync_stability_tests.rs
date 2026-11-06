@@ -116,16 +116,15 @@ fn append_rejects_target_changes_after_preparation_and_during_process_recheck() 
     for during_recheck in [false, true] {
         let fixture = AppendFixture::new();
         let action = fixture.action();
-        let changed = || {
+        let writer_blocked = std::cell::Cell::new(false);
+        let changed = || -> std::io::Result<()> {
             fs::OpenOptions::new()
                 .append(true)
-                .open(&fixture.target)
-                .unwrap()
+                .open(&fixture.target)?
                 .write_all(b"{\"type\":\"event\",\"text\":\"target edit\"}\r\n")
-                .unwrap();
         };
         if !during_recheck {
-            changed();
+            changed().unwrap();
         }
         let checks = std::cell::Cell::new(0);
         let result = copy_prepared_rollout(
@@ -136,14 +135,22 @@ fn append_rejects_target_changes_after_preparation_and_during_process_recheck() 
             || {
                 checks.set(checks.get() + 1);
                 if during_recheck && checks.get() == 2 {
-                    changed();
+                    if let Err(error) = changed() {
+                        // Windows excludes other writers while the append
+                        // handle is held; Unix relies on the byte recheck.
+                        assert!(cfg!(windows) && error.raw_os_error() == Some(32), "{error}");
+                        writer_blocked.set(true);
+                        return Err("synthetic competing writer was blocked".into());
+                    }
                 }
                 Ok(())
             },
         );
         assert!(result.is_err());
         let mut expected = fixture.prefix.clone();
-        expected.extend_from_slice(b"{\"type\":\"event\",\"text\":\"target edit\"}\r\n");
+        if !writer_blocked.get() {
+            expected.extend_from_slice(b"{\"type\":\"event\",\"text\":\"target edit\"}\r\n");
+        }
         assert_eq!(fs::read(&fixture.target).unwrap(), expected);
     }
 }
@@ -196,6 +203,7 @@ fn merged_source_same_as_target_path_still_appends_longer_verbatim_snapshot() {
 #[test]
 fn competing_rollout_lock_rejects_append_without_writing_bytes() {
     let fixture = AppendFixture::new();
+    let action = fixture.action();
     let locked = fs::OpenOptions::new()
         .read(true)
         .write(true)
@@ -206,10 +214,11 @@ fn competing_rollout_lock_rejects_append_without_writing_bytes() {
         &fixture.snapshot(),
         &fixture.target,
         &fixture.full,
-        fixture.action(),
+        action,
         || Ok(())
     )
     .is_err());
+    drop(locked);
     assert_eq!(fs::read(&fixture.target).unwrap(), fixture.prefix);
 }
 
