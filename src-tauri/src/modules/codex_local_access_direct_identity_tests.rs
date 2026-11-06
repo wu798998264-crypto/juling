@@ -76,7 +76,7 @@ fn direct_wakeup_and_pelican_use_the_account_store_and_separate_connection_pools
         use std::os::windows::process::CommandExt;
         command.creation_flags(0x08000000);
     }
-    let status = command.env_clear().env(CHILD,"1")
+    let status = command.env_clear().envs(crate::modules::test_support::child_platform_env()).env(CHILD,"1")
         .env("JULING_TOOLS_DATA_DIR",dir.path())
         .env("JULING_TEST_DIRECT_RESULT",dir.path().join("verified"))
         .args(["--exact","modules::codex_local_access::direct_identity_tests::direct_wakeup_and_pelican_use_the_account_store_and_separate_connection_pools","--test-threads=1"])

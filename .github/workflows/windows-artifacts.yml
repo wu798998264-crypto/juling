@@ -40,13 +40,22 @@ jobs:
       - uses: ./.github/actions/host-build-cache
         with:
           target: windows
+          cache-on-failure: 'true'
       - name: Install dependencies
         run: npm ci
       - name: Native client injection regressions
         run: node --test src-tauri/src/modules/codex_app_enhancements/*.test.cjs tests/codex_app_injection_dialog.test.cjs
+      - name: Verify Windows fixture regressions first
+        shell: bash
+        run: |
+          set -euo pipefail
+          cargo test --locked -p juling --lib commands::codex::codex_quota_future_tests -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib mixed_routing_update_restores_instance_store_when_speed_write_fails -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib native_proxy_cold_start_missing_store_accepts_concurrent_first_requests -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib request_diagnostics_pull_bounds_total_body_time_and_cancels_closed_endpoint -- --nocapture --test-threads=1
       - name: Native Rust behavior regressions
         timeout-minutes: 90
-        run: cargo test --locked -p juling --lib -- --test-threads=1
+        run: cargo test --locked -p juling --lib -- --nocapture --test-threads=1
       - name: Juling cooldown safety gate
         run: npm run test:juling-cooldown
       - name: Frozen protocol parity gate

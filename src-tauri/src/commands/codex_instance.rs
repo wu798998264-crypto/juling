@@ -1056,8 +1056,12 @@ mod tests {
             .unwrap_or_else(|error| error.into_inner());
         let env = TestDataDirGuard::new("juling-codex-routing-update-rollback");
 
-        let profile_path = env.root.join("profile-is-a-file");
-        std::fs::write(&profile_path, "not a directory").expect("write blocked profile path");
+        let profile_path = env.root.join("profile");
+        // The profile itself must be valid on Windows as well as Unix. Block
+        // the config file so the real speed write, rather than path preflight,
+        // fails after the instance-store update and exercises its rollback.
+        std::fs::create_dir_all(profile_path.join("config.toml"))
+            .expect("block the speed config file with a directory");
         let mut store = crate::models::InstanceStore::new();
         store.instances.push(InstanceProfile {
             id: "routing-rollback-instance".to_string(),
@@ -1090,8 +1094,8 @@ mod tests {
         )
         .await;
 
-        let error = result.expect_err("speed write should fail for a file profile path");
-        assert!(error.contains("Codex config.toml"));
+        let error = result.expect_err("speed write should fail for a blocked config file");
+        assert!(error.contains("Codex config.toml"), "unexpected write failure: {error}");
         let restored = modules::codex_instance::load_instance_store()
             .expect("load restored store")
             .instances

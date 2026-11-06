@@ -1,5 +1,23 @@
 use std::sync::{Mutex, OnceLock};
 
+/// Keep only operating-system prerequisites when a test clears a child env.
+/// In particular, Winsock providers require SystemRoot on Windows. Proxy,
+/// credential and profile variables must still be supplied by each fixture.
+pub fn child_platform_env() -> Vec<(std::ffi::OsString, std::ffi::OsString)> {
+    #[cfg(windows)]
+    {
+        ["SystemRoot", "WINDIR", "SystemDrive", "TEMP", "TMP", "COMSPEC"]
+            .iter()
+            .filter_map(|key| std::env::var_os(key)
+                .map(|value| (std::ffi::OsString::from(*key), value)))
+            .collect()
+    }
+    #[cfg(not(windows))]
+    {
+        Vec::new()
+    }
+}
+
 pub fn env_lock() -> &'static Mutex<()> {
     static LOCK: OnceLock<Mutex<()>> = OnceLock::new();
     LOCK.get_or_init(|| Mutex::new(()))

@@ -34,7 +34,7 @@ fn check_proxy_env_in_fresh_process(test_name: &str, scenario: &str) {
         command.creation_flags(0x08000000);
     }
     let status = command
-        .env_clear()
+        .env_clear().envs(crate::modules::test_support::child_platform_env())
         .env("HOME", &directory.0)
         .env("USERPROFILE", &directory.0)
         .env("CODEX_HOME", directory.0.join("codex-home"))

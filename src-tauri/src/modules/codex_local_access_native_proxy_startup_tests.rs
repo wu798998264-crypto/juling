@@ -25,7 +25,7 @@ fn native_proxy_cold_start_case(test_name: &str, scenario: &str) {
         command.creation_flags(0x08000000);
     }
     let status = command
-        .env_clear()
+        .env_clear().envs(crate::modules::test_support::child_platform_env())
         .env(SCENARIO, scenario)
         .env("JULING_TEST_NATIVE_PROXY_RESULT", &result_path)
         .env("JULING_TOOLS_DATA_DIR", directory.path().join("data"))

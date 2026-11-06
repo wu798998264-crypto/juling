@@ -149,7 +149,7 @@ async fn run_cli_lifecycle(flat_namespace: Option<&'static str>) {
     let mut command = tokio::process::Command::new("/usr/bin/sandbox-exec");
     command.args(["-p", "(version 1)(allow default)(deny network*)(allow network-outbound (remote ip \"localhost:*\"))(allow network-inbound (local ip \"localhost:*\"))"])
         .arg(binary).args(["exec","--ignore-user-config","--ignore-rules","--ephemeral","--skip-git-repo-check","--sandbox","read-only","--json","--model","gpt-5.6-sol","--cd"])
-        .arg(workspace.path()).env_clear().env("PATH", std::env::var_os("PATH").unwrap_or_default())
+        .arg(workspace.path()).env_clear().envs(crate::modules::test_support::child_platform_env()).env("PATH", std::env::var_os("PATH").unwrap_or_default())
         .env("CODEX_HOME", codex_home.path()).env("JULING_PLAN_CONTRACT_TOKEN","synthetic-loopback-only")
         .env("HOME", codex_home.path())
         .stdin(std::process::Stdio::null()).stdout(std::process::Stdio::piped()).stderr(std::process::Stdio::piped()).kill_on_drop(true);

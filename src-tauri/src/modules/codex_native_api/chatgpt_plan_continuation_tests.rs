@@ -367,7 +367,7 @@ async fn chatgpt_plan_real_codex_cli_reads_edits_and_checks_a_temporary_file() {
     #[cfg(not(target_os = "macos"))]
     let mut command = tokio::process::Command::new(binary);
     command
-        .env_clear()
+        .env_clear().envs(crate::modules::test_support::child_platform_env())
         .env("PATH", std::env::var_os("PATH").unwrap_or_default())
         .env("HOME", codex_home.path())
         .env("CODEX_HOME", codex_home.path())
