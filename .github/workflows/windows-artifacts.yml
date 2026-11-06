@@ -49,35 +49,37 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          cargo test --locked -p juling --lib modules::codex_session_visibility:: -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib modules::codex_session_usage::tests -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib modules::codex_thread_sync:: -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib modules::codex_temp_login::tests -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib modules::config::tests::proxy_env_ -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib modules::instance_storage_cleanup::tests -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib modules::process::codex_linux_layout_tests -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib modules::process::codex_windows_managed_launch_tests -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib modules::process::windows_passive_exec_scan_tests -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib modules::update_checker::local::tests -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib modules::codex_app_injection::usage::tests -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib modules::codex_app_injection::output_speed::tests -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib http_transport_failover_excludes_only_this_request_but_real_status_marks_account -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib remote_gateway_preserves_client_scope_and_thread_but_strips_management_headers -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib unfinished_http_upload_still_times_out_without_reaching_account_selection -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib responses_first_response_skips_transport_keepalives -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib websocket_candidate_with_no_upstream_send_has_no_failure_or_attempt_budget -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib websocket_handshake_connection_failure_keeps_code_and_context -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib browser_previews_are_sandboxed_bounded_and_expire -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib https_subscription_rejects_untrusted_certificate_without_system_trust_changes -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib modules::codex_proxy_desktop_router::tests::startup -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib resource_relocation_never_mistakes_transport_paths_or_encoded_keys_for_files -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib modules::chatgpt_plan::storage::tests -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib concurrent_bindings_cannot_assign_one_source_or_one_grant_twice -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib initial_directory_recovery_and_later_changes_use_the_same_persistent_location -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib commands::codex::codex_quota_future_tests -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib mixed_routing_update_restores_instance_store_when_speed_write_fails -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib native_proxy_cold_start_missing_store_accepts_concurrent_first_requests -- --nocapture --test-threads=1
-          cargo test --locked -p juling --lib request_diagnostics_pull_bounds_total_body_time_and_cancels_closed_endpoint -- --nocapture --test-threads=1
+          fixture_status=0
+          cargo test --locked -p juling --lib modules::codex_session_visibility:: -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib modules::codex_session_usage::tests -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib modules::codex_thread_sync:: -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib modules::codex_temp_login::tests -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib modules::config::tests::proxy_env_ -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib modules::instance_storage_cleanup::tests -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib modules::process::codex_linux_layout_tests -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib modules::process::codex_windows_managed_launch_tests -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib modules::process::windows_passive_exec_scan_tests -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib modules::update_checker::local::tests -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib modules::codex_app_injection::usage::tests -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib modules::codex_app_injection::output_speed::tests -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib http_transport_failover_excludes_only_this_request_but_real_status_marks_account -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib remote_gateway_preserves_client_scope_and_thread_but_strips_management_headers -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib unfinished_http_upload_still_times_out_without_reaching_account_selection -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib responses_first_response_skips_transport_keepalives -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib websocket_candidate_with_no_upstream_send_has_no_failure_or_attempt_budget -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib websocket_handshake_connection_failure_keeps_code_and_context -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib browser_previews_are_sandboxed_bounded_and_expire -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib https_subscription_rejects_untrusted_certificate_without_system_trust_changes -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib modules::codex_proxy_desktop_router::tests::startup -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib resource_relocation_never_mistakes_transport_paths_or_encoded_keys_for_files -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib modules::chatgpt_plan::storage::tests -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib concurrent_bindings_cannot_assign_one_source_or_one_grant_twice -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib initial_directory_recovery_and_later_changes_use_the_same_persistent_location -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib commands::codex::codex_quota_future_tests -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib mixed_routing_update_restores_instance_store_when_speed_write_fails -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib native_proxy_cold_start_missing_store_accepts_concurrent_first_requests -- --nocapture --test-threads=1 || fixture_status=$?
+          cargo test --locked -p juling --lib request_diagnostics_pull_bounds_total_body_time_and_cancels_closed_endpoint -- --nocapture --test-threads=1 || fixture_status=$?
+          exit $fixture_status
       - name: Native Rust behavior regressions
         timeout-minutes: 90
         run: cargo test --locked -p juling --lib -- --nocapture --test-threads=1

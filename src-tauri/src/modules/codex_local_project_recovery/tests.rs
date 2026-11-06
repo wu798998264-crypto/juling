@@ -540,6 +540,10 @@ fn integrated_repair(
 #[test]
 fn quick_visibility_directly_repairs_projects_and_unified_launch_uses_the_same_path() {
     use super::super::CodexSessionVisibilityRepairMode as Mode;
+    // Surface the bounded repair's deferral reason on hosted Windows runners.
+    let _trace = tracing::subscriber::set_default(
+        tracing_subscriber::fmt().with_test_writer().finish(),
+    );
     let f = Fixture::new();
     f.catalog();
     fs::write(
