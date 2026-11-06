@@ -209,9 +209,14 @@ mod request_diagnostics_poll_tests {
         let (port, server) = fake_diagnostic_server(vec![
             FakeDiagnosticResponse::json(json!({"events":[]})), delayed,
         ]).await;
-        let client = build_localhost_http_client(REQUEST_DIAGNOSTICS_POLL_TIMEOUT, "test").unwrap();
-        // Warm this client before measuring a body-read deadline. A cold
-        // Windows connector can otherwise time out before the fixture accepts.
+        // Exercise body timing against the fixture's IPv4 listener. Windows
+        // may otherwise try IPv6 localhost first on every new connection,
+        // consuming the 40 ms deadline before any response body is received.
+        let client = Client::builder()
+            .no_proxy()
+            .timeout(REQUEST_DIAGNOSTICS_POLL_TIMEOUT)
+            .resolve(CODEX_LOCAL_ACCESS_DEFAULT_CLIENT_URL_HOST, "127.0.0.1:0".parse().unwrap())
+            .build().unwrap();
         pull_request_diagnostics_from_port(&client, port, REQUEST_DIAGNOSTICS_POLL_TIMEOUT)
             .await.unwrap();
         let started = Instant::now();
