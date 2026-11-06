@@ -32,23 +32,19 @@ fn verify_codex_launch_receipt_pid(pid: u32, expected: &str, family: Option<&str
 pub fn collect_codex_launch_maintenance_process_entries() -> Result<Vec<(u32, Option<String>)>, String> {
     #[cfg(target_os = "windows")]
     {
-        let path = match resolve_codex_launch_path() {
-            Ok(path) => path,
-            Err(error) => {
-                // CLI-only installations need no desktop path. Prove that no
-                // supported GUI process exists before treating this as empty.
-                let mut system = System::new();
-                system.refresh_processes_specifics(
-                    sysinfo::ProcessesToUpdate::All, true, ProcessRefreshKind::nothing(),
-                );
-                if system.processes().values().any(|process| {
-                    process.name().to_string_lossy().eq_ignore_ascii_case("chatgpt.exe")
-                }) {
-                    return Err(format!("CODEX_SESSION_VISIBILITY_PROCESS_UNAVAILABLE: {error}"));
-                }
-                return Ok(Vec::new());
-            }
-        };
+        // Prove a desktop candidate exists before Store path discovery, which
+        // may start PowerShell and exhaust a bounded repair on CLI-only hosts.
+        let mut system = System::new();
+        system.refresh_processes_specifics(
+            sysinfo::ProcessesToUpdate::All, true, ProcessRefreshKind::nothing(),
+        );
+        if !system.processes().values().any(|process| {
+            process.name().to_string_lossy().eq_ignore_ascii_case("chatgpt.exe")
+        }) {
+            return Ok(Vec::new());
+        }
+        let path = resolve_codex_launch_path()
+            .map_err(|error| format!("CODEX_SESSION_VISIBILITY_PROCESS_UNAVAILABLE: {error}"))?;
         let (entries, complete) = collect_codex_process_snapshot_from_sysinfo(&path.to_string_lossy());
         if !complete {
             return Err("CODEX_SESSION_VISIBILITY_PROCESS_UNAVAILABLE".into());
