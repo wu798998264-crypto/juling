@@ -1,0 +1,87 @@
+name: Juling Windows Release Artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      expected_version:
+        description: Version in package.json
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: juling-windows-artifacts-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 150
+    env:
+      CARGO_BUILD_JOBS: '2'
+      CARGO_PROFILE_TEST_DEBUG: '0'
+      CARGO_PROFILE_TEST_INCREMENTAL: 'false'
+      CARGO_PROFILE_TEST_CODEGEN_UNITS: '256'
+      RUST_MIN_STACK: '8388608'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Validate source and version
+        env:
+          EXPECTED_VERSION: ${{ inputs.expected_version }}
+        run: |
+          node -e "const p=require('./package.json'),c=require('./src-tauri/tauri.conf.json');if(process.env.GITHUB_REPOSITORY!=='wu798998264-crypto/juling'||!/^\d+\.\d+\.\d+$/.test(process.env.EXPECTED_VERSION)||p.version!==process.env.EXPECTED_VERSION||c.version!==p.version||c.identifier!=='com.wu798998264.juling')throw Error('Unexpected release source');"
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: ./.github/actions/host-build-cache
+        with:
+          target: windows
+      - name: Install dependencies
+        run: npm ci
+      - name: Native client injection regressions
+        run: node --test src-tauri/src/modules/codex_app_enhancements/*.test.cjs tests/codex_app_injection_dialog.test.cjs
+      - name: Native Rust behavior regressions
+        timeout-minutes: 90
+        run: cargo test --locked -p juling --lib -- --test-threads=1
+      - name: Juling cooldown safety gate
+        run: npm run test:juling-cooldown
+      - name: Frozen protocol parity gate
+        run: npm run test:codex-parity
+      - name: Core Rust regressions
+        run: npm run test:rust:core
+      - name: Build signed Windows installers
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          JULING_ANTIGRAVITY_GOOGLE_CLIENT_ID: ${{ secrets.JULING_ANTIGRAVITY_GOOGLE_CLIENT_ID }}
+          JULING_ANTIGRAVITY_GOOGLE_CLIENT_SECRET: ${{ secrets.JULING_ANTIGRAVITY_GOOGLE_CLIENT_SECRET }}
+          JULING_GEMINI_GOOGLE_CLIENT_ID: ${{ secrets.JULING_GEMINI_GOOGLE_CLIENT_ID }}
+          JULING_GEMINI_GOOGLE_CLIENT_SECRET: ${{ secrets.JULING_GEMINI_GOOGLE_CLIENT_SECRET }}
+        run: node scripts/tauri.cjs build --ci
+      - name: Stage portable package and signed updater manifests
+        shell: pwsh
+        run: |
+          @'
+          const fs=require('node:fs'),crypto=require('node:crypto'),path=require('node:path');
+          const version=require('./package.json').version,out='release-assets';
+          require('./scripts/release/stage_release_assets.cjs').stageReleaseAssets({platform:'windows',assetsDir:'target/release/bundle',outputDir:out});
+          require('./scripts/release/build_windows_portable.cjs').buildWindowsPortableArchive({releaseDir:'target/release',outputDir:out,version});
+          require('./scripts/release/build_target_latest_json.cjs').buildTargetManifests({version,repo:process.env.GITHUB_REPOSITORY,assetsDir:out,notesFile:`docs/releases/v${version}.md`,publishedAt:new Date().toISOString(),outputDir:out,targets:['windows-x86_64-nsis','windows-x86_64-msi']});
+          require('./scripts/release/build_windows_latest_json.cjs').buildWindowsLatest(out);
+          const expected=[`Juling_${version}_x64-setup.exe`,`Juling_${version}_x64-setup.exe.sig`,`Juling_${version}_x64_zh-CN.msi`,`Juling_${version}_x64_zh-CN.msi.sig`,`Juling_${version}_x64-portable.zip`,'latest-windows-x86_64-nsis.json','latest-windows-x86_64-msi.json','latest-windows-x86_64.json','latest.json'].sort();
+          if(JSON.stringify(fs.readdirSync(out).sort())!==JSON.stringify(expected))throw Error('Incomplete or unexpected Windows assets');
+          fs.writeFileSync(path.join(out,'SHA256SUMS.txt'),expected.map(n=>crypto.createHash('sha256').update(fs.readFileSync(path.join(out,n))).digest('hex')+'  '+n).join('\n')+'\n');
+          console.log('Prepared signed installers, portable ZIP and updater manifests for '+version);
+          '@ | node
+      - name: Upload reviewable Windows assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: Juling-Windows-${{ github.sha }}
+          path: release-assets/*
+          retention-days: 14
+          if-no-files-found: error

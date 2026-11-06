@@ -90,7 +90,7 @@ jobs:
         run: npm run test:release
 
       - name: 🧪 Native client scripts and proxy archive tests
-        run: node --test src-tauri/src/modules/codex_app_enhancements/fast*.test.cjs tests/codex_app_injection_dialog.test.cjs scripts/verify-proxy-engine-archive.test.cjs
+        run: node --test src-tauri/src/modules/codex_app_enhancements/*.test.cjs tests/codex_app_injection_dialog.test.cjs scripts/verify-proxy-engine-archive.test.cjs
 
 
   preflight-ts-windows:

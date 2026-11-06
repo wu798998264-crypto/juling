@@ -10,6 +10,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+## [1.3.79] - 2026-11-06
+
+- Add MiniMax Code accounts, isolated instances, credit balances and check-ins, plus TRAE China check-in controls.
+- Add per-platform background enable controls, reduced motion, account timestamps, native prediction compatibility and separate OpenAI usage-query credentials.
+- Improve per-key proxy routing, safe capacity/quota recovery, gateway transport reporting and client credential compatibility.
+- Retain verified complete-history failover, all completed exec results, tool non-replay and bounded retry budgets.
+- Keep Juling branding, independent signed updates and disabled promotional backends. Windows x64 packages only; actual third-party access depends on credentials and network availability.
+
 ## [1.3.78] - 2026-11-01
 
 ### Changed

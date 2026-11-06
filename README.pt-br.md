@@ -17,7 +17,7 @@ Uma **ferramenta universal de gerenciamento de contas para IDEs de IA**, atualme
 
 🇺🇸 English · 🇨🇳 简体中文 · 繁體中文 · 🇯🇵 日本語 · 🇩🇪 Deutsch · 🇪🇸 Español · 🇫🇷 Français · 🇮🇹 Italiano · 🇰🇷 한국어 · 🇧🇷 Português · 🇷🇺 Русский · 🇹🇷 Türkçe · 🇵🇱 Polski · 🇨🇿 Čeština · 🇸🇦 العربية · 🇻🇳 Tiếng Việt · 🇮🇩 Bahasa Indonesia
 
-**Esta versão**: Windows 10/11 x64. O código para macOS/Linux permanece disponível, mas esta versão não publica pacotes para essas plataformas. Consulte [as notas](docs/releases/v1.3.78.md) e [NOTICE.txt](NOTICE.txt).
+**Esta versão**: Windows 10/11 x64. O código para macOS/Linux permanece disponível, mas esta versão não publica pacotes para essas plataformas. Consulte [as notas](docs/releases/v1.3.79.md) e [NOTICE.txt](NOTICE.txt).
 
 **Limites da validação**: As compilações e os testes automatizados de regressão passaram. A interface gráfica completa, o login com contas reais e as chamadas a serviços de terceiros ainda não concluíram os testes de aceitação manual.
 
@@ -289,11 +289,11 @@ Observações:
 
 ### Opção A: Download Manual (Recomendado)
 
-Acesse a [página de lançamentos do GitHub](https://github.com/wu798998264-crypto/juling/releases/tag/v1.3.78) para baixar esta versão v1.3.78 para Windows x64:
+Acesse a [página de lançamentos do GitHub](https://github.com/wu798998264-crypto/juling/releases/tag/v1.3.79) para baixar esta versão v1.3.79 para Windows x64:
 
 *   **Windows**: `.exe` (recomendado; corresponde ao canal padrão de atualização), `.msi` em chinês ou `x64-portable.zip` (extrair e executar)
 
-Esta versão não fornece pacotes para macOS/Linux nem distribui a v1.3.78 pelo Homebrew.
+Esta versão não fornece pacotes para macOS/Linux nem distribui a v1.3.79 pelo Homebrew.
 
 ### Referência histórica/de desenvolvimento: Homebrew e macOS
 
