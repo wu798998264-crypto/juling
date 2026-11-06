@@ -49,6 +49,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          cargo test --locked -p juling --lib modules::chatgpt_plan::storage::tests -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib concurrent_bindings_cannot_assign_one_source_or_one_grant_twice -- --nocapture --test-threads=1
+          cargo test --locked -p juling --lib initial_directory_recovery_and_later_changes_use_the_same_persistent_location -- --nocapture --test-threads=1
           cargo test --locked -p juling --lib commands::codex::codex_quota_future_tests -- --nocapture --test-threads=1
           cargo test --locked -p juling --lib mixed_routing_update_restores_instance_store_when_speed_write_fails -- --nocapture --test-threads=1
           cargo test --locked -p juling --lib native_proxy_cold_start_missing_store_accepts_concurrent_first_requests -- --nocapture --test-threads=1

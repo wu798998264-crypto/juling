@@ -360,6 +360,13 @@ fn build_migration_manifest(
     cancellable: bool,
 ) -> Result<MigrationManifest, String> {
     get_backup_root_dir()?;
+    // A recovered backup preference does not repair the application data root.
+    // Windows may report descendants of a file as NotFound; do not mistake
+    // unreadable legacy backup storage for an empty migration source.
+    let data_directory = account::get_data_dir()?;
+    if !data_directory.is_dir() {
+        return Err(format!("应用数据目录不可用: {}", data_directory.display()));
+    }
     let (current_root, target_root) = validate_backup_target(target_directory)?;
     let target_cmp = normalize_comparison_path(&target_root);
     if normalize_comparison_path(&current_root) == target_cmp {

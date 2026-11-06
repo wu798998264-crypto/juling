@@ -133,7 +133,15 @@ fn try_file_lock(path: &Path) -> Result<Option<RegistrationLock>, String> {
         .map_err(|_| "CHATGPT_PLAN_STORAGE".to_string())?;
     match fs2::FileExt::try_lock_exclusive(&file) {
         Ok(()) => Ok(Some(RegistrationLock(file))),
-        Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => Ok(None),
+        // Windows reports ERROR_LOCK_VIOLATION rather than WouldBlock. Use
+        // fs2's platform-specific contention code so competing refreshes wait
+        // for the owner instead of being misreported as storage corruption.
+        Err(error)
+            if error.kind() == std::io::ErrorKind::WouldBlock
+                || error.raw_os_error() == fs2::lock_contended_error().raw_os_error() =>
+        {
+            Ok(None)
+        }
         Err(_) => Err("CHATGPT_PLAN_STORAGE".into()),
     }
 }
