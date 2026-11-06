@@ -722,6 +722,14 @@ async fn native_transport_exhausted_stream_open_budget_can_fail_over_but_never_r
         alternate_url,
         selections: Mutex::new(Vec::new()),
     });
+    // Establish both fixture connections outside the 60ms opening budget. GET
+    // never enters the POST handlers, so every retry/failover count stays real.
+    for base_url in [&host.inner.url, &host.alternate_url] {
+        let warm = host.inner.client.get(format!("{base_url}/responses"))
+            .timeout(Duration::from_secs(2)).send().await.unwrap();
+        assert_eq!(warm.status(), reqwest::StatusCode::METHOD_NOT_ALLOWED);
+        warm.bytes().await.unwrap();
+    }
     let path =
         std::env::temp_dir().join(format!("native-failover-{}.sqlite", uuid::Uuid::now_v7()));
     let mut handle = native::start(
@@ -740,12 +748,10 @@ async fn native_transport_exhausted_stream_open_budget_can_fail_over_but_never_r
         .send()
         .await
         .unwrap();
-    assert_eq!(response.status(), 200);
-    assert!(response
-        .text()
-        .await
-        .unwrap()
-        .contains("response.completed"));
+    let status = response.status();
+    let body = response.text().await.unwrap();
+    assert_eq!(status, 200, "{body}");
+    assert!(body.contains("response.completed"));
     assert_eq!(primary_count.load(Ordering::SeqCst), 2);
     assert_eq!(alternate_count.load(Ordering::SeqCst), 1);
     let response = client()

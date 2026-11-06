@@ -50,6 +50,9 @@ jobs:
         run: |
           set -euo pipefail
           fixture_status=0
+          for attempt in 1 2 3; do
+            cargo test --locked -p juling --lib native_transport_exhausted_stream_open_budget_can_fail_over_but_never_replay_opaque_state -- --nocapture --test-threads=1 || fixture_status=$?
+          done
           cargo test --locked -p juling --lib modules::codex_session_visibility:: -- --nocapture --test-threads=1 || fixture_status=$?
           cargo test --locked -p juling --lib modules::codex_session_usage::tests -- --nocapture --test-threads=1 || fixture_status=$?
           cargo test --locked -p juling --lib modules::codex_thread_sync:: -- --nocapture --test-threads=1 || fixture_status=$?
