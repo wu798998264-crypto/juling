@@ -159,10 +159,12 @@ async fn call(routes: Vec<Route>, open_timeout: Duration) -> (u16, Value) {
         },
     });
     let temp = tempfile::tempdir().unwrap();
+    let identity_path = temp.path().join("identity.sqlite");
+    drop(super::super::identity::IdentityStore::open(identity_path.clone()).unwrap());
     let mut handle = start(
         "127.0.0.1:0".parse().unwrap(),
         host,
-        temp.path().join("identity.sqlite"),
+        identity_path,
         Options::default(),
     )
     .await
@@ -315,7 +317,9 @@ async fn header_timeout_uses_proxy_snapshot_without_claiming_proxy_auth_failure(
     });
     let (status, value) = call(
         vec![route(Some(&proxy), "slow-node")],
-        Duration::from_millis(200),
+        // The peer never sends headers. Give fixture state preparation room on
+        // loaded Windows runners, then still require the upstream timeout path.
+        Duration::from_secs(1),
     )
     .await;
     assert_eq!(status, 504, "{value}");
