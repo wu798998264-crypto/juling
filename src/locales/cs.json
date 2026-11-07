@@ -2485,6 +2485,22 @@
     "other_group": "Ostatní modely"
   },
   "codex": {
+    "overload": {
+      "setting": "Opakovat při přetížení",
+      "settingHint": "Platí pro nové požadavky místní služby API Codex. Požadavky, které lze bezpečně opakovat, počkají na dostupnost modelu.",
+      "retrying": "Model je vytížený, opakuji pokus ({{count}})",
+      "count": "Přetížení: {{count}}",
+      "countHint": "Počítá pokusy u poskytovatele včetně automatických opakování. Historie se uchovává až 7 dní.",
+      "history": "Historie přetížení",
+      "empty": "V tomto období nebyly zjištěny chyby přetížení.",
+      "attempt": "Pokus {{number}}",
+      "sameAccount": "Obnoveno na stejném účtu",
+      "otherAccount": "Obnoveno po změně účtu",
+      "pending": "Čeká se na výsledek",
+      "cancelled": "Zrušeno",
+      "failed": "Požadavek selhal",
+      "countUnavailable": "Statistiky přetížení nejsou dostupné"
+    },
     "instance": {
       "errors": {
         "threadSyncWorkerFailed": "Úloha synchronizace relací selhala: {{error}}",
@@ -3242,7 +3258,7 @@
       "imageGenerationMainModel": {
         "label": "Hlavní model obrázků",
         "notice": "Při běžném používání hlavní model obrázků neměňte.",
-        "hint": "Slouží pouze k předávání požadavků oficiální službě, ne k výběru modelu pro tvorbu obrázků. Upravte jej jen při změně oficiálního hlavního modelu. Prázdné pole použije gpt-5.6-luna.",
+        "hint": "Pouze pro tvorbu obrázků v Responses, nikoli pro samostatné API obrázků. Prázdné pole: gpt-5.6-luna.",
         "invalid": "Zadejte ID modelu bez mezer, nejvýše 200 znaků."
       },
       "requestDetail": {
@@ -6114,21 +6130,57 @@
     "officialApi": {
       "hint": "Účet s oficiálním API klíčem OpenAI, rozpoznaný podle skutečné adresy připojení."
     },
-    "overload": {
-      "setting": "Opakovat při přetížení",
-      "settingHint": "Platí pro nové požadavky místní služby API Codex. Požadavky, které lze bezpečně opakovat, počkají na dostupnost modelu.",
-      "retrying": "Model je vytížený, opakuji pokus ({{count}})",
-      "count": "Přetížení: {{count}}",
-      "countHint": "Počítá pokusy u poskytovatele včetně automatických opakování. Historie se uchovává až 7 dní.",
-      "history": "Historie přetížení",
-      "empty": "V tomto období nebyly zjištěny chyby přetížení.",
-      "attempt": "Pokus {{number}}",
-      "sameAccount": "Obnoveno na stejném účtu",
-      "otherAccount": "Obnoveno po změně účtu",
-      "pending": "Čeká se na výsledek",
-      "cancelled": "Zrušeno",
-      "failed": "Požadavek selhal",
-      "countUnavailable": "Statistiky přetížení nejsou dostupné"
+    "resetAutomation": {
+      "nothingToReset": "Žádný interval kvóty nyní nevyžaduje obnovení.",
+      "unknownOutcome": "Výsledek obnovení nelze potvrdit. Zkuste to znovu.",
+      "applyAllHint": "Po zapnutí se při uložení pravidlo zkopíruje do všech účtů a nahradí vlastní i vypnutá nastavení.",
+      "applyAll": "Uložit pro všechny účty",
+      "accountHint": "Účty bez vlastního nastavení používají společné pravidlo. Uložení platí jen pro tento účet.",
+      "title": "Automatické použití karet",
+      "accountTab": "Tento účet",
+      "publicTab": "Společné pravidlo",
+      "inherit": "Použít společné pravidlo",
+      "custom": "Vlastní pravidlo",
+      "off": "Vypnuto",
+      "entryDefault": "Automatické nastavení",
+      "noCredits": "Žádné karty",
+      "publicHint": "Výchozí pravidlo pro účty bez vlastního nastavení. Vlastní a vypnutá nastavení zůstanou zachována.",
+      "before": "Před vypršením",
+      "expiry": "Použít před vypršením",
+      "minutes": "min",
+      "hours": "hod.",
+      "days": "dny",
+      "hostHint": "Funguje, když je 聚灵 otevřený. Kartu vybírá server.",
+      "invalidTime": "Zadejte kladnou dobu v celých sekundách.",
+      "invalidPercent": "Zadejte celé procento od 0 do 100.",
+      "loadFailed": "Pravidla nelze načíst: {{error}}",
+      "saveFailed": "Pravidla nelze uložit: {{error}}",
+      "conflict": "Pravidlo se změnilo jinde. Načtěte je znovu.",
+      "busy": "U tohoto účtu již probíhá reset.",
+      "storageError": "Pravidla resetu nelze přečíst nebo uložit.",
+      "timeout": "Čas vypršel. Uložené ID požadavku se použije znovu, aby se karta neodečetla dvakrát.",
+      "history": "Nedávná aktivita",
+      "reasonExpiry": "Blížící se vypršení",
+      "reasonQuota": "Nízká kvóta",
+      "reasonManual": "Ruční reset",
+      "reasonCheck": "Kontrola na pozadí",
+      "pending": "Čekání na výsledek",
+      "editPublic": "Upravit společné pravidlo",
+      "accountMissing": "Účet již neexistuje.",
+      "masterLabel": "Používat karty automaticky",
+      "ruleSource": "Zdroj pravidla",
+      "weeklyTrigger": "Týdenní limit",
+      "weeklyRemaining": "Týdenní zůstatek ≤",
+      "previewTitle": "Náhled podmínek",
+      "previewAny": "Karta se použije při splnění kterékoli zapnuté podmínky:",
+      "previewExpiry": "Karta vyprší nejpozději za {{value}} {{unit}}",
+      "previewWeekly": "Zbývá nejvýše {{percent}} % týdenního limitu",
+      "previewOff": "Automatické použití je vypnuté. Níže uvedená pravidla nejsou aktivní.",
+      "previewEmpty": "Není zapnutá žádná podmínka. Karty se nebudou používat automaticky.",
+      "cardOn": "Autom.",
+      "cardOff": "Vyp.",
+      "orSeparator": " nebo ",
+      "inheritHint": "Nastavení se řídí společným pravidlem. Upravte je tam nebo zvolte vlastní pravidlo."
     }
   },
   "githubCopilot": {
@@ -7408,6 +7460,155 @@
       "timeRangeError": "Počáteční čas nesmí být pozdější než koncový čas"
     }
   },
+  "minimaxCode": {
+    "title": "Správa účtů MiniMax Code",
+    "noAccounts": "Žádné účty MiniMax Code",
+    "addAccount": "Přidat účet MiniMax Code",
+    "flowNotice": {
+      "title": "Informace o správě účtů MiniMax Code (kliknutím rozbalíte/sbalíte)",
+      "desc": "Správa místního přihlášení a přepínání účtů MiniMax Code.",
+      "permission": "Čte a zapisuje oficiální přihlašovací soubory. Každá instance MiniMax Code používá vlastní datovou složku.",
+      "network": "Autorizace, účet, tarif a kredity se ověřují pouze přes oficiální API MiniMax. Místní přihlašovací soubory se neodesílají."
+    },
+    "nickname": "Přezdívka",
+    "enterprise": "Podnikový",
+    "usage": "Stav využití",
+    "creditsBalance": "Zůstatek kreditů",
+    "usageNormal": "Normální",
+    "usageAbnormal": "Abnormální",
+    "usageViewDetail": "Zobrazit podrobnosti",
+    "usageDetailTitle": "Podrobnosti stavu využití",
+    "oauthWaiting": "Čekání na autorizaci...",
+    "oauthDesc": "Klikněte na tlačítko níže a otevřete autorizační stránku MiniMax Code v prohlížeči.",
+    "oauthDescWebview": "Klikněte na tlačítko níže a otevřete autorizační stránku MiniMax Code ve vestavěném WebView.",
+    "oauthFeature": {
+      "oauth": {
+        "title": "Pouze přihlášení IDE",
+        "item1": "Po dokončení OAuth v prohlížeči přidejte účet a použijte ho pro přepínání IDE.",
+        "item2": "Zůstatek kreditů",
+        "item3": "Zakoupené kredity · Darované kredity"
+      }
+    },
+    "oauthWebviewTab": "OAuth přes WebView",
+    "oauthOpenWebview": "Otevřít ve WebView",
+    "oauthOpenWebviewIncognito": "Otevřít v anonymním WebView",
+    "oauthOpenWebviewFailed": "Nepodařilo se otevřít WebView: {{error}}",
+    "oauthOpenBrowserFallback": "Otevřít v prohlížeči (záloha)",
+    "oauthOpenBrowserFailed": "Nepodařilo se otevřít prohlížeč: {{error}}",
+    "oauthWebviewProgressHint": "V horní části WebView se zobrazuje vodorovná lišta kroků pro určení zaseknuté fáze.",
+    "oauthFlow": {
+      "prepare": "Připravit OAuth odkaz",
+      "authorize": "Otevřít autorizační odkaz a potvrdit",
+      "bind": "Dotazovat výsledek autorizace a navázat účet",
+      "retryPrepare": "Znovu vygenerovat OAuth odkaz",
+      "retryAuthorize": "Znovu vyžádat autorizační odkaz",
+      "retryBind": "Opakovat dotazování autorizace",
+      "error": "Chyba toku: {{error}}"
+    },
+    "tokenDesc": "Vložte přístupový token MiniMax Code:",
+    "jsonDesc": "Vyberte soubor JSON obsahující účty MiniMax Code:",
+    "import": {
+      "localDesc": "Importujte data účtu z místního klienta MiniMax Code nebo ze souboru JSON.",
+      "localClient": "Importovat z místního MiniMax Code"
+    },
+    "search": "Hledat účty MiniMax Code...",
+    "quotaQuery": {
+      "failedRefreshCompact": "Obnovení kvóty selhalo",
+      "sectionTitle": "Dotaz kvóty",
+      "empty": "Zatím nejsou navázané informace o dotazu kvóty",
+      "packageUnknown": "Neznámý balíček",
+      "quotaLabel": "Zbývající kvóta",
+      "updatedAt": "Poslední dotaz: {{time}}",
+      "cycleRange": "Cyklus: {{start}} - {{end}}",
+      "cycleUnknown": "Informace o cyklu nejsou dostupné",
+      "expireAt": "Vyprší: {{time}}",
+      "expireUnknown": "Vyprší: N/A",
+      "packageTitle": {
+        "base": "Základní balíček zkušeností",
+        "activity": "Balíček dárků z akcí"
+      }
+    },
+    "extraCredit": {
+      "title": "Kreditní balíček"
+    },
+    "oauthUrlInputPlaceholder": "Autorizační URL můžete zadat ručně",
+    "oauthInvalidUrl": "Neplatná autorizační URL. Zadejte úplnou URL.",
+    "oauthGotoWebview": "Přejít v otevřeném WebView na zadanou URL",
+    "oauthGotoWebviewSuccess": "WebView dostalo požadavek přejít na zadanou URL.",
+    "oauthGotoWebviewFailed": "Nepodařilo se navigovat WebView: {{error}}",
+    "oauthWebviewInlineUrlPlaceholder": "Zadejte URL pro navigaci v tomto WebView",
+    "oauthWebviewInlineGo": "Přejít",
+    "oauthSuccessClosePrompt": "Účet byl úspěšně přidán. Zavřít toto WebView nyní?\nZvolte \"Zavřít WebView\" pro okamžité zavření nebo \"Později\" pro ponechání otevřeného.",
+    "oauthSuccessCloseTitle": "Účet přidán",
+    "oauthSuccessCloseNowLabel": "Zavřít WebView",
+    "oauthSuccessCloseLaterLabel": "Později",
+    "oauthSuccessCloseNowStatus": "✅ Účet přidán. Zavírám okno...",
+    "oauthSuccessCloseLaterStatus": "✅ Účet přidán. Toto WebView zůstane otevřené.",
+    "oauthWebviewOverlay": {
+      "steps": {
+        "prepare": "1 Připravit OAuth odkaz",
+        "authorize": "2 Otevřít autorizační odkaz a potvrdit",
+        "bind": "3 Dotazovat výsledek autorizace a navázat účet",
+        "complete": "5 Dokončeno (zavřít ručně)"
+      },
+      "status": {
+        "loginConfirm": "Na této stránce dokončete přihlášení a autorizaci."
+      }
+    },
+    "instances": {
+      "unsupported": {
+        "descPlatform": "Více instancí MiniMax Code je podporováno pouze na macOS, Windows a Linuxu."
+      }
+    },
+    "quota": {
+      "usedOfTotal": "{{used}} / {{total}}​",
+      "noPlan": "Bez předplatného M Plan",
+      "purchased": "Zakoupené kredity",
+      "gifted": "Darované kredity"
+    },
+    "checkin": {
+      "title": "Denní check-in",
+      "modalTitle": "Denní check-in",
+      "status": "Stav check-inu",
+      "checkedIn": "Zaregistrováno",
+      "notCheckedIn": "Nezaregistrováno",
+      "button": "Přihlásit",
+      "button.loading": "Probíhá check-in...",
+      "done": "Hotovo",
+      "success": "Check-in úspěšný! Série {{days}} dní",
+      "failure": "Přihlášení selhalo: {{message}}",
+      "failure.network": "Chyba sítě, zkuste to prosím později",
+      "lastCheckin": "Poslední check-in: {{time}}",
+      "streak": "{{days}}denní série",
+      "reward": "Odměna: {{reward}}",
+      "refreshStatus": "Obnovit",
+      "checkAll": "Check-in všeho",
+      "noAccounts": "Žádné účty",
+      "querying": "Načítání...",
+      "streakDays": "{{days}} dní",
+      "streakRewardCountdown": "Do bonusové odměny zbývá {{days}} dní",
+      "streakRewardToday": "Bonusová odměna je dnes dostupná!",
+      "recentDates": "Nedávno: ",
+      "claimed": "Vyzvednuto",
+      "queryFailed": "Dotaz selhal",
+      "retry": "Znovu",
+      "inactive": "Nedostupné",
+      "inactiveHint": "Check-in není pro tento účet aktivní",
+      "autoCheckinSettings": "Nastavení automatického přihlášení",
+      "autoCheckinLabel": "Automatické přihlášení",
+      "autoCheckinOff": "Automatické přihlášení vypnuto",
+      "autoCheckinEnabledHint": "Automatické přihlášení povoleno: Náhodné přihlášení mezi {{start}} a {{end}}",
+      "autoCheckinDisabledHint": "Automatické přihlášení zakázáno",
+      "enableAutoCheckin": "Povolit automatické přihlášení",
+      "enableAutoCheckinDesc": "Provádí denně náhodné přihlášení v určeném časovém rozmezí",
+      "randomTimeRange": "Náhodný časový rozsah přihlášení",
+      "startTime": "Počáteční čas",
+      "endTime": "Koncový čas",
+      "timeRangeHint": "Vybere denně náhodný čas v tomto rozsahu k dokončení přihlášení na pozadí.",
+      "timeRangeError": "Počáteční čas nesmí být pozdější než koncový čas"
+    },
+    "placeholder": "Správa účtů MiniMax Code bude brzy k dispozici."
+  },
   "zcode": {
     "search": "Hledat účty ZCode...",
     "flowNotice": {
@@ -7664,7 +7865,29 @@
     "continueMigrationScan": "Pokračovat ve skenu",
     "savePartialMigrationBatch": "Uložit část",
     "saveCompleteMigrationBatch": "Uložit vše",
-    "clearMigrationBatch": "Vymazat dávku"
+    "clearMigrationBatch": "Vymazat dávku",
+    "searchPlaceholder": "Hledat účty nebo typy",
+    "noSearchResults": "Žádné odpovídající účty ani typy",
+    "exportMigrationQr": "Exportovat migrační QR",
+    "exportBackup": "Exportovat zálohu",
+    "importBackup": "Importovat zálohu",
+    "batchDelete": "Smazat vybrané",
+    "exportBackupHint": "Exportovat zálohu všech uložených záznamů ve formátu JSON bez ohledu na hledání nebo výběr.",
+    "editAccountHint": "Použijte formát Typ:účet, například OpenAI:alice@example.com",
+    "migrationTitle": "Exportovat migrační QR kódy",
+    "migrationSelectedSummary": "Exportuje se {{count}} vybraných účtů.",
+    "migrationAllSummary": "Exportují se všechny uložené účty ({{count}}) bez ohledu na hledání.",
+    "migrationWarning": "Tyto QR kódy obsahují tajné klíče 2FA. Uchovávejte je v bezpečí.",
+    "migrationPage": "QR kód {{current}} z {{total}} · Počet účtů v tomto kódu: {{count}}",
+    "migrationPrevious": "Předchozí",
+    "migrationNext": "Další",
+    "migrationSaveImage": "Uložit QR kód",
+    "migrationImageAlt": "Migrační QR kód {{current}} z {{total}}",
+    "migrationInvalidRecord": "Některé záznamy obsahují neplatné tajné klíče. Před exportem migračních QR kódů je zkontrolujte.",
+    "migrationRecordTooLarge": "Účet obsahuje příliš mnoho informací pro migrační QR kód. Zkraťte název účtu a zkuste to znovu.",
+    "migrationUnsupportedParameters": "Migrační export nyní podporuje pouze šestimístné kódy SHA1 s intervalem 30 sekund; některé účty používají nepodporované parametry.",
+    "migrationQrFailed": "Migrační QR kódy se nepodařilo vytvořit. Zkuste to znovu.",
+    "exportFailed": "Export se nezdařil. Zkontrolujte umístění pro uložení a zkuste to znovu."
   },
   "logViewer": {
     "fileLabel": "Soubor logu",
@@ -8567,154 +8790,5 @@
     "errorModel": "Zadejte jedinečný úplný název modelu bez zástupných znaků.",
     "errorSave": "Nastavení se nepodařilo načíst nebo uložit. Zkuste to znovu.",
     "saved": "Uloženo. Platí pro nové požadavky."
-  },
-  "minimaxCode": {
-    "title": "Správa účtů MiniMax Code",
-    "noAccounts": "Žádné účty MiniMax Code",
-    "addAccount": "Přidat účet MiniMax Code",
-    "flowNotice": {
-      "title": "Informace o správě účtů MiniMax Code (kliknutím rozbalíte/sbalíte)",
-      "desc": "Správa místního přihlášení a přepínání účtů MiniMax Code.",
-      "permission": "Čte a zapisuje oficiální přihlašovací soubory. Každá instance MiniMax Code používá vlastní datovou složku.",
-      "network": "Autorizace, účet, tarif a kredity se ověřují pouze přes oficiální API MiniMax. Místní přihlašovací soubory se neodesílají."
-    },
-    "nickname": "Přezdívka",
-    "enterprise": "Podnikový",
-    "usage": "Stav využití",
-    "creditsBalance": "Zůstatek kreditů",
-    "usageNormal": "Normální",
-    "usageAbnormal": "Abnormální",
-    "usageViewDetail": "Zobrazit podrobnosti",
-    "usageDetailTitle": "Podrobnosti stavu využití",
-    "oauthWaiting": "Čekání na autorizaci...",
-    "oauthDesc": "Klikněte na tlačítko níže a otevřete autorizační stránku MiniMax Code v prohlížeči.",
-    "oauthDescWebview": "Klikněte na tlačítko níže a otevřete autorizační stránku MiniMax Code ve vestavěném WebView.",
-    "oauthFeature": {
-      "oauth": {
-        "title": "Pouze přihlášení IDE",
-        "item1": "Po dokončení OAuth v prohlížeči přidejte účet a použijte ho pro přepínání IDE.",
-        "item2": "Zůstatek kreditů",
-        "item3": "Zakoupené kredity · Darované kredity"
-      }
-    },
-    "oauthWebviewTab": "OAuth přes WebView",
-    "oauthOpenWebview": "Otevřít ve WebView",
-    "oauthOpenWebviewIncognito": "Otevřít v anonymním WebView",
-    "oauthOpenWebviewFailed": "Nepodařilo se otevřít WebView: {{error}}",
-    "oauthOpenBrowserFallback": "Otevřít v prohlížeči (záloha)",
-    "oauthOpenBrowserFailed": "Nepodařilo se otevřít prohlížeč: {{error}}",
-    "oauthWebviewProgressHint": "V horní části WebView se zobrazuje vodorovná lišta kroků pro určení zaseknuté fáze.",
-    "oauthFlow": {
-      "prepare": "Připravit OAuth odkaz",
-      "authorize": "Otevřít autorizační odkaz a potvrdit",
-      "bind": "Dotazovat výsledek autorizace a navázat účet",
-      "retryPrepare": "Znovu vygenerovat OAuth odkaz",
-      "retryAuthorize": "Znovu vyžádat autorizační odkaz",
-      "retryBind": "Opakovat dotazování autorizace",
-      "error": "Chyba toku: {{error}}"
-    },
-    "tokenDesc": "Vložte přístupový token MiniMax Code:",
-    "jsonDesc": "Vyberte soubor JSON obsahující účty MiniMax Code:",
-    "import": {
-      "localDesc": "Importujte data účtu z místního klienta MiniMax Code nebo ze souboru JSON.",
-      "localClient": "Importovat z místního MiniMax Code"
-    },
-    "search": "Hledat účty MiniMax Code...",
-    "quotaQuery": {
-      "failedRefreshCompact": "Obnovení kvóty selhalo",
-      "sectionTitle": "Dotaz kvóty",
-      "empty": "Zatím nejsou navázané informace o dotazu kvóty",
-      "packageUnknown": "Neznámý balíček",
-      "quotaLabel": "Zbývající kvóta",
-      "updatedAt": "Poslední dotaz: {{time}}",
-      "cycleRange": "Cyklus: {{start}} - {{end}}",
-      "cycleUnknown": "Informace o cyklu nejsou dostupné",
-      "expireAt": "Vyprší: {{time}}",
-      "expireUnknown": "Vyprší: N/A",
-      "packageTitle": {
-        "base": "Základní balíček zkušeností",
-        "activity": "Balíček dárků z akcí"
-      }
-    },
-    "extraCredit": {
-      "title": "Kreditní balíček"
-    },
-    "oauthUrlInputPlaceholder": "Autorizační URL můžete zadat ručně",
-    "oauthInvalidUrl": "Neplatná autorizační URL. Zadejte úplnou URL.",
-    "oauthGotoWebview": "Přejít v otevřeném WebView na zadanou URL",
-    "oauthGotoWebviewSuccess": "WebView dostalo požadavek přejít na zadanou URL.",
-    "oauthGotoWebviewFailed": "Nepodařilo se navigovat WebView: {{error}}",
-    "oauthWebviewInlineUrlPlaceholder": "Zadejte URL pro navigaci v tomto WebView",
-    "oauthWebviewInlineGo": "Přejít",
-    "oauthSuccessClosePrompt": "Účet byl úspěšně přidán. Zavřít toto WebView nyní?\nZvolte \"Zavřít WebView\" pro okamžité zavření nebo \"Později\" pro ponechání otevřeného.",
-    "oauthSuccessCloseTitle": "Účet přidán",
-    "oauthSuccessCloseNowLabel": "Zavřít WebView",
-    "oauthSuccessCloseLaterLabel": "Později",
-    "oauthSuccessCloseNowStatus": "✅ Účet přidán. Zavírám okno...",
-    "oauthSuccessCloseLaterStatus": "✅ Účet přidán. Toto WebView zůstane otevřené.",
-    "oauthWebviewOverlay": {
-      "steps": {
-        "prepare": "1 Připravit OAuth odkaz",
-        "authorize": "2 Otevřít autorizační odkaz a potvrdit",
-        "bind": "3 Dotazovat výsledek autorizace a navázat účet",
-        "complete": "5 Dokončeno (zavřít ručně)"
-      },
-      "status": {
-        "loginConfirm": "Na této stránce dokončete přihlášení a autorizaci."
-      }
-    },
-    "instances": {
-      "unsupported": {
-        "descPlatform": "Více instancí MiniMax Code je podporováno pouze na macOS, Windows a Linuxu."
-      }
-    },
-    "quota": {
-      "usedOfTotal": "{{used}} / {{total}}​",
-      "noPlan": "Bez předplatného M Plan",
-      "purchased": "Zakoupené kredity",
-      "gifted": "Darované kredity"
-    },
-    "checkin": {
-      "title": "Denní check-in",
-      "modalTitle": "Denní check-in",
-      "status": "Stav check-inu",
-      "checkedIn": "Zaregistrováno",
-      "notCheckedIn": "Nezaregistrováno",
-      "button": "Přihlásit",
-      "button.loading": "Probíhá check-in...",
-      "done": "Hotovo",
-      "success": "Check-in úspěšný! Série {{days}} dní",
-      "failure": "Přihlášení selhalo: {{message}}",
-      "failure.network": "Chyba sítě, zkuste to prosím později",
-      "lastCheckin": "Poslední check-in: {{time}}",
-      "streak": "{{days}}denní série",
-      "reward": "Odměna: {{reward}}",
-      "refreshStatus": "Obnovit",
-      "checkAll": "Check-in všeho",
-      "noAccounts": "Žádné účty",
-      "querying": "Načítání...",
-      "streakDays": "{{days}} dní",
-      "streakRewardCountdown": "Do bonusové odměny zbývá {{days}} dní",
-      "streakRewardToday": "Bonusová odměna je dnes dostupná!",
-      "recentDates": "Nedávno: ",
-      "claimed": "Vyzvednuto",
-      "queryFailed": "Dotaz selhal",
-      "retry": "Znovu",
-      "inactive": "Nedostupné",
-      "inactiveHint": "Check-in není pro tento účet aktivní",
-      "autoCheckinSettings": "Nastavení automatického přihlášení",
-      "autoCheckinLabel": "Automatické přihlášení",
-      "autoCheckinOff": "Automatické přihlášení vypnuto",
-      "autoCheckinEnabledHint": "Automatické přihlášení povoleno: Náhodné přihlášení mezi {{start}} a {{end}}",
-      "autoCheckinDisabledHint": "Automatické přihlášení zakázáno",
-      "enableAutoCheckin": "Povolit automatické přihlášení",
-      "enableAutoCheckinDesc": "Provádí denně náhodné přihlášení v určeném časovém rozmezí",
-      "randomTimeRange": "Náhodný časový rozsah přihlášení",
-      "startTime": "Počáteční čas",
-      "endTime": "Koncový čas",
-      "timeRangeHint": "Vybere denně náhodný čas v tomto rozsahu k dokončení přihlášení na pozadí.",
-      "timeRangeError": "Počáteční čas nesmí být pozdější než koncový čas"
-    },
-    "placeholder": "Správa účtů MiniMax Code bude brzy k dispozici."
   }
 }

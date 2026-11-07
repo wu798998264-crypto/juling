@@ -8,6 +8,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.3.80] - 2026-11-07
+
+### Added
+
+- Add GPT-6.1 Terra routing, image input, wakeup presets and Ultra model tests.
+- Add native GPT Image 2.6 Sunburst and Flare routes, image source selection and image editing options.
+- Add Chat-provider tool discovery and reusable remote context compaction.
+- Add reset-card automation rules, trigger preview, activity records and duplicate redemption protection.
+- Add persistent account card ordering and local 2FA migration QR export with SVG download.
+- Add reveal, hide and copy controls to existing API Key editors.
+
+### Fixed
+
+- Preserve local projects, onboarding and conversation membership across account switches, and correct repaired history ordering.
+- Clear stale quota cooldowns while retaining newer limits, and recover Windows gateway ports without changing their keys.
+- Improve bounded capacity recovery, continuation tool choice and image capability persistence.
+- Retain Juling complete-history checks, completed exec outputs, tool non-replay and total retry budgets.
+
 ## [Unreleased]
 
 ## [1.3.79] - 2026-11-06

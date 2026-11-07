@@ -2532,6 +2532,22 @@
     "other_group": "Model Lainnya"
   },
   "codex": {
+    "overload": {
+      "setting": "Coba lagi saat penuh",
+      "settingHint": "Berlaku untuk permintaan baru di layanan API Codex lokal. Permintaan yang aman diulang akan menunggu hingga model tersedia.",
+      "retrying": "Model sibuk, mencoba lagi ({{count}})",
+      "count": "Kapasitas penuh: {{count}}",
+      "countHint": "Menghitung percobaan ke penyedia, termasuk percobaan otomatis. Riwayat disimpan hingga 7 hari.",
+      "history": "Riwayat kapasitas",
+      "empty": "Tidak ada kesalahan kapasitas pada rentang ini.",
+      "attempt": "Percobaan {{number}}",
+      "sameAccount": "Pulih dengan akun yang sama",
+      "otherAccount": "Pulih setelah berganti akun",
+      "pending": "Menunggu hasil",
+      "cancelled": "Dibatalkan",
+      "failed": "Permintaan gagal",
+      "countUnavailable": "Statistik kapasitas tidak tersedia"
+    },
     "instance": {
       "errors": {
         "threadSyncWorkerFailed": "Tugas sinkronisasi sesi gagal: {{error}}",
@@ -3292,7 +3308,7 @@
       "imageGenerationMainModel": {
         "label": "Model utama gambar",
         "notice": "Jangan ubah model utama gambar saat penggunaan biasa.",
-        "hint": "Hanya digunakan untuk meneruskan permintaan ke layanan gambar resmi, bukan memilih model pembuat gambar. Ubah manual hanya jika model utama resmi berubah. Kosongkan untuk memakai gpt-5.6-luna.",
+        "hint": "Hanya untuk pembuatan gambar dalam Responses, bukan API gambar mandiri. Kosong: gpt-5.6-luna.",
         "invalid": "Masukkan ID model tanpa spasi, maksimal 200 karakter."
       },
       "requestDetail": {
@@ -6161,21 +6177,57 @@
     "officialApi": {
       "hint": "Akun dengan kunci API resmi OpenAI, dikenali berdasarkan alamat koneksi yang digunakan."
     },
-    "overload": {
-      "setting": "Coba lagi saat penuh",
-      "settingHint": "Berlaku untuk permintaan baru di layanan API Codex lokal. Permintaan yang aman diulang akan menunggu hingga model tersedia.",
-      "retrying": "Model sibuk, mencoba lagi ({{count}})",
-      "count": "Kapasitas penuh: {{count}}",
-      "countHint": "Menghitung percobaan ke penyedia, termasuk percobaan otomatis. Riwayat disimpan hingga 7 hari.",
-      "history": "Riwayat kapasitas",
-      "empty": "Tidak ada kesalahan kapasitas pada rentang ini.",
-      "attempt": "Percobaan {{number}}",
-      "sameAccount": "Pulih dengan akun yang sama",
-      "otherAccount": "Pulih setelah berganti akun",
+    "resetAutomation": {
+      "nothingToReset": "Tidak ada periode kuota yang perlu direset saat ini.",
+      "unknownOutcome": "Hasil reset tidak dapat dipastikan. Coba lagi.",
+      "applyAllHint": "Jika diaktifkan, Simpan menyalin aturan ini ke semua akun dan mengganti pengaturan khusus serta nonaktif.",
+      "applyAll": "Simpan untuk semua akun",
+      "accountHint": "Akun tanpa pengaturan sendiri memakai aturan bersama. Penyimpanan hanya berlaku untuk akun ini.",
+      "title": "Pemakaian kartu otomatis",
+      "accountTab": "Akun ini",
+      "publicTab": "Aturan bersama",
+      "inherit": "Ikuti aturan bersama",
+      "custom": "Aturan khusus",
+      "off": "Nonaktif",
+      "entryDefault": "Atur otomatis",
+      "noCredits": "Tidak ada kartu",
+      "publicHint": "Aturan bawaan untuk akun tanpa pengaturan sendiri. Pengaturan khusus atau nonaktif tetap dipertahankan.",
+      "before": "Sebelum kedaluwarsa",
+      "expiry": "Pakai sebelum kedaluwarsa",
+      "minutes": "menit",
+      "hours": "jam",
+      "days": "hari",
+      "hostHint": "Berjalan selama 聚灵 terbuka. Kartu dipilih oleh server.",
+      "invalidTime": "Masukkan durasi positif dalam detik bulat.",
+      "invalidPercent": "Masukkan persentase bulat dari 0 hingga 100.",
+      "loadFailed": "Gagal memuat aturan: {{error}}",
+      "saveFailed": "Gagal menyimpan aturan: {{error}}",
+      "conflict": "Aturan telah berubah di tempat lain. Muat ulang.",
+      "busy": "Reset sedang berlangsung untuk akun ini.",
+      "storageError": "Aturan reset tidak dapat dibaca atau disimpan.",
+      "timeout": "Waktu permintaan habis. ID tersimpan akan dipakai ulang agar kartu tidak terpakai dua kali.",
+      "history": "Aktivitas terbaru",
+      "reasonExpiry": "Hampir kedaluwarsa",
+      "reasonQuota": "Kuota rendah",
+      "reasonManual": "Reset manual",
+      "reasonCheck": "Pemeriksaan latar",
       "pending": "Menunggu hasil",
-      "cancelled": "Dibatalkan",
-      "failed": "Permintaan gagal",
-      "countUnavailable": "Statistik kapasitas tidak tersedia"
+      "editPublic": "Edit aturan bersama",
+      "accountMissing": "Akun sudah tidak ada.",
+      "masterLabel": "Gunakan kartu secara otomatis",
+      "ruleSource": "Sumber aturan",
+      "weeklyTrigger": "Ambang mingguan",
+      "weeklyRemaining": "Sisa mingguan ≤",
+      "previewTitle": "Pratinjau pemicu",
+      "previewAny": "Satu kartu digunakan saat salah satu kondisi aktif terpenuhi:",
+      "previewExpiry": "Kartu kedaluwarsa dalam {{value}} {{unit}}",
+      "previewWeekly": "Sisa kuota mingguan paling banyak {{percent}}%",
+      "previewOff": "Penggunaan otomatis nonaktif. Aturan di bawah tidak berlaku.",
+      "previewEmpty": "Tidak ada kondisi aktif. Kartu tidak akan digunakan otomatis.",
+      "cardOn": "Oto.",
+      "cardOff": "Mati",
+      "orSeparator": " atau ",
+      "inheritHint": "Pengaturan ini mengikuti aturan bersama. Edit aturan tersebut atau pilih aturan khusus."
     }
   },
   "codebuddy": {
@@ -7583,6 +7635,155 @@
       "timeRangeError": "Waktu mulai tidak boleh lebih lambat dari waktu selesai"
     }
   },
+  "minimaxCode": {
+    "title": "Akun MiniMax Code",
+    "noAccounts": "Tidak ada akun MiniMax Code",
+    "addAccount": "Tambah Akun MiniMax Code",
+    "flowNotice": {
+      "title": "Info Akun MiniMax Code (klik untuk perluas/ciutkan)",
+      "desc": "Kelola login lokal dan pergantian akun MiniMax Code.",
+      "permission": "Membaca dan menulis file login resmi. Setiap instans MiniMax Code memakai folder data terpisah.",
+      "network": "Hanya menghubungi API resmi MiniMax untuk otorisasi, akun, paket, dan kredit. File login lokal tidak diunggah."
+    },
+    "nickname": "Nama panggilan",
+    "enterprise": "Perusahaan",
+    "usage": "Status Penggunaan",
+    "creditsBalance": "Saldo Kredit",
+    "usageNormal": "Status normal",
+    "usageAbnormal": "Abnormal​",
+    "usageViewDetail": "Lihat detail",
+    "usageDetailTitle": "Detail Status Penggunaan",
+    "oauthWaiting": "Menunggu otorisasi...",
+    "oauthDesc": "Klik tombol di bawah ini untuk membuka halaman otorisasi MiniMax Code di peramban Anda.",
+    "oauthDescWebview": "Klik tombol di bawah ini untuk membuka halaman otorisasi MiniMax Code di WebView bawaan.",
+    "oauthFeature": {
+      "oauth": {
+        "title": "IDE sign-in only​",
+        "item1": "Add the account after completing OAuth in your browser, then use it for IDE switching.​",
+        "item2": "Saldo Kredit",
+        "item3": "Kredit dibeli · Kredit hadiah"
+      }
+    },
+    "oauthWebviewTab": "WebView OAuth​",
+    "oauthOpenWebview": "Open in WebView​",
+    "oauthOpenWebviewIncognito": "Open in Incognito WebView​",
+    "oauthOpenWebviewFailed": "Failed to open WebView: {{error}}​",
+    "oauthOpenBrowserFallback": "Open in Browser (Fallback)​",
+    "oauthOpenBrowserFailed": "Failed to open browser: {{error}}​",
+    "oauthWebviewProgressHint": "A horizontal step bar is shown at the top of the WebView to locate stuck stages.​",
+    "oauthFlow": {
+      "prepare": "Prepare OAuth link​",
+      "authorize": "Open authorization link and confirm​",
+      "bind": "Poll auth result and bind account​",
+      "retryPrepare": "Regenerate OAuth link​",
+      "retryAuthorize": "Request authorization link again​",
+      "retryBind": "Retry auth polling​",
+      "error": "Flow error: {{error}}​"
+    },
+    "oauthWebviewOverlay": {
+      "steps": {
+        "prepare": "1 Prepare OAuth link​",
+        "authorize": "2 Open authorization link and confirm​",
+        "bind": "3 Poll auth result and bind account​",
+        "complete": "5 Done (close manually)​"
+      },
+      "status": {
+        "loginConfirm": "Please complete sign-in and authorization on this page.​"
+      }
+    },
+    "tokenDesc": "Tempel token akses MiniMax Code Anda:",
+    "jsonDesc": "Pilih berkas JSON yang berisi akun MiniMax Code:",
+    "import": {
+      "localDesc": "Impor data akun dari klien MiniMax Code lokal atau berkas JSON.",
+      "localClient": "Impor dari MiniMax Code lokal"
+    },
+    "search": "Cari akun MiniMax Code...",
+    "quota": {
+      "usedOfTotal": "{{used}} / {{total}}​",
+      "noPlan": "Tanpa langganan M Plan",
+      "purchased": "Kredit dibeli",
+      "gifted": "Kredit hadiah"
+    },
+    "quotaQuery": {
+      "failedRefreshCompact": "Quota query failed​",
+      "sectionTitle": "Quota Query​",
+      "empty": "No quota data available​",
+      "packageUnknown": "Unknown package​",
+      "quotaLabel": "Remaining quota​",
+      "updatedAt": "Next refresh time: {{time}}​",
+      "cycleRange": "Cycle: {{start}} - {{end}}​",
+      "cycleUnknown": "Cycle info unavailable​",
+      "expireAt": "Expires at: {{time}}​",
+      "expireUnknown": "Expires at: N/A​",
+      "packageTitle": {
+        "base": "Base Experience Package​",
+        "activity": "Activity Gift Package​"
+      }
+    },
+    "extraCredit": {
+      "title": "Credit Package​"
+    },
+    "oauthUrlInputPlaceholder": "You can enter an authorization URL manually​",
+    "oauthInvalidUrl": "Invalid authorization URL. Please enter a full URL.​",
+    "oauthGotoWebview": "Navigate opened WebView to input URL​",
+    "oauthGotoWebviewSuccess": "Requested WebView to navigate to the input URL.​",
+    "oauthGotoWebviewFailed": "Failed to navigate WebView: {{error}}​",
+    "oauthWebviewInlineUrlPlaceholder": "Enter a URL to navigate within this WebView​",
+    "oauthWebviewInlineGo": "Go​",
+    "oauthSuccessClosePrompt": "Account added successfully. Close this WebView now?\nChoose \"Close WebView\" to close now, or \"Later\" to keep it open.​",
+    "oauthSuccessCloseTitle": "Account Added​",
+    "oauthSuccessCloseNowLabel": "Close WebView​",
+    "oauthSuccessCloseLaterLabel": "Later​",
+    "oauthSuccessCloseNowStatus": "Ã¢Å“â€¦ Account added. Closing window...",
+    "oauthSuccessCloseLaterStatus": "Ã¢Å“â€¦ Account added. This WebView stays open.",
+    "instances": {
+      "unsupported": {
+        "descPlatform": "Multi-instansi MiniMax Code didukung hanya di macOS, Windows, dan Linux."
+      }
+    },
+    "checkin": {
+      "title": "Check-in Harian",
+      "modalTitle": "Check-in Harian",
+      "status": "Status Check-in",
+      "checkedIn": "Sudah Check-in",
+      "notCheckedIn": "Belum Check-in",
+      "button": "Absen",
+      "button.loading": "Melakukan check-in...",
+      "done": "Selesai",
+      "success": "Check-in berhasil! Streak {{days}} hari",
+      "failure": "Absen gagal: {{message}}",
+      "failure.network": "Kesalahan jaringan, silakan coba lagi nanti",
+      "lastCheckin": "Check-in terakhir: {{time}}",
+      "streak": "Streak {{days}} hari",
+      "reward": "Hadiah: {{reward}}",
+      "refreshStatus": "Segarkan",
+      "checkAll": "Check In Semua",
+      "noAccounts": "Tidak ada akun",
+      "querying": "Memuat...",
+      "streakDays": "{{days}} hari",
+      "streakRewardCountdown": "{{days}} hari lagi untuk hadiah bonus",
+      "streakRewardToday": "Hadiah bonus tersedia hari ini!",
+      "recentDates": "Terbaru: ",
+      "claimed": "Diklaim",
+      "queryFailed": "Kueri gagal",
+      "retry": "Coba lagi",
+      "inactive": "Tidak tersedia",
+      "inactiveHint": "Check-in tidak aktif untuk akun ini",
+      "autoCheckinSettings": "Pengaturan Check-in Otomatis",
+      "autoCheckinLabel": "Check-in Otomatis",
+      "autoCheckinOff": "Check-in Otomatis Mati",
+      "autoCheckinEnabledHint": "Check-in otomatis aktif: Check-in acak antara {{start}} dan {{end}}",
+      "autoCheckinDisabledHint": "Check-in otomatis nonaktif",
+      "enableAutoCheckin": "Aktifkan Check-in Otomatis",
+      "enableAutoCheckinDesc": "Melakukan check-in harian secara acak dalam rentang waktu yang ditentukan",
+      "randomTimeRange": "Rentang Waktu Check-in Acak",
+      "startTime": "Waktu Mulai",
+      "endTime": "Waktu Selesai",
+      "timeRangeHint": "Memilih waktu acak dalam rentang ini setiap hari untuk menyelesaikan check-in latar belakang.",
+      "timeRangeError": "Waktu mulai tidak boleh lebih lambat dari waktu selesai"
+    },
+    "placeholder": "Manajemen akun MiniMax Code akan segera hadir."
+  },
   "mfaVault": {
     "pageDesc": "Simpan dan kelola kode pemulihan cadangan MFA, set kode sandi, dan data autentikasi sensitif lainnya dengan aman. Catatan MFA disimpan secara lokal saja. Menghapus catatan, membersihkan cache, atau mengganti/kehilangan perangkat dapat menyebabkan kehilangan MFA. Simpan cadangan dan impor dari cadangan saat diperlukan.",
     "manualAdd": "Tambah Kredensial",
@@ -7624,7 +7825,29 @@
     "continueMigrationScan": "Lanjut pindai",
     "savePartialMigrationBatch": "Simpan sebagian",
     "saveCompleteMigrationBatch": "Simpan lengkap",
-    "clearMigrationBatch": "Hapus batch"
+    "clearMigrationBatch": "Hapus batch",
+    "searchPlaceholder": "Cari akun atau jenis",
+    "noSearchResults": "Tidak ada akun atau jenis yang cocok",
+    "exportMigrationQr": "Ekspor QR Migrasi",
+    "exportBackup": "Ekspor Cadangan",
+    "importBackup": "Impor Cadangan",
+    "batchDelete": "Hapus yang Dipilih",
+    "exportBackupHint": "Ekspor cadangan JSON untuk semua catatan tersimpan, terlepas dari pencarian atau pilihan.",
+    "editAccountHint": "Gunakan format Jenis:akun, misalnya OpenAI:alice@example.com",
+    "migrationTitle": "Ekspor Kode QR Migrasi",
+    "migrationSelectedSummary": "Mengekspor {{count}} akun yang dipilih.",
+    "migrationAllSummary": "Mengekspor semua {{count}} akun tersimpan, terlepas dari pencarian.",
+    "migrationWarning": "Kode QR ini berisi kunci rahasia 2FA. Simpan dengan aman.",
+    "migrationPage": "QR {{current}} dari {{total}} · {{count}} akun dalam kode ini",
+    "migrationPrevious": "Sebelumnya",
+    "migrationNext": "Berikutnya",
+    "migrationSaveImage": "Simpan Kode QR",
+    "migrationImageAlt": "Kode QR migrasi {{current}} dari {{total}}",
+    "migrationInvalidRecord": "Beberapa catatan berisi kunci rahasia yang tidak valid. Periksa sebelum mengekspor kode QR migrasi.",
+    "migrationRecordTooLarge": "Informasi akun terlalu banyak untuk dimuat dalam kode QR migrasi. Persingkat nama akun lalu coba lagi.",
+    "migrationUnsupportedParameters": "Ekspor migrasi saat ini hanya mendukung kode SHA1, 6 digit, 30 detik; beberapa akun menggunakan parameter yang tidak didukung.",
+    "migrationQrFailed": "Tidak dapat membuat kode QR migrasi. Silakan coba lagi.",
+    "exportFailed": "Ekspor gagal. Periksa lokasi penyimpanan lalu coba lagi."
   },
   "twoFactorAuth": {
     "pageTitle": "2FA​",
@@ -8567,154 +8790,5 @@
     "errorModel": "Masukkan nama model lengkap dan unik tanpa karakter pengganti.",
     "errorSave": "Gagal memuat atau menyimpan pengaturan. Coba lagi.",
     "saved": "Tersimpan. Berlaku untuk permintaan baru."
-  },
-  "minimaxCode": {
-    "title": "Akun MiniMax Code",
-    "noAccounts": "Tidak ada akun MiniMax Code",
-    "addAccount": "Tambah Akun MiniMax Code",
-    "flowNotice": {
-      "title": "Info Akun MiniMax Code (klik untuk perluas/ciutkan)",
-      "desc": "Kelola login lokal dan pergantian akun MiniMax Code.",
-      "permission": "Membaca dan menulis file login resmi. Setiap instans MiniMax Code memakai folder data terpisah.",
-      "network": "Hanya menghubungi API resmi MiniMax untuk otorisasi, akun, paket, dan kredit. File login lokal tidak diunggah."
-    },
-    "nickname": "Nama panggilan",
-    "enterprise": "Perusahaan",
-    "usage": "Status Penggunaan",
-    "creditsBalance": "Saldo Kredit",
-    "usageNormal": "Status normal",
-    "usageAbnormal": "Abnormal​",
-    "usageViewDetail": "Lihat detail",
-    "usageDetailTitle": "Detail Status Penggunaan",
-    "oauthWaiting": "Menunggu otorisasi...",
-    "oauthDesc": "Klik tombol di bawah ini untuk membuka halaman otorisasi MiniMax Code di peramban Anda.",
-    "oauthDescWebview": "Klik tombol di bawah ini untuk membuka halaman otorisasi MiniMax Code di WebView bawaan.",
-    "oauthFeature": {
-      "oauth": {
-        "title": "IDE sign-in only​",
-        "item1": "Add the account after completing OAuth in your browser, then use it for IDE switching.​",
-        "item2": "Saldo Kredit",
-        "item3": "Kredit dibeli · Kredit hadiah"
-      }
-    },
-    "oauthWebviewTab": "WebView OAuth​",
-    "oauthOpenWebview": "Open in WebView​",
-    "oauthOpenWebviewIncognito": "Open in Incognito WebView​",
-    "oauthOpenWebviewFailed": "Failed to open WebView: {{error}}​",
-    "oauthOpenBrowserFallback": "Open in Browser (Fallback)​",
-    "oauthOpenBrowserFailed": "Failed to open browser: {{error}}​",
-    "oauthWebviewProgressHint": "A horizontal step bar is shown at the top of the WebView to locate stuck stages.​",
-    "oauthFlow": {
-      "prepare": "Prepare OAuth link​",
-      "authorize": "Open authorization link and confirm​",
-      "bind": "Poll auth result and bind account​",
-      "retryPrepare": "Regenerate OAuth link​",
-      "retryAuthorize": "Request authorization link again​",
-      "retryBind": "Retry auth polling​",
-      "error": "Flow error: {{error}}​"
-    },
-    "oauthWebviewOverlay": {
-      "steps": {
-        "prepare": "1 Prepare OAuth link​",
-        "authorize": "2 Open authorization link and confirm​",
-        "bind": "3 Poll auth result and bind account​",
-        "complete": "5 Done (close manually)​"
-      },
-      "status": {
-        "loginConfirm": "Please complete sign-in and authorization on this page.​"
-      }
-    },
-    "tokenDesc": "Tempel token akses MiniMax Code Anda:",
-    "jsonDesc": "Pilih berkas JSON yang berisi akun MiniMax Code:",
-    "import": {
-      "localDesc": "Impor data akun dari klien MiniMax Code lokal atau berkas JSON.",
-      "localClient": "Impor dari MiniMax Code lokal"
-    },
-    "search": "Cari akun MiniMax Code...",
-    "quota": {
-      "usedOfTotal": "{{used}} / {{total}}​",
-      "noPlan": "Tanpa langganan M Plan",
-      "purchased": "Kredit dibeli",
-      "gifted": "Kredit hadiah"
-    },
-    "quotaQuery": {
-      "failedRefreshCompact": "Quota query failed​",
-      "sectionTitle": "Quota Query​",
-      "empty": "No quota data available​",
-      "packageUnknown": "Unknown package​",
-      "quotaLabel": "Remaining quota​",
-      "updatedAt": "Next refresh time: {{time}}​",
-      "cycleRange": "Cycle: {{start}} - {{end}}​",
-      "cycleUnknown": "Cycle info unavailable​",
-      "expireAt": "Expires at: {{time}}​",
-      "expireUnknown": "Expires at: N/A​",
-      "packageTitle": {
-        "base": "Base Experience Package​",
-        "activity": "Activity Gift Package​"
-      }
-    },
-    "extraCredit": {
-      "title": "Credit Package​"
-    },
-    "oauthUrlInputPlaceholder": "You can enter an authorization URL manually​",
-    "oauthInvalidUrl": "Invalid authorization URL. Please enter a full URL.​",
-    "oauthGotoWebview": "Navigate opened WebView to input URL​",
-    "oauthGotoWebviewSuccess": "Requested WebView to navigate to the input URL.​",
-    "oauthGotoWebviewFailed": "Failed to navigate WebView: {{error}}​",
-    "oauthWebviewInlineUrlPlaceholder": "Enter a URL to navigate within this WebView​",
-    "oauthWebviewInlineGo": "Go​",
-    "oauthSuccessClosePrompt": "Account added successfully. Close this WebView now?\nChoose \"Close WebView\" to close now, or \"Later\" to keep it open.​",
-    "oauthSuccessCloseTitle": "Account Added​",
-    "oauthSuccessCloseNowLabel": "Close WebView​",
-    "oauthSuccessCloseLaterLabel": "Later​",
-    "oauthSuccessCloseNowStatus": "Ã¢Å“â€¦ Account added. Closing window...",
-    "oauthSuccessCloseLaterStatus": "Ã¢Å“â€¦ Account added. This WebView stays open.",
-    "instances": {
-      "unsupported": {
-        "descPlatform": "Multi-instansi MiniMax Code didukung hanya di macOS, Windows, dan Linux."
-      }
-    },
-    "checkin": {
-      "title": "Check-in Harian",
-      "modalTitle": "Check-in Harian",
-      "status": "Status Check-in",
-      "checkedIn": "Sudah Check-in",
-      "notCheckedIn": "Belum Check-in",
-      "button": "Absen",
-      "button.loading": "Melakukan check-in...",
-      "done": "Selesai",
-      "success": "Check-in berhasil! Streak {{days}} hari",
-      "failure": "Absen gagal: {{message}}",
-      "failure.network": "Kesalahan jaringan, silakan coba lagi nanti",
-      "lastCheckin": "Check-in terakhir: {{time}}",
-      "streak": "Streak {{days}} hari",
-      "reward": "Hadiah: {{reward}}",
-      "refreshStatus": "Segarkan",
-      "checkAll": "Check In Semua",
-      "noAccounts": "Tidak ada akun",
-      "querying": "Memuat...",
-      "streakDays": "{{days}} hari",
-      "streakRewardCountdown": "{{days}} hari lagi untuk hadiah bonus",
-      "streakRewardToday": "Hadiah bonus tersedia hari ini!",
-      "recentDates": "Terbaru: ",
-      "claimed": "Diklaim",
-      "queryFailed": "Kueri gagal",
-      "retry": "Coba lagi",
-      "inactive": "Tidak tersedia",
-      "inactiveHint": "Check-in tidak aktif untuk akun ini",
-      "autoCheckinSettings": "Pengaturan Check-in Otomatis",
-      "autoCheckinLabel": "Check-in Otomatis",
-      "autoCheckinOff": "Check-in Otomatis Mati",
-      "autoCheckinEnabledHint": "Check-in otomatis aktif: Check-in acak antara {{start}} dan {{end}}",
-      "autoCheckinDisabledHint": "Check-in otomatis nonaktif",
-      "enableAutoCheckin": "Aktifkan Check-in Otomatis",
-      "enableAutoCheckinDesc": "Melakukan check-in harian secara acak dalam rentang waktu yang ditentukan",
-      "randomTimeRange": "Rentang Waktu Check-in Acak",
-      "startTime": "Waktu Mulai",
-      "endTime": "Waktu Selesai",
-      "timeRangeHint": "Memilih waktu acak dalam rentang ini setiap hari untuk menyelesaikan check-in latar belakang.",
-      "timeRangeError": "Waktu mulai tidak boleh lebih lambat dari waktu selesai"
-    },
-    "placeholder": "Manajemen akun MiniMax Code akan segera hadir."
   }
 }

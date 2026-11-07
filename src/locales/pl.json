@@ -2485,6 +2485,22 @@
     "other_group": "Inne modele"
   },
   "codex": {
+    "overload": {
+      "setting": "Ponawiaj przy przeciążeniu",
+      "settingHint": "Dotyczy nowych żądań lokalnej usługi API Codex. Żądania, które można bezpiecznie ponowić, czekają na dostępność modelu.",
+      "retrying": "Model zajęty, ponawianie ({{count}})",
+      "count": "Przeciążenia: {{count}}",
+      "countHint": "Zlicza próby u dostawcy, także automatyczne. Historia obejmuje do 7 dni.",
+      "history": "Historia przeciążeń",
+      "empty": "W tym okresie nie było błędów przeciążenia.",
+      "attempt": "Próba {{number}}",
+      "sameAccount": "Wznowiono na tym samym koncie",
+      "otherAccount": "Wznowiono po zmianie konta",
+      "pending": "Oczekiwanie na wynik",
+      "cancelled": "Anulowano",
+      "failed": "Żądanie nie powiodło się",
+      "countUnavailable": "Statystyki przeciążenia są niedostępne"
+    },
     "instance": {
       "errors": {
         "threadSyncWorkerFailed": "Zadanie synchronizacji sesji nie powiodło się: {{error}}",
@@ -3242,7 +3258,7 @@
       "imageGenerationMainModel": {
         "label": "Główny model obrazów",
         "notice": "Nie zmieniaj głównego modelu obrazów podczas zwykłego użycia.",
-        "hint": "Służy tylko do przekazywania żądań do oficjalnej usługi, nie do wyboru modelu generującego obrazy. Zmień go ręcznie tylko po zmianie oficjalnego modelu głównego. Puste pole użyje gpt-5.6-luna.",
+        "hint": "Tylko do generowania obrazów w Responses, nie w osobnym API obrazów. Puste pole: gpt-5.6-luna.",
         "invalid": "Wpisz ID modelu bez spacji, do 200 znaków."
       },
       "requestDetail": {
@@ -6114,21 +6130,57 @@
     "officialApi": {
       "hint": "Konto z oficjalnym kluczem API OpenAI, rozpoznane na podstawie rzeczywistego adresu połączenia."
     },
-    "overload": {
-      "setting": "Ponawiaj przy przeciążeniu",
-      "settingHint": "Dotyczy nowych żądań lokalnej usługi API Codex. Żądania, które można bezpiecznie ponowić, czekają na dostępność modelu.",
-      "retrying": "Model zajęty, ponawianie ({{count}})",
-      "count": "Przeciążenia: {{count}}",
-      "countHint": "Zlicza próby u dostawcy, także automatyczne. Historia obejmuje do 7 dni.",
-      "history": "Historia przeciążeń",
-      "empty": "W tym okresie nie było błędów przeciążenia.",
-      "attempt": "Próba {{number}}",
-      "sameAccount": "Wznowiono na tym samym koncie",
-      "otherAccount": "Wznowiono po zmianie konta",
+    "resetAutomation": {
+      "nothingToReset": "Obecnie żaden okres limitu nie wymaga resetu.",
+      "unknownOutcome": "Nie udało się potwierdzić wyniku resetu. Spróbuj ponownie.",
+      "applyAllHint": "Po włączeniu zapis kopiuje regułę do wszystkich kont, zastępując ustawienia własne i wyłączone.",
+      "applyAll": "Zapisz dla wszystkich",
+      "accountHint": "Konta bez własnych ustawień używają wspólnej reguły. Zapis dotyczy tylko tego konta.",
+      "title": "Automatyczne użycie kart",
+      "accountTab": "To konto",
+      "publicTab": "Wspólna reguła",
+      "inherit": "Użyj wspólnej reguły",
+      "custom": "Własna reguła",
+      "off": "Wyłączone",
+      "entryDefault": "Ustawienia auto",
+      "noCredits": "Brak kart",
+      "publicHint": "Domyślna reguła dla kont bez własnych ustawień. Ustawienia własne i wyłączone pozostają bez zmian.",
+      "before": "Przed wygaśnięciem",
+      "expiry": "Użyj przed wygaśnięciem",
+      "minutes": "min",
+      "hours": "godz.",
+      "days": "dni",
+      "hostHint": "Działa, gdy 聚灵 jest otwarty. Kartę wybiera serwer.",
+      "invalidTime": "Wpisz dodatni czas z dokładnością do pełnej sekundy.",
+      "invalidPercent": "Wpisz całkowity procent od 0 do 100.",
+      "loadFailed": "Nie udało się wczytać reguł: {{error}}",
+      "saveFailed": "Nie udało się zapisać reguł: {{error}}",
+      "conflict": "Reguła została zmieniona gdzie indziej. Wczytaj ją ponownie.",
+      "busy": "Reset tego konta już trwa.",
+      "storageError": "Nie można odczytać lub zapisać reguł resetu.",
+      "timeout": "Przekroczono czas. Zapisany identyfikator zostanie użyty ponownie, aby uniknąć podwójnego zużycia.",
+      "history": "Ostatnie działania",
+      "reasonExpiry": "Bliskie wygaśnięcie",
+      "reasonQuota": "Niski limit",
+      "reasonManual": "Reset ręczny",
+      "reasonCheck": "Sprawdzenie w tle",
       "pending": "Oczekiwanie na wynik",
-      "cancelled": "Anulowano",
-      "failed": "Żądanie nie powiodło się",
-      "countUnavailable": "Statystyki przeciążenia są niedostępne"
+      "editPublic": "Edytuj wspólną regułę",
+      "accountMissing": "Konto już nie istnieje.",
+      "masterLabel": "Używaj kart automatycznie",
+      "ruleSource": "Źródło reguły",
+      "weeklyTrigger": "Próg tygodniowy",
+      "weeklyRemaining": "Pozostało w tygodniu ≤",
+      "previewTitle": "Podgląd warunków",
+      "previewAny": "Karta zostanie użyta, gdy spełniony będzie dowolny aktywny warunek:",
+      "previewExpiry": "Karta wygasa w ciągu {{value}} {{unit}}",
+      "previewWeekly": "Pozostały limit tygodniowy wynosi najwyżej {{percent}}%",
+      "previewOff": "Automatyczne użycie jest wyłączone. Poniższe reguły są nieaktywne.",
+      "previewEmpty": "Brak aktywnych warunków. Karty nie będą używane automatycznie.",
+      "cardOn": "Autom.",
+      "cardOff": "Wył.",
+      "orSeparator": " lub ",
+      "inheritHint": "Ustawienia korzystają ze wspólnej reguły. Edytuj ją lub wybierz własną regułę."
     }
   },
   "githubCopilot": {
@@ -7408,6 +7460,155 @@
       "timeRangeError": "Czas rozpoczęcia nie może być późniejszy niż czas zakończenia"
     }
   },
+  "minimaxCode": {
+    "title": "Zarządzanie kontami MiniMax Code",
+    "noAccounts": "Brak kont MiniMax Code",
+    "addAccount": "Dodaj konto MiniMax Code",
+    "flowNotice": {
+      "title": "Informacje o zarządzaniu kontami MiniMax Code (kliknij, aby rozwinąć/zwinąć)",
+      "desc": "Zarządzaj lokalnym logowaniem i zmianą kont MiniMax Code.",
+      "permission": "Odczytuje i zapisuje oficjalne pliki logowania. Każda instancja MiniMax Code ma osobny katalog danych.",
+      "network": "Autoryzacja, konto, plan i kredyty są sprawdzane wyłącznie przez oficjalne API MiniMax. Lokalne pliki logowania nie są przesyłane."
+    },
+    "nickname": "Pseudonim",
+    "enterprise": "Firmowe",
+    "usage": "Stan użycia",
+    "creditsBalance": "Saldo kredytów",
+    "usageNormal": "Normalny",
+    "usageAbnormal": "Nieprawidłowy",
+    "usageViewDetail": "Zobacz szczegóły",
+    "usageDetailTitle": "Szczegóły stanu użycia",
+    "oauthWaiting": "Oczekiwanie na autoryzację...",
+    "oauthDesc": "Kliknij przycisk poniżej, aby otworzyć stronę autoryzacji MiniMax Code w przeglądarce.",
+    "oauthDescWebview": "Kliknij przycisk poniżej, aby otworzyć stronę autoryzacji MiniMax Code we wbudowanym WebView.",
+    "oauthFeature": {
+      "oauth": {
+        "title": "Tylko logowanie IDE",
+        "item1": "Dodaj konto po zakończeniu OAuth w przeglądarce, a następnie użyj go do przełączania IDE.",
+        "item2": "Saldo kredytów",
+        "item3": "Kupione kredyty · Kredyty w prezencie"
+      }
+    },
+    "oauthWebviewTab": "OAuth przez WebView",
+    "oauthOpenWebview": "Otwórz w WebView",
+    "oauthOpenWebviewIncognito": "Otwórz w prywatnym WebView",
+    "oauthOpenWebviewFailed": "Nie udało się otworzyć WebView: {{error}}",
+    "oauthOpenBrowserFallback": "Otwórz w przeglądarce (awaryjnie)",
+    "oauthOpenBrowserFailed": "Nie udało się otworzyć przeglądarki: {{error}}",
+    "oauthWebviewProgressHint": "U góry WebView wyświetlany jest poziomy pasek kroków, aby wskazać zablokowany etap.",
+    "oauthFlow": {
+      "prepare": "Przygotuj link OAuth",
+      "authorize": "Otwórz link autoryzacji i potwierdź",
+      "bind": "Odpytaj wynik autoryzacji i powiąż konto",
+      "retryPrepare": "Wygeneruj link OAuth ponownie",
+      "retryAuthorize": "Ponownie poproś o link autoryzacji",
+      "retryBind": "Ponów odpytywanie autoryzacji",
+      "error": "Błąd przepływu: {{error}}"
+    },
+    "tokenDesc": "Wklej token dostępu MiniMax Code:",
+    "jsonDesc": "Wybierz plik JSON zawierający konta MiniMax Code:",
+    "import": {
+      "localDesc": "Importuj dane konta z lokalnego klienta MiniMax Code lub z pliku JSON.",
+      "localClient": "Importuj z lokalnego MiniMax Code"
+    },
+    "search": "Szukaj kont MiniMax Code...",
+    "quotaQuery": {
+      "failedRefreshCompact": "Odświeżanie limitu nieudane",
+      "sectionTitle": "Zapytanie limitu",
+      "empty": "Brak powiązanych informacji o zapytaniu limitu",
+      "packageUnknown": "Nieznany pakiet",
+      "quotaLabel": "Pozostały limit",
+      "updatedAt": "Ostatnie zapytanie: {{time}}",
+      "cycleRange": "Cykl: {{start}} - {{end}}",
+      "cycleUnknown": "Brak informacji o cyklu",
+      "expireAt": "Wygasa: {{time}}",
+      "expireUnknown": "Wygasa: brak danych",
+      "packageTitle": {
+        "base": "Podstawowy pakiet doświadczenia",
+        "activity": "Pakiet prezentowy z wydarzeń"
+      }
+    },
+    "extraCredit": {
+      "title": "Pakiet kredytów"
+    },
+    "oauthUrlInputPlaceholder": "Możesz ręcznie wpisać URL autoryzacji",
+    "oauthInvalidUrl": "Nieprawidłowy URL autoryzacji. Wprowadź pełny URL.",
+    "oauthGotoWebview": "Przejdź w otwartym WebView do podanego URL",
+    "oauthGotoWebviewSuccess": "Wysłano żądanie nawigacji WebView do podanego URL.",
+    "oauthGotoWebviewFailed": "Nie udało się nawigować WebView: {{error}}",
+    "oauthWebviewInlineUrlPlaceholder": "Wprowadź URL, aby przejść w tym WebView",
+    "oauthWebviewInlineGo": "Przejdź",
+    "oauthSuccessClosePrompt": "Konto dodano pomyślnie. Zamknąć teraz to WebView?\nWybierz „Zamknij WebView”, aby zamknąć teraz, albo „Później”, aby pozostawić otwarte.",
+    "oauthSuccessCloseTitle": "Konto dodane",
+    "oauthSuccessCloseNowLabel": "Zamknij WebView",
+    "oauthSuccessCloseLaterLabel": "Później",
+    "oauthSuccessCloseNowStatus": "✅ Konto dodane. Zamykanie okna...",
+    "oauthSuccessCloseLaterStatus": "✅ Konto dodane. To WebView pozostanie otwarte.",
+    "oauthWebviewOverlay": {
+      "steps": {
+        "prepare": "1 Przygotuj link OAuth",
+        "authorize": "2 Otwórz link autoryzacji i potwierdź",
+        "bind": "3 Odpytaj wynik autoryzacji i powiąż konto",
+        "complete": "5 Gotowe (zamknij ręcznie)"
+      },
+      "status": {
+        "loginConfirm": "Na tej stronie dokończ logowanie i autoryzację."
+      }
+    },
+    "instances": {
+      "unsupported": {
+        "descPlatform": "Wiele instancji MiniMax Code jest obsługiwane tylko na macOS, Windows i Linux."
+      }
+    },
+    "quota": {
+      "usedOfTotal": "{{used}} / {{total}}​",
+      "noPlan": "Brak subskrypcji M Plan",
+      "purchased": "Kupione kredyty",
+      "gifted": "Kredyty w prezencie"
+    },
+    "checkin": {
+      "title": "Codzienne zameldowanie",
+      "modalTitle": "Codzienne zameldowanie",
+      "status": "Status zameldowania",
+      "checkedIn": "Zameldowano",
+      "notCheckedIn": "Brak zameldowania",
+      "button": "Zamelduj",
+      "button.loading": "Trwa zameldowanie...",
+      "done": "Gotowe",
+      "success": "Zameldowanie udane! Seria {{days}} dni",
+      "failure": "Zameldowanie nie powiodło się: {{message}}",
+      "failure.network": "Błąd sieci, spróbuj ponownie później",
+      "lastCheckin": "Ostatnie zameldowanie: {{time}}",
+      "streak": "Seria {{days}} dni",
+      "reward": "Nagroda: {{reward}}",
+      "refreshStatus": "Odśwież",
+      "checkAll": "Zamelduj wszystkie",
+      "noAccounts": "Brak kont",
+      "querying": "Ładowanie...",
+      "streakDays": "{{days}} dni",
+      "streakRewardCountdown": "Do nagrody bonusowej pozostało {{days}} dni",
+      "streakRewardToday": "Nagroda bonusowa dostępna dzisiaj!",
+      "recentDates": "Ostatnie: ",
+      "claimed": "Odebrano",
+      "queryFailed": "Zapytanie nieudane",
+      "retry": "Ponów",
+      "inactive": "Niedostępne",
+      "inactiveHint": "Check-in nieaktywny dla tego konta",
+      "autoCheckinSettings": "Ustawienia automatycznego meldowania",
+      "autoCheckinLabel": "Automatyczne meldowanie",
+      "autoCheckinOff": "Automatyczne meldowanie wyłączone",
+      "autoCheckinEnabledHint": "Automatyczne meldowanie włączone: losowe meldowanie między {{start}} a {{end}}",
+      "autoCheckinDisabledHint": "Automatyczne meldowanie wyłączone",
+      "enableAutoCheckin": "Włącz automatyczne meldowanie",
+      "enableAutoCheckinDesc": "Wykonuje codzienne losowe meldowanie w określonym przedziale czasowym",
+      "randomTimeRange": "Losowy przedział czasowy meldowania",
+      "startTime": "Czas rozpoczęcia",
+      "endTime": "Czas zakończenia",
+      "timeRangeHint": "Wybiera codziennie losową godzinę w tym przedziale, aby dokończyć meldowanie w tle.",
+      "timeRangeError": "Czas rozpoczęcia nie może być późniejszy niż czas zakończenia"
+    },
+    "placeholder": "Zarządzanie kontami MiniMax Code wkrótce będzie dostępne."
+  },
   "zcode": {
     "search": "Szukaj kont ZCode...",
     "flowNotice": {
@@ -7664,7 +7865,29 @@
     "continueMigrationScan": "Kontynuuj skan",
     "savePartialMigrationBatch": "Zapisz częściowo",
     "saveCompleteMigrationBatch": "Zapisz całość",
-    "clearMigrationBatch": "Wyczyść partię"
+    "clearMigrationBatch": "Wyczyść partię",
+    "searchPlaceholder": "Szukaj kont lub typów",
+    "noSearchResults": "Brak pasujących kont lub typów",
+    "exportMigrationQr": "Eksportuj QR migracji",
+    "exportBackup": "Eksportuj kopię zapasową",
+    "importBackup": "Importuj kopię zapasową",
+    "batchDelete": "Usuń zaznaczone",
+    "exportBackupHint": "Eksportuj kopię zapasową JSON wszystkich zapisanych rekordów, niezależnie od wyszukiwania i zaznaczenia.",
+    "editAccountHint": "Użyj formatu Typ:konto, na przykład OpenAI:alice@example.com",
+    "migrationTitle": "Eksportuj kody QR migracji",
+    "migrationSelectedSummary": "Eksportowanie zaznaczonych kont: {{count}}.",
+    "migrationAllSummary": "Eksportowanie wszystkich zapisanych kont ({{count}}), niezależnie od wyszukiwania.",
+    "migrationWarning": "Te kody QR zawierają tajne klucze 2FA. Przechowuj je w bezpiecznym miejscu.",
+    "migrationPage": "Kod QR {{current}} z {{total}} · Liczba kont w tym kodzie: {{count}}",
+    "migrationPrevious": "Poprzedni",
+    "migrationNext": "Następny",
+    "migrationSaveImage": "Zapisz kod QR",
+    "migrationImageAlt": "Kod QR migracji {{current}} z {{total}}",
+    "migrationInvalidRecord": "Niektóre rekordy zawierają nieprawidłowe tajne klucze. Sprawdź je przed eksportem kodów QR migracji.",
+    "migrationRecordTooLarge": "Informacje o jednym z kont przekraczają pojemność kodu QR migracji. Skróć nazwę konta i spróbuj ponownie.",
+    "migrationUnsupportedParameters": "Eksport migracji obsługuje obecnie tylko 6-cyfrowe kody SHA1 z okresem 30 sekund; niektóre konta używają nieobsługiwanych parametrów.",
+    "migrationQrFailed": "Nie udało się wygenerować kodów QR migracji. Spróbuj ponownie.",
+    "exportFailed": "Eksport nie powiódł się. Sprawdź lokalizację zapisu i spróbuj ponownie."
   },
   "logViewer": {
     "fileLabel": "Plik logu",
@@ -8567,154 +8790,5 @@
     "errorModel": "Wpisz unikalną pełną nazwę modelu bez symboli wieloznacznych.",
     "errorSave": "Nie udało się wczytać lub zapisać ustawień. Spróbuj ponownie.",
     "saved": "Zapisano. Dotyczy nowych żądań."
-  },
-  "minimaxCode": {
-    "title": "Zarządzanie kontami MiniMax Code",
-    "noAccounts": "Brak kont MiniMax Code",
-    "addAccount": "Dodaj konto MiniMax Code",
-    "flowNotice": {
-      "title": "Informacje o zarządzaniu kontami MiniMax Code (kliknij, aby rozwinąć/zwinąć)",
-      "desc": "Zarządzaj lokalnym logowaniem i zmianą kont MiniMax Code.",
-      "permission": "Odczytuje i zapisuje oficjalne pliki logowania. Każda instancja MiniMax Code ma osobny katalog danych.",
-      "network": "Autoryzacja, konto, plan i kredyty są sprawdzane wyłącznie przez oficjalne API MiniMax. Lokalne pliki logowania nie są przesyłane."
-    },
-    "nickname": "Pseudonim",
-    "enterprise": "Firmowe",
-    "usage": "Stan użycia",
-    "creditsBalance": "Saldo kredytów",
-    "usageNormal": "Normalny",
-    "usageAbnormal": "Nieprawidłowy",
-    "usageViewDetail": "Zobacz szczegóły",
-    "usageDetailTitle": "Szczegóły stanu użycia",
-    "oauthWaiting": "Oczekiwanie na autoryzację...",
-    "oauthDesc": "Kliknij przycisk poniżej, aby otworzyć stronę autoryzacji MiniMax Code w przeglądarce.",
-    "oauthDescWebview": "Kliknij przycisk poniżej, aby otworzyć stronę autoryzacji MiniMax Code we wbudowanym WebView.",
-    "oauthFeature": {
-      "oauth": {
-        "title": "Tylko logowanie IDE",
-        "item1": "Dodaj konto po zakończeniu OAuth w przeglądarce, a następnie użyj go do przełączania IDE.",
-        "item2": "Saldo kredytów",
-        "item3": "Kupione kredyty · Kredyty w prezencie"
-      }
-    },
-    "oauthWebviewTab": "OAuth przez WebView",
-    "oauthOpenWebview": "Otwórz w WebView",
-    "oauthOpenWebviewIncognito": "Otwórz w prywatnym WebView",
-    "oauthOpenWebviewFailed": "Nie udało się otworzyć WebView: {{error}}",
-    "oauthOpenBrowserFallback": "Otwórz w przeglądarce (awaryjnie)",
-    "oauthOpenBrowserFailed": "Nie udało się otworzyć przeglądarki: {{error}}",
-    "oauthWebviewProgressHint": "U góry WebView wyświetlany jest poziomy pasek kroków, aby wskazać zablokowany etap.",
-    "oauthFlow": {
-      "prepare": "Przygotuj link OAuth",
-      "authorize": "Otwórz link autoryzacji i potwierdź",
-      "bind": "Odpytaj wynik autoryzacji i powiąż konto",
-      "retryPrepare": "Wygeneruj link OAuth ponownie",
-      "retryAuthorize": "Ponownie poproś o link autoryzacji",
-      "retryBind": "Ponów odpytywanie autoryzacji",
-      "error": "Błąd przepływu: {{error}}"
-    },
-    "tokenDesc": "Wklej token dostępu MiniMax Code:",
-    "jsonDesc": "Wybierz plik JSON zawierający konta MiniMax Code:",
-    "import": {
-      "localDesc": "Importuj dane konta z lokalnego klienta MiniMax Code lub z pliku JSON.",
-      "localClient": "Importuj z lokalnego MiniMax Code"
-    },
-    "search": "Szukaj kont MiniMax Code...",
-    "quotaQuery": {
-      "failedRefreshCompact": "Odświeżanie limitu nieudane",
-      "sectionTitle": "Zapytanie limitu",
-      "empty": "Brak powiązanych informacji o zapytaniu limitu",
-      "packageUnknown": "Nieznany pakiet",
-      "quotaLabel": "Pozostały limit",
-      "updatedAt": "Ostatnie zapytanie: {{time}}",
-      "cycleRange": "Cykl: {{start}} - {{end}}",
-      "cycleUnknown": "Brak informacji o cyklu",
-      "expireAt": "Wygasa: {{time}}",
-      "expireUnknown": "Wygasa: brak danych",
-      "packageTitle": {
-        "base": "Podstawowy pakiet doświadczenia",
-        "activity": "Pakiet prezentowy z wydarzeń"
-      }
-    },
-    "extraCredit": {
-      "title": "Pakiet kredytów"
-    },
-    "oauthUrlInputPlaceholder": "Możesz ręcznie wpisać URL autoryzacji",
-    "oauthInvalidUrl": "Nieprawidłowy URL autoryzacji. Wprowadź pełny URL.",
-    "oauthGotoWebview": "Przejdź w otwartym WebView do podanego URL",
-    "oauthGotoWebviewSuccess": "Wysłano żądanie nawigacji WebView do podanego URL.",
-    "oauthGotoWebviewFailed": "Nie udało się nawigować WebView: {{error}}",
-    "oauthWebviewInlineUrlPlaceholder": "Wprowadź URL, aby przejść w tym WebView",
-    "oauthWebviewInlineGo": "Przejdź",
-    "oauthSuccessClosePrompt": "Konto dodano pomyślnie. Zamknąć teraz to WebView?\nWybierz „Zamknij WebView”, aby zamknąć teraz, albo „Później”, aby pozostawić otwarte.",
-    "oauthSuccessCloseTitle": "Konto dodane",
-    "oauthSuccessCloseNowLabel": "Zamknij WebView",
-    "oauthSuccessCloseLaterLabel": "Później",
-    "oauthSuccessCloseNowStatus": "✅ Konto dodane. Zamykanie okna...",
-    "oauthSuccessCloseLaterStatus": "✅ Konto dodane. To WebView pozostanie otwarte.",
-    "oauthWebviewOverlay": {
-      "steps": {
-        "prepare": "1 Przygotuj link OAuth",
-        "authorize": "2 Otwórz link autoryzacji i potwierdź",
-        "bind": "3 Odpytaj wynik autoryzacji i powiąż konto",
-        "complete": "5 Gotowe (zamknij ręcznie)"
-      },
-      "status": {
-        "loginConfirm": "Na tej stronie dokończ logowanie i autoryzację."
-      }
-    },
-    "instances": {
-      "unsupported": {
-        "descPlatform": "Wiele instancji MiniMax Code jest obsługiwane tylko na macOS, Windows i Linux."
-      }
-    },
-    "quota": {
-      "usedOfTotal": "{{used}} / {{total}}​",
-      "noPlan": "Brak subskrypcji M Plan",
-      "purchased": "Kupione kredyty",
-      "gifted": "Kredyty w prezencie"
-    },
-    "checkin": {
-      "title": "Codzienne zameldowanie",
-      "modalTitle": "Codzienne zameldowanie",
-      "status": "Status zameldowania",
-      "checkedIn": "Zameldowano",
-      "notCheckedIn": "Brak zameldowania",
-      "button": "Zamelduj",
-      "button.loading": "Trwa zameldowanie...",
-      "done": "Gotowe",
-      "success": "Zameldowanie udane! Seria {{days}} dni",
-      "failure": "Zameldowanie nie powiodło się: {{message}}",
-      "failure.network": "Błąd sieci, spróbuj ponownie później",
-      "lastCheckin": "Ostatnie zameldowanie: {{time}}",
-      "streak": "Seria {{days}} dni",
-      "reward": "Nagroda: {{reward}}",
-      "refreshStatus": "Odśwież",
-      "checkAll": "Zamelduj wszystkie",
-      "noAccounts": "Brak kont",
-      "querying": "Ładowanie...",
-      "streakDays": "{{days}} dni",
-      "streakRewardCountdown": "Do nagrody bonusowej pozostało {{days}} dni",
-      "streakRewardToday": "Nagroda bonusowa dostępna dzisiaj!",
-      "recentDates": "Ostatnie: ",
-      "claimed": "Odebrano",
-      "queryFailed": "Zapytanie nieudane",
-      "retry": "Ponów",
-      "inactive": "Niedostępne",
-      "inactiveHint": "Check-in nieaktywny dla tego konta",
-      "autoCheckinSettings": "Ustawienia automatycznego meldowania",
-      "autoCheckinLabel": "Automatyczne meldowanie",
-      "autoCheckinOff": "Automatyczne meldowanie wyłączone",
-      "autoCheckinEnabledHint": "Automatyczne meldowanie włączone: losowe meldowanie między {{start}} a {{end}}",
-      "autoCheckinDisabledHint": "Automatyczne meldowanie wyłączone",
-      "enableAutoCheckin": "Włącz automatyczne meldowanie",
-      "enableAutoCheckinDesc": "Wykonuje codzienne losowe meldowanie w określonym przedziale czasowym",
-      "randomTimeRange": "Losowy przedział czasowy meldowania",
-      "startTime": "Czas rozpoczęcia",
-      "endTime": "Czas zakończenia",
-      "timeRangeHint": "Wybiera codziennie losową godzinę w tym przedziale, aby dokończyć meldowanie w tle.",
-      "timeRangeError": "Czas rozpoczęcia nie może być późniejszy niż czas zakończenia"
-    },
-    "placeholder": "Zarządzanie kontami MiniMax Code wkrótce będzie dostępne."
   }
 }

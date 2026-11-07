@@ -2485,6 +2485,22 @@
     "other_group": "Mô hình khác"
   },
   "codex": {
+    "overload": {
+      "setting": "Thử lại khi quá tải",
+      "settingHint": "Áp dụng cho yêu cầu mới của dịch vụ API Codex cục bộ. Yêu cầu có thể thử lại an toàn sẽ chờ mô hình hoạt động trở lại.",
+      "retrying": "Mô hình đang bận, đang thử lại ({{count}})",
+      "count": "Quá tải: {{count}}",
+      "countHint": "Đếm số lần thử tới nhà cung cấp, gồm cả lần thử tự động. Lịch sử lưu tối đa 7 ngày.",
+      "history": "Lịch sử quá tải",
+      "empty": "Không có lỗi quá tải trong khoảng này.",
+      "attempt": "Lần thử {{number}}",
+      "sameAccount": "Khôi phục trên cùng tài khoản",
+      "otherAccount": "Khôi phục sau khi đổi tài khoản",
+      "pending": "Đang chờ kết quả",
+      "cancelled": "Đã hủy",
+      "failed": "Yêu cầu thất bại",
+      "countUnavailable": "Không thể tải thống kê quá tải"
+    },
     "instance": {
       "errors": {
         "threadSyncWorkerFailed": "Tác vụ đồng bộ phiên thất bại: {{error}}",
@@ -3242,7 +3258,7 @@
       "imageGenerationMainModel": {
         "label": "Mô hình chính tạo ảnh",
         "notice": "Không đổi mô hình chính tạo ảnh khi sử dụng thông thường.",
-        "hint": "Chỉ dùng để chuyển tiếp yêu cầu đến dịch vụ ảnh chính thức, không dùng để chọn mô hình tạo ảnh. Chỉ cập nhật thủ công khi mô hình chính của dịch vụ thay đổi. Để trống để dùng gpt-5.6-luna.",
+        "hint": "Chỉ dùng để tạo ảnh trong Responses, không áp dụng cho API ảnh độc lập. Để trống: gpt-5.6-luna.",
         "invalid": "Nhập ID mô hình không có khoảng trắng, tối đa 200 ký tự."
       },
       "requestDetail": {
@@ -6114,21 +6130,57 @@
     "officialApi": {
       "hint": "Tài khoản dùng khóa API chính thức của OpenAI, được xác định theo địa chỉ kết nối thực tế."
     },
-    "overload": {
-      "setting": "Thử lại khi quá tải",
-      "settingHint": "Áp dụng cho yêu cầu mới của dịch vụ API Codex cục bộ. Yêu cầu có thể thử lại an toàn sẽ chờ mô hình hoạt động trở lại.",
-      "retrying": "Mô hình đang bận, đang thử lại ({{count}})",
-      "count": "Quá tải: {{count}}",
-      "countHint": "Đếm số lần thử tới nhà cung cấp, gồm cả lần thử tự động. Lịch sử lưu tối đa 7 ngày.",
-      "history": "Lịch sử quá tải",
-      "empty": "Không có lỗi quá tải trong khoảng này.",
-      "attempt": "Lần thử {{number}}",
-      "sameAccount": "Khôi phục trên cùng tài khoản",
-      "otherAccount": "Khôi phục sau khi đổi tài khoản",
+    "resetAutomation": {
+      "nothingToReset": "Hiện không có kỳ hạn mức nào cần đặt lại.",
+      "unknownOutcome": "Không thể xác nhận kết quả đặt lại. Hãy thử lại.",
+      "applyAllHint": "Khi bật, thao tác Lưu sẽ sao chép quy tắc này cho mọi tài khoản, ghi đè các thiết lập tùy chỉnh và đã tắt.",
+      "applyAll": "Lưu cho mọi tài khoản",
+      "accountHint": "Tài khoản chưa có thiết lập riêng dùng quy tắc chung. Lưu chỉ áp dụng cho tài khoản này.",
+      "title": "Tự dùng thẻ đặt lại",
+      "accountTab": "Tài khoản này",
+      "publicTab": "Quy tắc chung",
+      "inherit": "Theo quy tắc chung",
+      "custom": "Quy tắc riêng",
+      "off": "Tắt",
+      "entryDefault": "Cài đặt tự động",
+      "noCredits": "Không có thẻ",
+      "publicHint": "Quy tắc mặc định cho tài khoản chưa có thiết lập riêng. Giữ nguyên các thiết lập tùy chỉnh hoặc đã tắt.",
+      "before": "Trước khi hết hạn",
+      "expiry": "Dùng trước khi hết hạn",
+      "minutes": "phút",
+      "hours": "giờ",
+      "days": "ngày",
+      "hostHint": "Chạy khi 聚灵 đang mở. Máy chủ quyết định thẻ được dùng.",
+      "invalidTime": "Nhập thời gian dương với số giây nguyên.",
+      "invalidPercent": "Nhập phần trăm nguyên từ 0 đến 100.",
+      "loadFailed": "Không tải được quy tắc: {{error}}",
+      "saveFailed": "Không lưu được quy tắc: {{error}}",
+      "conflict": "Quy tắc đã thay đổi ở nơi khác. Hãy tải lại.",
+      "busy": "Tài khoản này đang được đặt lại.",
+      "storageError": "Không đọc hoặc lưu được quy tắc đặt lại.",
+      "timeout": "Yêu cầu hết thời gian. Mã yêu cầu đã lưu sẽ được dùng lại để tránh trừ thẻ hai lần.",
+      "history": "Hoạt động gần đây",
+      "reasonExpiry": "Sắp hết hạn",
+      "reasonQuota": "Hạn mức thấp",
+      "reasonManual": "Đặt lại thủ công",
+      "reasonCheck": "Kiểm tra nền",
       "pending": "Đang chờ kết quả",
-      "cancelled": "Đã hủy",
-      "failed": "Yêu cầu thất bại",
-      "countUnavailable": "Không thể tải thống kê quá tải"
+      "editPublic": "Sửa quy tắc chung",
+      "accountMissing": "Tài khoản không còn tồn tại.",
+      "masterLabel": "Tự động dùng thẻ đặt lại",
+      "ruleSource": "Nguồn quy tắc",
+      "weeklyTrigger": "Ngưỡng hằng tuần",
+      "weeklyRemaining": "Hạn mức tuần còn ≤",
+      "previewTitle": "Xem trước điều kiện",
+      "previewAny": "Dùng một thẻ khi đáp ứng bất kỳ điều kiện đang bật nào:",
+      "previewExpiry": "Thẻ sẽ hết hạn trong vòng {{value}} {{unit}}",
+      "previewWeekly": "Hạn mức tuần còn lại không quá {{percent}}%",
+      "previewOff": "Đã tắt tự động dùng thẻ. Các quy tắc bên dưới chưa có hiệu lực.",
+      "previewEmpty": "Chưa bật điều kiện nào. Thẻ sẽ không được dùng tự động.",
+      "cardOn": "Tự động",
+      "cardOff": "Tắt",
+      "orSeparator": " hoặc ",
+      "inheritHint": "Đang dùng quy tắc chung. Hãy sửa quy tắc chung hoặc chuyển sang tùy chỉnh."
     }
   },
   "githubCopilot": {
@@ -7408,6 +7460,155 @@
       "timeRangeError": "Thời gian bắt đầu không thể sau thời gian kết thúc"
     }
   },
+  "minimaxCode": {
+    "title": "Quản lý tài khoản MiniMax Code",
+    "noAccounts": "Chưa có tài khoản MiniMax Code",
+    "addAccount": "Thêm tài khoản MiniMax Code",
+    "flowNotice": {
+      "title": "Hướng dẫn quản lý tài khoản MiniMax Code (bấm để mở rộng/thu gọn)",
+      "desc": "Quản lý đăng nhập cục bộ và chuyển tài khoản MiniMax Code.",
+      "permission": "Đọc và ghi tệp đăng nhập chính thức. Mỗi phiên bản MiniMax Code dùng thư mục dữ liệu riêng.",
+      "network": "Chỉ gọi API chính thức của MiniMax để xác thực và lấy thông tin tài khoản, gói, điểm. Không tải lên tệp đăng nhập cục bộ."
+    },
+    "nickname": "Biệt danh",
+    "enterprise": "Doanh nghiệp",
+    "usage": "Trạng thái sử dụng",
+    "creditsBalance": "Số dư tín dụng",
+    "usageNormal": "Bình thường",
+    "usageAbnormal": "Bất thường",
+    "usageViewDetail": "Xem chi tiết",
+    "usageDetailTitle": "Chi tiết trạng thái sử dụng",
+    "oauthWaiting": "Đang chờ hoàn tất ủy quyền...",
+    "oauthDesc": "Bấm nút bên dưới để mở trang ủy quyền MiniMax Code trong trình duyệt.",
+    "oauthDescWebview": "Bấm nút bên dưới để mở trang ủy quyền MiniMax Code trong WebView tích hợp.",
+    "oauthFeature": {
+      "oauth": {
+        "title": "Chỉ ủy quyền thông tin đăng nhập IDE",
+        "item1": "Sau khi hoàn tất OAuth trong trình duyệt, bạn có thể thêm tài khoản và dùng để chuyển IDE.",
+        "item2": "Số dư tín dụng",
+        "item3": "Điểm đã mua · Điểm được tặng"
+      }
+    },
+    "oauthWebviewTab": "Xác thực WebView",
+    "oauthOpenWebview": "Mở trong WebView",
+    "oauthOpenWebviewIncognito": "Mở trong WebView ẩn danh",
+    "oauthOpenWebviewFailed": "Mở WebView thất bại: {{error}}",
+    "oauthOpenBrowserFallback": "Mở trong trình duyệt (dự phòng)",
+    "oauthOpenBrowserFailed": "Mở trình duyệt thất bại: {{error}}",
+    "oauthWebviewProgressHint": "Thanh bước ngang sẽ hiển thị ở đầu WebView để dễ xác định bước bị kẹt.",
+    "oauthFlow": {
+      "prepare": "Chuẩn bị liên kết ủy quyền",
+      "authorize": "Mở liên kết ủy quyền và xác nhận",
+      "bind": "Thăm dò kết quả ủy quyền và liên kết tài khoản",
+      "retryPrepare": "Tạo lại liên kết ủy quyền",
+      "retryAuthorize": "Yêu cầu lại liên kết ủy quyền",
+      "retryBind": "Thử lại thăm dò ủy quyền",
+      "error": "Lỗi quy trình: {{error}}"
+    },
+    "tokenDesc": "Dán access token của MiniMax Code:",
+    "jsonDesc": "Chọn tệp JSON chứa tài khoản MiniMax Code:",
+    "import": {
+      "localDesc": "Hỗ trợ nhập dữ liệu tài khoản từ ứng dụng MiniMax Code cục bộ hoặc từ tệp JSON.",
+      "localClient": "Nhập từ MiniMax Code cục bộ"
+    },
+    "search": "Tìm kiếm tài khoản MiniMax Code...",
+    "quotaQuery": {
+      "failedRefreshCompact": "Làm mới hạn ngạch thất bại",
+      "sectionTitle": "Truy vấn hạn ngạch",
+      "empty": "Chưa có thông tin truy vấn hạn ngạch được liên kết",
+      "packageUnknown": "Không rõ gói",
+      "quotaLabel": "Hạn ngạch còn lại",
+      "updatedAt": "Lần truy vấn gần nhất: {{time}}",
+      "cycleRange": "Chu kỳ: {{start}} - {{end}}",
+      "cycleUnknown": "Chưa có thông tin chu kỳ",
+      "expireAt": "Hết hạn lúc: {{time}}",
+      "expireUnknown": "Hết hạn: chưa có",
+      "packageTitle": {
+        "base": "Gói trải nghiệm cơ bản",
+        "activity": "Gói quà tặng sự kiện"
+      }
+    },
+    "extraCredit": {
+      "title": "Gói cộng thêm"
+    },
+    "oauthUrlInputPlaceholder": "Có thể nhập URL ủy quyền thủ công",
+    "oauthInvalidUrl": "Định dạng liên kết ủy quyền không đúng. Vui lòng nhập URL đầy đủ.",
+    "oauthGotoWebview": "Điều hướng WebView đã mở tới URL đã nhập",
+    "oauthGotoWebviewSuccess": "Đã yêu cầu WebView điều hướng tới URL đã nhập.",
+    "oauthGotoWebviewFailed": "Điều hướng WebView thất bại: {{error}}",
+    "oauthWebviewInlineUrlPlaceholder": "Nhập URL để điều hướng ngay trong WebView này",
+    "oauthWebviewInlineGo": "Đi",
+    "oauthSuccessClosePrompt": "Đã thêm tài khoản thành công. Đóng WebView này ngay bây giờ?\nChọn \"Đóng WebView\" để đóng ngay hoặc \"Để sau\" để giữ nguyên cửa sổ.",
+    "oauthSuccessCloseTitle": "Đã thêm tài khoản",
+    "oauthSuccessCloseNowLabel": "Đóng WebView",
+    "oauthSuccessCloseLaterLabel": "Để sau",
+    "oauthSuccessCloseNowStatus": "✅ Đã thêm tài khoản. Đang đóng cửa sổ...",
+    "oauthSuccessCloseLaterStatus": "✅ Đã thêm tài khoản. WebView này sẽ vẫn mở.",
+    "oauthWebviewOverlay": {
+      "steps": {
+        "prepare": "1 Chuẩn bị liên kết ủy quyền",
+        "authorize": "2 Mở liên kết ủy quyền và xác nhận",
+        "bind": "3 Thăm dò kết quả ủy quyền và liên kết tài khoản",
+        "complete": "5 Hoàn tất (đóng thủ công)"
+      },
+      "status": {
+        "loginConfirm": "Vui lòng hoàn tất đăng nhập và ủy quyền trên trang này."
+      }
+    },
+    "instances": {
+      "unsupported": {
+        "descPlatform": "Phiên bản đa phiên bản MiniMax Code chỉ được hỗ trợ trên macOS, Windows và Linux."
+      }
+    },
+    "quota": {
+      "usedOfTotal": "{{used}} / {{total}}​",
+      "noPlan": "Chưa đăng ký M Plan",
+      "purchased": "Điểm đã mua",
+      "gifted": "Điểm được tặng"
+    },
+    "checkin": {
+      "title": "Điểm danh hằng ngày",
+      "modalTitle": "Điểm danh hằng ngày",
+      "status": "Trạng thái điểm danh",
+      "checkedIn": "Đã điểm danh",
+      "notCheckedIn": "Chưa điểm danh",
+      "button": "Điểm danh",
+      "button.loading": "Đang điểm danh...",
+      "done": "Hoàn tất",
+      "success": "Điểm danh thành công! Chuỗi {{days}} ngày",
+      "failure": "Điểm danh thất bại: {{message}}",
+      "failure.network": "Lỗi mạng, vui lòng thử lại sau",
+      "lastCheckin": "Lần điểm danh gần nhất: {{time}}",
+      "streak": "Chuỗi {{days}} ngày",
+      "reward": "Phần thưởng: {{reward}}",
+      "refreshStatus": "Làm mới",
+      "checkAll": "Điểm danh tất cả",
+      "noAccounts": "Không có tài khoản",
+      "querying": "Đang tải...",
+      "streakDays": "{{days}} ngày",
+      "streakRewardCountdown": "Còn {{days}} ngày nữa để nhận thưởng bonus",
+      "streakRewardToday": "Hôm nay có thể nhận thưởng bonus!",
+      "recentDates": "Gần đây: ",
+      "claimed": "Đã nhận",
+      "queryFailed": "Truy vấn thất bại",
+      "retry": "Thử lại",
+      "inactive": "Không khả dụng",
+      "inactiveHint": "Check-in không hoạt động với tài khoản này",
+      "autoCheckinSettings": "Cài đặt điểm danh tự động",
+      "autoCheckinLabel": "Điểm danh tự động",
+      "autoCheckinOff": "Điểm danh tự động tắt",
+      "autoCheckinEnabledHint": "Điểm danh tự động bật: Điểm danh ngẫu nhiên từ {{start}} đến {{end}}",
+      "autoCheckinDisabledHint": "Điểm danh tự động tắt",
+      "enableAutoCheckin": "Bật điểm danh tự động",
+      "enableAutoCheckinDesc": "Tự động điểm danh ngẫu nhiên mỗi ngày trong khoảng thời gian quy định",
+      "randomTimeRange": "Khoảng thời gian điểm danh ngẫu nhiên",
+      "startTime": "Thời gian bắt đầu",
+      "endTime": "Thời gian kết thúc",
+      "timeRangeHint": "Tự động chọn một thời điểm ngẫu nhiên mỗi ngày trong khoảng này để điểm danh chạy ngầm.",
+      "timeRangeError": "Thời gian bắt đầu không thể sau thời gian kết thúc"
+    },
+    "placeholder": "Quản lý tài khoản MiniMax Code sẽ sớm ra mắt."
+  },
   "zcode": {
     "search": "Tìm tài khoản ZCode...",
     "flowNotice": {
@@ -7664,7 +7865,29 @@
     "continueMigrationScan": "Tiếp tục quét",
     "savePartialMigrationBatch": "Lưu một phần",
     "saveCompleteMigrationBatch": "Lưu toàn bộ",
-    "clearMigrationBatch": "Xóa lô"
+    "clearMigrationBatch": "Xóa lô",
+    "searchPlaceholder": "Tìm tài khoản hoặc loại",
+    "noSearchResults": "Không có tài khoản hoặc loại phù hợp",
+    "exportMigrationQr": "Xuất mã QR chuyển tài khoản",
+    "exportBackup": "Xuất bản sao lưu",
+    "importBackup": "Nhập bản sao lưu",
+    "batchDelete": "Xóa mục đã chọn",
+    "exportBackupHint": "Xuất bản sao lưu JSON của tất cả bản ghi đã lưu, không phụ thuộc vào tìm kiếm hay lựa chọn.",
+    "editAccountHint": "Dùng định dạng Loại:tài khoản, ví dụ OpenAI:alice@example.com",
+    "migrationTitle": "Xuất mã QR chuyển tài khoản",
+    "migrationSelectedSummary": "Xuất {{count}} tài khoản đã chọn.",
+    "migrationAllSummary": "Xuất toàn bộ {{count}} tài khoản đã lưu, không phụ thuộc vào tìm kiếm.",
+    "migrationWarning": "Các mã QR này chứa khóa bí mật 2FA. Hãy bảo quản an toàn.",
+    "migrationPage": "Mã QR {{current}} / {{total}} · Mã này chứa {{count}} tài khoản",
+    "migrationPrevious": "Trước",
+    "migrationNext": "Tiếp",
+    "migrationSaveImage": "Lưu mã QR",
+    "migrationImageAlt": "Mã QR chuyển tài khoản {{current}} / {{total}}",
+    "migrationInvalidRecord": "Một số bản ghi chứa khóa bí mật không hợp lệ. Hãy kiểm tra trước khi xuất mã QR chuyển tài khoản.",
+    "migrationRecordTooLarge": "Thông tin tài khoản quá dài để chứa trong mã QR chuyển tài khoản. Hãy rút ngắn tên tài khoản rồi thử lại.",
+    "migrationUnsupportedParameters": "Tính năng xuất chuyển tài khoản hiện chỉ hỗ trợ mã SHA1, 6 chữ số, 30 giây; một số tài khoản dùng tham số không được hỗ trợ.",
+    "migrationQrFailed": "Không thể tạo mã QR chuyển tài khoản. Vui lòng thử lại.",
+    "exportFailed": "Xuất thất bại. Hãy kiểm tra vị trí lưu rồi thử lại."
   },
   "logViewer": {
     "fileLabel": "Tệp nhật ký",
@@ -8567,154 +8790,5 @@
     "errorModel": "Nhập tên mô hình đầy đủ, không trùng và không có ký tự đại diện.",
     "errorSave": "Không thể tải hoặc lưu cài đặt. Hãy thử lại.",
     "saved": "Đã lưu. Áp dụng cho yêu cầu mới."
-  },
-  "minimaxCode": {
-    "title": "Quản lý tài khoản MiniMax Code",
-    "noAccounts": "Chưa có tài khoản MiniMax Code",
-    "addAccount": "Thêm tài khoản MiniMax Code",
-    "flowNotice": {
-      "title": "Hướng dẫn quản lý tài khoản MiniMax Code (bấm để mở rộng/thu gọn)",
-      "desc": "Quản lý đăng nhập cục bộ và chuyển tài khoản MiniMax Code.",
-      "permission": "Đọc và ghi tệp đăng nhập chính thức. Mỗi phiên bản MiniMax Code dùng thư mục dữ liệu riêng.",
-      "network": "Chỉ gọi API chính thức của MiniMax để xác thực và lấy thông tin tài khoản, gói, điểm. Không tải lên tệp đăng nhập cục bộ."
-    },
-    "nickname": "Biệt danh",
-    "enterprise": "Doanh nghiệp",
-    "usage": "Trạng thái sử dụng",
-    "creditsBalance": "Số dư tín dụng",
-    "usageNormal": "Bình thường",
-    "usageAbnormal": "Bất thường",
-    "usageViewDetail": "Xem chi tiết",
-    "usageDetailTitle": "Chi tiết trạng thái sử dụng",
-    "oauthWaiting": "Đang chờ hoàn tất ủy quyền...",
-    "oauthDesc": "Bấm nút bên dưới để mở trang ủy quyền MiniMax Code trong trình duyệt.",
-    "oauthDescWebview": "Bấm nút bên dưới để mở trang ủy quyền MiniMax Code trong WebView tích hợp.",
-    "oauthFeature": {
-      "oauth": {
-        "title": "Chỉ ủy quyền thông tin đăng nhập IDE",
-        "item1": "Sau khi hoàn tất OAuth trong trình duyệt, bạn có thể thêm tài khoản và dùng để chuyển IDE.",
-        "item2": "Số dư tín dụng",
-        "item3": "Điểm đã mua · Điểm được tặng"
-      }
-    },
-    "oauthWebviewTab": "Xác thực WebView",
-    "oauthOpenWebview": "Mở trong WebView",
-    "oauthOpenWebviewIncognito": "Mở trong WebView ẩn danh",
-    "oauthOpenWebviewFailed": "Mở WebView thất bại: {{error}}",
-    "oauthOpenBrowserFallback": "Mở trong trình duyệt (dự phòng)",
-    "oauthOpenBrowserFailed": "Mở trình duyệt thất bại: {{error}}",
-    "oauthWebviewProgressHint": "Thanh bước ngang sẽ hiển thị ở đầu WebView để dễ xác định bước bị kẹt.",
-    "oauthFlow": {
-      "prepare": "Chuẩn bị liên kết ủy quyền",
-      "authorize": "Mở liên kết ủy quyền và xác nhận",
-      "bind": "Thăm dò kết quả ủy quyền và liên kết tài khoản",
-      "retryPrepare": "Tạo lại liên kết ủy quyền",
-      "retryAuthorize": "Yêu cầu lại liên kết ủy quyền",
-      "retryBind": "Thử lại thăm dò ủy quyền",
-      "error": "Lỗi quy trình: {{error}}"
-    },
-    "tokenDesc": "Dán access token của MiniMax Code:",
-    "jsonDesc": "Chọn tệp JSON chứa tài khoản MiniMax Code:",
-    "import": {
-      "localDesc": "Hỗ trợ nhập dữ liệu tài khoản từ ứng dụng MiniMax Code cục bộ hoặc từ tệp JSON.",
-      "localClient": "Nhập từ MiniMax Code cục bộ"
-    },
-    "search": "Tìm kiếm tài khoản MiniMax Code...",
-    "quotaQuery": {
-      "failedRefreshCompact": "Làm mới hạn ngạch thất bại",
-      "sectionTitle": "Truy vấn hạn ngạch",
-      "empty": "Chưa có thông tin truy vấn hạn ngạch được liên kết",
-      "packageUnknown": "Không rõ gói",
-      "quotaLabel": "Hạn ngạch còn lại",
-      "updatedAt": "Lần truy vấn gần nhất: {{time}}",
-      "cycleRange": "Chu kỳ: {{start}} - {{end}}",
-      "cycleUnknown": "Chưa có thông tin chu kỳ",
-      "expireAt": "Hết hạn lúc: {{time}}",
-      "expireUnknown": "Hết hạn: chưa có",
-      "packageTitle": {
-        "base": "Gói trải nghiệm cơ bản",
-        "activity": "Gói quà tặng sự kiện"
-      }
-    },
-    "extraCredit": {
-      "title": "Gói cộng thêm"
-    },
-    "oauthUrlInputPlaceholder": "Có thể nhập URL ủy quyền thủ công",
-    "oauthInvalidUrl": "Định dạng liên kết ủy quyền không đúng. Vui lòng nhập URL đầy đủ.",
-    "oauthGotoWebview": "Điều hướng WebView đã mở tới URL đã nhập",
-    "oauthGotoWebviewSuccess": "Đã yêu cầu WebView điều hướng tới URL đã nhập.",
-    "oauthGotoWebviewFailed": "Điều hướng WebView thất bại: {{error}}",
-    "oauthWebviewInlineUrlPlaceholder": "Nhập URL để điều hướng ngay trong WebView này",
-    "oauthWebviewInlineGo": "Đi",
-    "oauthSuccessClosePrompt": "Đã thêm tài khoản thành công. Đóng WebView này ngay bây giờ?\nChọn \"Đóng WebView\" để đóng ngay hoặc \"Để sau\" để giữ nguyên cửa sổ.",
-    "oauthSuccessCloseTitle": "Đã thêm tài khoản",
-    "oauthSuccessCloseNowLabel": "Đóng WebView",
-    "oauthSuccessCloseLaterLabel": "Để sau",
-    "oauthSuccessCloseNowStatus": "✅ Đã thêm tài khoản. Đang đóng cửa sổ...",
-    "oauthSuccessCloseLaterStatus": "✅ Đã thêm tài khoản. WebView này sẽ vẫn mở.",
-    "oauthWebviewOverlay": {
-      "steps": {
-        "prepare": "1 Chuẩn bị liên kết ủy quyền",
-        "authorize": "2 Mở liên kết ủy quyền và xác nhận",
-        "bind": "3 Thăm dò kết quả ủy quyền và liên kết tài khoản",
-        "complete": "5 Hoàn tất (đóng thủ công)"
-      },
-      "status": {
-        "loginConfirm": "Vui lòng hoàn tất đăng nhập và ủy quyền trên trang này."
-      }
-    },
-    "instances": {
-      "unsupported": {
-        "descPlatform": "Phiên bản đa phiên bản MiniMax Code chỉ được hỗ trợ trên macOS, Windows và Linux."
-      }
-    },
-    "quota": {
-      "usedOfTotal": "{{used}} / {{total}}​",
-      "noPlan": "Chưa đăng ký M Plan",
-      "purchased": "Điểm đã mua",
-      "gifted": "Điểm được tặng"
-    },
-    "checkin": {
-      "title": "Điểm danh hằng ngày",
-      "modalTitle": "Điểm danh hằng ngày",
-      "status": "Trạng thái điểm danh",
-      "checkedIn": "Đã điểm danh",
-      "notCheckedIn": "Chưa điểm danh",
-      "button": "Điểm danh",
-      "button.loading": "Đang điểm danh...",
-      "done": "Hoàn tất",
-      "success": "Điểm danh thành công! Chuỗi {{days}} ngày",
-      "failure": "Điểm danh thất bại: {{message}}",
-      "failure.network": "Lỗi mạng, vui lòng thử lại sau",
-      "lastCheckin": "Lần điểm danh gần nhất: {{time}}",
-      "streak": "Chuỗi {{days}} ngày",
-      "reward": "Phần thưởng: {{reward}}",
-      "refreshStatus": "Làm mới",
-      "checkAll": "Điểm danh tất cả",
-      "noAccounts": "Không có tài khoản",
-      "querying": "Đang tải...",
-      "streakDays": "{{days}} ngày",
-      "streakRewardCountdown": "Còn {{days}} ngày nữa để nhận thưởng bonus",
-      "streakRewardToday": "Hôm nay có thể nhận thưởng bonus!",
-      "recentDates": "Gần đây: ",
-      "claimed": "Đã nhận",
-      "queryFailed": "Truy vấn thất bại",
-      "retry": "Thử lại",
-      "inactive": "Không khả dụng",
-      "inactiveHint": "Check-in không hoạt động với tài khoản này",
-      "autoCheckinSettings": "Cài đặt điểm danh tự động",
-      "autoCheckinLabel": "Điểm danh tự động",
-      "autoCheckinOff": "Điểm danh tự động tắt",
-      "autoCheckinEnabledHint": "Điểm danh tự động bật: Điểm danh ngẫu nhiên từ {{start}} đến {{end}}",
-      "autoCheckinDisabledHint": "Điểm danh tự động tắt",
-      "enableAutoCheckin": "Bật điểm danh tự động",
-      "enableAutoCheckinDesc": "Tự động điểm danh ngẫu nhiên mỗi ngày trong khoảng thời gian quy định",
-      "randomTimeRange": "Khoảng thời gian điểm danh ngẫu nhiên",
-      "startTime": "Thời gian bắt đầu",
-      "endTime": "Thời gian kết thúc",
-      "timeRangeHint": "Tự động chọn một thời điểm ngẫu nhiên mỗi ngày trong khoảng này để điểm danh chạy ngầm.",
-      "timeRangeError": "Thời gian bắt đầu không thể sau thời gian kết thúc"
-    },
-    "placeholder": "Quản lý tài khoản MiniMax Code sẽ sớm ra mắt."
   }
 }

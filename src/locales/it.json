@@ -2485,6 +2485,22 @@
     "other_group": "Altri modelli"
   },
   "codex": {
+    "overload": {
+      "setting": "Riprova se saturo",
+      "settingHint": "Per le nuove richieste del servizio API locale di Codex. Le richieste ripetibili in sicurezza attendono che il modello torni disponibile.",
+      "retrying": "Modello occupato, nuovo tentativo ({{count}})",
+      "count": "Saturazioni: {{count}}",
+      "countHint": "Conta i tentativi verso il fornitore, inclusi quelli automatici. Cronologia fino a 7 giorni.",
+      "history": "Cronologia saturazione",
+      "empty": "Nessun errore di saturazione nel periodo.",
+      "attempt": "Tentativo {{number}}",
+      "sameAccount": "Ripreso con lo stesso account",
+      "otherAccount": "Ripreso dopo il cambio account",
+      "pending": "Esito in attesa",
+      "cancelled": "Annullato",
+      "failed": "Richiesta non riuscita",
+      "countUnavailable": "Statistiche di saturazione non disponibili"
+    },
     "instance": {
       "errors": {
         "threadSyncWorkerFailed": "Sincronizzazione delle sessioni non riuscita: {{error}}",
@@ -3242,7 +3258,7 @@
       "imageGenerationMainModel": {
         "label": "Modello base immagini",
         "notice": "Non modificare il modello base immagini durante l’uso normale.",
-        "hint": "Serve solo a inoltrare le richieste al servizio ufficiale, non a scegliere il modello che genera le immagini. Modificalo solo se cambia il modello base ufficiale. Lascia vuoto per gpt-5.6-luna.",
+        "hint": "Solo per generare immagini in Responses, non per l’API Images indipendente. Vuoto: gpt-5.6-luna.",
         "invalid": "Inserisci un ID modello senza spazi, fino a 200 caratteri."
       },
       "requestDetail": {
@@ -6114,21 +6130,57 @@
     "officialApi": {
       "hint": "Account con chiave API ufficiale OpenAI, identificato dall’indirizzo di connessione effettivo."
     },
-    "overload": {
-      "setting": "Riprova se saturo",
-      "settingHint": "Per le nuove richieste del servizio API locale di Codex. Le richieste ripetibili in sicurezza attendono che il modello torni disponibile.",
-      "retrying": "Modello occupato, nuovo tentativo ({{count}})",
-      "count": "Saturazioni: {{count}}",
-      "countHint": "Conta i tentativi verso il fornitore, inclusi quelli automatici. Cronologia fino a 7 giorni.",
-      "history": "Cronologia saturazione",
-      "empty": "Nessun errore di saturazione nel periodo.",
-      "attempt": "Tentativo {{number}}",
-      "sameAccount": "Ripreso con lo stesso account",
-      "otherAccount": "Ripreso dopo il cambio account",
-      "pending": "Esito in attesa",
-      "cancelled": "Annullato",
-      "failed": "Richiesta non riuscita",
-      "countUnavailable": "Statistiche di saturazione non disponibili"
+    "resetAutomation": {
+      "nothingToReset": "Al momento non ci sono intervalli di quota da reimpostare.",
+      "unknownOutcome": "Impossibile confermare il risultato. Riprova.",
+      "applyAllHint": "Se attivo, Salva copia questa regola in tutti gli account, sostituendo le impostazioni personalizzate e disattivate.",
+      "applyAll": "Salva per tutti",
+      "accountHint": "Gli account senza impostazioni proprie usano la regola comune. Il salvataggio vale solo per questo account.",
+      "title": "Uso automatico delle carte",
+      "accountTab": "Questo account",
+      "publicTab": "Regola comune",
+      "inherit": "Segui regola comune",
+      "custom": "Regola personale",
+      "off": "Disattivato",
+      "entryDefault": "Impostazioni auto",
+      "noCredits": "Nessuna carta",
+      "publicHint": "Regola predefinita per gli account senza impostazioni proprie. Le impostazioni personalizzate o disattivate restano invariate.",
+      "before": "Prima della scadenza",
+      "expiry": "Usa prima della scadenza",
+      "minutes": "min",
+      "hours": "ore",
+      "days": "giorni",
+      "hostHint": "Funziona mentre 聚灵 è aperto. La carta viene scelta dal server.",
+      "invalidTime": "Inserisci una durata positiva in secondi interi.",
+      "invalidPercent": "Inserisci una percentuale intera da 0 a 100.",
+      "loadFailed": "Impossibile caricare le regole: {{error}}",
+      "saveFailed": "Impossibile salvare le regole: {{error}}",
+      "conflict": "La regola è stata modificata altrove. Ricaricala.",
+      "busy": "È già in corso un ripristino per questo account.",
+      "storageError": "Impossibile leggere o salvare le regole.",
+      "timeout": "Tempo scaduto. Verrà riutilizzato l’ID salvato per evitare consumi duplicati.",
+      "history": "Attività recente",
+      "reasonExpiry": "Scadenza vicina",
+      "reasonQuota": "Quota bassa",
+      "reasonManual": "Ripristino manuale",
+      "reasonCheck": "Controllo in background",
+      "pending": "In attesa del risultato",
+      "editPublic": "Modifica regola comune",
+      "accountMissing": "L’account non esiste più.",
+      "masterLabel": "Usa le carte automaticamente",
+      "ruleSource": "Origine della regola",
+      "weeklyTrigger": "Soglia settimanale",
+      "weeklyRemaining": "Quota settimanale ≤",
+      "previewTitle": "Anteprima delle condizioni",
+      "previewAny": "Una carta viene usata quando si verifica una delle condizioni attive:",
+      "previewExpiry": "La carta scade entro {{value}} {{unit}}",
+      "previewWeekly": "Quota settimanale residua non superiore al {{percent}}%",
+      "previewOff": "L’uso automatico è disattivato. Le regole seguenti non sono attive.",
+      "previewEmpty": "Nessuna condizione attiva. Le carte non verranno usate automaticamente.",
+      "cardOn": "Autom.",
+      "cardOff": "Spento",
+      "orSeparator": " oppure ",
+      "inheritHint": "Queste impostazioni seguono la regola comune. Modificala oppure scegli una regola personalizzata."
     }
   },
   "githubCopilot": {
@@ -7408,6 +7460,155 @@
       "timeRangeError": "L'ora di inizio non può essere successiva all'ora di fine"
     }
   },
+  "minimaxCode": {
+    "title": "Gestione account MiniMax Code",
+    "noAccounts": "Nessun account MiniMax Code",
+    "addAccount": "Aggiungi account MiniMax Code",
+    "flowNotice": {
+      "title": "Informazioni sulla gestione degli account MiniMax Code (clicca per espandere/comprimere)",
+      "desc": "Gestisci l’accesso locale e il cambio di account MiniMax Code.",
+      "permission": "Legge e scrive i file di accesso ufficiali. Ogni istanza di MiniMax Code usa una cartella dati separata.",
+      "network": "Contatta solo le API ufficiali MiniMax per autorizzazione, account, piano e crediti. I file di accesso locali non vengono caricati."
+    },
+    "nickname": "Nickname​",
+    "enterprise": "Enterprise​",
+    "usage": "Stato utilizzo",
+    "creditsBalance": "Saldo crediti",
+    "usageNormal": "Stato normale",
+    "usageAbnormal": "Anomalo",
+    "usageViewDetail": "Visualizza dettagli",
+    "usageDetailTitle": "Dettagli stato utilizzo",
+    "oauthWaiting": "In attesa di autorizzazione...",
+    "oauthDesc": "Fai clic sul pulsante qui sotto per aprire la pagina di autorizzazione MiniMax Code nel browser.",
+    "oauthDescWebview": "Fai clic sul pulsante qui sotto per aprire la pagina di autorizzazione MiniMax Code nella WebView integrata.",
+    "oauthFeature": {
+      "oauth": {
+        "title": "Solo accesso IDE",
+        "item1": "Aggiungi laccount dopo aver completato OAuth nel browser, poi usalo per il cambio account nellIDE.",
+        "item2": "Saldo crediti",
+        "item3": "Crediti acquistati · Crediti omaggio"
+      }
+    },
+    "oauthWebviewTab": "OAuth in WebView",
+    "oauthOpenWebview": "Apri in WebView",
+    "oauthOpenWebviewIncognito": "Apri in WebView in incognito",
+    "oauthOpenWebviewFailed": "Impossibile aprire la WebView: {{error}}",
+    "oauthOpenBrowserFallback": "Apri nel browser (fallback)",
+    "oauthOpenBrowserFailed": "Impossibile aprire il browser: {{error}}",
+    "oauthWebviewProgressHint": "Nella parte alta della WebView viene mostrata una barra di avanzamento orizzontale per individuare i passaggi bloccati.",
+    "oauthFlow": {
+      "prepare": "Prepara il link OAuth",
+      "authorize": "Apri il link di autorizzazione e conferma",
+      "bind": "Controlla il risultato auth e collega laccount",
+      "retryPrepare": "Rigenera il link OAuth",
+      "retryAuthorize": "Richiedi di nuovo il link di autorizzazione",
+      "retryBind": "Riprova il controllo auth",
+      "error": "Errore del flusso: {{error}}"
+    },
+    "tokenDesc": "Incolla il token di accesso MiniMax Code:",
+    "jsonDesc": "Seleziona un file JSON contenente account MiniMax Code:",
+    "import": {
+      "localDesc": "Importa i dati account dal client MiniMax Code locale o da un file JSON.",
+      "localClient": "Importa da MiniMax Code locale"
+    },
+    "search": "Cerca account MiniMax Code...",
+    "quotaQuery": {
+      "failedRefreshCompact": "Aggiornamento quota non riuscito",
+      "sectionTitle": "Interrogazione quota",
+      "empty": "Nessuna informazione di query quota collegata",
+      "packageUnknown": "Pacchetto sconosciuto",
+      "quotaLabel": "Quota residua",
+      "updatedAt": "Ultima interrogazione: {{time}}",
+      "cycleRange": "Ciclo: {{start}} - {{end}}",
+      "cycleUnknown": "Informazioni sul ciclo non disponibili",
+      "expireAt": "Scade il: {{time}}",
+      "expireUnknown": "Scadenza: N/D",
+      "packageTitle": {
+        "base": "Pacchetto esperienza base",
+        "activity": "Pacchetto regalo attività"
+      }
+    },
+    "extraCredit": {
+      "title": "Pacchetto crediti"
+    },
+    "oauthUrlInputPlaceholder": "Puoi inserire manualmente un URL di autorizzazione",
+    "oauthInvalidUrl": "URL di autorizzazione non valido. Inserisci un URL completo.",
+    "oauthGotoWebview": "Naviga la WebView aperta verso lURL inserito",
+    "oauthGotoWebviewSuccess": "Richiesta inviata alla WebView per navigare verso lURL inserito.",
+    "oauthGotoWebviewFailed": "Impossibile navigare nella WebView: {{error}}",
+    "oauthWebviewInlineUrlPlaceholder": "Inserisci un URL da aprire in questa WebView",
+    "oauthWebviewInlineGo": "Vai",
+    "oauthSuccessClosePrompt": "Account aggiunto con successo. Chiudere ora questa WebView?\nScegli \"Chiudi WebView\" per chiuderla ora, oppure \"Dopo\" per lasciarla aperta.",
+    "oauthSuccessCloseTitle": "Account aggiunto",
+    "oauthSuccessCloseNowLabel": "Chiudi WebView",
+    "oauthSuccessCloseLaterLabel": "Dopo",
+    "oauthSuccessCloseNowStatus": "✅ Account aggiunto. Chiusura finestra...",
+    "oauthSuccessCloseLaterStatus": "✅ Account aggiunto. Questa WebView restera aperta.",
+    "oauthWebviewOverlay": {
+      "steps": {
+        "prepare": "1 Prepara il link OAuth",
+        "authorize": "2 Apri il link di autorizzazione e conferma",
+        "bind": "3 Controlla il risultato auth e collega laccount",
+        "complete": "5 Completato (chiudi manualmente)"
+      },
+      "status": {
+        "loginConfirm": "Completa l'accesso e l'autorizzazione in questa pagina."
+      }
+    },
+    "instances": {
+      "unsupported": {
+        "descPlatform": "La multi-istanza MiniMax Code è supportata solo su macOS, Windows e Linux."
+      }
+    },
+    "quota": {
+      "usedOfTotal": "{{used}} / {{total}}​",
+      "noPlan": "Nessun abbonamento M Plan",
+      "purchased": "Crediti acquistati",
+      "gifted": "Crediti omaggio"
+    },
+    "checkin": {
+      "title": "Check-in giornaliero",
+      "modalTitle": "Check-in giornaliero",
+      "status": "Stato check-in",
+      "checkedIn": "Check-in effettuato",
+      "notCheckedIn": "Non effettuato",
+      "button": "Registra presenza",
+      "button.loading": "Check-in in corso...",
+      "done": "Fatto",
+      "success": "Check-in riuscito! Serie di {{days}} giorni",
+      "failure": "Registrazione non riuscita: {{message}}",
+      "failure.network": "Errore di rete, riprova più tardi",
+      "lastCheckin": "Ultimo check-in: {{time}}",
+      "streak": "Serie di {{days}} giorni",
+      "reward": "Ricompensa: {{reward}}",
+      "refreshStatus": "Aggiorna",
+      "checkAll": "Check-in per tutti",
+      "noAccounts": "Nessun account",
+      "querying": "Caricamento...",
+      "streakDays": "{{days}} giorni",
+      "streakRewardCountdown": "Mancano {{days}} giorni alla ricompensa bonus",
+      "streakRewardToday": "Ricompensa bonus disponibile oggi!",
+      "recentDates": "Recenti: ",
+      "claimed": "Riscattato",
+      "queryFailed": "Query non riuscita",
+      "retry": "Riprova",
+      "inactive": "Non disponibile",
+      "inactiveHint": "Check-in non attivo per questo account",
+      "autoCheckinSettings": "Impostazioni check-in automatico",
+      "autoCheckinLabel": "Check-in automatico",
+      "autoCheckinOff": "Check-in automatico disattivato",
+      "autoCheckinEnabledHint": "Check-in automatico attivo: check-in casuale tra {{start}} e {{end}}",
+      "autoCheckinDisabledHint": "Check-in automatico disattivato",
+      "enableAutoCheckin": "Attiva check-in automatico",
+      "enableAutoCheckinDesc": "Esegue il check-in giornaliero in modo casuale nella fascia oraria specificata",
+      "randomTimeRange": "Fascia oraria check-in casuale",
+      "startTime": "Ora di inizio",
+      "endTime": "Ora di fine",
+      "timeRangeHint": "Seleziona ogni giorno un orario casuale in questo intervallo per completare il check-in.",
+      "timeRangeError": "L'ora di inizio non può essere successiva all'ora di fine"
+    },
+    "placeholder": "La gestione degli account MiniMax Code sarà presto disponibile."
+  },
   "zcode": {
     "search": "Cerca account ZCode...",
     "flowNotice": {
@@ -7664,7 +7865,29 @@
     "continueMigrationScan": "Continua scansione",
     "savePartialMigrationBatch": "Salva parziale",
     "saveCompleteMigrationBatch": "Salva completo",
-    "clearMigrationBatch": "Svuota batch"
+    "clearMigrationBatch": "Svuota batch",
+    "searchPlaceholder": "Cerca account o tipi",
+    "noSearchResults": "Nessun account o tipo corrispondente",
+    "exportMigrationQr": "Esporta QR di migrazione",
+    "exportBackup": "Esporta backup",
+    "importBackup": "Importa backup",
+    "batchDelete": "Elimina selezionati",
+    "exportBackupHint": "Esporta un backup JSON di tutti i record salvati, indipendentemente dalla ricerca o dalla selezione.",
+    "editAccountHint": "Usa Tipo:account, ad esempio OpenAI:alice@example.com",
+    "migrationTitle": "Esporta codici QR di migrazione",
+    "migrationSelectedSummary": "Esportazione di {{count}} account selezionati.",
+    "migrationAllSummary": "Esportazione di tutti i {{count}} account salvati, indipendentemente dalla ricerca.",
+    "migrationWarning": "Questi codici QR contengono chiavi segrete 2FA. Conservali al sicuro.",
+    "migrationPage": "QR {{current}} di {{total}} · {{count}} account in questo codice",
+    "migrationPrevious": "Precedente",
+    "migrationNext": "Successivo",
+    "migrationSaveImage": "Salva codice QR",
+    "migrationImageAlt": "Codice QR di migrazione {{current}} di {{total}}",
+    "migrationInvalidRecord": "Alcuni record contengono chiavi segrete non valide. Controllali prima di esportare i codici QR di migrazione.",
+    "migrationRecordTooLarge": "Un account contiene troppe informazioni per un codice QR di migrazione. Abbrevia il nome dell’account e riprova.",
+    "migrationUnsupportedParameters": "L’esportazione di migrazione supporta attualmente solo codici SHA1 a 6 cifre con un intervallo di 30 secondi; alcuni account usano parametri non supportati.",
+    "migrationQrFailed": "Impossibile generare i codici QR di migrazione. Riprova.",
+    "exportFailed": "Esportazione non riuscita. Controlla la posizione di salvataggio e riprova."
   },
   "logViewer": {
     "fileLabel": "File di log",
@@ -8567,154 +8790,5 @@
     "errorModel": "Inserisci un nome di modello completo e univoco, senza caratteri jolly.",
     "errorSave": "Impossibile caricare o salvare le impostazioni. Riprova.",
     "saved": "Salvato. Si applica alle nuove richieste."
-  },
-  "minimaxCode": {
-    "title": "Gestione account MiniMax Code",
-    "noAccounts": "Nessun account MiniMax Code",
-    "addAccount": "Aggiungi account MiniMax Code",
-    "flowNotice": {
-      "title": "Informazioni sulla gestione degli account MiniMax Code (clicca per espandere/comprimere)",
-      "desc": "Gestisci l’accesso locale e il cambio di account MiniMax Code.",
-      "permission": "Legge e scrive i file di accesso ufficiali. Ogni istanza di MiniMax Code usa una cartella dati separata.",
-      "network": "Contatta solo le API ufficiali MiniMax per autorizzazione, account, piano e crediti. I file di accesso locali non vengono caricati."
-    },
-    "nickname": "Nickname​",
-    "enterprise": "Enterprise​",
-    "usage": "Stato utilizzo",
-    "creditsBalance": "Saldo crediti",
-    "usageNormal": "Stato normale",
-    "usageAbnormal": "Anomalo",
-    "usageViewDetail": "Visualizza dettagli",
-    "usageDetailTitle": "Dettagli stato utilizzo",
-    "oauthWaiting": "In attesa di autorizzazione...",
-    "oauthDesc": "Fai clic sul pulsante qui sotto per aprire la pagina di autorizzazione MiniMax Code nel browser.",
-    "oauthDescWebview": "Fai clic sul pulsante qui sotto per aprire la pagina di autorizzazione MiniMax Code nella WebView integrata.",
-    "oauthFeature": {
-      "oauth": {
-        "title": "Solo accesso IDE",
-        "item1": "Aggiungi laccount dopo aver completato OAuth nel browser, poi usalo per il cambio account nellIDE.",
-        "item2": "Saldo crediti",
-        "item3": "Crediti acquistati · Crediti omaggio"
-      }
-    },
-    "oauthWebviewTab": "OAuth in WebView",
-    "oauthOpenWebview": "Apri in WebView",
-    "oauthOpenWebviewIncognito": "Apri in WebView in incognito",
-    "oauthOpenWebviewFailed": "Impossibile aprire la WebView: {{error}}",
-    "oauthOpenBrowserFallback": "Apri nel browser (fallback)",
-    "oauthOpenBrowserFailed": "Impossibile aprire il browser: {{error}}",
-    "oauthWebviewProgressHint": "Nella parte alta della WebView viene mostrata una barra di avanzamento orizzontale per individuare i passaggi bloccati.",
-    "oauthFlow": {
-      "prepare": "Prepara il link OAuth",
-      "authorize": "Apri il link di autorizzazione e conferma",
-      "bind": "Controlla il risultato auth e collega laccount",
-      "retryPrepare": "Rigenera il link OAuth",
-      "retryAuthorize": "Richiedi di nuovo il link di autorizzazione",
-      "retryBind": "Riprova il controllo auth",
-      "error": "Errore del flusso: {{error}}"
-    },
-    "tokenDesc": "Incolla il token di accesso MiniMax Code:",
-    "jsonDesc": "Seleziona un file JSON contenente account MiniMax Code:",
-    "import": {
-      "localDesc": "Importa i dati account dal client MiniMax Code locale o da un file JSON.",
-      "localClient": "Importa da MiniMax Code locale"
-    },
-    "search": "Cerca account MiniMax Code...",
-    "quotaQuery": {
-      "failedRefreshCompact": "Aggiornamento quota non riuscito",
-      "sectionTitle": "Interrogazione quota",
-      "empty": "Nessuna informazione di query quota collegata",
-      "packageUnknown": "Pacchetto sconosciuto",
-      "quotaLabel": "Quota residua",
-      "updatedAt": "Ultima interrogazione: {{time}}",
-      "cycleRange": "Ciclo: {{start}} - {{end}}",
-      "cycleUnknown": "Informazioni sul ciclo non disponibili",
-      "expireAt": "Scade il: {{time}}",
-      "expireUnknown": "Scadenza: N/D",
-      "packageTitle": {
-        "base": "Pacchetto esperienza base",
-        "activity": "Pacchetto regalo attività"
-      }
-    },
-    "extraCredit": {
-      "title": "Pacchetto crediti"
-    },
-    "oauthUrlInputPlaceholder": "Puoi inserire manualmente un URL di autorizzazione",
-    "oauthInvalidUrl": "URL di autorizzazione non valido. Inserisci un URL completo.",
-    "oauthGotoWebview": "Naviga la WebView aperta verso lURL inserito",
-    "oauthGotoWebviewSuccess": "Richiesta inviata alla WebView per navigare verso lURL inserito.",
-    "oauthGotoWebviewFailed": "Impossibile navigare nella WebView: {{error}}",
-    "oauthWebviewInlineUrlPlaceholder": "Inserisci un URL da aprire in questa WebView",
-    "oauthWebviewInlineGo": "Vai",
-    "oauthSuccessClosePrompt": "Account aggiunto con successo. Chiudere ora questa WebView?\nScegli \"Chiudi WebView\" per chiuderla ora, oppure \"Dopo\" per lasciarla aperta.",
-    "oauthSuccessCloseTitle": "Account aggiunto",
-    "oauthSuccessCloseNowLabel": "Chiudi WebView",
-    "oauthSuccessCloseLaterLabel": "Dopo",
-    "oauthSuccessCloseNowStatus": "✅ Account aggiunto. Chiusura finestra...",
-    "oauthSuccessCloseLaterStatus": "✅ Account aggiunto. Questa WebView restera aperta.",
-    "oauthWebviewOverlay": {
-      "steps": {
-        "prepare": "1 Prepara il link OAuth",
-        "authorize": "2 Apri il link di autorizzazione e conferma",
-        "bind": "3 Controlla il risultato auth e collega laccount",
-        "complete": "5 Completato (chiudi manualmente)"
-      },
-      "status": {
-        "loginConfirm": "Completa l'accesso e l'autorizzazione in questa pagina."
-      }
-    },
-    "instances": {
-      "unsupported": {
-        "descPlatform": "La multi-istanza MiniMax Code è supportata solo su macOS, Windows e Linux."
-      }
-    },
-    "quota": {
-      "usedOfTotal": "{{used}} / {{total}}​",
-      "noPlan": "Nessun abbonamento M Plan",
-      "purchased": "Crediti acquistati",
-      "gifted": "Crediti omaggio"
-    },
-    "checkin": {
-      "title": "Check-in giornaliero",
-      "modalTitle": "Check-in giornaliero",
-      "status": "Stato check-in",
-      "checkedIn": "Check-in effettuato",
-      "notCheckedIn": "Non effettuato",
-      "button": "Registra presenza",
-      "button.loading": "Check-in in corso...",
-      "done": "Fatto",
-      "success": "Check-in riuscito! Serie di {{days}} giorni",
-      "failure": "Registrazione non riuscita: {{message}}",
-      "failure.network": "Errore di rete, riprova più tardi",
-      "lastCheckin": "Ultimo check-in: {{time}}",
-      "streak": "Serie di {{days}} giorni",
-      "reward": "Ricompensa: {{reward}}",
-      "refreshStatus": "Aggiorna",
-      "checkAll": "Check-in per tutti",
-      "noAccounts": "Nessun account",
-      "querying": "Caricamento...",
-      "streakDays": "{{days}} giorni",
-      "streakRewardCountdown": "Mancano {{days}} giorni alla ricompensa bonus",
-      "streakRewardToday": "Ricompensa bonus disponibile oggi!",
-      "recentDates": "Recenti: ",
-      "claimed": "Riscattato",
-      "queryFailed": "Query non riuscita",
-      "retry": "Riprova",
-      "inactive": "Non disponibile",
-      "inactiveHint": "Check-in non attivo per questo account",
-      "autoCheckinSettings": "Impostazioni check-in automatico",
-      "autoCheckinLabel": "Check-in automatico",
-      "autoCheckinOff": "Check-in automatico disattivato",
-      "autoCheckinEnabledHint": "Check-in automatico attivo: check-in casuale tra {{start}} e {{end}}",
-      "autoCheckinDisabledHint": "Check-in automatico disattivato",
-      "enableAutoCheckin": "Attiva check-in automatico",
-      "enableAutoCheckinDesc": "Esegue il check-in giornaliero in modo casuale nella fascia oraria specificata",
-      "randomTimeRange": "Fascia oraria check-in casuale",
-      "startTime": "Ora di inizio",
-      "endTime": "Ora di fine",
-      "timeRangeHint": "Seleziona ogni giorno un orario casuale in questo intervallo per completare il check-in.",
-      "timeRangeError": "L'ora di inizio non può essere successiva all'ora di fine"
-    },
-    "placeholder": "La gestione degli account MiniMax Code sarà presto disponibile."
   }
 }

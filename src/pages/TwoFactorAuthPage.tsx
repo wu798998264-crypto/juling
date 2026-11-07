@@ -7,7 +7,7 @@ export function TwoFactorAuthPage() {
   const { t } = useTranslation();
 
   return (
-    <main className="main-content ghcp-accounts-page two-factor-query-page">
+    <main className="main-content ghcp-accounts-page two-factor-query-page" aria-label={t('twoFactorAuth.pageTitle')}>
       <div className="mfa-command-header">
         <div className="mfa-command-mark"><Fingerprint size={26} /></div>
         <div className="mfa-command-copy">

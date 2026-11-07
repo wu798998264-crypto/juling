@@ -2485,6 +2485,22 @@
     "other_group": "Diğer modeller"
   },
   "codex": {
+    "overload": {
+      "setting": "Yoğunlukta yeniden dene",
+      "settingHint": "Yerel Codex API hizmetindeki yeni istekler içindir. Güvenle yinelenebilen istekler modelin yeniden kullanılabilir olmasını bekler.",
+      "retrying": "Model meşgul, yeniden deneniyor ({{count}})",
+      "count": "Yoğunluk: {{count}}",
+      "countHint": "Otomatik denemeler dahil sağlayıcıya yapılan denemeleri sayar. Geçmiş en fazla 7 gün saklanır.",
+      "history": "Yoğunluk geçmişi",
+      "empty": "Bu aralıkta yoğunluk hatası yok.",
+      "attempt": "Deneme {{number}}",
+      "sameAccount": "Aynı hesapta düzeldi",
+      "otherAccount": "Hesap değişince düzeldi",
+      "pending": "Sonuç bekleniyor",
+      "cancelled": "İptal edildi",
+      "failed": "İstek başarısız",
+      "countUnavailable": "Yoğunluk istatistikleri kullanılamıyor"
+    },
     "instance": {
       "errors": {
         "threadSyncWorkerFailed": "Oturum eşitleme görevi başarısız oldu: {{error}}",
@@ -3242,7 +3258,7 @@
       "imageGenerationMainModel": {
         "label": "Ana görsel modeli",
         "notice": "Normal kullanımda ana görsel modelini değiştirmeyin.",
-        "hint": "Yalnızca istekleri resmî görsel hizmetine iletir; görsel üreten modeli seçmez. Sadece resmî ana model değişirse elle güncelleyin. gpt-5.6-luna için boş bırakın.",
+        "hint": "Yalnızca Responses içindeki görsel üretiminde kullanılır. Bağımsız görsel API’sine uygulanmaz. Boş bırakılırsa: gpt-5.6-luna.",
         "invalid": "Boşluksuz, en fazla 200 karakterlik model kimliği girin."
       },
       "requestDetail": {
@@ -6114,21 +6130,57 @@
     "officialApi": {
       "hint": "Gerçek bağlantı adresine göre tanımlanan resmî OpenAI API anahtarı hesabı."
     },
-    "overload": {
-      "setting": "Yoğunlukta yeniden dene",
-      "settingHint": "Yerel Codex API hizmetindeki yeni istekler içindir. Güvenle yinelenebilen istekler modelin yeniden kullanılabilir olmasını bekler.",
-      "retrying": "Model meşgul, yeniden deneniyor ({{count}})",
-      "count": "Yoğunluk: {{count}}",
-      "countHint": "Otomatik denemeler dahil sağlayıcıya yapılan denemeleri sayar. Geçmiş en fazla 7 gün saklanır.",
-      "history": "Yoğunluk geçmişi",
-      "empty": "Bu aralıkta yoğunluk hatası yok.",
-      "attempt": "Deneme {{number}}",
-      "sameAccount": "Aynı hesapta düzeldi",
-      "otherAccount": "Hesap değişince düzeldi",
+    "resetAutomation": {
+      "nothingToReset": "Şu anda sıfırlanması gereken kota dönemi yok.",
+      "unknownOutcome": "Sıfırlama sonucu doğrulanamadı. Tekrar deneyin.",
+      "applyAllHint": "Açıldığında Kaydet, bu kuralı tüm hesaplara kopyalar ve özel veya kapalı ayarların üzerine yazar.",
+      "applyAll": "Tüm hesaplara kaydet",
+      "accountHint": "Özel ayarı olmayan hesaplar ortak kuralı kullanır. Kaydetme yalnızca bu hesabı etkiler.",
+      "title": "Sıfırlama kartını otomatik kullan",
+      "accountTab": "Bu hesap",
+      "publicTab": "Ortak kural",
+      "inherit": "Ortak kuralı izle",
+      "custom": "Özel kural",
+      "off": "Kapalı",
+      "entryDefault": "Otomatik ayarlar",
+      "noCredits": "Kart yok",
+      "publicHint": "Özel ayarı olmayan hesaplar için varsayılan kuraldır. Özel veya kapalı ayarlar korunur.",
+      "before": "Süre dolmadan",
+      "expiry": "Süre dolmadan kullan",
+      "minutes": "dk",
+      "hours": "saat",
+      "days": "gün",
+      "hostHint": "聚灵 açıkken çalışır. Kullanılacak kartı sunucu seçer.",
+      "invalidTime": "Tam saniye cinsinden pozitif süre girin.",
+      "invalidPercent": "0 ile 100 arasında tam sayı yüzdesi girin.",
+      "loadFailed": "Kurallar yüklenemedi: {{error}}",
+      "saveFailed": "Kurallar kaydedilemedi: {{error}}",
+      "conflict": "Kural başka yerde değiştirildi. Yeniden yükleyin.",
+      "busy": "Bu hesap zaten sıfırlanıyor.",
+      "storageError": "Sıfırlama kuralları okunamadı veya kaydedilemedi.",
+      "timeout": "İstek zaman aşımına uğradı. Çift kart tüketimini önlemek için kayıtlı istek kimliği yeniden kullanılacak.",
+      "history": "Son etkinlik",
+      "reasonExpiry": "Süre dolmak üzere",
+      "reasonQuota": "Düşük kota",
+      "reasonManual": "Elle sıfırlama",
+      "reasonCheck": "Arka plan kontrolü",
       "pending": "Sonuç bekleniyor",
-      "cancelled": "İptal edildi",
-      "failed": "İstek başarısız",
-      "countUnavailable": "Yoğunluk istatistikleri kullanılamıyor"
+      "editPublic": "Ortak kuralı düzenle",
+      "accountMissing": "Hesap artık mevcut değil.",
+      "masterLabel": "Kartları otomatik kullan",
+      "ruleSource": "Kural kaynağı",
+      "weeklyTrigger": "Haftalık eşik",
+      "weeklyRemaining": "Haftalık kalan ≤",
+      "previewTitle": "Koşul önizlemesi",
+      "previewAny": "Etkin koşullardan biri karşılandığında bir kart kullanılır:",
+      "previewExpiry": "Kartın süresinin dolmasına en fazla {{value}} {{unit}} kaldığında",
+      "previewWeekly": "Haftalık kalan kota en fazla %{{percent}} olduğunda",
+      "previewOff": "Otomatik kullanım kapalı. Aşağıdaki kurallar etkin değil.",
+      "previewEmpty": "Etkin koşul yok. Kartlar otomatik kullanılmayacak.",
+      "cardOn": "Otom.",
+      "cardOff": "Kapalı",
+      "orSeparator": " veya ",
+      "inheritHint": "Bu ayarlar ortak kuralı izler. Ortak kuralı düzenleyin veya özel kurala geçin."
     }
   },
   "githubCopilot": {
@@ -7408,6 +7460,155 @@
       "timeRangeError": "Başlangıç zamanı bitiş zamanından sonra olamaz"
     }
   },
+  "minimaxCode": {
+    "title": "MiniMax Code Hesap Yönetimi",
+    "noAccounts": "MiniMax Code hesabı yok",
+    "addAccount": "MiniMax Code Hesabı Ekle",
+    "flowNotice": {
+      "title": "MiniMax Code hesap yönetimi bilgisi (genişlet/daralt için tıklayın)",
+      "desc": "MiniMax Code yerel oturumunu ve hesap geçişlerini yönetin.",
+      "permission": "Resmî oturum dosyalarını okur ve yazar. Her MiniMax Code örneği ayrı veri klasörü kullanır.",
+      "network": "Yetkilendirme, hesap, plan ve kredi bilgileri yalnızca resmî MiniMax API’lerinden alınır. Yerel oturum dosyaları yüklenmez."
+    },
+    "nickname": "Takma ad",
+    "enterprise": "Kurumsal",
+    "usage": "Kullanım durumu",
+    "creditsBalance": "Kredi bakiyesi",
+    "usageNormal": "Normal​",
+    "usageAbnormal": "Anormal",
+    "usageViewDetail": "Ayrıntıları görüntüle",
+    "usageDetailTitle": "Kullanım durumu ayrıntıları",
+    "oauthWaiting": "Yetkilendirme bekleniyor...",
+    "oauthDesc": "Tarayıcınızda MiniMax Code yetkilendirme sayfasını açmak için aşağıdaki düğmeye tıklayın.",
+    "oauthDescWebview": "Yerleşik WebView'da MiniMax Code yetkilendirme sayfasını açmak için aşağıdaki düğmeye tıklayın.",
+    "oauthFeature": {
+      "oauth": {
+        "title": "Yalnızca IDE girişi",
+        "item1": "Tarayıcıda OAuth tamamlandıktan sonra hesabı ekleyin ve IDE geçişi için kullanın.",
+        "item2": "Kredi bakiyesi",
+        "item3": "Satın alınan krediler · Hediye krediler"
+      }
+    },
+    "oauthWebviewTab": "WebView ile OAuth",
+    "oauthOpenWebview": "WebView'da aç",
+    "oauthOpenWebviewIncognito": "Gizli WebView'da aç",
+    "oauthOpenWebviewFailed": "WebView açılamadı: {{error}}",
+    "oauthOpenBrowserFallback": "Tarayıcıda aç (yedek)",
+    "oauthOpenBrowserFailed": "Tarayıcı açılamadı: {{error}}",
+    "oauthWebviewProgressHint": "Takılan aşamayı bulmak için WebView üstünde yatay adım çubuğu gösterilir.",
+    "oauthFlow": {
+      "prepare": "OAuth bağlantısını hazırla",
+      "authorize": "Yetkilendirme bağlantısını aç ve onayla",
+      "bind": "Yetkilendirme sonucunu yokla ve hesabı bağla",
+      "retryPrepare": "OAuth bağlantısını yeniden oluştur",
+      "retryAuthorize": "Yetkilendirme bağlantısını yeniden iste",
+      "retryBind": "Yetki yoklamasını yeniden dene",
+      "error": "Akış hatası: {{error}}"
+    },
+    "tokenDesc": "MiniMax Code erişim belirtecinizi yapıştırın:",
+    "jsonDesc": "MiniMax Code hesaplarını içeren bir JSON dosyası seçin:",
+    "import": {
+      "localDesc": "Hesap verilerini yerel MiniMax Code istemcisinden veya bir JSON dosyasından içe aktarın.",
+      "localClient": "Yerel MiniMax Code'den içe aktar"
+    },
+    "search": "MiniMax Code hesaplarını ara...",
+    "quotaQuery": {
+      "failedRefreshCompact": "Kota yenileme başarısız",
+      "sectionTitle": "Kota Sorgusu",
+      "empty": "Henüz bağlı kota sorgu bilgisi yok",
+      "packageUnknown": "Bilinmeyen paket",
+      "quotaLabel": "Kalan kota",
+      "updatedAt": "Son sorgu: {{time}}",
+      "cycleRange": "Döngü: {{start}} - {{end}}",
+      "cycleUnknown": "Döngü bilgisi yok",
+      "expireAt": "Bitiş: {{time}}",
+      "expireUnknown": "Bitiş: Yok",
+      "packageTitle": {
+        "base": "Temel deneyim paketi",
+        "activity": "Etkinlik hediye paketi"
+      }
+    },
+    "extraCredit": {
+      "title": "Kredi Paketi"
+    },
+    "oauthUrlInputPlaceholder": "Yetkilendirme URL'sini elle girebilirsiniz",
+    "oauthInvalidUrl": "Geçersiz yetkilendirme URL'si. Lütfen tam bir URL girin.",
+    "oauthGotoWebview": "Açık WebView'ı girilen URL'ye yönlendir",
+    "oauthGotoWebviewSuccess": "WebView'ın girilen URL'ye gitmesi istendi.",
+    "oauthGotoWebviewFailed": "WebView yönlendirme başarısız: {{error}}",
+    "oauthWebviewInlineUrlPlaceholder": "Bu WebView içinde gitmek için bir URL girin",
+    "oauthWebviewInlineGo": "Git",
+    "oauthSuccessClosePrompt": "Hesap başarıyla eklendi. Bu WebView şimdi kapatılsın mı?\nHemen kapatmak için \"WebView'ı Kapat\", açık bırakmak için \"Daha Sonra\" seçin.",
+    "oauthSuccessCloseTitle": "Hesap Eklendi",
+    "oauthSuccessCloseNowLabel": "WebView'ı Kapat",
+    "oauthSuccessCloseLaterLabel": "Daha Sonra",
+    "oauthSuccessCloseNowStatus": "✅ Hesap eklendi. Pencere kapatılıyor...",
+    "oauthSuccessCloseLaterStatus": "✅ Hesap eklendi. Bu WebView açık kalacak.",
+    "oauthWebviewOverlay": {
+      "steps": {
+        "prepare": "1 OAuth bağlantısını hazırla",
+        "authorize": "2 Yetkilendirme bağlantısını aç ve onayla",
+        "bind": "3 Yetkilendirme sonucunu yokla ve hesabı bağla",
+        "complete": "5 Tamamlandı (elle kapat)"
+      },
+      "status": {
+        "loginConfirm": "Lütfen bu sayfada giriş ve yetkilendirmeyi tamamlayın."
+      }
+    },
+    "instances": {
+      "unsupported": {
+        "descPlatform": "MiniMax Code çoklu örneği yalnızca macOS, Windows ve Linux'ta desteklenir."
+      }
+    },
+    "quota": {
+      "usedOfTotal": "{{used}} / {{total}}​",
+      "noPlan": "M Plan aboneliği yok",
+      "purchased": "Satın alınan krediler",
+      "gifted": "Hediye krediler"
+    },
+    "checkin": {
+      "title": "Günlük check-in",
+      "modalTitle": "Günlük check-in",
+      "status": "Check-in durumu",
+      "checkedIn": "Check-in yapıldı",
+      "notCheckedIn": "Check-in yapılmadı",
+      "button": "Yoklama",
+      "button.loading": "Check-in yapılıyor...",
+      "done": "Tamam",
+      "success": "Check-in başarılı! {{days}} günlük seri",
+      "failure": "Yoklama başarısız: {{message}}",
+      "failure.network": "Ağ hatası, lütfen daha sonra tekrar deneyin",
+      "lastCheckin": "Son check-in: {{time}}",
+      "streak": "{{days}} günlük seri",
+      "reward": "Ödül: {{reward}}",
+      "refreshStatus": "Yenile",
+      "checkAll": "Tümünü check-in yap",
+      "noAccounts": "Hesap yok",
+      "querying": "Yükleniyor...",
+      "streakDays": "{{days}} gün",
+      "streakRewardCountdown": "Bonus ödüle {{days}} gün kaldı",
+      "streakRewardToday": "Bonus ödül bugün kullanılabilir!",
+      "recentDates": "Son: ",
+      "claimed": "Alındı",
+      "queryFailed": "Sorgu başarısız",
+      "retry": "Yeniden dene",
+      "inactive": "Kullanılamaz",
+      "inactiveHint": "Bu hesap için check-in etkin değil",
+      "autoCheckinSettings": "Otomatik Giriş Ayarları",
+      "autoCheckinLabel": "Otomatik Giriş",
+      "autoCheckinOff": "Otomatik Giriş Kapalı",
+      "autoCheckinEnabledHint": "Otomatik giriş etkin: {{start}} ile {{end}} arasında rastgele giriş",
+      "autoCheckinDisabledHint": "Otomatik giriş devre dışı",
+      "enableAutoCheckin": "Otomatik Girişi Etkinleştir",
+      "enableAutoCheckinDesc": "Belirtilen zaman aralığında günlük olarak rastgele giriş yapar",
+      "randomTimeRange": "Rastgele Giriş Zaman Aralığı",
+      "startTime": "Başlangıç Zamanı",
+      "endTime": "Bitiş Zamanı",
+      "timeRangeHint": "Arka planda girişi tamamlamak için her gün bu aralıkta rastgele bir zaman seçer.",
+      "timeRangeError": "Başlangıç zamanı bitiş zamanından sonra olamaz"
+    },
+    "placeholder": "MiniMax Code hesap yönetimi yakında geliyor."
+  },
   "zcode": {
     "search": "ZCode hesaplarını ara...",
     "flowNotice": {
@@ -7664,7 +7865,29 @@
     "continueMigrationScan": "Taramaya devam",
     "savePartialMigrationBatch": "Kısmi kaydet",
     "saveCompleteMigrationBatch": "Tam kaydet",
-    "clearMigrationBatch": "Toplu temizle"
+    "clearMigrationBatch": "Toplu temizle",
+    "searchPlaceholder": "Hesap veya tür ara",
+    "noSearchResults": "Eşleşen hesap veya tür yok",
+    "exportMigrationQr": "Aktarım QR kodunu dışa aktar",
+    "exportBackup": "Yedeği dışa aktar",
+    "importBackup": "Yedeği içe aktar",
+    "batchDelete": "Seçilenleri sil",
+    "exportBackupHint": "Arama veya seçimden bağımsız olarak tüm kayıtlı kayıtların JSON yedeğini dışa aktarın.",
+    "editAccountHint": "Tür:hesap biçimini kullanın, örneğin OpenAI:alice@example.com",
+    "migrationTitle": "Aktarım QR kodlarını dışa aktar",
+    "migrationSelectedSummary": "Seçilen {{count}} hesap dışa aktarılıyor.",
+    "migrationAllSummary": "Aramadan bağımsız olarak kayıtlı {{count}} hesabın tümü dışa aktarılıyor.",
+    "migrationWarning": "Bu QR kodları 2FA gizli anahtarlarını içerir. Güvenli bir yerde saklayın.",
+    "migrationPage": "QR kodu {{current}} / {{total}} · Bu koddaki hesap sayısı: {{count}}",
+    "migrationPrevious": "Önceki",
+    "migrationNext": "Sonraki",
+    "migrationSaveImage": "QR kodunu kaydet",
+    "migrationImageAlt": "Aktarım QR kodu {{current}} / {{total}}",
+    "migrationInvalidRecord": "Bazı kayıtlar geçersiz gizli anahtarlar içeriyor. Aktarım QR kodlarını dışa aktarmadan önce bunları kontrol edin.",
+    "migrationRecordTooLarge": "Bir hesabın bilgileri aktarım QR kodunun kapasitesini aşıyor. Hesap adını kısaltıp tekrar deneyin.",
+    "migrationUnsupportedParameters": "Aktarım dışa aktarma işlemi şu anda yalnızca SHA1 kullanan, 6 haneli ve 30 saniyelik kodları destekler; bazı hesaplar desteklenmeyen parametreler kullanıyor.",
+    "migrationQrFailed": "Aktarım QR kodları oluşturulamadı. Lütfen tekrar deneyin.",
+    "exportFailed": "Dışa aktarma başarısız oldu. Kayıt konumunu kontrol edip tekrar deneyin."
   },
   "logViewer": {
     "fileLabel": "Günlük dosyası",
@@ -8567,154 +8790,5 @@
     "errorModel": "Joker karakter içermeyen benzersiz, tam bir model adı girin.",
     "errorSave": "Ayarlar yüklenemedi veya kaydedilemedi. Yeniden deneyin.",
     "saved": "Kaydedildi. Yeni isteklerde uygulanır."
-  },
-  "minimaxCode": {
-    "title": "MiniMax Code Hesap Yönetimi",
-    "noAccounts": "MiniMax Code hesabı yok",
-    "addAccount": "MiniMax Code Hesabı Ekle",
-    "flowNotice": {
-      "title": "MiniMax Code hesap yönetimi bilgisi (genişlet/daralt için tıklayın)",
-      "desc": "MiniMax Code yerel oturumunu ve hesap geçişlerini yönetin.",
-      "permission": "Resmî oturum dosyalarını okur ve yazar. Her MiniMax Code örneği ayrı veri klasörü kullanır.",
-      "network": "Yetkilendirme, hesap, plan ve kredi bilgileri yalnızca resmî MiniMax API’lerinden alınır. Yerel oturum dosyaları yüklenmez."
-    },
-    "nickname": "Takma ad",
-    "enterprise": "Kurumsal",
-    "usage": "Kullanım durumu",
-    "creditsBalance": "Kredi bakiyesi",
-    "usageNormal": "Normal​",
-    "usageAbnormal": "Anormal",
-    "usageViewDetail": "Ayrıntıları görüntüle",
-    "usageDetailTitle": "Kullanım durumu ayrıntıları",
-    "oauthWaiting": "Yetkilendirme bekleniyor...",
-    "oauthDesc": "Tarayıcınızda MiniMax Code yetkilendirme sayfasını açmak için aşağıdaki düğmeye tıklayın.",
-    "oauthDescWebview": "Yerleşik WebView'da MiniMax Code yetkilendirme sayfasını açmak için aşağıdaki düğmeye tıklayın.",
-    "oauthFeature": {
-      "oauth": {
-        "title": "Yalnızca IDE girişi",
-        "item1": "Tarayıcıda OAuth tamamlandıktan sonra hesabı ekleyin ve IDE geçişi için kullanın.",
-        "item2": "Kredi bakiyesi",
-        "item3": "Satın alınan krediler · Hediye krediler"
-      }
-    },
-    "oauthWebviewTab": "WebView ile OAuth",
-    "oauthOpenWebview": "WebView'da aç",
-    "oauthOpenWebviewIncognito": "Gizli WebView'da aç",
-    "oauthOpenWebviewFailed": "WebView açılamadı: {{error}}",
-    "oauthOpenBrowserFallback": "Tarayıcıda aç (yedek)",
-    "oauthOpenBrowserFailed": "Tarayıcı açılamadı: {{error}}",
-    "oauthWebviewProgressHint": "Takılan aşamayı bulmak için WebView üstünde yatay adım çubuğu gösterilir.",
-    "oauthFlow": {
-      "prepare": "OAuth bağlantısını hazırla",
-      "authorize": "Yetkilendirme bağlantısını aç ve onayla",
-      "bind": "Yetkilendirme sonucunu yokla ve hesabı bağla",
-      "retryPrepare": "OAuth bağlantısını yeniden oluştur",
-      "retryAuthorize": "Yetkilendirme bağlantısını yeniden iste",
-      "retryBind": "Yetki yoklamasını yeniden dene",
-      "error": "Akış hatası: {{error}}"
-    },
-    "tokenDesc": "MiniMax Code erişim belirtecinizi yapıştırın:",
-    "jsonDesc": "MiniMax Code hesaplarını içeren bir JSON dosyası seçin:",
-    "import": {
-      "localDesc": "Hesap verilerini yerel MiniMax Code istemcisinden veya bir JSON dosyasından içe aktarın.",
-      "localClient": "Yerel MiniMax Code'den içe aktar"
-    },
-    "search": "MiniMax Code hesaplarını ara...",
-    "quotaQuery": {
-      "failedRefreshCompact": "Kota yenileme başarısız",
-      "sectionTitle": "Kota Sorgusu",
-      "empty": "Henüz bağlı kota sorgu bilgisi yok",
-      "packageUnknown": "Bilinmeyen paket",
-      "quotaLabel": "Kalan kota",
-      "updatedAt": "Son sorgu: {{time}}",
-      "cycleRange": "Döngü: {{start}} - {{end}}",
-      "cycleUnknown": "Döngü bilgisi yok",
-      "expireAt": "Bitiş: {{time}}",
-      "expireUnknown": "Bitiş: Yok",
-      "packageTitle": {
-        "base": "Temel deneyim paketi",
-        "activity": "Etkinlik hediye paketi"
-      }
-    },
-    "extraCredit": {
-      "title": "Kredi Paketi"
-    },
-    "oauthUrlInputPlaceholder": "Yetkilendirme URL'sini elle girebilirsiniz",
-    "oauthInvalidUrl": "Geçersiz yetkilendirme URL'si. Lütfen tam bir URL girin.",
-    "oauthGotoWebview": "Açık WebView'ı girilen URL'ye yönlendir",
-    "oauthGotoWebviewSuccess": "WebView'ın girilen URL'ye gitmesi istendi.",
-    "oauthGotoWebviewFailed": "WebView yönlendirme başarısız: {{error}}",
-    "oauthWebviewInlineUrlPlaceholder": "Bu WebView içinde gitmek için bir URL girin",
-    "oauthWebviewInlineGo": "Git",
-    "oauthSuccessClosePrompt": "Hesap başarıyla eklendi. Bu WebView şimdi kapatılsın mı?\nHemen kapatmak için \"WebView'ı Kapat\", açık bırakmak için \"Daha Sonra\" seçin.",
-    "oauthSuccessCloseTitle": "Hesap Eklendi",
-    "oauthSuccessCloseNowLabel": "WebView'ı Kapat",
-    "oauthSuccessCloseLaterLabel": "Daha Sonra",
-    "oauthSuccessCloseNowStatus": "✅ Hesap eklendi. Pencere kapatılıyor...",
-    "oauthSuccessCloseLaterStatus": "✅ Hesap eklendi. Bu WebView açık kalacak.",
-    "oauthWebviewOverlay": {
-      "steps": {
-        "prepare": "1 OAuth bağlantısını hazırla",
-        "authorize": "2 Yetkilendirme bağlantısını aç ve onayla",
-        "bind": "3 Yetkilendirme sonucunu yokla ve hesabı bağla",
-        "complete": "5 Tamamlandı (elle kapat)"
-      },
-      "status": {
-        "loginConfirm": "Lütfen bu sayfada giriş ve yetkilendirmeyi tamamlayın."
-      }
-    },
-    "instances": {
-      "unsupported": {
-        "descPlatform": "MiniMax Code çoklu örneği yalnızca macOS, Windows ve Linux'ta desteklenir."
-      }
-    },
-    "quota": {
-      "usedOfTotal": "{{used}} / {{total}}​",
-      "noPlan": "M Plan aboneliği yok",
-      "purchased": "Satın alınan krediler",
-      "gifted": "Hediye krediler"
-    },
-    "checkin": {
-      "title": "Günlük check-in",
-      "modalTitle": "Günlük check-in",
-      "status": "Check-in durumu",
-      "checkedIn": "Check-in yapıldı",
-      "notCheckedIn": "Check-in yapılmadı",
-      "button": "Yoklama",
-      "button.loading": "Check-in yapılıyor...",
-      "done": "Tamam",
-      "success": "Check-in başarılı! {{days}} günlük seri",
-      "failure": "Yoklama başarısız: {{message}}",
-      "failure.network": "Ağ hatası, lütfen daha sonra tekrar deneyin",
-      "lastCheckin": "Son check-in: {{time}}",
-      "streak": "{{days}} günlük seri",
-      "reward": "Ödül: {{reward}}",
-      "refreshStatus": "Yenile",
-      "checkAll": "Tümünü check-in yap",
-      "noAccounts": "Hesap yok",
-      "querying": "Yükleniyor...",
-      "streakDays": "{{days}} gün",
-      "streakRewardCountdown": "Bonus ödüle {{days}} gün kaldı",
-      "streakRewardToday": "Bonus ödül bugün kullanılabilir!",
-      "recentDates": "Son: ",
-      "claimed": "Alındı",
-      "queryFailed": "Sorgu başarısız",
-      "retry": "Yeniden dene",
-      "inactive": "Kullanılamaz",
-      "inactiveHint": "Bu hesap için check-in etkin değil",
-      "autoCheckinSettings": "Otomatik Giriş Ayarları",
-      "autoCheckinLabel": "Otomatik Giriş",
-      "autoCheckinOff": "Otomatik Giriş Kapalı",
-      "autoCheckinEnabledHint": "Otomatik giriş etkin: {{start}} ile {{end}} arasında rastgele giriş",
-      "autoCheckinDisabledHint": "Otomatik giriş devre dışı",
-      "enableAutoCheckin": "Otomatik Girişi Etkinleştir",
-      "enableAutoCheckinDesc": "Belirtilen zaman aralığında günlük olarak rastgele giriş yapar",
-      "randomTimeRange": "Rastgele Giriş Zaman Aralığı",
-      "startTime": "Başlangıç Zamanı",
-      "endTime": "Bitiş Zamanı",
-      "timeRangeHint": "Arka planda girişi tamamlamak için her gün bu aralıkta rastgele bir zaman seçer.",
-      "timeRangeError": "Başlangıç zamanı bitiş zamanından sonra olamaz"
-    },
-    "placeholder": "MiniMax Code hesap yönetimi yakında geliyor."
   }
 }
