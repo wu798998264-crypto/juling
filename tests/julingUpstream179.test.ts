@@ -7,11 +7,11 @@ import { resolveCodexAccountCardSkin } from '../src/utils/codexAccountCardSkin.t
 
 const source = (path: string) => readFileSync(new URL('../' + path, import.meta.url), 'utf8');
 
-test('1.3.80 metadata is consistent without changing Juling update trust or identity', () => {
+test('1.3.81 metadata is consistent without changing Juling update trust or identity', () => {
   const pkg = JSON.parse(source('package.json'));
   const lock = JSON.parse(source('package-lock.json'));
   const config = JSON.parse(source('src-tauri/tauri.conf.json'));
-  assert.equal(pkg.version, '1.3.80');
+  assert.equal(pkg.version, '1.3.81');
   assert.equal(lock.version, pkg.version);
   assert.equal(lock.packages[''].version, pkg.version);
   assert.equal(config.version, pkg.version);
@@ -41,13 +41,13 @@ test('new release keeps neutral provider presentation and a single Juling card s
   assert.doesNotMatch(source('src/pages/useCodexAccountsRenderers.tsx'), /"APIKEY\.FUN"|codex-card-skin-apikey-fun/);
 });
 
-test('Rust-only packaging retains the third-party license and visible S1.0.3 identity', () => {
+test('Rust-only packaging retains the third-party license and visible S1.0.4 identity', () => {
   const config = JSON.parse(source('src-tauri/tauri.conf.json'));
   assert.equal(config.bundle.externalBin, undefined);
   assert.ok(Object.keys(config.bundle.resources).every(path => !path.includes('juling-cliproxy')));
   assert.equal(config.bundle.resources['../resources/codex/LICENSE.CLIProxyAPI'], 'licenses/CLIProxyAPI-LICENSE.txt');
   assert.doesNotMatch(source('src-tauri/build.rs'), /Command::new\("go"\)|fn build_go_sidecar/);
-  assert.match(source('src/pages/SettingsPageView.tsx'), />S1\.0\.3</);
+  assert.match(source('src/pages/SettingsPageView.tsx'), />S1\.0\.4</);
 });
 
 test('1.3.78 release history uses bundled notes and independently trusted updater notes', () => {

@@ -8,6 +8,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.3.81] - 2026-11-09
+
+### Fixed
+
+- Restore verified local project groups before optional history maintenance after account switching.
+- Refresh OAuth subscription expiry hourly with staggered account checks, including before the previous expiry.
+- Wait 30 minutes after each successful automatic reset-card use, including after app restarts.
+- Repair unaffected history indexes when individual sessions or ancestors are missing and report affected IDs.
+- Stream large session logs in chunks without fixed file, record or total-read byte limits.
+- Synchronize newer official credentials from the default authentication store when a UI profile path is detected.
+- Recover API ports through cleanup or a random available port in the same error dialog.
+- Preserve Juling complete-history failover, all completed tool outputs, non-replay and bounded retry budgets.
+
 ## [1.3.80] - 2026-11-07
 
 ### Added
