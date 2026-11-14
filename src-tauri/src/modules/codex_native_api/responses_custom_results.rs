@@ -45,7 +45,10 @@ pub(super) fn replay(items: &[Value]) -> Option<Cow<'_, [Value]>> {
 }
 
 pub(super) fn replayable(items: &[Value]) -> bool {
-    merge_groups(items).is_some()
+    // Existing verified Juling histories retain their original envelopes even
+    // when exec notifications are separated by other accepted history items.
+    (replay_items(items) && super::identity::rebuild::paired_tools(items))
+        || merge_groups(items).is_some()
 }
 
 fn merge_groups(items: &[Value]) -> Option<Vec<Range<usize>>> {

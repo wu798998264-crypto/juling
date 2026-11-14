@@ -168,7 +168,17 @@ fn juling_custom_results_reject_other_tools_and_unfinished_exec_notifications() 
         input[2]["name"] = json!(name);
         input[3]["name"] = json!(name);
         assert!(replay(&input).is_none(), "must reject {name}:{status}");
+        assert!(!replayable(&input), "must not admit {name}:{status}");
     }
+}
+
+#[test]
+fn juling_verified_exec_notifications_remain_replayable_without_wire_merging() {
+    let mut input = source();
+    input.insert(2, json!({"role":"assistant","content":"verified progress"}));
+    assert!(super::super::identity::rebuild::paired_tools(&input));
+    assert!(replayable(&input));
+    assert!(replay(&input).is_none(), "wire grouping must retain its strict order checks");
 }
 
 // Synthetic values reproduce only the verified envelope/part structure: three
