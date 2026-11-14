@@ -52,6 +52,17 @@ function cache() {
     }};
   return {client, queries, listeners};
 }
+// Dynamic import callbacks in vm contexts require VM modules in Node 24.
+if (typeof vm.SourceTextModule !== 'function') {
+  test('quota-state regressions execute in VM-enabled Node', () => {
+    const result = require('node:child_process').spawnSync(process.execPath,
+      ['--experimental-vm-modules', '--test', __filename],
+      { encoding: 'utf8', windowsHide: true, timeout: 60000 });
+    assert.ifError(result.error);
+    assert.equal(result.status, 0, result.stdout + result.stderr);
+  });
+} else {
+
 test('incoming usage has consistent available quota while preserving identity, subscription and images', () => {
   const {api, root} = harness(), raw = exhausted(), before = JSON.stringify(raw);
   const next = api.usage(raw);
@@ -229,3 +240,5 @@ test('module discovery errors are observable failures and revocation refreshes t
   assert.equal(refreshes.length, 3);
   assert.equal(refreshes.every(options => options.refetchType === 'active'), true);
 });
+
+}
