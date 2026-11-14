@@ -93,6 +93,7 @@ async fn legacy_relay_item_ids_are_stripped_on_official_http_sse_and_websocket_w
     assert_eq!(event["type"], "response.completed", "{event}");
     socket.close(None).await.unwrap();
     service.shutdown(Duration::from_secs(3)).await.unwrap();
+    drop(service);
     upstream.abort();
     std::fs::remove_dir_all(root).unwrap();
 }

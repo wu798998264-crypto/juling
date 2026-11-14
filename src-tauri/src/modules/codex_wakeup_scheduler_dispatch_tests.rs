@@ -163,8 +163,16 @@ fn run_isolated(root: &Path, test: &str, phase: &str) {
         use std::os::windows::process::CommandExt;
         command.creation_flags(0x08000000);
     }
+    command.env_clear();
+    // Winsock loads its service provider through the Windows system directory.
+    // Retain OS discovery only; account/proxy configuration stays isolated.
+    #[cfg(windows)]
+    for name in ["SystemRoot", "WINDIR"] {
+        if let Some(value) = std::env::var_os(name) {
+            command.env(name, value);
+        }
+    }
     let status = command
-        .env_clear()
         .env(CHILD, phase)
         // The unoptimized scheduler and HTTP futures share this test thread.
         .env("RUST_MIN_STACK", "16777216")

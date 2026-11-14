@@ -1,6 +1,22 @@
 fn project_switch_test_profile(root: &std::path::Path, id: &str, binding: Option<String>) -> PathBuf {
     let profile = root.join(id);
     fs::create_dir_all(&profile).unwrap();
+    #[cfg(target_os = "windows")]
+    {
+        // Only path validation and stopped-runtime discovery run in this
+        // fixture. Supply an inert GUI PE header; never launch a real client.
+        let executable = root.join("ChatGPT.exe");
+        let mut bytes = vec![0u8; 158];
+        bytes[..2].copy_from_slice(b"MZ");
+        bytes[60..64].copy_from_slice(&64u32.to_le_bytes());
+        bytes[64..68].copy_from_slice(b"PE\0\0");
+        bytes[88..90].copy_from_slice(&0x20bu16.to_le_bytes());
+        bytes[156..158].copy_from_slice(&2u16.to_le_bytes());
+        fs::write(&executable, bytes).unwrap();
+        let mut config = crate::modules::config::get_user_config();
+        config.codex_app_path = executable.to_string_lossy().into_owned();
+        crate::modules::config::save_user_config(&config).unwrap();
+    }
     fs::write(profile.join(CODEX_PROFILE_CONFIG_FILE), "cli_auth_credentials_store = 'file'\n")
         .unwrap();
     let mut store = crate::modules::codex_instance::load_instance_store().unwrap();

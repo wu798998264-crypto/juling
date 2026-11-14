@@ -1424,7 +1424,10 @@ supports_websockets = false
         let config = crate::modules::codex_config_format::read_codex_config_doc_from_str(&config)
             .expect("parse current config");
         assert_eq!(config["openai_base_url"].as_str(), Some("https://relay.example.com/v1"));
-        assert!(config.get("model_provider").is_none());
+        assert_eq!(
+            config.get("model_provider").and_then(|value| value.as_str()),
+            if cfg!(target_os = "windows") { Some("openai") } else { None },
+        );
         assert!(config.get("model_providers").and_then(|providers| providers.get(CODEX_RUNTIME_MODEL_PROVIDER_ID)).is_none());
     }
 
@@ -2231,7 +2234,10 @@ supports_websockets = false
         let config = crate::modules::codex_config_format::read_codex_config_doc_from_str(&config)
             .expect("parse config");
         assert_eq!(config["openai_base_url"].as_str(), Some("https://relay.example.com/v1"));
-        assert!(config.get("model_provider").is_none());
+        assert_eq!(
+            config.get("model_provider").and_then(|value| value.as_str()),
+            if cfg!(target_os = "windows") { Some("openai") } else { None },
+        );
         assert!(config.get("model_providers").and_then(|providers| providers.get(CODEX_RUNTIME_MODEL_PROVIDER_ID)).is_none());
         assert!(config.get("model_catalog_json").is_none());
         assert!(!base_dir

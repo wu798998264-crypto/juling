@@ -23,12 +23,17 @@ fn custom_results_rebuild_preserves_source_checkpoint_after_restart() {
         context.rebuild_input.as_ref().unwrap(),
         original["input"].as_array().unwrap()
     );
-    assert_eq!(
-        plan.source_input.as_deref().unwrap(),
-        original["input"].as_array().unwrap()
-    );
+    assert!(plan.source_input.is_none(), "verified Juling exec envelopes need no replay-only merge");
+    let mut expected_wire = original["input"].as_array().unwrap().clone();
+    if !context.portable_body {
+        for item in &mut expected_wire {
+            item.as_object_mut().unwrap().remove("id");
+        }
+    }
+    assert_eq!(plan.body["input"], json!(expected_wire));
     assert!(paired_tools(plan.body["input"].as_array().unwrap()));
-    assert!(!paired_tools(context.rebuild_input.as_ref().unwrap()));
+    assert!(paired_tools(context.rebuild_input.as_ref().unwrap()));
+    assert!(!strict_paired_tools(context.rebuild_input.as_ref().unwrap()));
     // Account switching reinspects the wire copy, then restores the source
     // transcript through the same generation hook as production.
     let mut context = store
