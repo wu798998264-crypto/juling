@@ -1821,7 +1821,7 @@ pub async fn codex_query_model_provider_usage(
             Ok(summary) => {
                 let mut summary = summary.clone();
                 // The connection contains remote scope metadata, which is not quota.
-                summary.juling = None;
+                summary.cockpit = None;
                 serde_json::to_value(summary).ok()
             }
             Err(error) if error == crate::modules::codex_quota::RELAY_BALANCE_DISABLED => return result,

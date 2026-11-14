@@ -167,7 +167,7 @@ fn committed_empty_antigravity_index_never_rebuilds_deleted_accounts_from_detail
         .lock()
         .unwrap_or_else(|error| error.into_inner());
     let guard = DataDirGuard::new();
-    let account = seed("deleted-but-file-retained");
+    let account = seed("deleted-but-file-retained", 0);
     let legacy = guard.path.join("accounts.json");
     fs::write(
         &legacy,
