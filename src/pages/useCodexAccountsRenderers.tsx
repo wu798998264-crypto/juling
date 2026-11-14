@@ -413,7 +413,7 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
             <AccountLastUsed accountId={account.id} lastSwitchedAt={account.last_switched_at} createdAt={account.created_at} formatDate={formatDate} />
             <div className="codex-compact-quotas">
               {isApiKeyAccount ? (
-                (!hideRelayQuota || shouldShowCodexApiKeyUsagePanel(account, hideRelayQuota)) && (isOpenAIOfficialUsageAccount(account)
+                (!hideRelayQuota || apiKeyUsageMap[account.id]?.summary?.cockpit || shouldShowCodexApiKeyUsagePanel(account, hideRelayQuota)) && (isOpenAIOfficialUsageAccount(account)
                   ? renderApiKeyUsagePanel(account, resolveUsageProviderForApiKeyAccount(account), 'table')
                   : codexDailyUsageMetrics(resolveCodexAccountDailyUsage(account, apiKeyUsageMap[account.id]?.summary), t).map(item => (
                   <span key={`${account.id}-${item.key}`} className="codex-compact-quota" title={`${item.label} ${item.value}`}>
@@ -593,7 +593,7 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
         const apiKeyUsageMode = resolveApiKeyUsageMode(
           apiKeyUsageMap[account.id]?.summary,
         );
-        const showApiKeyUsagePanel = (isApiKeyAccount && !hideRelayQuota) || shouldShowCodexApiKeyUsagePanel(
+        const showApiKeyUsagePanel = isJulingAccount || (isApiKeyAccount && !hideRelayQuota) || shouldShowCodexApiKeyUsagePanel(
           account,
           hideRelayQuota,
         );
@@ -1002,7 +1002,7 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
                   </button>
                   {!isPendingOAuthAccount &&
                     (!isApiKeyAccount ||
-                      isNewApiAccount ||
+                      (isNewApiAccount && !hideRelayQuota) ||
                       canRefreshApiKeyUsage(account, apiKeyUsageProvider)) && (
                       <button
                         className="card-action-btn"
@@ -1316,7 +1316,7 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
                   </span>
                   <code
                     className="codex-local-access-code"
-                    title={localAccessCollection?.apiKey || "-"}
+                    title={localAccessKeyVisible ? localAccessCollection?.apiKey : undefined}
                   >
                     {apiKeyDisplay}
                   </code>
@@ -1836,7 +1836,7 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
         const apiKeyUsageMode = resolveApiKeyUsageMode(
           apiKeyUsageMap[account.id]?.summary,
         );
-        const showApiKeyUsagePanel = (isApiKeyAccount && !hideRelayQuota) || shouldShowCodexApiKeyUsagePanel(
+        const showApiKeyUsagePanel = isJulingAccount || (isApiKeyAccount && !hideRelayQuota) || shouldShowCodexApiKeyUsagePanel(
           account,
           hideRelayQuota,
         );
@@ -2103,7 +2103,7 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
             <td>
               {showApiKeyUsagePanel ? (
                 renderApiKeyUsagePanel(account, apiKeyUsageProvider, "table")
-              ) : isChatCompletionsApiKey ? (
+              ) : isChatCompletionsApiKey || (isApiKeyAccount && hideRelayQuota) ? (
                 <span className="codex-subscription-table-empty">-</span>
               ) : (
                 <>
@@ -2227,7 +2227,7 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
                 </button>
                 {!isPendingOAuthAccount &&
                   (!isApiKeyAccount ||
-                    isNewApiAccount ||
+                    (isNewApiAccount && !hideRelayQuota) ||
                     canRefreshApiKeyUsage(account, apiKeyUsageProvider)) && (
                     <button
                       className="action-btn"
@@ -2357,7 +2357,8 @@ export function useCodexAccountsRenderers(context: Pick<ReturnType<typeof useCod
 
     const renderApiKeyUsageDetailModal = () => {
       const account = apiKeyUsageDetailAccount;
-      if (!account) return null;
+      if (!account || (hideRelayQuota && !apiKeyUsageMap[account.id]?.summary?.cockpit
+        && !shouldShowCodexApiKeyUsagePanel(account, true))) return null;
       const provider = resolveUsageProviderForApiKeyAccount(account);
       const state = isOpenAIOfficialUsageAccount(account, provider?.baseUrl)
         ? currentOpenAIUsageState(provider, account.openai_api_key ?? '', apiKeyUsageMap[account.id]) : apiKeyUsageMap[account.id];

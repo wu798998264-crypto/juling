@@ -13,9 +13,9 @@
     `window.__julingNativeFast?.allow(${host},${auth})===true`;
   const enabled = () => root.__julingEnhancements?.nativeFast === true;
   const predictionsEnabled = () => root.__julingEnhancements?.nativePredictions === true
-    && root.__julingEnhancements?.apiKeyAuthVerified === true;
+    && (root.__julingEnhancements?.apiKeyAuthVerified === true || root.__julingEnhancements?.apiService === true);
   const quotaModuleEnabled = () => root.__julingEnhancements?.quotaCompat === true
-    || root.__julingEnhancements?.apiService === true;
+    && root.__julingEnhancements?.apiService !== true;
   const allow = (host, auth) => enabled() && host === "local"
     && (auth === "apiKey" || auth === "apikey"
       // The current renderer can expose no auth method for a functioning API

@@ -52,7 +52,7 @@ if (!process.versions.electron) {
       assert.equal(result.resumed.ok, true);
       assert.equal(result.adapted.install.ok, true);
       assert.equal(result.adapted.state.nativePatchState, 'active');
-      assert.equal(result.adapted.state.nativePatchFeatures, '1011');
+      assert.equal(result.adapted.state.nativePatchFeatures, '1110');
       assert.equal(result.adapted.fixture.access.granted, true);
       assert.equal(result.adapted.fixture.dictation, true);
       assert.equal(result.adapted.fixture.dependency, 'static-relative-import-ok');
@@ -64,7 +64,7 @@ if (!process.versions.electron) {
       assert.equal(result.adapted.name, 'fixture-original-name');
       assert.ok(result.injectionBytes < 100000, 'new-document script contains no module payload');
       assert.deepEqual(result.repeated.fixture.access, { granted: true }, JSON.stringify(result.repeated));
-      assert.equal(result.repeated.state.nativePatchFeatures, '1011');
+      assert.equal(result.repeated.state.nativePatchFeatures, '1110');
       assert.equal(result.repeated.name, 'fixture-original-name');
       assert.equal(result.canceled.install.reason, 'handoff-unavailable');
       assert.equal(result.canceled.fixture.access, null);
@@ -199,7 +199,9 @@ window.fixturePrimary={importUrl:import.meta.url};`;
   await window.loadURL('app://-/');
   await send('Page.enable');
   const original = await waitForModule();
-  const bootstrap = `window.__julingEnhancements={nativeFast:true,quotaCompat:false,apiService:true,apiKeyAuthVerified:true,owner:'loader-test'};${runtime}`;
+  // Exercise the optional legacy quota adapter. API Service now owns a separate
+  // quota-state adapter, covered by service_rspack.test.cjs.
+  const bootstrap = `window.__julingEnhancements={nativeFast:true,quotaCompat:true,apiService:false,apiKeyAuthVerified:true,owner:'loader-test'};${runtime}`;
   await evaluate(`window.name='fixture-original-name';${bootstrap}`);
   // Reproduce the real failure: ordinary input while module preparation is
   // still pending. This is an isolated renderer, never a user's application.

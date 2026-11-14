@@ -211,6 +211,7 @@
 .main-wrapper {
   position: relative;
   flex: 1;
+  min-width: 0;
   margin-inline-start: 120px; /* 增加起始侧留白，主要避开 Sidebar */
   padding: 40px 32px 32px 0;
   padding-inline-start: 0;
@@ -220,20 +221,6 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-}
-
-.app-global-promo-layer {
-  position: absolute;
-  top: 70px;
-  left: 0;
-  right: 32px;
-  height: 0;
-  z-index: 6;
-  pointer-events: none;
-}
-
-.app-global-promo-layer .global-promo-center {
-  top: 0;
 }
 
 .main-content {
@@ -480,17 +467,17 @@
   position: relative;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
   width: 100%;
   min-height: 60px;
 }
 
 .page-top-strip-left {
-  position: absolute;
-  left: 0;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  z-index: 2;
+  min-width: 0;
 }
 
 .page-top-strip-label {
@@ -499,7 +486,8 @@
   font-size: 24px;
   font-weight: 700;
   letter-spacing: -0.02em;
-  line-height: 1;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
   background: var(--gradient-primary);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -515,9 +503,7 @@
 }
 
 .page-top-strip-right {
-  position: absolute;
-  right: 0;
-  z-index: 2;
+  margin-inline-start: auto;
   display: inline-flex;
   align-items: center;
   justify-content: flex-end;
@@ -577,7 +563,7 @@
 
 .page-tabs-row-with-leading {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  grid-template-columns: minmax(120px, 1fr) minmax(0, max-content) minmax(max-content, 1fr);
   align-items: center;
 }
 
@@ -586,11 +572,29 @@
   justify-self: start;
   display: inline-flex;
   align-items: center;
+  min-width: 0;
+  max-width: 100%;
 }
 
-.page-tabs-row-with-leading .page-tabs {
+.page-tabs-leading .platform-group-switcher,
+.page-tabs-leading .platform-group-switcher-trigger {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.page-tabs-row-with-leading .page-tabs,
+.settings-page-tabs-row .page-tabs {
   grid-column: 2;
   justify-self: center;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.page-tabs-row-with-leading .page-tabs > .filter-tab,
+.settings-page-tabs-row .page-tabs > .filter-tab {
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 .page-tabs-leading .platform-group-switcher-trigger {
@@ -633,8 +637,8 @@
 }
 
 .page-tabs-label {
-  position: absolute;
-  left: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
   font-size: 24px;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -642,6 +646,11 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+.settings-page-tabs-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(0, max-content) minmax(0, 1fr);
 }
 
 .page-tabs-center {

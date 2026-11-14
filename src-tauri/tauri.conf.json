@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "聚灵",
-  "version": "1.3.81",
+  "version": "1.3.84",
   "identifier": "com.wu798998264.juling",
   "build": {
     "beforeDevCommand": "node scripts/prepare-tauri.cjs && npm run dev",
@@ -86,11 +86,10 @@
       "../src/assets/icons/cursor-menu.png": "native-menu-icons/cursor-menu.png",
       "../src/assets/icons/github-copilot.svg": "native-menu-icons/github-copilot.svg",
       "../src/assets/icons/kiro-menu.png": "native-menu-icons/kiro-menu.png",
+      "../src/assets/icons/minimax-code.png": "native-menu-icons/minimax-code.png",
       "../src/assets/icons/qoder.png": "native-menu-icons/qoder.png",
       "../src/assets/icons/trae.png": "native-menu-icons/trae.png",
       "../src/assets/icons/trae-cn.png": "native-menu-icons/trae-cn.png",
-      "../src/assets/icons/trae-solo.png": "native-menu-icons/trae-solo.png",
-      "../src/assets/icons/trae-solo-cn.png": "native-menu-icons/trae-solo-cn.png",
       "../src/assets/icons/windsurf.svg": "native-menu-icons/windsurf.svg",
       "../src/assets/icons/workbuddy.png": "native-menu-icons/workbuddy.png",
       "../src/assets/icons/zed.png": "native-menu-icons/zed.png",
@@ -98,7 +97,7 @@
       "../resources/codex/LICENSE.CLIProxyAPI": "licenses/CLIProxyAPI-LICENSE.txt",
       "../NOTICE.txt": "NOTICE.txt",
       "../docs/windows-usage.md": "升级说明.md",
-      "../src/assets/icons/minimax-code.png": "native-menu-icons/minimax-code.png"
+      "../src/assets/icons/trae-work.png": "native-menu-icons/trae-work.png"
     },
     "macOS": {
       "bundleName": "聚灵",

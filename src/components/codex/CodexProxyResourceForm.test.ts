@@ -17,6 +17,8 @@ test('local-provider previews remain local and allow explicit import despite unk
     '../../hooks/useEscClose': { useEscCloseTopmost() {} },
     '../../hooks/useModalFocusTrap': { useModalFocusTrap() {} },
     '../../hooks/useModalScrollLock': { useModalScrollLock() {} },
+    '../../hooks/useDurableUiSetting': { useDurableUiSetting: () => null },
+    '../../utils/durableUiSettings': { previewDurableUiSetting() {} },
     '../SingleSelectDropdown': { SingleSelectDropdown: 'dropdown' },
     '../../services/codexProxyCatalogService': {
       catalogErrorKey: () => 'codex.proxy.catalog.failed', catalogUnsupportedKey: () => 'unsupported',
@@ -51,6 +53,8 @@ test('explicit subscription mode cannot submit insecure or credentialed URLs', (
     '../../hooks/useEscClose': { useEscCloseTopmost() {} },
     '../../hooks/useModalFocusTrap': { useModalFocusTrap() {} },
     '../../hooks/useModalScrollLock': { useModalScrollLock() {} },
+    '../../hooks/useDurableUiSetting': { useDurableUiSetting: () => null },
+    '../../utils/durableUiSettings': { previewDurableUiSetting() {} },
     '../SingleSelectDropdown': { SingleSelectDropdown: 'dropdown' },
     '../../services/codexProxyCatalogService': { catalogErrorKey: () => 'failed', catalogUnsupportedKey: () => 'unsupported',
       previewProxyImport: async () => ({ rows: [], valid: 0, invalid: 0, duplicates: 0 }) },

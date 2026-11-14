@@ -1,3 +1,4 @@
+import zhCN from '../../locales/zh-CN.json';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
@@ -118,7 +119,7 @@ test('lands each credit type in a labelled group instead of 其他', () => {
       ],
       total_count: 2,
     }),
-    (_key, defaultValue) => defaultValue ?? '',
+    (key, defaultValue) => key.split('.').reduce((v: any, part) => v?.[part], zhCN) ?? defaultValue ?? '',
   );
 
   const labels = groups.filter((group) => group.visible).map((group) => group.label);

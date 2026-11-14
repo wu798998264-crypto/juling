@@ -43,6 +43,9 @@ pub(crate) struct Plan {
     pub headers: HeaderMap,
     pub body: Value,
     pub base_revision: i64,
+    // A replay-only custom result merge must not replace accepted source history.
+    // This also maps every merged item's original ID to its ordered result group.
+    pub source_input: Option<Arc<Vec<Value>>>,
 }
 
 pub(super) fn initialize(connection: &Connection) -> rusqlite::Result<()> {
@@ -540,6 +543,26 @@ pub(in crate::modules::codex_native_api) fn replay_items(items: &[Value]) -> boo
 }
 
 pub(in crate::modules::codex_native_api) fn paired_tools(items: &[Value]) -> bool {
+    paired_tool_items(items)
+}
+
+pub(in crate::modules::codex_native_api) fn paired_tool_items<'a>(
+    items: impl IntoIterator<Item = &'a Value>,
+) -> bool {
+    check_tool_pairs(items, true)
+}
+
+pub(in crate::modules::codex_native_api) fn strict_paired_tools(items: &[Value]) -> bool {
+    strict_paired_tool_items(items)
+}
+
+pub(in crate::modules::codex_native_api) fn strict_paired_tool_items<'a>(
+    items: impl IntoIterator<Item = &'a Value>,
+) -> bool {
+    check_tool_pairs(items, false)
+}
+
+fn check_tool_pairs<'a>(items: impl IntoIterator<Item = &'a Value>, allow_exec_notifications: bool) -> bool {
     let mut pending = HashMap::new();
     let mut seen = HashSet::new();
     // Codex code-mode exec can yield several host result items for one completed
@@ -577,7 +600,7 @@ pub(in crate::modules::codex_native_api) fn paired_tools(items: &[Value]) -> boo
                     return false;
                 };
                 if pending.remove(id) != Some(kind)
-                    && !(kind == "custom_tool_call_output"
+                    && !(allow_exec_notifications && kind == "custom_tool_call_output"
                         && item["name"] == "exec"
                         && multi_output_exec.contains(id))
                 {
@@ -683,7 +706,7 @@ pub(super) fn complete_input_available(
     else {
         return Ok(false);
     };
-    Ok(replay_items(&transcript) && paired_tools(&transcript))
+    Ok(super::super::responses_custom_results::replayable(&transcript))
 }
 
 impl IdentityStore {
@@ -1074,12 +1097,22 @@ impl IdentityStore {
         });
         drop(connection);
         context.rebuild_base_revision = Some(base_revision);
-        if !paired_tools(&transcript) {
-            return Ok(None);
-        }
+        // Already verified Juling exec histories keep every result envelope.
+        // Only normalize a replay copy when the stricter wire shape requires it.
+        let replay = if paired_tools(&transcript) {
+            std::borrow::Cow::Borrowed(transcript.as_slice())
+        } else {
+            let Some(replay) = super::super::responses_custom_results::replay(&transcript) else {
+                return Ok(None);
+            };
+            replay
+        };
+        let (mut fresh_input, source_input) = match replay {
+            std::borrow::Cow::Borrowed(_) => (transcript, None),
+            std::borrow::Cow::Owned(replay) => (replay, Some(Arc::new(transcript))),
+        };
         let mut upstream_headers = headers.clone();
         let mut upstream_body = body.clone();
-        let mut fresh_input = transcript;
         if !context.portable_body {
             for item in &mut fresh_input {
                 item.as_object_mut().unwrap().remove("id");
@@ -1126,6 +1159,7 @@ impl IdentityStore {
             headers: upstream_headers,
             body: upstream_body,
             base_revision,
+            source_input,
         }))
     }
 
@@ -1283,6 +1317,9 @@ impl RequestIdentity {
         self.rebuild_base_revision = Some(plan.base_revision);
         self.rebuild_new_generation = true;
         self.generation = None;
+        if let Some(input) = &plan.source_input {
+            self.rebuild_input = Some((**input).clone());
+        }
     }
     pub(crate) fn retain_binding_generation(&mut self, binding: &Binding) {
         self.session_identity_mapping_enabled = binding.session_identity_mapping_enabled;
