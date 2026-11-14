@@ -1108,7 +1108,13 @@ impl IdentityStore {
             replay
         };
         let (mut fresh_input, source_input) = match replay {
-            std::borrow::Cow::Borrowed(_) => (transcript, None),
+            std::borrow::Cow::Borrowed(_) => {
+                // Preserve original item IDs across account reinspection even
+                // when Juling can forward separate completed-exec envelopes.
+                let source = (!strict_paired_tools(&transcript))
+                    .then(|| Arc::new(transcript.clone()));
+                (transcript, source)
+            }
             std::borrow::Cow::Owned(replay) => (replay, Some(Arc::new(transcript))),
         };
         let mut upstream_headers = headers.clone();

@@ -23,7 +23,11 @@ fn custom_results_rebuild_preserves_source_checkpoint_after_restart() {
         context.rebuild_input.as_ref().unwrap(),
         original["input"].as_array().unwrap()
     );
-    assert!(plan.source_input.is_none(), "verified Juling exec envelopes need no replay-only merge");
+    assert_eq!(
+        plan.source_input.as_deref().unwrap(),
+        original["input"].as_array().unwrap(),
+        "account reinspection must restore exact source IDs without merging results",
+    );
     let mut expected_wire = original["input"].as_array().unwrap().clone();
     if !context.portable_body {
         for item in &mut expected_wire {
