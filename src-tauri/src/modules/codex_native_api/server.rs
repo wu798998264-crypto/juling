@@ -722,6 +722,7 @@ mod shutdown_handoff_tests {
                 let temp = tempfile::tempdir().unwrap();
                 let (_stop, receiver) = watch::channel(false);
                 let state = AppState {
+                    reasoning_proofs: Default::default(),
                     host: Arc::new(UnusedHost),
                     identity: Arc::new(IdentityStore::open(temp.path().join("identity.sqlite")).unwrap()),
                     options: Options::default(),
