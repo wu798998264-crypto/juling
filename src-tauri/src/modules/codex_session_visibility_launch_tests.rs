@@ -34,7 +34,10 @@ fn launch_repairs_rollout_with_large_metadata_without_changing_contents() {
     }).to_string().into_bytes();
     rollout.push(b'\n');
     fs::write(&fixture.rollout, &rollout).unwrap();
-    fs::File::open(&fixture.rollout).unwrap().set_modified(fixture.original_time).unwrap();
+    // Windows requires a write-capable handle to restore the fixture timestamp.
+    // Opening without truncate preserves the bytes checked below.
+    fs::OpenOptions::new().write(true).open(&fixture.rollout).unwrap()
+        .set_modified(fixture.original_time).unwrap();
     let result = repair_session_visibility_quick_for_instance(
         "large-header", "Large header", &fixture.dir, false,
     ).unwrap();
