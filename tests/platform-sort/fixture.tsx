@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { PlatformLayoutModal } from '../../src/components/PlatformLayoutModal';
-import { usePlatformLayoutStore } from '../../src/stores/usePlatformLayoutStore';
+import { API_RELAY_LAYOUT_ENTRY_ID, usePlatformLayoutStore } from '../../src/stores/usePlatformLayoutStore';
 import '../../src/App.css';
 const snapshot = { values: {}, revisions: {} };
 let writes = 0, closed = 0;
@@ -28,7 +28,13 @@ usePlatformLayoutStore.getState().upsertPlatformGroup({
 window.fixture = {
   get writes() { return writes; },
   get closed() { return closed; },
-  get order() { return usePlatformLayoutStore.getState().orderedEntryIds; },
+  get order() {
+    const state = usePlatformLayoutStore.getState();
+    const order: string[] = [...state.orderedEntryIds];
+    // Juling's local API configuration entry participates in the visible list.
+    order.splice(state.apiRelayEntryOrder, 0, API_RELAY_LAYOUT_ENTRY_ID);
+    return order;
+  },
   get groupOrder() { return usePlatformLayoutStore.getState().platformGroups.find(g => g.id === 'fixture-sort-group').platformIds; },
 };
 function Fixture() {
