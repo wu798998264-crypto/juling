@@ -2,7 +2,7 @@
 #![cfg_attr(target_os = "windows", windows_subsystem = "windows")]
 
 fn main() {
-    if let Some(code) = antigravity_juling_tools_lib::try_run_codebuddy_cli() {
+    if let Some(code) = juling_lib::try_run_codebuddy_cli() {
         std::process::exit(code);
     }
     #[cfg(target_os = "windows")]

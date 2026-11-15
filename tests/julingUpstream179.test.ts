@@ -17,6 +17,11 @@ test('1.4.0 metadata is consistent without changing Juling update trust or ident
   assert.equal(config.version, pkg.version);
   assert.equal(config.mainBinaryName, '聚灵');
   assert.equal(config.identifier, 'com.wu798998264.juling');
+  const crateName = source('src-tauri/Cargo.toml').match(/\[lib\]\s+name = "([^"]+)"/)?.[1];
+  assert.equal(crateName, 'juling_lib');
+  const startup = source('src-tauri/src/main.rs');
+  assert.match(startup, /juling_lib::try_run_codebuddy_cli\(\)/);
+  for (const call of startup.matchAll(/\b(\w+_lib)::/g)) assert.equal(call[1], crateName);
   assert.deepEqual(config.plugins.updater.endpoints, [
     'https://github.com/wu798998264-crypto/juling/releases/latest/download/latest-{{target}}.json',
     'https://github.com/wu798998264-crypto/juling/releases/latest/download/latest.json',
