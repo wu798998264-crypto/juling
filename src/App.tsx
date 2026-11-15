@@ -3355,6 +3355,8 @@ function MainApp() {
         return { section: 'PLATFORM', title: t('nav.traeSoloCn', 'TRAE SOLO CN') };
       case 'workbuddy':
         return { section: 'PLATFORM', title: 'WorkBuddy' };
+      case 'workbuddy_ai':
+        return { section: 'PLATFORM', title: 'WorkBuddy AI' };
       case 'accounts':
       case 'codex-instances':
       default:
