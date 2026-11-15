@@ -8,6 +8,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.4.0] - 2026-11-15
+
+### Added
+
+- Juling S1.0.6 adds WorkBuddy AI international accounts, Antigravity desktop/IDE/CLI launch choices, CodeBuddy CLI instances, missing-path recovery, proxy DNS/IPv6 controls, provider quota queries and batch model probes.
+
+### Changed
+
+- Reorder platforms and groups with drag previews or keyboard controls. Improve themed controls, short-window scrolling and reachable modal actions.
+- Add credit-first reset cards; avoid copying desktop history into new CLI profiles; remove fixed session/project repair limits and preserve previous backups.
+- Keep Juling branding, maintainer contacts, independently signed updates and license notices. Upstream ads, promotions, feedback and update backends remain disabled.
+
+### Fixed
+
+- Resume long WebSocket sessions with segmented preloads, reduce duplicate history and recover compatible quota blocks without replaying unknown outcomes. Preserve complete-history checks, every completed exec result, cooldown failover and renewed retry budgets within the original total deadline.
+- Recover stalled connections, release Windows gateway ports, retain repeated images and API key protocols, and correct quota classification and pool totals.
+- Update Antigravity account recovery, Claude plans, CodeBuddy CN credits, Zhipu quotas, shared MiniMax credentials and compressed session usage. Improve card contrast, overflow and modal accessibility while retaining the Juling skin.
+
 ## [1.3.84] - 2026-11-14
 
 ### Added

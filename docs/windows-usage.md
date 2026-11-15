@@ -1,8 +1,8 @@
 # 聚灵 Windows 本地版
 
-界面版本 S1.0.5，内部功能基线 1.3.84。
+界面版本 S1.0.6，内部功能基线 1.4.0。
 
-安装版使用 Juling_1.3.84_x64-setup.exe；便携版解压后运行「聚灵.exe」。
+安装版使用 Juling_1.4.0_x64-setup.exe；便携版解压后运行「聚灵.exe」。
 需要 Windows 10/11 x64 和 Microsoft Edge WebView2 Runtime。
 请保留同目录的 scripts、native-menu-icons 和 licenses，不要只移动主程序。本版 API 服务使用内置 Rust 引擎，不再打包 Go 代理。
 

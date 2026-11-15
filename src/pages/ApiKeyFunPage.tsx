@@ -32,6 +32,7 @@ import julingCoreLogo from '../assets/branding/juling-core-master.png';
 import { ApiKeyFunKeyConfigModal } from '../components/apiKeyFun/ApiKeyFunKeyConfigModal';
 import { LOCAL_RELAY_ENDPOINT_KEY, normalizeLocalRelayUrl } from '../utils/localRelayConfig';
 import { resolveApiKeyFunGrokModel } from '../utils/apikeyFunClientConfigs';
+import { ModalErrorMessage, useModalErrorState } from '../components/ModalErrorMessage';
 import {
   exportLegacyApiKeyFunVault,
   initializeApiKeyFunVault,
@@ -150,6 +151,10 @@ export function ApiKeyFunPage() {
   const [configKey, setConfigKey] = useState<ManagedApiKey | null>(null);
   const [configModels, setConfigModels] = useState<string[]>([]);
   const [configModelsLoading, setConfigModelsLoading] = useState(false);
+  const [pendingDeleteKey, setPendingDeleteKey] = useState<ManagedApiKey | null>(null);
+  const [deletingKey, setDeletingKey] = useState(false);
+  const deletingKeyRef = useRef(false);
+  const deleteError = useModalErrorState();
 
   const claudeBaseUrl = useMemo(
     () => providerBaseUrl.replace(/\/+$/, '').replace(/\/v1$/i, ''),
@@ -242,15 +247,20 @@ export function ApiKeyFunPage() {
     }
   }, [apiKey, managedKeys]);
 
-  const changeSavedKeys = useCallback(async (update: (keys: ManagedApiKey[]) => ManagedApiKey[]) => {
+  const changeSavedKeys = useCallback(async (
+    update: (keys: ManagedApiKey[]) => ManagedApiKey[],
+    reportFailure?: (needsRecovery: boolean) => void,
+  ) => {
     setVaultWriteFailed(false);
     try {
       await updateApiKeyFunVault(update);
       setVaultLoadFailed(false);
       return true;
     } catch (error) {
-      if (requiresApiKeyFunRecovery(error)) setVaultNeedsRecovery(true);
-      else setVaultWriteFailed(true);
+      const needsRecovery = requiresApiKeyFunRecovery(error);
+      if (needsRecovery) setVaultNeedsRecovery(true);
+      if (reportFailure) reportFailure(needsRecovery);
+      else if (!needsRecovery) setVaultWriteFailed(true);
       return false;
     }
   }, []);
@@ -482,10 +492,31 @@ export function ApiKeyFunPage() {
     )));
   }, [changeSavedKeys]);
 
-  // 删除密钥
-  const handleDeleteManagedKey = useCallback((id: string) => {
-    void changeSavedKeys((items) => items.filter((item) => item.id !== id));
-  }, [changeSavedKeys]);
+  const closeDeleteKeyDialog = () => {
+    if (deletingKeyRef.current) return;
+    deleteError.clear();
+    setPendingDeleteKey(null);
+  };
+
+  const handleDeleteManagedKey = async () => {
+    if (!pendingDeleteKey || deletingKeyRef.current) return;
+    const targetId = pendingDeleteKey.id;
+    deletingKeyRef.current = true;
+    setDeletingKey(true);
+    deleteError.clear();
+    try {
+      const saved = await changeSavedKeys(
+        (items) => items.filter((item) => item.id !== targetId),
+        (needsRecovery) => deleteError.report(t(needsRecovery
+          ? 'apiKeyFun.keyManager.checkpointAvailable'
+          : 'apiKeyFun.keyManager.vaultWriteFailed')),
+      );
+      if (saved) setPendingDeleteKey(null);
+    } finally {
+      deletingKeyRef.current = false;
+      setDeletingKey(false);
+    }
+  };
 
   // 行内重命名密钥管理
   const handleStartRename = useCallback((item: ManagedApiKey, e: React.MouseEvent) => {
@@ -832,7 +863,7 @@ export function ApiKeyFunPage() {
                 </button>
               </div>
             )}
-            {vaultNeedsRecovery && (
+            {vaultNeedsRecovery && !pendingDeleteKey && (
               <div className="apikey-fun-empty-keys" role="alert">
                 <span>{t('apiKeyFun.keyManager.checkpointAvailable')}</span>
                 <button type="button" className="btn btn-secondary btn-sm" disabled={vaultLoading} onClick={restoreSavedKeys}>
@@ -936,7 +967,9 @@ export function ApiKeyFunPage() {
                           disabled={isEditing}
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDeleteManagedKey(item.id);
+                            if (pendingDeleteKey) return;
+                            deleteError.clear();
+                            setPendingDeleteKey(item);
                           }}
                           title={t('apiKeyFun.keyManager.deleteButton', '删除')}
                         >
@@ -960,6 +993,52 @@ export function ApiKeyFunPage() {
           modelsLoading={configModelsLoading}
           onClose={() => setConfigKey(null)}
         />
+      )}
+      {pendingDeleteKey && (
+        <div className="modal-overlay">
+          <div className="modal-content apikey-fun-delete-modal" role="alertdialog" aria-modal="true" aria-labelledby="apikey-fun-delete-title" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2 id="apikey-fun-delete-title">{t('common.delete', '删除')}</h2>
+              <button
+                type="button"
+                className="modal-close"
+                onClick={closeDeleteKeyDialog}
+                disabled={deletingKey}
+                aria-label={t('common.close', '关闭')}
+              >
+                <X />
+              </button>
+            </div>
+            <div className="modal-body">
+              <p>
+                {t(
+                  'apiKeyFun.keyManager.deleteConfirm',
+                  '确定删除已保存密钥“{{name}}”吗？此操作无法撤销。',
+                  { name: pendingDeleteKey.name },
+                )}
+              </p>
+              <ModalErrorMessage message={deleteError.message} scrollKey={deleteError.scrollKey} position="bottom" />
+            </div>
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={closeDeleteKeyDialog}
+                disabled={deletingKey}
+              >
+                {t('common.cancel', '取消')}
+              </button>
+              <button
+                type="button"
+                className="btn btn-danger"
+                onClick={() => void handleDeleteManagedKey()}
+                disabled={deletingKey}
+              >
+                {deletingKey ? t('common.processing') : t('common.delete', '删除')}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

@@ -158,10 +158,28 @@
     "providerClear": "Limpar seleção"
   },
   "common": {
+    "collapseAll": "Recolher tudo",
+    "expandAll": "Expandir tudo",
+    "syncing": "Sincronizando…",
+    "notice": "Aviso",
+    "gotIt": "Entendi",
+    "unknown": "Desconhecido",
+    "noData": "Sem dados",
+    "search": "Buscar",
+    "rename": "Renomear",
+    "yes": "Sim",
+    "no": "Não",
+    "saved": "Salvo",
+    "done": "Concluir",
+    "edit": "Editar",
+    "windowMinimize": "Minimizar",
+    "windowMaximize": "Maximizar",
+    "windowRestore": "Restaurar",
     "profileRestoreBusy": "A sessão está sendo restaurada. Tente novamente em instantes.",
     "profileRestoreInvalid": "O caminho da cópia da sessão é inválido. Importe a conta novamente.",
     "profileRestoreRecoveryFailed": "Falha ao restaurar a sessão. O backup foi mantido: {{detail}}",
     "dataQueryBusy": "Os dados estão sendo processados. Tente novamente em instantes.",
+    "historyRestoring": "Restaurando o histórico…",
     "apiBudget": {
       "keyScope": "Esta chave",
       "upgradeRequired": "Atualize o 聚灵 no computador do gateway para ver estatísticas e histórico de solicitações.",
@@ -636,7 +654,14 @@
       },
       "clear": "Limpar",
       "loginSuccess": "Login bem-sucedido",
-      "switchAccount": "Trocar conta"
+      "switchAccount": "Trocar conta",
+      "tokenFormat": {
+        "summary": "Campos obrigatórios e exemplos (clique para expandir)",
+        "single": "Exemplo único",
+        "singleToken": "Exemplo único (Token)",
+        "singleJson": "Exemplo único (JSON)",
+        "batchJson": "Exemplo em lote (JSON)"
+      }
     },
     "topRightAd": {
       "ariaLabel": "Slot global de anúncio no canto superior direito",
@@ -701,25 +726,7 @@
       "failed": "Não foi possível concluir a operação. O último estado foi preservado. Tente novamente.",
       "loginAttempt": "Login sem conta identificada",
       "removed": "Conta local removida"
-    },
-    "collapseAll": "Recolher tudo",
-    "expandAll": "Expandir tudo",
-    "syncing": "Sincronizando…",
-    "notice": "Aviso",
-    "gotIt": "Entendi",
-    "unknown": "Desconhecido",
-    "noData": "Sem dados",
-    "search": "Buscar",
-    "rename": "Renomear",
-    "yes": "Sim",
-    "no": "Não",
-    "saved": "Salvo",
-    "done": "Concluir",
-    "edit": "Editar",
-    "windowMinimize": "Minimizar",
-    "windowMaximize": "Maximizar",
-    "windowRestore": "Restaurar",
-    "historyRestoring": "Restaurando o histórico…"
+    }
   },
   "nav": {
     "overview": "Antigravity IDE​",
@@ -762,7 +769,8 @@
     "claude": "Claude",
     "openrouter": "OpenRouter",
     "opencode": "OpenCode",
-    "antigravity": "Antigravity"
+    "antigravity": "Antigravity",
+    "workbuddyAi": "WorkBuddy AI"
   },
   "sponsors": {
     "pageTitle": "Patrocinadores",
@@ -787,6 +795,10 @@
     "hiddenBadge": "Oculto",
     "openFromMore": "Gerenciar layout de plataformas",
     "dragHandleLabel": "Arrastar para reordenar",
+    "sortKeyboardInstructions": "Pressione Espaço para iniciar a ordenação, use as setas para mover, pressione Espaço ou Enter para soltar e Esc para cancelar.",
+    "sortPosition": "Posição {{position}} de {{total}}.",
+    "sortPlaced": "Movido para a posição {{position}}.",
+    "sortCancelled": "Ordenação cancelada.",
     "tipWithGroups": "Arraste para reordenar. Até {{max}} entradas podem aparecer na barra lateral. Itens filhos de grupos não têm alternância de barra lateral/painel e são usados apenas para a barra de menus e a plataforma padrão.",
     "addGroup": "Adicionar grupo",
     "editGroup": "Editar grupo",
@@ -820,7 +832,9 @@
     "groupEnabledHint": "Ativar ou desativar todas as plataformas do grupo",
     "disabledHint": "Desativar interrompe as tarefas automáticas e oculta as configurações da plataforma. A visibilidade da entrada é controlada separadamente",
     "enableAll": "Ativar todas",
-    "disableAll": "Desativar todas"
+    "disableAll": "Desativar todas",
+    "confirmResetDesc": "Restaurar o padrão limpará os grupos personalizados e a ordenação. Deseja continuar?",
+    "confirmDeleteGroupDesc": "Excluir o grupo \"{{name}}\"? As plataformas dentro dele voltarão a ser exibidas separadamente."
   },
   "privacy": {
     "hideSensitive": "Ocultar e-mails",
@@ -1151,6 +1165,11 @@
       "submit": "Importar"
     },
     "launchDialog": {
+      "customCommand": "Comando personalizado",
+      "useDefaultCommand": "Comando padrão",
+      "customCommandHint": "Deixe em branco para executar o comando padrão.",
+      "rememberDirectory": "A última pasta de trabalho é lembrada.",
+      "chooseDirectory": "Escolher pasta",
       "title": "Iniciar instância",
       "terminal": "Console",
       "command": "Comando de inicialização",
@@ -1186,6 +1205,11 @@
       "data": "Gerenciamento de Dados"
     },
     "general": {
+      "accountLevelRefreshSummary": "Mostrar configurações",
+      "accountLevelRefreshSummaryActive": "Contas configuradas: {{count}}",
+      "accountLevelRefreshDesc": "Defina um intervalo de atualização automática por conta para substituir o padrão da plataforma.",
+      "accountLevelRefreshTitle": "Atualização por conta",
+      "accountLevelRefreshInherit": "Herdar da plataforma",
       "errorReporting": "Diagnóstico",
       "errorReportingDesc": "Quando ativado, envia diagnósticos de inicialização e interface após a remoção de dados sensíveis. Desativar interrompe o envio.",
       "appearance": "Aparência",
@@ -1227,6 +1251,8 @@
       "minimizeBehaviorDesc": "Escolha se, ao minimizar a janela, ela permanece no Dock e na barra de menus ou somente na barra de menus",
       "minimizeBehaviorDockAndTray": "Dock + barra de menus (recomendado)",
       "minimizeBehaviorTrayOnly": "Somente barra de menus",
+      "showTrayIcon": "Mostrar ícone na bandeja",
+      "showTrayIconDesc": "As tarefas continuam em segundo plano com o ícone oculto. Restaure a janela pelo Dock ou pela barra de tarefas.",
       "hideDockIcon": "Ocultar ícone do Dock (somente macOS)?",
       "hideDockIconDesc": "Controla a visibilidade do ícone do Dock de forma independente, sem relação com o comportamento de minimizar a janela",
       "hideDockIconOff": "Não (Mostrar ícone do Dock)",
@@ -1490,6 +1516,8 @@
       "menuBarQuotaConfigure": "Configurar",
       "menuBarQuotaModalTitle": "Cota da barra de menus",
       "menuBarQuotaModalDesc": "Opções só desta função: segue a conta atual. Serviço API do Codex: “API + % restante do pool”; conta API Key: “API + saldo restante”; normal: prefixo do e-mail + % restante (a menor; vermelho/laranja/verde).",
+      "menuBarAntigravityMetric": "Cota na barra de menus",
+      "menuBarQuotaLowest": "Menor cota",
       "menuBarQuotaPlatform": "Plataforma da conta",
       "menuBarQuotaPlatformDesc": "Usa a conta ativa dessa plataforma; atualiza após atualizar ou trocar",
       "menuBarAccountPrefix": "4 primeiros do e-mail",
@@ -1512,22 +1540,12 @@
       "codexEnhancements": {
         "quotaCompat": "Cotas no modo misto",
         "quotaCompatDesc": "As instâncias do serviço API mostram uma cota disponível para exibição e verificações locais do cliente. O uso real no provedor e os limites de imagens não mudam. Esta opção se aplica apenas a outras combinações de OAuth e API externa.",
-        "restartHint": "As previsões nativas ficam desativadas por padrão. Reinicie cada instância Codex afetada após mudanças e mantenha o 聚灵 aberto. O ditado nativo depende dos recursos e configurações do cliente; o Juling não assume seu controle nem força sua ativação.",
         "configFailed": "Falha ao ler ou salvar configurações: {{error}}",
         "nativePredictions": "Previsões nativas do próximo passo (Tab)",
-        "nativePredictionsDesc": "Gera sugestões para a próxima mensagem com o provedor de API e o modelo da conversa atual. Consome créditos de API adicionais; reinicie o Codex após salvar."
+        "nativePredictionsDesc": "Desativado por padrão. As sugestões usam o provedor de API e o modelo da conversa atual e geram consumo adicional da API. Após alterar esta configuração, reinicie as instâncias afetadas do Codex e mantenha o 聚灵 em execução."
       },
       "timeDisplayMode": "Hora exibida",
-      "timeDisplayModeDesc": "Hora nos cartões e listas de contas. Por padrão, a hora da troca de conta",
-      "accountLevelRefreshSummary": "Mostrar configurações",
-      "accountLevelRefreshSummaryActive": "Contas configuradas: {{count}}",
-      "accountLevelRefreshDesc": "Defina um intervalo de atualização automática por conta para substituir o padrão da plataforma.",
-      "accountLevelRefreshTitle": "Atualização por conta",
-      "accountLevelRefreshInherit": "Herdar da plataforma",
-      "showTrayIcon": "Mostrar ícone na bandeja",
-      "showTrayIconDesc": "As tarefas continuam em segundo plano com o ícone oculto. Restaure a janela pelo Dock ou pela barra de tarefas.",
-      "menuBarAntigravityMetric": "Cota na barra de menus",
-      "menuBarQuotaLowest": "Menor cota"
+      "timeDisplayModeDesc": "Hora nos cartões e listas de contas. Por padrão, a hora da troca de conta"
     },
     "network": {
       "apiTitle": "API de juling antigravidade",
@@ -1880,6 +1898,14 @@
   },
   "appPath": {
     "missing": {
+      "pathLabel": "Caminho de inicialização de {{app}}",
+      "configurePath": "Configurar caminho",
+      "configureHint": "Selecione um executável ou deixe o campo em branco para usar a detecção automática.",
+      "cliHint": "Não foi possível encontrar {{app}}. Selecione o executável ou instale a CLI e detecte novamente.",
+      "invalidPath": "Este caminho não aponta para um executável válido de {{app}}.",
+      "accountAlreadySwitched": "A conta já foi trocada. Apenas a inicialização será tentada novamente.",
+      "saveAndRetry": "Salvar e tentar novamente",
+      "operationCancelled": "Inicialização cancelada.",
       "scanEmpty": "Nenhum aplicativo em execução foi detectado. Abra-o e tente de novo ou escolha o caminho manualmente.",
       "scanEmptyGeneric": "O aplicativo {{app}} não foi detectado em execução. Abra-o e tente de novo ou escolha o caminho manualmente.",
       "title": "Caminho do aplicativo não encontrado",
@@ -2611,6 +2637,10 @@
     "other_group": "Outros modelos"
   },
   "codex": {
+    "cli": {
+      "launchSuccess": "Codex CLI iniciado",
+      "selectWorkingDir": "Escolha a pasta de trabalho do Codex CLI"
+    },
     "resetAutomation": {
       "nothingToReset": "Nenhum período de cota precisa ser redefinido agora.",
       "unknownOutcome": "Não foi possível confirmar o resultado da redefinição. Tente novamente.",
@@ -2651,11 +2681,13 @@
       "masterLabel": "Usar cartões automaticamente",
       "ruleSource": "Origem da regra",
       "weeklyTrigger": "Limite semanal",
+      "preferUsageCredits": "Créditos primeiro",
       "weeklyRemaining": "Saldo semanal ≤",
       "previewTitle": "Prévia das condições",
       "previewAny": "Um cartão será usado quando qualquer condição ativada for atendida:",
       "previewExpiry": "O cartão vence em até {{value}} {{unit}}",
       "previewWeekly": "Cota semanal restante de {{percent}}% ou menos",
+      "previewWeeklyAfterCredits": "A cota semanal restante é de {{percent}}% ou menos e foi confirmada a indisponibilidade de créditos",
       "previewOff": "O uso automático está desativado. As regras abaixo estão inativas.",
       "previewEmpty": "Nenhuma condição ativada. Os cartões não serão usados automaticamente.",
       "cardOn": "Autom.",
@@ -2689,6 +2721,70 @@
         "threadSyncFileBusy": "Outra sincronização está usando a sessão de destino. Tente novamente em instantes."
       }
     },
+    "quotaHistory": {
+      "storage": {
+        "title": "Armazenamento do histórico",
+        "recordCount": "Registros",
+        "diskSpace": "Espaço em disco",
+        "defaultAccount": "Conta padrão",
+        "recording": "Registro",
+        "usage": "{{records}} registros · {{size}} no disco",
+        "loadFailed": "Não foi possível ler o armazenamento do histórico.",
+        "enabled": "Registrar histórico",
+        "onlyChanges": "Registrar só alterações",
+        "autoCleanup": "Limpar registros expirados automaticamente",
+        "intervalMinutes": "Intervalo (min)",
+        "retentionDays": "Manter por (dias)",
+        "cleanupEveryDays": "Limpar a cada (dias)",
+        "validRange": "Digite um inteiro de 1 a {{max}}.",
+        "recordScope": "Contas registradas",
+        "allAccounts": "Todas as contas",
+        "selectedAccounts": "Contas selecionadas",
+        "saveFailed": "Não foi possível salvar as configurações do histórico.",
+        "saved": "Configurações salvas.",
+        "cleanup": "Limpar histórico",
+        "cleanupAccounts": "Contas a limpar",
+        "cleanupRange": "Registros a excluir",
+        "expired": "Expirados",
+        "dates": "Intervalo de datas",
+        "all": "Todos os registros",
+        "fromDate": "Data inicial",
+        "toDate": "Data final",
+        "invalidDates": "Escolha um intervalo de datas válido.",
+        "cleanupFailed": "Falha na limpeza. Veja a prévia novamente antes de tentar de novo.",
+        "previewCount": "Cerca de {{records}} registros serão excluídos.",
+        "confirmCleanup": "Confirmar exclusão",
+        "preview": "Prévia da limpeza",
+        "deleted": "{{records}} registros excluídos."
+      },
+      "title": "Histórico de cota",
+      "chart": "Gráfico",
+      "details": "Detalhes",
+      "onlyChanges": "Só alterações",
+      "noChanges": "Sem alterações de cota neste período.",
+      "recordedAt": "Hora do registro",
+      "noValue": "Sem dados",
+      "shortConsumed": "Consumo de 5 h",
+      "weeklyConsumed": "Consumo semanal",
+      "shortRemaining": "Rest. 5h",
+      "shortDelta": "Var. 5h",
+      "weeklyRemaining": "Rest. sem.",
+      "weeklyDelta": "Var. sem.",
+      "changeFromPrevious": "Alteração desde a amostra anterior",
+      "points": "{{value}} p.p.",
+      "account": "Conta",
+      "interval": "Intervalo (min)",
+      "intervalInvalid": "Insira um número inteiro de 1 a 1440.",
+      "empty": "Não há amostras de cota nesse período.",
+      "readFailed": "Não foi possível carregar o histórico de cota.",
+      "noAccount": "Adicione uma conta com assinatura do Codex para ver o histórico de cota."
+    },
+    "quotaRecovery": {
+      "title": "Aviso de recuperação da cota",
+      "description": "O PushPlus avisa se a atualização mostrar que a cota restante subiu para pelo menos 90%. O acesso à rede externa deve estar habilitado.",
+      "token": "Token do PushPlus",
+      "settingsError": "Não foi possível carregar ou salvar as configurações do aviso."
+    },
     "thresholds": {
       "shortCycle": "Cota curta",
       "weekly": "Cota semanal",
@@ -2705,8 +2801,6 @@
     },
     "launchErrors": {
       "sessionRestoreFailed": "A reparação das sessões falhou e a restauração está incompleta. Inicialização interrompida; verifique os logs e backups antes de tentar novamente.",
-      "sessionCheckTimeout": "A verificação das sessões excedeu o tempo. Inicialização interrompida; tente novamente ou consulte os logs.",
-      "sessionFileTooLarge": "O cabeçalho de um arquivo de sessão é muito grande. Inicialização interrompida; consulte os logs.",
       "bindingFailed": "Não foi possível confirmar a conta vinculada. Inicialização interrompida; tente trocar de conta novamente.",
       "processScanFailed": "Não foi possível verificar os processos anteriores em segundo plano. Inicialização interrompida; tente novamente.",
       "proxyEntryFailed": "Não foi possível iniciar o proxy configurado. Nenhuma rota alternativa foi usada; tente novamente."
@@ -2924,7 +3018,8 @@
       "forceRefreshAction": "Atualizar agora",
       "forceRefreshRunning": "Atualizando Token…",
       "forceRefreshSuccess": "Token atualizado com sucesso",
-      "forceRefreshRetry": "Verificar novamente"
+      "forceRefreshRetry": "Verificar novamente",
+      "advancedMaintenanceTitle": "Manutenção e diagnóstico"
     },
     "switch": "Alternar",
     "switched": "Alternado para {{email}}",
@@ -3916,9 +4011,6 @@
       "repairModal": {
         "historyDuplicateOrdinals": "Os históricos abaixo têm números de sequência duplicados. O reparo do índice os ignora e o reparo completo não pode continuar. Selecione “Reparar índice de chats” para as outras sessões.\n{{details}}",
         "projectsDeferredAction": "Feche a instância e selecione Projetos locais na janela de reparo de sessões.",
-        "projectsStateSize": "Maior arquivo de estado: {{file}} ({{bytes}} bytes).",
-        "projectsQuickBudget": "A verificação rápida de projetos atingiu o limite.",
-        "projectsStateTooLarge": "O arquivo de estado dos projetos excede o tamanho aceito.",
         "projectsStopHint": "Feche as instâncias selecionadas antes de recuperar. Você já pode visualizar as mudanças.",
         "modeProjectsDesc": "Recupera projetos locais e associações de chats. Mantém o histórico das conversas.",
         "modeProjects": "Projetos locais",
@@ -5118,7 +5210,8 @@
         "speedAdjusted": "{{tier}} → Padrão",
         "officialDefaultSpeed": "A rota oficial de assinatura não aceita substituição de velocidade. Esta tentativa foi enviada na velocidade padrão.",
         "sentTier": "Enviado: {{tier}}",
-        "originalTier": "Nível original: {{tier}}"
+        "originalTier": "Nível original: {{tier}}",
+        "moreFilters": "Mais filtros"
       },
       "timeouts": {
         "retryTitle": "Novas tentativas de envio e por conta",
@@ -5441,6 +5534,13 @@
       "restartFailed": "Falha ao reiniciar o gateway: {{error}}"
     },
     "proxy": {
+      "directHosts": {
+        "title": "Hosts diretos do Codex",
+        "hint": "Informe nomes de host ou intervalos CIDR, uma regra por linha. Destinos correspondentes, como servidores MCP internos, ignoram o proxy gerenciado do Codex. As configurações do cliente se aplicam após reiniciar o Codex.",
+        "invalid": "Informe um nome de host, endereço IP ou intervalo CIDR válido em cada linha.",
+        "loadFailed": "Não foi possível carregar os hosts diretos.",
+        "saveFailed": "Não foi possível salvar os hosts diretos."
+      },
       "legacyBoundHint": "O proxy da conta vinculada anteriormente continua ativo. Salvar novamente aplica o modo selecionado.",
       "boundAccountUnavailable": "A conta vinculada não está disponível. Escolha um proxy novamente.",
       "boundProxyUnavailable": "A conta vinculada não tem um proxy disponível. Escolha outro.",
@@ -6045,7 +6145,14 @@
         "strategyAdvancedHint": "Campos vazios mantêm o padrão indicado no marcador.",
         "strategyDeleteNotice": "Excluir a estratégia remove sua definição e desfaz o proxy das contas que a usam; essas contas passam a seguir o proxy unificado ou a conectar diretamente.",
         "strategyFilter": "Buscar membros da estratégia",
-        "accountRefreshFailed": "Não foi possível atualizar o status das contas; as alterações de proxy podem já ter entrado em vigor. Tente novamente."
+        "accountRefreshFailed": "Não foi possível atualizar o status das contas; as alterações de proxy podem já ter entrado em vigor. Tente novamente.",
+        "dnsOverride": "Sobrescrever DNS",
+        "ipv6": "Ativar IPv6",
+        "dnsServers": "Servidores DNS",
+        "dnsServersHint": "Um endereço por linha. Deixe em branco para usar o Cloudflare DoH.",
+        "networkScope": "Aplica-se às novas conexões de proxy desta origem.",
+        "invalidDnsServer": "Digite um endereço de servidor DNS válido por linha.",
+        "networkSaveFailed": "Não foi possível salvar ou aplicar as configurações de rede. Tente novamente."
       },
       "manager": {
         "proxies": "Servidores proxy",
@@ -6115,14 +6222,7 @@
       "noCurrentNode": "O nó atual ainda não está disponível",
       "runtimeBusy": "O proxy local está ocupado. A atualização está indisponível no momento.",
       "runtimeCapacity": "Há proxies demais em execução. Pare os que não usa e tente novamente.",
-      "runtimeReadFailed": "O estado do proxy local está temporariamente indisponível. Tente novamente.",
-      "directHosts": {
-        "title": "Hosts diretos do Codex",
-        "hint": "Informe nomes de host ou intervalos CIDR, uma regra por linha. Destinos correspondentes, como servidores MCP internos, ignoram o proxy gerenciado do Codex. As configurações do cliente se aplicam após reiniciar o Codex.",
-        "invalid": "Informe um nome de host, endereço IP ou intervalo CIDR válido em cada linha.",
-        "loadFailed": "Não foi possível carregar os hosts diretos.",
-        "saveFailed": "Não foi possível salvar os hosts diretos."
-      }
+      "runtimeReadFailed": "O estado do proxy local está temporariamente indisponível. Tente novamente."
     },
     "more": {
       "title": "Mais",
@@ -6405,74 +6505,6 @@
     "officialApi": {
       "hint": "Conta com chave de API oficial da OpenAI, identificada pelo endereço real de conexão."
     },
-    "cli": {
-      "launchSuccess": "Codex CLI iniciado",
-      "selectWorkingDir": "Escolha a pasta de trabalho do Codex CLI"
-    },
-    "quotaHistory": {
-      "storage": {
-        "title": "Armazenamento do histórico",
-        "recordCount": "Registros",
-        "diskSpace": "Espaço em disco",
-        "defaultAccount": "Conta padrão",
-        "recording": "Registro",
-        "usage": "{{records}} registros · {{size}} no disco",
-        "loadFailed": "Não foi possível ler o armazenamento do histórico.",
-        "enabled": "Registrar histórico",
-        "onlyChanges": "Registrar só alterações",
-        "autoCleanup": "Limpar registros expirados automaticamente",
-        "intervalMinutes": "Intervalo (min)",
-        "retentionDays": "Manter por (dias)",
-        "cleanupEveryDays": "Limpar a cada (dias)",
-        "validRange": "Digite um inteiro de 1 a {{max}}.",
-        "recordScope": "Contas registradas",
-        "allAccounts": "Todas as contas",
-        "selectedAccounts": "Contas selecionadas",
-        "saveFailed": "Não foi possível salvar as configurações do histórico.",
-        "saved": "Configurações salvas.",
-        "cleanup": "Limpar histórico",
-        "cleanupAccounts": "Contas a limpar",
-        "cleanupRange": "Registros a excluir",
-        "expired": "Expirados",
-        "dates": "Intervalo de datas",
-        "all": "Todos os registros",
-        "fromDate": "Data inicial",
-        "toDate": "Data final",
-        "invalidDates": "Escolha um intervalo de datas válido.",
-        "cleanupFailed": "Falha na limpeza. Veja a prévia novamente antes de tentar de novo.",
-        "previewCount": "Cerca de {{records}} registros serão excluídos.",
-        "confirmCleanup": "Confirmar exclusão",
-        "preview": "Prévia da limpeza",
-        "deleted": "{{records}} registros excluídos."
-      },
-      "title": "Histórico de cota",
-      "chart": "Gráfico",
-      "details": "Detalhes",
-      "onlyChanges": "Só alterações",
-      "noChanges": "Sem alterações de cota neste período.",
-      "recordedAt": "Hora do registro",
-      "noValue": "Sem dados",
-      "shortConsumed": "Consumo de 5 h",
-      "weeklyConsumed": "Consumo semanal",
-      "shortRemaining": "Rest. 5h",
-      "shortDelta": "Var. 5h",
-      "weeklyRemaining": "Rest. sem.",
-      "weeklyDelta": "Var. sem.",
-      "changeFromPrevious": "Alteração desde a amostra anterior",
-      "points": "{{value}} p.p.",
-      "account": "Conta",
-      "interval": "Intervalo (min)",
-      "intervalInvalid": "Insira um número inteiro de 1 a 1440.",
-      "empty": "Não há amostras de cota nesse período.",
-      "readFailed": "Não foi possível carregar o histórico de cota.",
-      "noAccount": "Adicione uma conta com assinatura do Codex para ver o histórico de cota."
-    },
-    "quotaRecovery": {
-      "title": "Aviso de recuperação da cota",
-      "description": "O PushPlus avisa se a atualização mostrar que a cota restante subiu para pelo menos 90%. O acesso à rede externa deve estar habilitado.",
-      "token": "Token do PushPlus",
-      "settingsError": "Não foi possível carregar ou salvar as configurações do aviso."
-    },
     "resetHistory": {
       "redeemedCardId": "ID do cartão resgatado",
       "windowsReset": "Janelas de cota redefinidas",
@@ -6523,7 +6555,8 @@
       "desc": "Clique no botão abaixo e conclua a autorização do GitHub Copilot no navegador."
     },
     "token": {
-      "desc": "Cole seu token de acesso do GitHub Copilot ou dados JSON exportados."
+      "desc": "Cole seu token de acesso do GitHub Copilot ou dados JSON exportados.",
+      "requiredFields": "Campos obrigatórios: no modo Token, cole diretamente um GitHub access token; o modo JSON requer id, github_login, github_id, github_access_token, copilot_token, created_at e last_used."
     },
     "import": {
       "localDesc": "Importe dados de contas do GitHub Copilot do VS Code local ou de um arquivo JSON.",
@@ -6705,6 +6738,10 @@
       "hint": "Troca automaticamente quando os grupos de modelos monitorados atingem o limite; com o monitoramento de créditos ativo, também dispara quando os créditos restantes ficam abaixo do limite.",
       "creditsEnable": "Monitorar créditos",
       "creditsThreshold": "Limite de créditos",
+      "windowThresholdsEnable": "Limites separados de 5 h e semana",
+      "fiveHourThreshold": "Limite de 5 h",
+      "weeklyThreshold": "Limite semanal",
+      "windowThresholdsHint": "A conta muda quando qualquer limite é atingido. O limite geral continua valendo para as cotas dos modelos.",
       "creditsThresholdDesc": "Também trocar automaticamente quando os créditos restantes estiverem nesse valor ou abaixo",
       "triggerModel": "Modelo de acionamento",
       "scopeAnyGroup": "Qualquer grupo de modelos",
@@ -6898,7 +6935,8 @@
       "desc": "Clique no botão abaixo e conclua a autorização do Devin no navegador."
     },
     "token": {
-      "desc": "Cole seu token de acesso do Devin ou dados JSON exportados."
+      "desc": "Cole seu token de acesso do Devin ou dados JSON exportados.",
+      "requiredFields": "Campo obrigatório: github_access_token (API Key)"
     },
     "import": {
       "localDesc": "Importe dados de contas do Devin de um arquivo JSON.",
@@ -7002,7 +7040,8 @@
       "startUrlRequired": "Informe uma URL inicial do IAM Identity Center"
     },
     "token": {
-      "desc": "Cole seu token de acesso Kiro ou dados JSON exportados."
+      "desc": "Cole seu token de acesso Kiro ou dados JSON exportados.",
+      "requiredFields": "Campos obrigatórios: para JSON, recomenda-se access_token + refresh_token (accessToken / refreshToken apenas por compatibilidade)."
     },
     "import": {
       "localDesc": "Importe do cliente local ou de JSON. As contas JSON são salvas primeiro; as credenciais e cotas são atualizadas em segundo plano.",
@@ -7825,6 +7864,9 @@
       "timeRangeError": "O horário de início não pode ser posterior ao horário de término"
     },
     "modelProbe": {
+      "scopeAll": "Todos ({{count}})",
+      "scopeSelected": "Selecionados ({{count}})",
+      "scopeCurrent": "Conta atual",
       "title": "Teste de modelo",
       "hint": "Envia uma mensagem curta e lê a resposta. Consome uma pequena cota. A conversa de teste é excluída por padrão.",
       "account": "Conta",
@@ -7855,6 +7897,12 @@
     }
   },
   "minimaxCode": {
+    "credentialRefresh": {
+      "signInClient": "Entre no cliente MiniMax Code e tente novamente.",
+      "authorizeAgain": "Autorize novamente a conta do MiniMax Code ou importe-a após entrar no cliente.",
+      "credentialsChanged": "As credenciais do MiniMax Code mudaram. Tente novamente.",
+      "missingAccessToken": "O MiniMax Code não retornou um token de acesso na renovação."
+    },
     "title": "Gerenciamento de contas do MiniMax Code",
     "noAccounts": "Nenhuma conta MiniMax Code",
     "addAccount": "Adicionar conta MiniMax Code",
@@ -8478,7 +8526,8 @@
       "deploying": "Buscando modelos…",
       "deploySuccess": "Implantado no Codex: {{count}} modelos",
       "deployFailed": "Falha na implantação: {{error}}",
-      "useKey": "Usar chave"
+      "useKey": "Usar chave",
+      "deleteConfirm": "Excluir a chave salva \"{{name}}\"? Esta ação não pode ser desfeita."
     },
     "prefill": {
       "claudeDesktopReady": "As configurações do serviço escolhido foram carregadas. Confirme antes de adicioná-las ao Claude.",
@@ -9213,5 +9262,99 @@
     "errorModel": "Informe um nome de modelo completo e único, sem curingas.",
     "errorSave": "Não foi possível carregar ou salvar. Tente novamente.",
     "saved": "Salvo. Aplicado às próximas solicitações."
+  },
+  "antigravityLaunch": {
+    "initializeTitle": "O Antigravity IDE precisa ser inicializado",
+    "initializeThenSwitch": "Abra o IDE uma vez para poder trocar de conta.",
+    "initializeThenBind": "Inicie a instância uma vez para vincular uma conta.",
+    "initializeThenUseAccount": "Inicie a instância uma vez para usar a conta vinculada.",
+    "initializeAction": "Iniciar uma vez",
+    "initializeHint": "O Antigravity IDE precisa ser inicializado. Inicie a instância selecionada uma vez antes de continuar.",
+    "initializeWaiting": "Aguardando a inicialização do Antigravity IDE. Continue manualmente quando estiver pronto.",
+    "initializeRetry": "A inicialização ainda está pendente. Confira se o IDE está aberto e tente novamente.",
+    "pathLabel": "Caminho de inicialização",
+    "pathConfigured": "Configurado",
+    "pathDetected": "Detectado automaticamente",
+    "pathInvalid": "O caminho configurado é inválido",
+    "pathCheckFailed": "Falha ao verificar o caminho",
+    "pathSaveAndRetry": "Salvar e tentar novamente",
+    "switchAndCopy": "Trocar e copiar",
+    "sharedInstanceStart": "Trocar conta compartilhada e iniciar",
+    "sharedInstanceHint": "Outras instâncias do Antigravity ficam abertas e podem adotar a nova conta.",
+    "sharedInstanceRestart": "Apenas a instância selecionada será reiniciada.",
+    "lastSharedAccount": "Última conta compartilhada escolhida",
+    "sharedAccountUnknown": "Nenhuma troca registrada",
+    "sharedInstanceSubtitle": "As instâncias usam pastas separadas e compartilham o login do Google.",
+    "sharedInstanceStarted": "Login compartilhado atualizado. Inicialização solicitada.",
+    "sharedInstanceLaunchFailed": "Login atualizado, mas a instância não iniciou: {{error}}",
+    "sharedCopySource": "Copia a pasta de configuração da instância selecionada.",
+    "quickSwitchSetting": "Aplica-se à troca rápida do Antigravity IDE. No diálogo da conta, você pode escolher se deseja iniciar a cada troca.",
+    "title": "Escolher cliente",
+    "switchOnly": "Só trocar",
+    "switchAndLaunch": "Trocar e iniciar",
+    "homeDirectory": "Pasta pessoal",
+    "invalidDirectory": "Escolha uma pasta existente.",
+    "directoryFailed": "Não foi possível abrir o seletor de pastas. {{error}}",
+    "shared": "Login do Google compartilhado por {{clients}}.",
+    "sharedHint": "Clientes que compartilham o login do Google podem trocar de conta juntos.",
+    "clientOnly": "Este cliente usa um login próprio.",
+    "cliAuth": "O agy segue suas configurações de autenticação. A chave de API ou as credenciais do Google Cloud têm prioridade quando configuradas.",
+    "cliMissing": "O agy não foi encontrado. Instale a Antigravity CLI oficial e tente novamente.",
+    "terminalFailed": "Não foi possível preparar o terminal. {{error}}",
+    "switchedTerminalFailed": "A conta foi trocada, mas o terminal não pôde ser aberto. {{error}}"
+  },
+  "codebuddyCli": {
+    "launchTitle": "Iniciar CodeBuddy CN",
+    "launchDesktop": "Iniciar aplicativo para desktop",
+    "recheck": "Verificar novamente",
+    "checking": "Procurando o CodeBuddy CLI…",
+    "rememberDirectory": "A última pasta de trabalho fica salva para esta conta.",
+    "installGuide": "Guia oficial de instalação",
+    "launch": "Abrir CLI",
+    "terminalOpened": "Comando enviado. Confira a saída da CLI no terminal.",
+    "account": "Conta",
+    "selectAccount": "Selecionar conta",
+    "chooseDirectory": "Escolher pasta",
+    "homeDirectory": "Pasta pessoal",
+    "instances": "Instâncias da CLI",
+    "newInstance": "Nova instância",
+    "editInstance": "Editar instância",
+    "noInstances": "Nenhuma instância salva.",
+    "removeConfirmation": "Remover esta instância? A configuração e o histórico da CLI continuarão no disco.",
+    "errors": {
+      "cliCheckFailed": "Não foi possível verificar a disponibilidade do CodeBuddy CLI.",
+      "accountMissing": "A conta salva não foi encontrada.",
+      "accountUnreadable": "Não foi possível ler a conta salva.",
+      "credentialMissing": "A conta não tem token de acesso. Autorize-a novamente no CodeBuddy ou no CodeBuddy CN.",
+      "workingDirInvalid": "Escolha uma pasta de trabalho existente.",
+      "nameRequired": "Digite um nome para a instância.",
+      "instanceMissing": "A instância não foi encontrada.",
+      "storageError": "Não foi possível ler ou salvar os dados da instância da CLI.",
+      "cliMissing": "CodeBuddy CLI não encontrada. Instale-a pelo guia oficial.",
+      "launchFailed": "Não foi possível iniciar a CodeBuddy CLI.",
+      "terminalFailed": "Não foi possível abrir o terminal.",
+      "terminalUnsupported": "Escolha um terminal compatível nas configurações gerais. No macOS, use Terminal, iTerm2 ou Ghostty."
+    }
+  },
+  "workbuddyAi": {
+    "search": "Buscar contas do WorkBuddy AI",
+    "noAccounts": "Nenhuma conta do WorkBuddy AI",
+    "addAccount": "Adicionar conta do WorkBuddy AI",
+    "oauthDesc": "Abra a página de acesso do WorkBuddy AI no navegador.",
+    "tokenDesc": "Cole um token de acesso do WorkBuddy AI ou um JSON exportado.",
+    "importDesc": "Importe do aplicativo local ou de um arquivo JSON.",
+    "importClient": "Importar do WorkBuddy AI",
+    "flowNotice": {
+      "title": "Sobre as contas do WorkBuddy AI",
+      "desc": "A troca atualiza o arquivo local de acesso e abre a edição internacional.",
+      "permission": "A importação e a troca usam o arquivo de acesso da edição internacional. O aplicativo oficial processa os campos criptografados existentes.",
+      "network": "A autorização, a renovação do token e a consulta de créditos acessam o WorkBuddy AI. O arquivo de acesso e os dados criptográficos ficam no dispositivo."
+    },
+    "oauthFeature": {
+      "title": "Acesso ao WorkBuddy AI",
+      "signIn": "Entre no WorkBuddy AI pelo navegador.",
+      "switch": "Depois de autorizar, troque a conta da edição internacional pela lista.",
+      "credits": "Veja os créditos restantes no cartão da conta."
+    }
   }
 }

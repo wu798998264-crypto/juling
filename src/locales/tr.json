@@ -158,10 +158,28 @@
     "providerClear": "Seçimi temizle"
   },
   "common": {
+    "collapseAll": "Tümünü daralt",
+    "expandAll": "Tümünü genişlet",
+    "syncing": "Eşitleniyor…",
+    "notice": "Bildirim",
+    "gotIt": "Anladım",
+    "unknown": "Bilinmiyor",
+    "noData": "Veri yok",
+    "search": "Ara",
+    "rename": "Yeniden adlandır",
+    "yes": "Evet",
+    "no": "Hayır",
+    "saved": "Kaydedildi",
+    "done": "Bitti",
+    "edit": "Düzenle",
+    "windowMinimize": "Simge durumuna küçült",
+    "windowMaximize": "Ekranı kapla",
+    "windowRestore": "Geri yükle",
     "profileRestoreBusy": "Oturum durumu geri yükleniyor. Biraz sonra yeniden deneyin.",
     "profileRestoreInvalid": "Oturum yedeğinin yolu geçersiz. Hesabı yeniden içe aktarın.",
     "profileRestoreRecoveryFailed": "Oturum geri yüklenemedi. Yedek korundu: {{detail}}",
     "dataQueryBusy": "Veriler işleniyor. Lütfen biraz sonra tekrar deneyin.",
+    "historyRestoring": "Geçmiş geri yükleniyor…",
     "apiBudget": {
       "keyScope": "Bu anahtar",
       "upgradeRequired": "İstatistikleri ve istek geçmişini görmek için ağ geçidi bilgisayarındaki 聚灵 uygulamasını güncelleyin.",
@@ -631,7 +649,14 @@
       },
       "clear": "Temizle",
       "loginSuccess": "Giriş başarılı",
-      "switchAccount": "Hesap Değiştir"
+      "switchAccount": "Hesap Değiştir",
+      "tokenFormat": {
+        "summary": "Gerekli alanlar ve örnekler (genişletmek için tıklayın)",
+        "single": "Tekli örnek",
+        "singleToken": "Tekli örnek (Token)",
+        "singleJson": "Tekli örnek (JSON)",
+        "batchJson": "Toplu örnek (JSON)"
+      }
     },
     "sessionSharing": {
       "title": "Geçişte yerel oturumları paylaş",
@@ -701,25 +726,7 @@
       "failed": "İşlem tamamlanamadı. Son bilinen durum korundu. Yeniden deneyin.",
       "loginAttempt": "Hesabı belirlenemeyen giriş",
       "removed": "Silinmiş yerel hesap"
-    },
-    "collapseAll": "Tümünü daralt",
-    "expandAll": "Tümünü genişlet",
-    "syncing": "Eşitleniyor…",
-    "notice": "Bildirim",
-    "gotIt": "Anladım",
-    "unknown": "Bilinmiyor",
-    "noData": "Veri yok",
-    "search": "Ara",
-    "rename": "Yeniden adlandır",
-    "yes": "Evet",
-    "no": "Hayır",
-    "saved": "Kaydedildi",
-    "done": "Bitti",
-    "edit": "Düzenle",
-    "windowMinimize": "Simge durumuna küçült",
-    "windowMaximize": "Ekranı kapla",
-    "windowRestore": "Geri yükle",
-    "historyRestoring": "Geçmiş geri yükleniyor…"
+    }
   },
   "nav": {
     "overview": "Antigravity IDE​",
@@ -762,7 +769,8 @@
     "claude": "Claude",
     "openrouter": "OpenRouter",
     "opencode": "OpenCode",
-    "antigravity": "Antigravity"
+    "antigravity": "Antigravity",
+    "workbuddyAi": "WorkBuddy AI"
   },
   "sponsors": {
     "pageTitle": "Sponsorlar",
@@ -787,6 +795,10 @@
     "hiddenBadge": "Gizli",
     "openFromMore": "Platform düzenini yönet",
     "dragHandleLabel": "Sürükleyerek sırala",
+    "sortKeyboardInstructions": "Sıralamayı başlatmak için Boşluk, taşımak için ok tuşları, bırakmak için Boşluk veya Enter, iptal etmek için Esc tuşuna basın.",
+    "sortPosition": "{{total}} öğe içinde {{position}}. konum.",
+    "sortPlaced": "{{position}}. konuma taşındı.",
+    "sortCancelled": "Sıralama iptal edildi.",
     "tipWithGroups": "Sıralamak için sürükleyin. Kenar çubuğunda en fazla {{max}} giriş gösterilebilir. Grup alt öğelerinde kenar çubuğu/pano anahtarı yoktur; yalnızca menü çubuğu ve varsayılan platform seçimi için kullanılır.",
     "addGroup": "Grup ekle",
     "editGroup": "Grubu düzenle",
@@ -820,7 +832,9 @@
     "groupEnabledHint": "Gruptaki tüm platformları birlikte etkinleştir veya devre dışı bırak",
     "disabledHint": "Devre dışı bırakma otomatik görevleri durdurur ve platform ayarlarını gizler. Girişin görünürlüğü ayrı ayarlanır",
     "enableAll": "Tümünü etkinleştir",
-    "disableAll": "Tümünü devre dışı bırak"
+    "disableAll": "Tümünü devre dışı bırak",
+    "confirmResetDesc": "Varsayılana sıfırlamak özel grupları ve sıralama ayarlarını temizler. Devam edilsin mi?",
+    "confirmDeleteGroupDesc": "\"{{name}}\" grubu silinsin mi? İçindeki platformlar yeniden tekil olarak gösterilecektir."
   },
   "privacy": {
     "hideSensitive": "E-postaları gizle",
@@ -1151,6 +1165,11 @@
       "submit": "İçe aktar"
     },
     "launchDialog": {
+      "customCommand": "Özel komut",
+      "useDefaultCommand": "Varsayılan komut",
+      "customCommandHint": "Varsayılan komutu çalıştırmak için boş bırakın.",
+      "rememberDirectory": "Son çalışma klasörü hatırlanır.",
+      "chooseDirectory": "Klasör seç",
       "title": "Örneği başlat",
       "terminal": "Uçbirim",
       "command": "Başlatma komutu",
@@ -1186,6 +1205,11 @@
       "data": "Veri Yönetimi"
     },
     "general": {
+      "accountLevelRefreshSummary": "Ayarları göster",
+      "accountLevelRefreshSummaryActive": "Yapılandırılan hesap: {{count}}",
+      "accountLevelRefreshDesc": "Platform varsayılanını geçersiz kılmak için her hesaba ayrı otomatik yenileme aralığı belirleyin.",
+      "accountLevelRefreshTitle": "Hesaba göre yenileme",
+      "accountLevelRefreshInherit": "Platform ayarını devral",
       "errorReporting": "Tanılama",
       "errorReportingDesc": "Etkinleştirildiğinde, hassas veriler temizlendikten sonra başlangıç ve arayüz tanılamaları gönderilir. Kapatıldığında gönderim durur.",
       "appearance": "Görünüm",
@@ -1227,6 +1251,8 @@
       "minimizeBehaviorDesc": "Pencere küçültüldüğünde Dock ve menü çubuğunda mı, yoksa yalnızca menü çubuğunda mı kalacağını seçin",
       "minimizeBehaviorDockAndTray": "Dock + menü çubuğu (önerilen)",
       "minimizeBehaviorTrayOnly": "Yalnızca menü çubuğu",
+      "showTrayIcon": "Tepsi simgesini göster",
+      "showTrayIconDesc": "Simge gizlendiğinde arka plan görevleri sürer. Pencereyi Dock veya görev çubuğundan geri açabilirsiniz.",
       "hideDockIcon": "Dock simgesi gizlensin mi? (yalnızca macOS)",
       "hideDockIconDesc": "Dock simgesinin görünürlüğünü pencere küçültme davranışından bağımsız olarak kontrol eder",
       "hideDockIconOff": "Hayır (Dock simgesini göster)",
@@ -1490,6 +1516,8 @@
       "menuBarQuotaConfigure": "Yapılandır",
       "menuBarQuotaModalTitle": "Menü çubuğu kotası",
       "menuBarQuotaModalDesc": "Yalnızca bu özellik için: geçerli hesabı izler. Codex API hizmeti: “API + havuz kalan %”; API Key hesabı: “API + kalan bakiye”; normal: e-posta öneki + % (en düşük; kırmızı/turuncu/yeşil).",
+      "menuBarAntigravityMetric": "Menü çubuğu kotası",
+      "menuBarQuotaLowest": "En düşük kota",
       "menuBarQuotaPlatform": "Kota hesabı platformu",
       "menuBarQuotaPlatformDesc": "O platformun etkin hesabını kullanır; yenileme veya geçişten sonra güncellenir",
       "menuBarAccountPrefix": "E-postanın ilk 4 karakteri",
@@ -1512,22 +1540,12 @@
       "codexEnhancements": {
         "quotaCompat": "Karma mod kota uyumu",
         "quotaCompatDesc": "API hizmeti örnekleri istemci görünümü ve yerel kontroller için kullanılabilir kota gösterir. Sağlayıcıdaki gerçek kullanım ve görsel sınırları değişmez. Bu anahtar yalnızca diğer OAuth ve harici API birleşimleri için geçerlidir.",
-        "restartHint": "Yerel tahminler varsayılan olarak kapalıdır. Değişiklikten sonra ilgili Codex örneklerini yeniden başlatın ve 聚灵 açık kalsın. Yerel dikte, istemcinin yeteneklerine ve ayarlarına bağlıdır; Juling bu işlevi devralmaz veya zorla etkinleştirmez.",
         "configFailed": "Ayarlar okunamadı veya kaydedilemedi: {{error}}",
         "nativePredictions": "Yerel sonraki adım tahminleri (Tab)",
-        "nativePredictionsDesc": "Geçerli konuşmanın API sağlayıcısı ve modeliyle sonraki mesaj önerileri oluşturur. Ek API kredisi kullanır; kaydettikten sonra Codex’i yeniden başlatın."
+        "nativePredictionsDesc": "Varsayılan olarak kapalıdır. Öneriler mevcut konuşmanın API sağlayıcısını ve modelini kullanır ve API kullanımını artırır. Bu ayarı değiştirdikten sonra ilgili Codex örneklerini yeniden başlatın ve 聚灵’u çalışır durumda tutun."
       },
       "timeDisplayMode": "Zaman gösterimi",
-      "timeDisplayModeDesc": "Hesap kartları ve listelerindeki zaman. Varsayılan, hesap değiştirme zamanıdır",
-      "accountLevelRefreshSummary": "Ayarları göster",
-      "accountLevelRefreshSummaryActive": "Yapılandırılan hesap: {{count}}",
-      "accountLevelRefreshDesc": "Platform varsayılanını geçersiz kılmak için her hesaba ayrı otomatik yenileme aralığı belirleyin.",
-      "accountLevelRefreshTitle": "Hesaba göre yenileme",
-      "accountLevelRefreshInherit": "Platform ayarını devral",
-      "showTrayIcon": "Tepsi simgesini göster",
-      "showTrayIconDesc": "Simge gizlendiğinde arka plan görevleri sürer. Pencereyi Dock veya görev çubuğundan geri açabilirsiniz.",
-      "menuBarAntigravityMetric": "Menü çubuğu kotası",
-      "menuBarQuotaLowest": "En düşük kota"
+      "timeDisplayModeDesc": "Hesap kartları ve listelerindeki zaman. Varsayılan, hesap değiştirme zamanıdır"
     },
     "network": {
       "apiTitle": "Yerçekimine Karşı Kokpit API'si",
@@ -1880,6 +1898,14 @@
   },
   "appPath": {
     "missing": {
+      "pathLabel": "{{app}} başlatma yolu",
+      "configurePath": "Yolu ayarla",
+      "configureHint": "Bir yürütülebilir dosya seçin veya otomatik algılama için alanı boş bırakın.",
+      "cliHint": "{{app}} bulunamadı. Yürütülebilir dosyasını seçin veya CLI’yi yükleyip tekrar arayın.",
+      "invalidPath": "Bu yol, kullanılabilir bir {{app}} yürütülebilir dosyasına işaret etmiyor.",
+      "accountAlreadySwitched": "Hesap zaten değiştirildi. Yalnızca uygulama yeniden başlatılmayı deneyecek.",
+      "saveAndRetry": "Kaydet ve yeniden dene",
+      "operationCancelled": "Başlatma iptal edildi.",
       "scanEmpty": "Çalışan uygulama bulunamadı. Uygulamayı başlatıp yeniden deneyin veya yolunu elle seçin.",
       "scanEmptyGeneric": "{{app}} çalışır durumda bulunamadı. Uygulamayı başlatıp yeniden deneyin veya yolunu elle seçin.",
       "title": "Uygulama yolu bulunamadı",
@@ -2611,6 +2637,10 @@
     "other_group": "Diğer modeller"
   },
   "codex": {
+    "cli": {
+      "launchSuccess": "Codex CLI başlatıldı",
+      "selectWorkingDir": "Codex CLI çalışma klasörünü seçin"
+    },
     "resetAutomation": {
       "nothingToReset": "Şu anda sıfırlanması gereken kota dönemi yok.",
       "unknownOutcome": "Sıfırlama sonucu doğrulanamadı. Tekrar deneyin.",
@@ -2651,11 +2681,13 @@
       "masterLabel": "Kartları otomatik kullan",
       "ruleSource": "Kural kaynağı",
       "weeklyTrigger": "Haftalık eşik",
+      "preferUsageCredits": "Önce krediler",
       "weeklyRemaining": "Haftalık kalan ≤",
       "previewTitle": "Koşul önizlemesi",
       "previewAny": "Etkin koşullardan biri karşılandığında bir kart kullanılır:",
       "previewExpiry": "Kartın süresinin dolmasına en fazla {{value}} {{unit}} kaldığında",
       "previewWeekly": "Haftalık kalan kota en fazla %{{percent}} olduğunda",
+      "previewWeeklyAfterCredits": "Haftalık kota %{{percent}} veya daha az ve kullanım kredilerinin kullanılamadığı doğrulandı",
       "previewOff": "Otomatik kullanım kapalı. Aşağıdaki kurallar etkin değil.",
       "previewEmpty": "Etkin koşul yok. Kartlar otomatik kullanılmayacak.",
       "cardOn": "Otom.",
@@ -2689,6 +2721,70 @@
         "threadSyncFileBusy": "Başka bir eşitleme hedef oturumu kullanıyor. Biraz sonra yeniden deneyin."
       }
     },
+    "quotaHistory": {
+      "storage": {
+        "title": "Geçmiş depolama",
+        "recordCount": "Kayıtlar",
+        "diskSpace": "Disk alanı",
+        "defaultAccount": "Varsayılan hesap",
+        "recording": "Kayıt ayarları",
+        "usage": "{{records}} kayıt · diskte {{size}}",
+        "loadFailed": "Geçmiş depolama bilgileri okunamadı.",
+        "enabled": "Geçmişi kaydet",
+        "onlyChanges": "Yalnızca değişiklikleri kaydet",
+        "autoCleanup": "Eski kayıtları otomatik sil",
+        "intervalMinutes": "Kayıt aralığı (dk.)",
+        "retentionDays": "Saklama süresi (gün)",
+        "cleanupEveryDays": "Temizleme aralığı (gün)",
+        "validRange": "1 ile {{max}} arasında bir tam sayı girin.",
+        "recordScope": "Kaydedilecek hesaplar",
+        "allAccounts": "Tüm hesaplar",
+        "selectedAccounts": "Seçili hesaplar",
+        "saveFailed": "Geçmiş ayarları kaydedilemedi.",
+        "saved": "Geçmiş ayarları kaydedildi.",
+        "cleanup": "Geçmişi temizle",
+        "cleanupAccounts": "Temizlenecek hesaplar",
+        "cleanupRange": "Silinecek kayıtlar",
+        "expired": "Süresi dolanlar",
+        "dates": "Tarih aralığı",
+        "all": "Tüm kayıtlar",
+        "fromDate": "Başlangıç tarihi",
+        "toDate": "Bitiş tarihi",
+        "invalidDates": "Geçerli bir tarih aralığı seçin.",
+        "cleanupFailed": "Temizleme başarısız. Yeniden denemeden önce önizlemeyi açın.",
+        "previewCount": "Yaklaşık {{records}} kayıt silinecek.",
+        "confirmCleanup": "Silmeyi onayla",
+        "preview": "Temizleme önizlemesi",
+        "deleted": "{{records}} kayıt silindi."
+      },
+      "title": "Kota geçmişi",
+      "chart": "Grafik",
+      "details": "Ayrıntılar",
+      "onlyChanges": "Yalnızca değişimler",
+      "noChanges": "Bu dönemde kota değişmedi.",
+      "recordedAt": "Kayıt zamanı",
+      "noValue": "Yok",
+      "shortConsumed": "5 sa. tüketimi",
+      "weeklyConsumed": "Haftalık tüketim",
+      "shortRemaining": "Kalan 5 sa",
+      "shortDelta": "Değ. 5 sa",
+      "weeklyRemaining": "Haftalık Kalan",
+      "weeklyDelta": "Haftalık Değ.",
+      "changeFromPrevious": "Önceki ölçüme göre değişim",
+      "points": "{{value}} yüzde puanı",
+      "account": "Hesap",
+      "interval": "Aralık (dk.)",
+      "intervalInvalid": "1 ile 1440 arasında bir tam sayı girin.",
+      "empty": "Bu dönemde kota ölçümü yok.",
+      "readFailed": "Kota geçmişi yüklenemedi.",
+      "noAccount": "Kota geçmişini görmek için bir Codex abonelik hesabı ekleyin."
+    },
+    "quotaRecovery": {
+      "title": "Kota yenilenme bildirimi",
+      "description": "Yenilemede kalan kotanın en az %90’a çıktığı görülürse PushPlus bildirim gönderir. Harici ağ erişimi açık olmalıdır.",
+      "token": "PushPlus belirteci",
+      "settingsError": "Bildirim ayarları yüklenemedi veya kaydedilemedi."
+    },
     "thresholds": {
       "shortCycle": "Kısa dönem kotası",
       "weekly": "Haftalık kota",
@@ -2705,8 +2801,6 @@
     },
     "launchErrors": {
       "sessionRestoreFailed": "Oturum onarımı başarısız oldu ve yedek geri yükleme tamamlanmadı. Başlatma durduruldu; yeniden denemeden önce günlükleri ve yedekleri inceleyin.",
-      "sessionCheckTimeout": "Oturum denetimi zaman aşımına uğradı. Başlatma durduruldu; yeniden deneyin veya günlükleri inceleyin.",
-      "sessionFileTooLarge": "Oturum dosyasının başlığı çok büyük. Başlatma durduruldu; günlükleri inceleyin.",
       "bindingFailed": "Hesap bağlantısı doğrulanamadı. Başlatma durduruldu; hesap değiştirmeyi yeniden deneyin.",
       "processScanFailed": "Önceki arka plan işlemleri denetlenemedi. Başlatma durduruldu; yeniden deneyin.",
       "proxyEntryFailed": "Yapılandırılan vekil sunucu başlatılamadı. Başka bir rota kullanılmadı; yeniden deneyin."
@@ -2924,7 +3018,8 @@
       "forceRefreshAction": "Şimdi yenile",
       "forceRefreshRunning": "Token yenileniyor…",
       "forceRefreshSuccess": "Token başarıyla yenilendi",
-      "forceRefreshRetry": "Yeniden denetle"
+      "forceRefreshRetry": "Yeniden denetle",
+      "advancedMaintenanceTitle": "Bakım ve Tanılama"
     },
     "switch": "Değiştir",
     "switched": "{{email}} hesabına geçildi",
@@ -3916,9 +4011,6 @@
       "repairModal": {
         "historyDuplicateOrdinals": "Aşağıdaki geçmişlerde yinelenen sıra numaraları var. Geçmiş dizini onarımı bunları atlar ve tam onarım devam edemez. Diğer oturumlar için “Sohbet dizinini onar” seçeneğini kullanın.\n{{details}}",
         "projectsDeferredAction": "Örneği kapatıp oturum onarımı penceresinde Yerel projeler’i seçin.",
-        "projectsStateSize": "En büyük durum dosyası: {{file}} ({{bytes}} bayt).",
-        "projectsQuickBudget": "Hızlı proje taraması sınırına ulaştı.",
-        "projectsStateTooLarge": "Proje durum dosyası desteklenen boyutu aşıyor.",
         "projectsStopHint": "Kurtarmadan önce seçili örnekleri kapatın. Değişiklikleri şimdi önizleyebilirsiniz.",
         "modeProjectsDesc": "Yerel projeleri ve sohbet bağlantılarını kurtarır. Sohbet geçmişi korunur.",
         "modeProjects": "Yerel projeler",
@@ -5118,7 +5210,8 @@
         "speedAdjusted": "{{tier}} → Standart",
         "officialDefaultSpeed": "Resmî abonelik yolu hız geçersiz kılmayı desteklemez. Bu deneme varsayılan hızda gönderildi.",
         "sentTier": "Gönderilen: {{tier}}",
-        "originalTier": "Özgün kademe: {{tier}}"
+        "originalTier": "Özgün kademe: {{tier}}",
+        "moreFilters": "Diğer filtreler"
       },
       "timeouts": {
         "retryTitle": "Gönderim ve hesap denemeleri",
@@ -5441,6 +5534,13 @@
       "restartFailed": "Ağ geçidi yeniden başlatılamadı: {{error}}"
     },
     "proxy": {
+      "directHosts": {
+        "title": "Codex doğrudan bağlantıları",
+        "hint": "Her satıra bir ana makine adı veya CIDR aralığı girin. Dahili MCP sunucuları gibi eşleşen hedefler Codex tarafından yönetilen proxy'yi kullanmaz. İstemci ayarları Codex yeniden başlatılınca uygulanır.",
+        "invalid": "Her satıra geçerli bir ana makine adı, IP adresi veya CIDR aralığı girin.",
+        "loadFailed": "Doğrudan bağlantılar yüklenemedi.",
+        "saveFailed": "Doğrudan bağlantılar kaydedilemedi."
+      },
       "legacyBoundHint": "Önceden bağlı hesabın vekili kullanılmaya devam eder. Yeniden kaydetmek seçilen modu uygular.",
       "boundAccountUnavailable": "Bağlı hesap kullanılamıyor. Yeniden bir vekil seçin.",
       "boundProxyUnavailable": "Bağlı hesabın kullanılabilir vekili yok. Yeniden seçin.",
@@ -6045,7 +6145,14 @@
         "strategyAdvancedHint": "Boş alanlar yer tutucudaki varsayılan değeri korur.",
         "strategyDeleteNotice": "Stratejiyi silmek tanımı kaldırır ve kullanan hesapların proxy bağlantısını siler; bu hesaplar sonrasında birleşik proxy'yi kullanır veya doğrudan bağlanır.",
         "strategyFilter": "Strateji üyelerini ara",
-        "accountRefreshFailed": "Hesap durumu yenilenemedi; vekil değişiklikleri zaten uygulanmış olabilir. Lütfen tekrar deneyin."
+        "accountRefreshFailed": "Hesap durumu yenilenemedi; vekil değişiklikleri zaten uygulanmış olabilir. Lütfen tekrar deneyin.",
+        "dnsOverride": "DNS ayarını geçersiz kıl",
+        "ipv6": "IPv6’yı etkinleştir",
+        "dnsServers": "DNS sunucuları",
+        "dnsServersHint": "Her satıra bir adres yazın. Cloudflare DoH kullanmak için boş bırakın.",
+        "networkScope": "Bu kaynaktan yapılan yeni proxy bağlantıları için geçerlidir.",
+        "invalidDnsServer": "Her satıra geçerli bir DNS sunucusu adresi girin.",
+        "networkSaveFailed": "Ağ ayarları kaydedilemedi veya uygulanamadı. Tekrar deneyin."
       },
       "manager": {
         "proxies": "Vekil sunucular",
@@ -6115,14 +6222,7 @@
       "noCurrentNode": "Geçerli düğüm henüz kullanılamıyor",
       "runtimeBusy": "Yerel vekil meşgul. Güncelleme geçici olarak kullanılamıyor.",
       "runtimeCapacity": "Çok fazla vekil çalışıyor. Kullanmadıklarınızı durdurup yeniden deneyin.",
-      "runtimeReadFailed": "Yerel vekil durumu geçici olarak okunamıyor. Yeniden deneyin.",
-      "directHosts": {
-        "title": "Codex doğrudan bağlantıları",
-        "hint": "Her satıra bir ana makine adı veya CIDR aralığı girin. Dahili MCP sunucuları gibi eşleşen hedefler Codex tarafından yönetilen proxy'yi kullanmaz. İstemci ayarları Codex yeniden başlatılınca uygulanır.",
-        "invalid": "Her satıra geçerli bir ana makine adı, IP adresi veya CIDR aralığı girin.",
-        "loadFailed": "Doğrudan bağlantılar yüklenemedi.",
-        "saveFailed": "Doğrudan bağlantılar kaydedilemedi."
-      }
+      "runtimeReadFailed": "Yerel vekil durumu geçici olarak okunamıyor. Yeniden deneyin."
     },
     "more": {
       "title": "Daha fazla",
@@ -6405,74 +6505,6 @@
     "officialApi": {
       "hint": "Gerçek bağlantı adresine göre tanımlanan resmî OpenAI API anahtarı hesabı."
     },
-    "cli": {
-      "launchSuccess": "Codex CLI başlatıldı",
-      "selectWorkingDir": "Codex CLI çalışma klasörünü seçin"
-    },
-    "quotaHistory": {
-      "storage": {
-        "title": "Geçmiş depolama",
-        "recordCount": "Kayıtlar",
-        "diskSpace": "Disk alanı",
-        "defaultAccount": "Varsayılan hesap",
-        "recording": "Kayıt ayarları",
-        "usage": "{{records}} kayıt · diskte {{size}}",
-        "loadFailed": "Geçmiş depolama bilgileri okunamadı.",
-        "enabled": "Geçmişi kaydet",
-        "onlyChanges": "Yalnızca değişiklikleri kaydet",
-        "autoCleanup": "Eski kayıtları otomatik sil",
-        "intervalMinutes": "Kayıt aralığı (dk.)",
-        "retentionDays": "Saklama süresi (gün)",
-        "cleanupEveryDays": "Temizleme aralığı (gün)",
-        "validRange": "1 ile {{max}} arasında bir tam sayı girin.",
-        "recordScope": "Kaydedilecek hesaplar",
-        "allAccounts": "Tüm hesaplar",
-        "selectedAccounts": "Seçili hesaplar",
-        "saveFailed": "Geçmiş ayarları kaydedilemedi.",
-        "saved": "Geçmiş ayarları kaydedildi.",
-        "cleanup": "Geçmişi temizle",
-        "cleanupAccounts": "Temizlenecek hesaplar",
-        "cleanupRange": "Silinecek kayıtlar",
-        "expired": "Süresi dolanlar",
-        "dates": "Tarih aralığı",
-        "all": "Tüm kayıtlar",
-        "fromDate": "Başlangıç tarihi",
-        "toDate": "Bitiş tarihi",
-        "invalidDates": "Geçerli bir tarih aralığı seçin.",
-        "cleanupFailed": "Temizleme başarısız. Yeniden denemeden önce önizlemeyi açın.",
-        "previewCount": "Yaklaşık {{records}} kayıt silinecek.",
-        "confirmCleanup": "Silmeyi onayla",
-        "preview": "Temizleme önizlemesi",
-        "deleted": "{{records}} kayıt silindi."
-      },
-      "title": "Kota geçmişi",
-      "chart": "Grafik",
-      "details": "Ayrıntılar",
-      "onlyChanges": "Yalnızca değişimler",
-      "noChanges": "Bu dönemde kota değişmedi.",
-      "recordedAt": "Kayıt zamanı",
-      "noValue": "Yok",
-      "shortConsumed": "5 sa. tüketimi",
-      "weeklyConsumed": "Haftalık tüketim",
-      "shortRemaining": "Kalan 5 sa",
-      "shortDelta": "Değ. 5 sa",
-      "weeklyRemaining": "Haftalık Kalan",
-      "weeklyDelta": "Haftalık Değ.",
-      "changeFromPrevious": "Önceki ölçüme göre değişim",
-      "points": "{{value}} yüzde puanı",
-      "account": "Hesap",
-      "interval": "Aralık (dk.)",
-      "intervalInvalid": "1 ile 1440 arasında bir tam sayı girin.",
-      "empty": "Bu dönemde kota ölçümü yok.",
-      "readFailed": "Kota geçmişi yüklenemedi.",
-      "noAccount": "Kota geçmişini görmek için bir Codex abonelik hesabı ekleyin."
-    },
-    "quotaRecovery": {
-      "title": "Kota yenilenme bildirimi",
-      "description": "Yenilemede kalan kotanın en az %90’a çıktığı görülürse PushPlus bildirim gönderir. Harici ağ erişimi açık olmalıdır.",
-      "token": "PushPlus belirteci",
-      "settingsError": "Bildirim ayarları yüklenemedi veya kaydedilemedi."
-    },
     "resetHistory": {
       "redeemedCardId": "Kullanılan kart kimliği",
       "windowsReset": "Sıfırlanan kota dönemleri",
@@ -6523,7 +6555,8 @@
       "desc": "Aşağıdaki düğmeye tıklayın ve tarayıcıda GitHub Copilot yetkilendirmesini tamamlayın."
     },
     "token": {
-      "desc": "GitHub Copilot erişim belirtecini veya dışa aktarılan JSON verisini yapıştırın."
+      "desc": "GitHub Copilot erişim belirtecini veya dışa aktarılan JSON verisini yapıştırın.",
+      "requiredFields": "Gerekli alanlar: Token modunda doğrudan bir GitHub access token yapıştırın; JSON modu id, github_login, github_id, github_access_token, copilot_token, created_at ve last_used gerektirir."
     },
     "import": {
       "localDesc": "GitHub Copilot hesap verilerini yerel VS Code'dan veya bir JSON dosyasından içe aktarın.",
@@ -6705,6 +6738,10 @@
       "hint": "İzlenen model grupları eşiğe ulaştığında otomatik geçiş yapar; kredi izleme açıksa kalan krediler eşik altına düştüğünde de tetiklenir.",
       "creditsEnable": "Kredileri izle",
       "creditsThreshold": "Kredi eşiği",
+      "windowThresholdsEnable": "5 saatlik ve haftalık eşikleri ayır",
+      "fiveHourThreshold": "5 saatlik eşik",
+      "weeklyThreshold": "Haftalık eşik",
+      "windowThresholdsHint": "Kotalardan biri eşiğe ulaştığında hesap değişir. Genel eşik model kotaları için geçerlidir.",
       "creditsThresholdDesc": "Kalan krediler bu değere veya altına düştüğünde de otomatik geçiş yap",
       "triggerModel": "Tetik model",
       "scopeAnyGroup": "Herhangi bir model grubu",
@@ -6898,7 +6935,8 @@
       "desc": "Aşağıdaki düğmeye tıklayın ve tarayıcıda Devin yetkilendirmesini tamamlayın."
     },
     "token": {
-      "desc": "Devin erişim belirtecini veya dışa aktarılan JSON verisini yapıştırın."
+      "desc": "Devin erişim belirtecini veya dışa aktarılan JSON verisini yapıştırın.",
+      "requiredFields": "Gerekli alan: github_access_token (API Key)"
     },
     "import": {
       "localDesc": "Yerelde oturum açılmış oturumlardan Devin hesaplarını içe aktar.",
@@ -7002,7 +7040,8 @@
       "startUrlRequired": "Bir IAM Identity Center başlangıç URL'si girin"
     },
     "token": {
-      "desc": "Kiro erişim belirtecinizi veya dışa aktarılan JSON verilerinizi yapıştırın."
+      "desc": "Kiro erişim belirtecinizi veya dışa aktarılan JSON verilerinizi yapıştırın.",
+      "requiredFields": "Gerekli alanlar: JSON için access_token + refresh_token önerilir (accessToken / refreshToken yalnızca uyumluluk içindir)."
     },
     "import": {
       "localDesc": "Yerel istemciden veya JSON’dan içe aktarın. JSON hesapları önce kaydedilir, ardından oturum bilgileri ve kotalar arka planda yenilenir.",
@@ -7825,6 +7864,9 @@
       "timeRangeError": "Başlangıç zamanı bitiş zamanından sonra olamaz"
     },
     "modelProbe": {
+      "scopeAll": "Tümü ({{count}})",
+      "scopeSelected": "Seçili ({{count}})",
+      "scopeCurrent": "Geçerli hesap",
       "title": "Model testi",
       "hint": "Kısa bir mesaj gönderip yanıtı okur. Az miktarda kota kullanır. Test konuşması varsayılan olarak silinir.",
       "account": "Hesap",
@@ -7855,6 +7897,12 @@
     }
   },
   "minimaxCode": {
+    "credentialRefresh": {
+      "signInClient": "MiniMax Code istemcisinde oturum açıp tekrar deneyin.",
+      "authorizeAgain": "MiniMax Code hesabını yeniden yetkilendirin veya istemcide oturum açtıktan sonra yeniden içe aktarın.",
+      "credentialsChanged": "MiniMax Code kimlik bilgileri değişti. Tekrar deneyin.",
+      "missingAccessToken": "MiniMax Code yenileme sırasında erişim belirteci döndürmedi."
+    },
     "title": "MiniMax Code Hesap Yönetimi",
     "noAccounts": "MiniMax Code hesabı yok",
     "addAccount": "MiniMax Code Hesabı Ekle",
@@ -8478,7 +8526,8 @@
       "deploying": "Modeller alınıyor…",
       "deploySuccess": "Codex'e kuruldu: {{count}} model",
       "deployFailed": "Kurulum başarısız: {{error}}",
-      "useKey": "Anahtarı kullan"
+      "useKey": "Anahtarı kullan",
+      "deleteConfirm": "Kayıtlı \"{{name}}\" anahtarı silinsin mi? Bu işlem geri alınamaz."
     },
     "prefill": {
       "claudeDesktopReady": "Seçtiğiniz hizmetin ayarları yüklendi. Claude’a eklemeden önce doğrulayın.",
@@ -9213,5 +9262,99 @@
     "errorModel": "Joker karakter içermeyen benzersiz, tam bir model adı girin.",
     "errorSave": "Ayarlar yüklenemedi veya kaydedilemedi. Yeniden deneyin.",
     "saved": "Kaydedildi. Yeni isteklerde uygulanır."
+  },
+  "antigravityLaunch": {
+    "initializeTitle": "Antigravity IDE henüz başlatılmadı",
+    "initializeThenSwitch": "Hesap değiştirmek için IDE’yi bir kez açın.",
+    "initializeThenBind": "Hesap bağlamak için örneği bir kez başlatın.",
+    "initializeThenUseAccount": "Bağlı hesabı kullanmak için örneği bir kez başlatın.",
+    "initializeAction": "Bir kez başlat",
+    "initializeHint": "Antigravity IDE başlatılmaya hazırlanmalı. Devam etmeden önce seçili örneği bir kez başlatın.",
+    "initializeWaiting": "Antigravity IDE’nin hazırlanması bekleniyor. Hazır olduğunda elle devam edin.",
+    "initializeRetry": "Hazırlık henüz tamamlanmadı. IDE’nin açık olduğundan emin olun ve yeniden deneyin.",
+    "pathLabel": "Başlatma yolu",
+    "pathConfigured": "Yapılandırıldı",
+    "pathDetected": "Otomatik algılandı",
+    "pathInvalid": "Yapılandırılan yol geçersiz",
+    "pathCheckFailed": "Yol denetlenemedi",
+    "pathSaveAndRetry": "Kaydet ve yeniden dene",
+    "switchAndCopy": "Değiştir ve kopyala",
+    "sharedInstanceStart": "Ortak hesabı değiştir ve başlat",
+    "sharedInstanceHint": "Diğer Antigravity örnekleri açık kalır ve yeni hesaba geçebilir.",
+    "sharedInstanceRestart": "Yalnızca seçilen örnek yeniden başlatılır.",
+    "lastSharedAccount": "Son seçilen ortak hesap",
+    "sharedAccountUnknown": "Kayıtlı değişiklik yok",
+    "sharedInstanceSubtitle": "Örneklerin klasörleri ayrıdır ve Google oturumu ortaktır.",
+    "sharedInstanceStarted": "Ortak oturum güncellendi. Başlatma istendi.",
+    "sharedInstanceLaunchFailed": "Ortak oturum güncellendi ancak örnek başlatılamadı: {{error}}",
+    "sharedCopySource": "Seçilen örneğin yapılandırma klasörünü kopyalar.",
+    "quickSwitchSetting": "Antigravity IDE hızlı geçişi için geçerlidir. Hesap penceresinde istemciyi başlatıp başlatmamayı her seferinde seçebilirsiniz.",
+    "title": "İstemci seç",
+    "switchOnly": "Yalnızca değiştir",
+    "switchAndLaunch": "Değiştir ve başlat",
+    "homeDirectory": "Ana klasör",
+    "invalidDirectory": "Var olan bir klasör seçin.",
+    "directoryFailed": "Klasör seçici açılamadı. {{error}}",
+    "shared": "Google oturumunu paylaşan istemciler: {{clients}}.",
+    "sharedHint": "Google oturumunu paylaşan istemciler birlikte hesap değiştirebilir.",
+    "clientOnly": "Bu istemci ayrı bir oturum kullanır.",
+    "cliAuth": "agy kendi kimlik doğrulama ayarlarını kullanır. Yapılandırılmış API anahtarı veya Google Cloud kimlik bilgileri önceliklidir.",
+    "cliMissing": "agy bulunamadı. Resmî Antigravity CLI’ı kurup yeniden deneyin.",
+    "terminalFailed": "Terminal hazırlanamadı. {{error}}",
+    "switchedTerminalFailed": "Hesap değiştirildi ancak terminal açılamadı. {{error}}"
+  },
+  "codebuddyCli": {
+    "launchTitle": "CodeBuddy CN’yi başlat",
+    "launchDesktop": "Masaüstü uygulamasını başlat",
+    "recheck": "Tekrar denetle",
+    "checking": "CodeBuddy CLI aranıyor…",
+    "rememberDirectory": "Bu hesap için son çalışma klasörü hatırlanır.",
+    "installGuide": "Resmî kurulum kılavuzu",
+    "launch": "CLI’yi başlat",
+    "terminalOpened": "Komut gönderildi. CLI çıktısını terminalden kontrol edin.",
+    "account": "Hesap",
+    "selectAccount": "Hesap seçin",
+    "chooseDirectory": "Klasör seç",
+    "homeDirectory": "Ana klasör",
+    "instances": "CLI örnekleri",
+    "newInstance": "Yeni örnek",
+    "editInstance": "Örneği düzenle",
+    "noInstances": "Kayıtlı örnek yok.",
+    "removeConfirmation": "Bu örnek kaldırılsın mı? CLI yapılandırması ve geçmişi diskte kalır.",
+    "errors": {
+      "cliCheckFailed": "CodeBuddy CLI kullanılabilirliği denetlenemedi.",
+      "accountMissing": "Kayıtlı hesap bulunamadı.",
+      "accountUnreadable": "Kayıtlı hesap okunamadı.",
+      "credentialMissing": "Bu hesabın erişim belirteci yok. CodeBuddy veya CodeBuddy CN’de yeniden yetkilendirin.",
+      "workingDirInvalid": "Var olan bir çalışma klasörü seçin.",
+      "nameRequired": "Örnek için bir ad girin.",
+      "instanceMissing": "Örnek bulunamadı.",
+      "storageError": "CLI örneği verileri okunamadı veya kaydedilemedi.",
+      "cliMissing": "CodeBuddy CLI bulunamadı. Resmî kılavuzu izleyerek kurun.",
+      "launchFailed": "CodeBuddy CLI başlatılamadı.",
+      "terminalFailed": "Terminal açılamadı.",
+      "terminalUnsupported": "Genel Ayarlar’dan desteklenen bir terminal seçin. macOS’ta Terminal, iTerm2 veya Ghostty kullanın."
+    }
+  },
+  "workbuddyAi": {
+    "search": "WorkBuddy AI hesaplarını ara",
+    "noAccounts": "WorkBuddy AI hesabı yok",
+    "addAccount": "WorkBuddy AI hesabı ekle",
+    "oauthDesc": "WorkBuddy AI oturum açma sayfasını tarayıcıda açın.",
+    "tokenDesc": "WorkBuddy AI erişim belirtecini veya dışa aktarılan JSON’u yapıştırın.",
+    "importDesc": "Yerel uygulamadan veya JSON dosyasından içe aktarın.",
+    "importClient": "WorkBuddy AI’dan içe aktar",
+    "flowNotice": {
+      "title": "WorkBuddy AI hesapları hakkında",
+      "desc": "Hesap değişikliği yerel oturum dosyasını günceller ve uluslararası sürümü başlatır.",
+      "permission": "İçe aktarma ve geçiş, uluslararası sürümün oturum dosyasını kullanır. Mevcut şifreli alanları resmi uygulama işler.",
+      "network": "Yetkilendirme, belirteç yenileme ve kredi sorgusu WorkBuddy AI’a bağlanır. Oturum dosyası ve şifreleme verileri cihazda kalır."
+    },
+    "oauthFeature": {
+      "title": "WorkBuddy AI oturumu",
+      "signIn": "Tarayıcıda WorkBuddy AI hesabınıza giriş yapın.",
+      "switch": "Yetkilendirmeden sonra uluslararası sürümün hesabını listeden değiştirin.",
+      "credits": "Kalan kredileri hesap kartında görün."
+    }
   }
 }

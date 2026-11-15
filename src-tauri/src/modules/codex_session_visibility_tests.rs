@@ -1201,6 +1201,7 @@ use super::*;
                 data_dir: data_dir.clone(),
                 last_pid: None,
             }],
+            false,
         )
         .expect("dry run summary");
 

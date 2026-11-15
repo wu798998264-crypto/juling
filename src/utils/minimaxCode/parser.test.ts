@@ -1,4 +1,3 @@
-import zhCN from '../../locales/zh-CN.json';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
@@ -119,13 +118,13 @@ test('lands each credit type in a labelled group instead of 其他', () => {
       ],
       total_count: 2,
     }),
-    (key, defaultValue) => key.split('.').reduce((v: any, part) => v?.[part], zhCN) ?? defaultValue ?? '',
+    (key) => key,
   );
 
   const labels = groups.filter((group) => group.visible).map((group) => group.label);
-  assert.ok(labels.includes('活动赠送包'), `expected 活动赠送包, got ${JSON.stringify(labels)}`);
-  assert.ok(labels.includes('加量包'), `expected 加量包, got ${JSON.stringify(labels)}`);
-  assert.ok(!labels.includes('其他'), `其他 should be empty, got ${JSON.stringify(labels)}`);
+  assert.ok(labels.includes('common.shared.quotaCategories.activity'), `expected 活动赠送包, got ${JSON.stringify(labels)}`);
+  assert.ok(labels.includes('common.shared.quotaCategories.extra'), `expected 加量包, got ${JSON.stringify(labels)}`);
+  assert.ok(!labels.includes('common.shared.quotaCategories.other'), `其他 should be empty, got ${JSON.stringify(labels)}`);
 });
 
 test('drops detail rows the official client would discard', () => {

@@ -42,7 +42,8 @@ if (files.length === 0) {
 
 console.log(`Running ${files.length} TypeScript test files.`);
 const tsxCli = path.join(__dirname, "..", "node_modules", "tsx", "dist", "cli.mjs");
-const result = spawnSync(process.execPath, [tsxCli, "--test", ...files], {
+// Each SSR suite owns a Vite/esbuild server; bound their concurrent resource use.
+const result = spawnSync(process.execPath, [tsxCli, "--test", "--test-concurrency=4", ...files], {
   stdio: "inherit",
 });
 
