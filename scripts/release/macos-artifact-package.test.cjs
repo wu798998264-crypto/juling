@@ -1,6 +1,8 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
+const fs = require('node:fs');
+const path = require('node:path');
 const { verifySignature, validateProvenance, validateIdentity } = require('./macos-artifact-package.cjs');
 
 test('updater verification rejects tampered data, key identity and trusted comments', () => {
@@ -57,4 +59,17 @@ test('Mac identity checks reject the upstream bundle, wrong version and incomple
   assert.throws(() => validateIdentity({ ...info, CFBundleIdentifier: 'com.jlcodes.cockpit-tools' }, config, ['arm64'], ['arm64']));
   assert.throws(() => validateIdentity({ ...info, CFBundleShortVersionString: '1.3.84' }, config, ['arm64'], ['arm64']));
   assert.throws(() => validateIdentity(info, config, ['arm64'], ['arm64', 'x86_64']));
+});
+
+test('Mac packaging uses ASCII filesystem names and preserves the Chinese display identity', () => {
+  const config = JSON.parse(fs.readFileSync(path.join(__dirname, '../../src-tauri/tauri.conf.json')));
+  const mac = JSON.parse(fs.readFileSync(path.join(__dirname, '../../src-tauri/tauri.macos.conf.json')));
+  assert.equal(mac.productName, 'Juling');
+  assert.equal(mac.mainBinaryName, 'Juling');
+  assert.equal(mac.identifier, undefined, 'Mac must inherit the stable Juling application ID');
+  assert.equal(config.mainBinaryName, '聚灵', 'Windows naming must remain unchanged');
+  const effective = { ...config, ...mac, bundle: { ...config.bundle, ...mac.bundle } };
+  validateIdentity({ CFBundleIdentifier: config.identifier, CFBundleName: '聚灵',
+    CFBundleDisplayName: '聚灵', CFBundleShortVersionString: config.version,
+    CFBundleExecutable: 'Juling' }, effective, ['arm64'], ['arm64']);
 });
