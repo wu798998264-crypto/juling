@@ -147,7 +147,12 @@ async function main(mode) {
   assert.ok(pids.length > 0, 'No application process after LaunchServices startup');
   for (const pid of pids) process.kill(Number(pid), 'SIGTERM');
   if (child.exitCode === null) child.kill('SIGTERM');
-  await new Promise(resolve => { child.once('exit', resolve); setTimeout(resolve, 5000).unref(); });
+  if (child.exitCode === null && child.signalCode === null) {
+    await new Promise(resolve => {
+      const timer = setTimeout(resolve, 5000);
+      child.once('exit', () => { clearTimeout(timer); resolve(); });
+    });
+  }
   if (child.exitCode === null && child.signalCode === null) child.kill('SIGKILL');
   fs.symlinkSync('/Applications', path.join(payload, 'Applications'));
   fs.copyFileSync(path.join(__dirname, 'assets/dmg-readme-adhoc.txt'), path.join(payload, '安装说明.txt'));
