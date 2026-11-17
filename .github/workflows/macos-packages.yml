@@ -1,0 +1,91 @@
+name: Juling macOS packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Published Juling version to package
+        required: true
+        default: '1.4.0'
+      source_run:
+        description: Successful Build Matrix run for that release tag
+        required: true
+        default: '43724543025'
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: juling-macos-packages-${{ inputs.version }}
+  cancel-in-progress: false
+
+jobs:
+  package:
+    name: Package and verify ${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: aarch64
+            artifact: macos-aarch64
+            runner: macos-15
+          - arch: x64
+            artifact: macos-x86_64
+            runner: macos-15-intel
+          - arch: universal
+            artifact: macos-universal
+            runner: macos-15
+    env:
+      VERSION: ${{ inputs.version }}
+      SOURCE_RUN: ${{ inputs.source_run }}
+      PACKAGE_ARCH: ${{ matrix.arch }}
+      SOURCE_ARTIFACT: bundles-${{ matrix.artifact }}
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          ref: v${{ inputs.version }}
+          path: source
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - name: Test packaging safeguards
+        run: npm run test:release
+      - name: Verify source run and safety gates
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/release/macos-artifact-package.cjs provenance
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.SOURCE_ARTIFACT }}
+          run-id: ${{ inputs.source_run }}
+          github-token: ${{ github.token }}
+          path: incoming
+      - name: Verify, ad-hoc sign and package the original application
+        run: node scripts/release/macos-artifact-package.cjs package
+      # Signing secrets are available only after provenance and package checks.
+      - name: Sign the finished updater archive
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          test -n "$TAURI_SIGNING_PRIVATE_KEY"
+          npx tauri signer sign "release-assets/Juling_${PACKAGE_ARCH}.app.tar.gz"
+      - name: Verify updater signature and checksums
+        run: node scripts/release/macos-artifact-package.cjs finalize
+      - uses: actions/upload-artifact@v4
+        with:
+          name: juling-macos-${{ matrix.arch }}
+          path: release-assets/
+          if-no-files-found: error
+          retention-days: 14
