@@ -88,7 +88,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p .tmp/mac-diagnostics
-          node -e 'const fs=require("node:fs"),cp=require("node:child_process");try{const r=cp.spawnSync("lldb",["--batch","-k","thread backtrace all","-o","run","-o","quit","--",".tmp/macos-payload/聚灵.app/Contents/MacOS/聚灵"],{encoding:"utf8",timeout:45000,maxBuffer:8*1024*1024});fs.writeFileSync(".tmp/macos-lldb.log",String(r.stdout)+String(r.stderr));}catch(e){fs.writeFileSync(".tmp/macos-lldb.log",e.message)}'
+          node -e 'const fs=require("node:fs"),cp=require("node:child_process");try{const r=cp.spawnSync("lldb",["--batch","-k","thread backtrace all","-o","run","-o","quit","--",".tmp/macos-payload/Juling.app/Contents/MacOS/Juling"],{encoding:"utf8",timeout:45000,maxBuffer:8*1024*1024});fs.writeFileSync(".tmp/macos-lldb.log",String(r.stdout)+String(r.stderr));}catch(e){fs.writeFileSync(".tmp/macos-lldb.log",e.message)}'
           cp .tmp/macos-*.log .tmp/mac-diagnostics/ 2>/dev/null || true
           find "$HOME/Library/Logs/DiagnosticReports" -maxdepth 1 -name '聚灵*' -exec cp '{}' .tmp/mac-diagnostics/ \; 2>/dev/null || true
           sw_vers > .tmp/mac-diagnostics/host.txt

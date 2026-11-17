@@ -1,0 +1,10 @@
+{
+  "productName": "Juling",
+  "mainBinaryName": "Juling",
+  "bundle": {
+    "macOS": {
+      "bundleName": "聚灵",
+      "minimumSystemVersion": "12.0"
+    }
+  }
+}

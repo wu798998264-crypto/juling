@@ -59,8 +59,9 @@ function validateProvenance({ run, jobs, artifact, sha, repo, artifactName }) {
 
 function validateIdentity(info, config, archs, expectedArchs) {
   assert.equal(info.CFBundleIdentifier, config.identifier);
-  assert.equal(info.CFBundleName, config.productName);
-  assert.equal(info.CFBundleDisplayName, config.productName);
+  const displayName = config.bundle?.macOS?.bundleName || config.productName;
+  assert.equal(info.CFBundleName, displayName);
+  assert.equal(info.CFBundleDisplayName, displayName);
   assert.equal(info.CFBundleShortVersionString, config.version);
   assert.equal(info.CFBundleExecutable, config.mainBinaryName);
   assert.deepEqual([...archs].sort(), [...expectedArchs].sort());
@@ -72,7 +73,12 @@ async function main(mode) {
   const expectedArchs = { aarch64: ['arm64'], x64: ['x86_64'], universal: ['arm64', 'x86_64'] }[arch];
   assert.match(version || '', /^\d+\.\d+\.\d+$/);
   assert.ok(expectedArchs, 'Unsupported architecture');
-  const config = readJson('source/src-tauri/tauri.conf.json');
+  let config = readJson('source/src-tauri/tauri.conf.json');
+  if (fs.existsSync('source/src-tauri/tauri.macos.conf.json')) {
+    const mac = readJson('source/src-tauri/tauri.macos.conf.json');
+    config = { ...config, ...mac, bundle: { ...config.bundle, ...mac.bundle,
+      macOS: { ...config.bundle.macOS, ...mac.bundle?.macOS } } };
+  }
   assert.equal(config.version, version);
   assert.equal(config.identifier, 'com.wu798998264.juling');
   const output = path.resolve('release-assets');
@@ -109,15 +115,16 @@ async function main(mode) {
   assert.equal(candidates.length, 1, 'Expected one original updater archive');
   const original = candidates[0];
   verifySignature(fs.readFileSync(original), fs.readFileSync(`${original}.sig`, 'utf8'), config.plugins.updater.pubkey);
+  const sourceAppName = `${config.productName}.app`;
   const entries = command('tar', ['-tzf', original]).trim().split('\n');
-  assert.ok(entries.every(e => e.replace(/^\.\//, '').startsWith('聚灵.app/') && !e.split('/').includes('..')),
+  assert.ok(entries.every(e => e.replace(/^\.\//, '').startsWith(`${sourceAppName}/`) && !e.split('/').includes('..')),
     'Archive must contain only the expected application');
   const payload = path.resolve('.tmp/macos-payload');
   fs.mkdirSync(payload, { recursive: true });
   command('tar', ['-xzf', original, '-C', payload]);
-  const app = path.join(payload, '聚灵.app');
+  let app = path.join(payload, sourceAppName);
   const info = JSON.parse(command('plutil', ['-convert', 'json', '-o', '-', path.join(app, 'Contents/Info.plist')]));
-  const binary = path.join(app, 'Contents/MacOS', info.CFBundleExecutable);
+  let binary = path.join(app, 'Contents/MacOS', info.CFBundleExecutable);
   const archs = command('lipo', ['-archs', binary]).trim().split(/\s+/);
   validateIdentity(info, config, archs, expectedArchs);
   for (const [source, dest] of Object.entries(config.bundle.resources)) {
@@ -126,6 +133,19 @@ async function main(mode) {
   const icon = info.CFBundleIconFile.endsWith('.icns') ? info.CFBundleIconFile : `${info.CFBundleIconFile}.icns`;
   assert.equal(digest('source/src-tauri/icons/icon.icns'), digest(path.join(app, 'Contents/Resources', icon)));
   const originalBinarySha256 = digest(binary);
+  // CoreFoundation's image-name lookup can crash on a non-ASCII executable.
+  // Keep Chinese display metadata; only normalize the physical package names.
+  if (info.CFBundleExecutable !== 'Juling') {
+    fs.renameSync(binary, path.join(app, 'Contents/MacOS/Juling'));
+  }
+  command('plutil', ['-replace', 'CFBundleExecutable', '-string', 'Juling', path.join(app, 'Contents/Info.plist')]);
+  command('plutil', ['-replace', 'LSMinimumSystemVersion', '-string', '12.0', path.join(app, 'Contents/Info.plist')]);
+  if (sourceAppName !== 'Juling.app') fs.renameSync(app, path.join(payload, 'Juling.app'));
+  app = path.join(payload, 'Juling.app');
+  binary = path.join(app, 'Contents/MacOS/Juling');
+  assert.equal(digest(binary), originalBinarySha256, 'Packaging must not alter executable code');
+  const packagedInfo = JSON.parse(command('plutil', ['-convert', 'json', '-o', '-', path.join(app, 'Contents/Info.plist')]));
+  validateIdentity(packagedInfo, { ...config, mainBinaryName: 'Juling' }, archs, expectedArchs);
   command('codesign', ['--force', '--deep', '--sign', '-', '--timestamp=none', app]);
   command('codesign', ['--verify', '--deep', '--strict', '--verbose=2', app]);
   const signing = spawnSync('codesign', ['--display', '--verbose=4', app], { encoding: 'utf8' });
@@ -158,15 +178,16 @@ async function main(mode) {
   fs.copyFileSync(path.join(__dirname, 'assets/dmg-readme-adhoc.txt'), path.join(payload, '安装说明.txt'));
   const dmg = path.join(output, `Juling_${version}_${arch}.dmg`);
   command(process.execPath, [path.join(__dirname, 'package-local-dmg.cjs'), '--stage', payload, '--output', dmg], { stdio: 'inherit' });
-  command('tar', ['-czf', archive, '-C', payload, '聚灵.app']);
+  command('tar', ['-czf', archive, '-C', payload, 'Juling.app']);
   const extracted = path.resolve('.tmp/updater-verification');
   fs.mkdirSync(extracted, { recursive: true });
   command('tar', ['-xzf', archive, '-C', extracted]);
-  verifyTree(app, path.join(extracted, '聚灵.app'));
-  command('codesign', ['--verify', '--deep', '--strict', path.join(extracted, '聚灵.app')]);
+  verifyTree(app, path.join(extracted, 'Juling.app'));
+  command('codesign', ['--verify', '--deep', '--strict', path.join(extracted, 'Juling.app')]);
   fs.writeFileSync(reportPath, JSON.stringify({ ...readJson('provenance.json'), arch, archs,
     bundleId: info.CFBundleIdentifier, productName: info.CFBundleName,
-    minimumSystemVersion: info.LSMinimumSystemVersion, originalBinarySha256,
+    minimumSystemVersion: packagedInfo.LSMinimumSystemVersion, originalBinarySha256,
+    executable: packagedInfo.CFBundleExecutable, bundleDirectory: 'Juling.app', codePreservedBeforeSigning: true,
     signing: 'ad-hoc', notarized: false, sourceSignatureVerified: true,
     resourcesVerified: Object.keys(config.bundle.resources).length, logoVerified: true,
     startupSmokeSeconds: 12, dmgVerified: true, updaterTreeVerified: true }, null, 2));

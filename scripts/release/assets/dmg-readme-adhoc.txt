@@ -1,6 +1,6 @@
 聚灵 macOS 安装说明
 
-把“聚灵.app”拖入 Applications（应用程序），再从应用程序文件夹打开。
+把“Juling.app（聚灵）”拖入 Applications（应用程序），再从应用程序文件夹打开。
 Apple 芯片使用 aarch64，Intel 使用 x64；universal 同时包含两种架构。
 
 本安装包采用 ad-hoc 临时签名，尚未进行 Apple Developer ID 签名或公证。
@@ -15,7 +15,7 @@ https://support.apple.com/zh-cn/102445
 
 Juling for macOS
 
-Drag Juling (聚灵.app) into Applications, then launch it from Applications.
+Drag Juling.app into Applications, then launch it from Applications.
 Choose aarch64 for Apple silicon, x64 for Intel, or universal for either.
 This build is ad-hoc signed, NOT Developer ID signed or Apple notarized.
 Verify the download source and checksum before deciding whether to open it.
