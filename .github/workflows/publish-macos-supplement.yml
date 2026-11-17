@@ -7,6 +7,13 @@ on:
         description: Successful macOS packaging run for Juling 1.4.0
         required: true
         default: '44016875910'
+      verify_only:
+        description: Recheck public downloads without modifying the release
+        type: boolean
+        default: false
+      publication_run:
+        description: Previous publication run containing evidence (verify only)
+        default: '44018123791'
 
 permissions:
   contents: write
@@ -34,27 +41,39 @@ jobs:
         run: |
           node -e 'const cp=require("node:child_process"),assert=require("node:assert/strict");assert.match(process.env.PACKAGE_RUN,/^\d+$/);const run=JSON.parse(cp.execFileSync("gh",["api",`repos/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.PACKAGE_RUN}`]));assert.equal(run.path,".github/workflows/macos-packages.yml");assert.equal(run.event,"workflow_dispatch");assert.equal(run.conclusion,"success");assert.equal(run.head_repository.full_name,process.env.GITHUB_REPOSITORY);'
       - uses: actions/download-artifact@v4
+        if: inputs.verify_only != true
         with:
           name: juling-macos-aarch64
           run-id: ${{ inputs.package_run }}
           github-token: ${{ github.token }}
           path: .tmp/macos-v1.4.0/downloads/aarch64
       - uses: actions/download-artifact@v4
+        if: inputs.verify_only != true
         with:
           name: juling-macos-x64
           run-id: ${{ inputs.package_run }}
           github-token: ${{ github.token }}
           path: .tmp/macos-v1.4.0/downloads/x64
       - uses: actions/download-artifact@v4
+        if: inputs.verify_only != true
         with:
           name: juling-macos-universal
           run-id: ${{ inputs.package_run }}
           github-token: ${{ github.token }}
           path: .tmp/macos-v1.4.0/downloads/universal
       - name: Verify packages and prepare merged update index
+        if: inputs.verify_only != true
         run: node scripts/release/publish-macos-supplement.cjs prepare "$PACKAGE_RUN"
       - name: Add Mac packages and update indexes
+        if: inputs.verify_only != true
         run: node scripts/release/publish-macos-supplement.cjs publish
+      - uses: actions/download-artifact@v4
+        if: inputs.verify_only == true
+        with:
+          name: macos-publication-evidence
+          run-id: ${{ inputs.publication_run }}
+          github-token: ${{ github.token }}
+          path: .tmp/macos-v1.4.0
       - name: Verify anonymous downloads and existing Windows update routes
         run: node scripts/release/publish-macos-supplement.cjs verify
       - uses: actions/upload-artifact@v4
