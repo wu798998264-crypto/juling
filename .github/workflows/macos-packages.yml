@@ -83,6 +83,21 @@ jobs:
           npx tauri signer sign "release-assets/Juling_${PACKAGE_ARCH}.app.tar.gz"
       - name: Verify updater signature and checksums
         run: node scripts/release/macos-artifact-package.cjs finalize
+      - name: Collect startup diagnostics
+        if: failure()
+        shell: bash
+        run: |
+          mkdir -p .tmp/mac-diagnostics
+          cp .tmp/macos-*.log .tmp/mac-diagnostics/ 2>/dev/null || true
+          find "$HOME/Library/Logs/DiagnosticReports" -maxdepth 1 -name '聚灵*' -exec cp '{}' .tmp/mac-diagnostics/ \; 2>/dev/null || true
+          sw_vers > .tmp/mac-diagnostics/host.txt
+          uname -m >> .tmp/mac-diagnostics/host.txt
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: macos-diagnostics-${{ matrix.arch }}
+          path: .tmp/mac-diagnostics/
+          if-no-files-found: warn
       - uses: actions/upload-artifact@v4
         with:
           name: juling-macos-${{ matrix.arch }}

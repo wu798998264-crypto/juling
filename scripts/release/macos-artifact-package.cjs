@@ -132,13 +132,19 @@ async function main(mode) {
   assert.equal(signing.status, 0);
   assert.match(signing.stderr, /^Signature=adhoc$/m);
   // The runner is disposable and contains no user's accounts or local config.
-  const child = spawn(binary, [], { stdio: 'ignore' });
+  const launchLog = fs.openSync('.tmp/macos-launch.log', 'w');
+  const child = spawn('open', ['-W', '-n', '--stdout', path.resolve('.tmp/macos-app-stdout.log'),
+    '--stderr', path.resolve('.tmp/macos-app-stderr.log'), app], { stdio: ['ignore', launchLog, launchLog] });
+  fs.closeSync(launchLog);
   let launchError;
   child.on('error', error => { launchError = error; });
   await new Promise(resolve => setTimeout(resolve, 12_000));
   assert.equal(launchError, undefined, 'Application launch failed');
   assert.equal(child.exitCode, null, 'Application exited during startup');
   assert.equal(child.signalCode, null, 'Application crashed during startup');
+  const pids = command('pgrep', ['-f', `${app}/Contents/MacOS/`]).trim().split(/\s+/);
+  assert.ok(pids.length > 0, 'No application process after LaunchServices startup');
+  for (const pid of pids) process.kill(Number(pid), 'SIGTERM');
   child.kill('SIGTERM');
   await new Promise(resolve => { child.once('exit', resolve); setTimeout(resolve, 5000).unref(); });
   if (child.exitCode === null && child.signalCode === null) child.kill('SIGKILL');
