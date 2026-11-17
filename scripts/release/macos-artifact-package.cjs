@@ -140,12 +140,13 @@ async function main(mode) {
   child.on('error', error => { launchError = error; });
   await new Promise(resolve => setTimeout(resolve, 12_000));
   assert.equal(launchError, undefined, 'Application launch failed');
-  assert.equal(child.exitCode, null, 'Application exited during startup');
-  assert.equal(child.signalCode, null, 'Application crashed during startup');
+  // Some macOS runners return from open -W before the application terminates.
+  // Inspect the application itself rather than treating the launcher as it.
+  assert.ok(child.exitCode === null || child.exitCode === 0, 'LaunchServices failed');
   const pids = command('pgrep', ['-f', `${app}/Contents/MacOS/`]).trim().split(/\s+/);
   assert.ok(pids.length > 0, 'No application process after LaunchServices startup');
   for (const pid of pids) process.kill(Number(pid), 'SIGTERM');
-  child.kill('SIGTERM');
+  if (child.exitCode === null) child.kill('SIGTERM');
   await new Promise(resolve => { child.once('exit', resolve); setTimeout(resolve, 5000).unref(); });
   if (child.exitCode === null && child.signalCode === null) child.kill('SIGKILL');
   fs.symlinkSync('/Applications', path.join(payload, 'Applications'));
