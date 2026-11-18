@@ -51,6 +51,21 @@
         pointer-events: none;
       }
 
+      #app-boot-failure {
+        max-width: min(340px, 85vw);
+        text-align: center;
+      }
+
+      #app-boot-failure button {
+        padding: 8px 16px;
+        border: 1px solid currentColor;
+        border-radius: 8px;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+      }
+
       .app-boot-mark {
         display: flex;
         flex-direction: column;
@@ -118,11 +133,37 @@
       }
 
       @media (max-width: 400px) {
-        #app-boot-splash {
+        #app-boot-splash:not([data-failed]) {
           display: none !important;
         }
       }
     </style>
+    <script>
+      function showJulingBootFailure() {
+        var splash = document.getElementById('app-boot-splash');
+        var failure = document.getElementById('app-boot-failure');
+        if (!splash || !failure || !failure.hidden) return;
+        var retry = failure.querySelector('button');
+        if (/^zh\b/i.test(navigator.language)) {
+          failure.querySelector('p').textContent = '聚灵 启动失败。';
+          retry.textContent = '重新加载';
+        }
+        splash.querySelector('.app-boot-progress').hidden = true;
+        splash.setAttribute('data-failed', '');
+        splash.removeAttribute('aria-hidden');
+        retry.onclick = function () { window.location.reload(); };
+        failure.hidden = false;
+        retry.focus();
+      }
+
+      window.addEventListener('juling:boot-failed', showJulingBootFailure);
+      window.addEventListener('error', function (event) {
+        var target = event.target;
+        if (target instanceof HTMLScriptElement && target.type === 'module') {
+          showJulingBootFailure();
+        }
+      }, true);
+    </script>
   </head>
 
   <body>
@@ -134,16 +175,12 @@
       <div class="app-boot-progress" data-mode="indeterminate">
         <div class="app-boot-bar" id="app-boot-bar"></div>
       </div>
+      <div id="app-boot-failure" hidden>
+        <p role="alert">聚灵 failed to start.</p>
+        <button type="button">Reload</button>
+      </div>
     </div>
     <div id="root"></div>
-    <script>
-      window.setTimeout(function () {
-        var splash = document.getElementById("app-boot-splash");
-        if (splash) {
-          splash.classList.add("is-hidden");
-        }
-      }, 15000);
-    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

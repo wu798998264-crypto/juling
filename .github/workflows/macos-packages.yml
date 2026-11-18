@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: Published Juling version to package
+        description: Juling source tag version to package
         required: true
-        default: '1.4.0'
+        type: string
       source_run:
         description: Successful Build Matrix run for that release tag
         required: true
-        default: '43724543025'
+        type: string
 
 permissions:
   contents: read

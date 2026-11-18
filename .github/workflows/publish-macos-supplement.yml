@@ -14,17 +14,24 @@ on:
       publication_run:
         description: Previous publication run containing evidence (verify only)
         default: '44018123791'
+      release_version:
+        description: Source tag version for a combined Windows and Mac release
+        type: string
+      windows_run:
+        description: Successful Windows artifact run for the same source tag
+        type: string
 
 permissions:
   contents: write
   actions: read
 
 concurrency:
-  group: publish-juling-v1.4.0-macos
+  group: publish-juling-${{ inputs.release_version || '1.4.0-macos' }}
   cancel-in-progress: false
 
 jobs:
   publish:
+    if: inputs.release_version == '' && inputs.windows_run == ''
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -87,3 +94,28 @@ jobs:
             .tmp/macos-v1.4.0/published.json
             .tmp/macos-v1.4.0/public-verified.json
           if-no-files-found: warn
+
+  publish-desktop:
+    if: inputs.release_version != '' || inputs.windows_run != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_VERSION: ${{ inputs.release_version }}
+      WINDOWS_RUN: ${{ inputs.windows_run }}
+      PACKAGE_RUN: ${{ inputs.package_run }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Verify build provenance and publish signed desktop packages
+        run: node scripts/release/publish-desktop.cjs
+      - name: Verify anonymous access to update manifests and installers
+        shell: bash
+        run: |
+          node scripts/release/verify_published_updater_manifests.cjs \
+            --version "$RELEASE_VERSION" --repo "$GITHUB_REPOSITORY" --legacy true \
+            --targets windows-x86_64-nsis,windows-x86_64-msi,windows-aarch64-nsis,darwin-aarch64-app,darwin-x86_64-app

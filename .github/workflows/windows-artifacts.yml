@@ -125,3 +125,44 @@ jobs:
           path: release-assets/*
           retention-days: 14
           if-no-files-found: error
+
+  windows-arm64:
+    runs-on: windows-11-arm
+    timeout-minutes: 105
+    env:
+      ELECTRON_SKIP_BINARY_DOWNLOAD: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-pc-windows-msvc
+      - uses: ./.github/actions/host-build-cache
+        with:
+          target: windows-aarch64
+      - run: npm ci
+      - name: Build signed native ARM64 installer
+        env:
+          EXPECTED_VERSION: ${{ inputs.expected_version }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          JULING_ANTIGRAVITY_GOOGLE_CLIENT_ID: ${{ secrets.JULING_ANTIGRAVITY_GOOGLE_CLIENT_ID }}
+          JULING_ANTIGRAVITY_GOOGLE_CLIENT_SECRET: ${{ secrets.JULING_ANTIGRAVITY_GOOGLE_CLIENT_SECRET }}
+          JULING_GEMINI_GOOGLE_CLIENT_ID: ${{ secrets.JULING_GEMINI_GOOGLE_CLIENT_ID }}
+          JULING_GEMINI_GOOGLE_CLIENT_SECRET: ${{ secrets.JULING_GEMINI_GOOGLE_CLIENT_SECRET }}
+        run: |
+          node -e "if (require('./package.json').version !== process.env.EXPECTED_VERSION) process.exit(1)"
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npx tauri build --ci --target aarch64-pc-windows-msvc --bundles nsis
+      - name: Stage ARM64 installer
+        run: node scripts/release/stage_release_assets.cjs --platform windows --assets-dir target/aarch64-pc-windows-msvc/release/bundle --output-dir release-assets
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Juling-Windows-arm64-${{ github.sha }}
+          path: release-assets/*
+          retention-days: 14
+          if-no-files-found: error

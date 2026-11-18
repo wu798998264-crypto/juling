@@ -9,5 +9,8 @@ fn main() {
     if let Some(code) = juling_lib::try_run_codex_package_launcher() {
         std::process::exit(code);
     }
+    if let Some(code) = juling_lib::try_run_codex_cli_resume() {
+        std::process::exit(code);
+    }
     juling_lib::run()
 }

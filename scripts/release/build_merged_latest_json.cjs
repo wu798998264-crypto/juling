@@ -108,6 +108,7 @@ function main() {
   const darwinX64Tar = findAsset(assets, /_x64\.app\.tar\.gz$/, 'darwin-x86_64');
   const windowsMsi = findAsset(assets, TARGET_SPECS['windows-x86_64-msi'], 'windows-x86_64-msi');
   const windowsNsis = findAsset(assets, /_x64-setup\.exe$/, 'windows-x86_64-nsis');
+  const windowsArmNsis = assets.find(name => TARGET_SPECS['windows-aarch64-nsis'].test(name));
   const linuxX64AppImage = findAsset(assets, /_amd64\.AppImage$/, 'linux-x86_64-appimage');
   const linuxArmAppImage = findAsset(assets, /_aarch64\.AppImage$/, 'linux-aarch64-appimage');
   const linuxX64Deb = findAsset(assets, /_amd64\.deb$/, 'linux-x86_64-deb');
@@ -149,6 +150,12 @@ function main() {
       'linux-aarch64-rpm': linuxArmRpmEntry,
     },
   };
+
+  if (windowsArmNsis) {
+    const entry = buildPlatformEntry(windowsArmNsis, signatures, repo, version);
+    latest.platforms['windows-aarch64'] = entry;
+    latest.platforms['windows-aarch64-nsis'] = cloneEntry(entry);
+  }
 
   fs.writeFileSync(output, `${JSON.stringify(latest, null, 2)}\n`);
   console.log(`Merged latest.json generated at ${output}`);

@@ -8,6 +8,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.4.2] - 2026-11-18
+
+- Codex adds named account pools, monthly token alerts, session resume, model catalog and price refresh, GPT-6.2 models, and request log filters.
+- Antigravity adds local token usage analytics. WorkBuddy sessions can be rebound after renaming a workspace.
+- Select a data directory in settings and restart to apply it. Windows tray and proxy behavior and the macOS menu bar and sign-in state are improved.
+- Juling retains complete-history validation, cooldown failover, protection against repeating completed tools, and the overall retry deadline.
+
 ## [1.4.0] - 2026-11-15
 
 ### Added

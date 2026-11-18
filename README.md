@@ -22,7 +22,7 @@
 
 **验证范围**：构建、自动化回归、安装及第三方服务的验收边界见对应发行说明。
 
-聚灵为独立修改版，界面版本 S1.0.6，功能基线 1.4.0。新增 WorkBuddy AI 国际版、Antigravity／CodeBuddy CLI 启动、代理 DNS 与 IPv6 配置、模型批量探测和平台拖拽排序；同步长会话续接、账号额度、会话修复和弹框可达性改进。保留完整历史校验、冷却安全接替、工具不重放及原有总时间预算；广告与推广后端保持关闭。独立更新签名及已知限制见 [发行说明](docs/releases/v1.4.0.md)，来源与许可见 [NOTICE.txt](NOTICE.txt)。
+聚灵界面版本 S1.0.7，功能基线 1.4.2。新增 Codex 账号池、月度 Token 提醒、会话续跑、模型目录与价格刷新，以及 Antigravity 本地会话统计。Windows 与 macOS 下载及兼容说明见 [发行说明](docs/releases/v1.4.2.md)，来源与许可见 [NOTICE.txt](NOTICE.txt)。
 
 ---
 

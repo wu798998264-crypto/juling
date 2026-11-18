@@ -3,9 +3,9 @@ const fs = require('node:fs');
 const os = require('node:os');
 const path = require('node:path');
 const test = require('node:test');
-const { execFileSync } = require('node:child_process');
 
 const { buildTargetManifests } = require('./build_target_latest_json.cjs');
+const { execFileSync } = require('node:child_process');
 const { stageReleaseAssets } = require('./stage_release_assets.cjs');
 
 test('builds manifests from the same normalized assets uploaded to GitHub', () => {
@@ -148,6 +148,7 @@ test('supports every staged release target', () => {
     'darwin-x86_64-app': 'Juling_1.2.3_x64.app.tar.gz',
     'windows-x86_64-msi': 'Juling_1.2.3_x64_zh-CN.msi',
     'windows-x86_64-nsis': 'Juling_1.2.3_x64-setup.exe',
+    'windows-aarch64-nsis': 'Juling_1.2.3_arm64-setup.exe',
     'linux-x86_64-appimage': 'Juling_1.2.3_amd64.AppImage',
     'linux-x86_64-deb': 'Juling_1.2.3_amd64.deb',
     'linux-x86_64-rpm': 'Juling-1.2.3-1.x86_64.rpm',
@@ -181,6 +182,23 @@ test('supports every staged release target', () => {
     );
     assert.match(manifest.url, new RegExp(assetsByTarget[target].replaceAll('.', '\\.')));
   }
+  const mergedFile = path.join(outputDir, 'latest.json');
+  execFileSync(process.execPath, [
+    path.join(__dirname, 'build_merged_latest_json.cjs'),
+    '--version', '1.2.3',
+    '--repo', 'wu798998264-crypto/juling',
+    '--assets-dir', assetsDir,
+    '--notes-file', notesFile,
+    '--published-at', '2026-07-10T12:00:00Z',
+    '--output', mergedFile,
+  ]);
+  const { platforms } = JSON.parse(fs.readFileSync(mergedFile, 'utf8'));
+  const armAsset = assetsByTarget['windows-aarch64-nsis'];
+  assert.match(platforms['windows-aarch64-nsis'].url, /_arm64-setup\.exe$/);
+  assert.equal(platforms['windows-aarch64-nsis'].signature, `${armAsset}-signature`);
+  assert.deepEqual(platforms['windows-aarch64'], platforms['windows-aarch64-nsis']);
+  assert.match(platforms['windows-x86_64'].url, /_x64_zh-CN\.msi$/);
+  assert.match(platforms['windows-x86_64-nsis'].url, /_x64-setup\.exe$/);
   const mergedPath = path.join(outputDir, 'latest.json');
   execFileSync(process.execPath, [path.join(__dirname, 'build_merged_latest_json.cjs'),
     '--version', '1.2.3', '--repo', 'wu798998264-crypto/juling',
