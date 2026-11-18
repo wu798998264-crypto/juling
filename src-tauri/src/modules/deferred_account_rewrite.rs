@@ -124,6 +124,21 @@ pub fn schedule_account_rewrite_if_unchanged<F>(
 ) where
     F: FnOnce() -> Result<String, String> + Send + 'static,
 {
+    schedule_account_rewrite_with_commit_lock(
+        platform, account_id, source_path, source_content, None, action,
+    );
+}
+
+pub(crate) fn schedule_account_rewrite_with_commit_lock<F>(
+    platform: &'static str,
+    account_id: String,
+    source_path: PathBuf,
+    source_content: &[u8],
+    commit_lock: Option<&'static Mutex<()>>,
+    action: F,
+) where
+    F: FnOnce() -> Result<String, String> + Send + 'static,
+{
     let key = format!("{}:{}:{}", platform, account_id, source_path.display());
     let expected_hash = content_hash(source_content);
     schedule_keyed(
@@ -134,6 +149,11 @@ pub fn schedule_account_rewrite_if_unchanged<F>(
                 platform, account_id
             ));
             let rewritten = action().and_then(|content| {
+                // The foreground transaction owns the in-process write order.
+                // A busy migration can be retried on the next detail read.
+                let _commit_guard = commit_lock
+                    .map(|lock| lock.try_lock().map_err(|error| error.to_string()))
+                    .transpose()?;
                 let _lock = crate::modules::account_file_crypto::lock_account_file(&source_path)?;
                 crate::modules::atomic_write::write_string_atomic_if_hash_matches(
                     &source_path,

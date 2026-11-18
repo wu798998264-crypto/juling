@@ -940,11 +940,12 @@ fn load_account_from_dirs(
             || migrated_index_summary
         {
             let account_for_rewrite = account.clone();
-            crate::modules::deferred_account_rewrite::schedule_account_rewrite_if_unchanged(
+            crate::modules::deferred_account_rewrite::schedule_account_rewrite_with_commit_lock(
                 "codex",
                 account_for_rewrite.id.clone(),
                 path.clone(),
                 content.as_bytes(),
+                Some(&CODEX_ACCOUNT_MUTATION_LOCK),
                 move || {
                     crate::modules::secure_account_storage::serialize_account_file(
                         "codex",
@@ -971,11 +972,12 @@ fn load_account_from_dirs(
     }
 
     let account_for_rewrite = account.clone();
-    crate::modules::deferred_account_rewrite::schedule_account_rewrite_if_unchanged(
+    crate::modules::deferred_account_rewrite::schedule_account_rewrite_with_commit_lock(
         "codex",
         account_for_rewrite.id.clone(),
         path.clone(),
         content.as_bytes(),
+        Some(&CODEX_ACCOUNT_MUTATION_LOCK),
         move || {
             crate::modules::secure_account_storage::serialize_account_file(
                 "codex",
