@@ -2505,7 +2505,7 @@ fn parse_account_profile_from_check_response(
 ) -> Result<(Option<String>, Option<String>, Option<String>), String> {
     let records = collect_account_records(payload);
     if records.is_empty() {
-        return Err("官方账号检查响应中未包含可用工作区记录".to_string());
+        return Err("CODEX_WORKSPACE_PROFILE_NOT_FOUND: 官方账号检查响应中未包含可用工作区记录".to_string());
     }
 
     let ordering_first_id = payload
@@ -2535,7 +2535,7 @@ fn parse_account_profile_from_check_response(
         match by_account.or(by_org) {
             Some(record) => record,
             None => {
-                return Err("官方账号检查响应中未找到目标工作区资料".to_string());
+                return Err("CODEX_WORKSPACE_PROFILE_NOT_FOUND: 官方账号检查响应中未找到目标工作区资料".to_string());
             }
         }
     } else {
@@ -2586,7 +2586,7 @@ fn parse_account_profile_from_check_response(
         let requires_workspace_name =
             !is_personal_structure && crate::modules::codex_wakeup::is_team_like_plan(effective_plan);
         if requires_workspace_name {
-            return Err("官方账号检查响应缺少 Team/Business 工作区名称".to_string());
+            return Err("CODEX_WORKSPACE_PROFILE_NAME_MISSING: 官方账号检查响应缺少 Team/Business 工作区名称".to_string());
         }
     }
 

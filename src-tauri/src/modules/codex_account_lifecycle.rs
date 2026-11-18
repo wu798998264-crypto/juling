@@ -370,8 +370,11 @@ fn oauth_reauth_matches_user_and_workspace(
         (Some(stored), Some(received)) => stored == received,
         _ => true,
     };
+    let token_user_id = extract_user_info(&target.tokens.id_token)
+        .ok()
+        .and_then(|(_, user_id, ..)| user_id);
     !target.is_web_session_auth()
-        && matches_id(target.user_id.as_deref(), user_id)
+        && matches_id(token_user_id.as_deref().or(target.user_id.as_deref()), user_id)
         && matches_id(target.account_id.as_deref(), account_id)
         && organization_matches
 }
@@ -401,19 +404,11 @@ fn resolve_reauth_target_account_id(
                 target.email, email
             ));
         }
-        // 重新授权会清理衍生 ID 下的重复记录，换邮箱时先确认该记录的身份。
+        // A separate destination record may have its own credentials and references.
         if generated_id != target_id
-            && load_account(generated_id).is_some_and(|duplicate| {
-                !is_oauth_identity_candidate(&duplicate)
-                    || !oauth_reauth_matches_user_and_workspace(
-                        &duplicate,
-                        user_id,
-                        account_id,
-                        organization_id,
-                    )
-            })
+            && load_account(generated_id).is_some()
         {
-            return Err("CODEX_OAUTH_RESTART_REQUIRED: 新邮箱对应的账号记录与重新授权身份冲突".into());
+            return Err("CODEX_OAUTH_RESTART_REQUIRED: 新邮箱对应的账号记录已存在".into());
         }
     }
     // 历史混合记录保留原文件及引用；本次授权回到 OAuth 身份域独立保存。

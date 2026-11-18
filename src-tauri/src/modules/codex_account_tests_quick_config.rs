@@ -523,11 +523,11 @@
                 .expect("read switched catalog"),
         )
         .expect("parse switched catalog");
-        assert!(generated["models"]
-            .as_array()
-            .expect("models")
-            .first()
-            .is_some_and(|model| model["slug"] == "gpt-6.2-sol"));
+        assert_eq!(
+            generated["models"].as_array().expect("models").iter().take(3)
+                .filter_map(|model| model["slug"].as_str()).collect::<Vec<_>>(),
+            ["gpt-6.1-sol", "gpt-6.2-sol", "gpt-6.2-astra"],
+        );
         assert!(generated["models"]
             .as_array()
             .expect("models")

@@ -1539,18 +1539,18 @@ async fn native_select_route_once(
         request.target_account_id.as_deref(),
     );
     native_sort_accounts_scoped(host, &mut accounts, &collection, key, &routing_namespace);
+    let now = chrono::Utc::now().timestamp();
+    let tier = |account: &CodexAccount| native_account_rank(account, &collection, key, now).0;
     if request.auxiliary.as_deref() == Some("search") {
-        // Preserve the native OAuth search path when a scoped OAuth account
-        // is available. A compatible relay can serve API-key-only pools.
-        accounts.sort_by_key(CodexAccount::is_api_key_auth);
+        // Prefer native OAuth search within each preferred/regular/backup tier.
+        accounts.sort_by_key(|account| (tier(account), account.is_api_key_auth()));
     } else if plan.automatic {
-        // The old automatic gateway exhausts native candidates before provider routes.
-        // Preserve the configured selection order within each group.
+        // Preserve routing tier priority, then prefer native candidates within it.
         accounts.sort_by_key(|account| {
-            automatic_api_service_provider_route_eligible(
+            (tier(account), automatic_api_service_provider_route_eligible(
                 account,
                 || native_automatic_upstream_models(&collection, account),
-            ) && !codex_account::is_grok_upstream_provider(account)
+            ) && !codex_account::is_grok_upstream_provider(account))
         });
     }
     if request.capability_fallback_from.is_some() {

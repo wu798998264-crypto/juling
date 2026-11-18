@@ -2611,8 +2611,6 @@ mod tests {
         assert_eq!(
             managed_codex_model_ids(),
             vec![
-                "gpt-6.2-sol",
-                "gpt-6.2-astra",
                 "gpt-6.1-sol",
                 "gpt-6.2-sol",
                 "gpt-6.2-astra",

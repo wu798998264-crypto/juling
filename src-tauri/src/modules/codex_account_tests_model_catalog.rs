@@ -54,7 +54,10 @@ fn opencode_go_catalog_upgrade_adds_vision_once_and_respects_explicit_settings()
             fs::write(&path, serde_json::to_vec(&old_config).unwrap()).unwrap();
             let upgraded = super::read_experimental_model_definitions(&dir);
             assert_eq!(upgraded.iter().filter(|model| model.model_id == "gpt-6.1-terra").count(), 1);
-            assert_eq!(upgraded[0].model_id, "gpt-6.2-sol");
+            assert_eq!(
+                upgraded.iter().take(3).map(|model| model.model_id.as_str()).collect::<Vec<_>>(),
+                ["gpt-6.1-sol", "gpt-6.2-sol", "gpt-6.2-astra"],
+            );
             assert_eq!(upgraded.iter().find(|model| model.model_id == "gpt-6.1-sol").unwrap().context_window, Some(800_000));
             let old_ids = previous.iter().map(|model| model.model_id.clone()).collect::<Vec<_>>();
             let catalog_path = super::experimental_model_catalog_path(&dir);
