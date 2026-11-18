@@ -207,7 +207,8 @@ use super::*;
                 "userId": user, "email":"fixture@example.invalid", "accessToken": access,
                 "refreshToken": refresh, "expiresAt": 1_800_000_000, "platformId":"trae",
             }}).to_string()).unwrap();
-            fs::File::open(&path).unwrap().set_modified(saved + Duration::from_secs(time)).unwrap();
+            fs::OpenOptions::new().write(true).open(&path)
+                .unwrap().set_modified(saved + Duration::from_secs(time)).unwrap();
             (name.to_owned(), path)
         };
         let newest = session("default.json", 20, "fixture-user", "newest-access", "newest-refresh");

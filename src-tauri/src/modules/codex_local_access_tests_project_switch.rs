@@ -594,7 +594,12 @@ async fn project_switch_responses_gateway_repairs_receipts_for_legacy_provider_w
 
         // The fixture runs in the test process. Supply its scoped profile the
         // same way the production process scan supplies a running Codex app.
-        let processes = [(std::process::id(), Some(profile.to_string_lossy().into_owned()))];
+        #[cfg(target_os = "windows")]
+        let reported_profile =
+            crate::modules::codex_instance::get_windows_app_user_data_dir(&profile).unwrap();
+        #[cfg(not(target_os = "windows"))]
+        let reported_profile = profile.clone();
+        let processes = [(std::process::id(), Some(reported_profile.to_string_lossy().into_owned()))];
         Box::pin(super::restore_instance_gateways_after_failed_update(
             &recovery.instance_keys, &processes,
         )).await.unwrap();

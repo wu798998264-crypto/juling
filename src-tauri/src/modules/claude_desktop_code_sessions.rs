@@ -173,7 +173,7 @@ fn sync_lists(
             atomic_write::write_bytes_atomic(&path, &entry.bytes)?;
             copied_new_entry |= observed.entry(target_key.clone()).or_default().insert(name);
             // Preserve source mtime so copying cannot make an older entry win the next sync.
-            fs::File::open(&path)
+            fs::OpenOptions::new().write(true).open(&path)
                 .and_then(|file| file.set_modified(entry.modified))
                 .map_err(|error| error.to_string())?;
         }
@@ -233,7 +233,7 @@ mod tests {
         }))
         .unwrap();
         fs::write(&path, &bytes).unwrap();
-        fs::File::open(path)
+        fs::OpenOptions::new().write(true).open(path)
             .unwrap()
             .set_modified(UNIX_EPOCH + Duration::from_millis(mtime))
             .unwrap();
