@@ -70,6 +70,7 @@ fn request_pages_use_stable_ties_and_the_published_rollout_snapshot() {
     assert_eq!(published.rows.len(), 1);
     assert_eq!(published.rows[0].input_tokens, 500);
     assert_eq!(store.query(&query).unwrap().totals.request_count, 1);
+    conn.close().unwrap();
     fs::remove_dir_all(dir).unwrap();
 }
 
@@ -160,5 +161,6 @@ fn project_backfill_resumes_without_overwriting_new_metadata_or_hiding_unknown_u
         )
         .unwrap();
     assert_eq!(metadata_count, 0);
+    conn.close().unwrap();
     fs::remove_dir_all(dir).unwrap();
 }
