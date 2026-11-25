@@ -112,7 +112,7 @@ pub fn initialize_embedded_oauth_environment() {
     }
 }
 
-fn oauth_client_config(preferred: Option<&str>) -> Result<(String, String, String), String> {
+pub(crate) fn oauth_client_config(preferred: Option<&str>) -> Result<(String, String, String), String> {
     let key = resolve_oauth_client_key(preferred)?;
     let client_id =
         resolve_oauth_credential(ANTIGRAVITY_CLIENT_ID_ENV, EMBEDDED_ANTIGRAVITY_CLIENT_ID)?;

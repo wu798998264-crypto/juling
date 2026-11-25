@@ -8,5 +8,7 @@
   <string>聚灵</string>
   <key>LSRequiresCarbon</key>
   <false/>
+  <key>LSUIElement</key>
+  <true/>
 </dict>
 </plist>

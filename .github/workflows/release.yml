@@ -717,6 +717,7 @@ jobs:
       - name: 🏗️ Build Linux app
         shell: bash
         env:
+          LINUXDEPLOY_EXCLUDED_LIBRARIES: libwayland-*
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
@@ -726,7 +727,8 @@ jobs:
           JULING_GEMINI_GOOGLE_CLIENT_SECRET: ${{ secrets.JULING_GEMINI_GOOGLE_CLIENT_SECRET }}
         run: |
           set -euo pipefail
-          npx tauri build --ci
+          npm run build
+          npx tauri build --ci --config src-tauri/tauri.prebuilt-frontend.conf.json
 
       - name: 📥 Download release metadata
         uses: actions/download-artifact@v4

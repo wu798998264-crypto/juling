@@ -470,7 +470,7 @@ pub(crate) fn prepare(home: &Path, owner: Option<&str>) -> Result<bool, String> 
     let before = decode(Some(&bytes))?;
     let mut after = before.clone();
     ssh::inherit_scoped_auto_connect(&mut after, owner);
-    // Modern scoped SSH preferences can exist without a project archive.
+    // Desktop can store account-specific SSH preferences before creating a project archive.
     if before.get(SCOPES).is_none() && before.get(PARKED).is_none() {
         return finish_prepare(home, &bytes, &before, &after);
     }

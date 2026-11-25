@@ -166,7 +166,7 @@ async fn native_remote_connection(
     // Creation time is stable across key rotation and reveals no credentials.
     Ok(json!({
         "product":"cockpit-tools","protocolVersion":1,
-        "serviceId":format!("juling-{}", collection.created_at),"serviceName":"聚灵",
+        "serviceId":crate::modules::codex_remote_service::local_service_id(collection.created_at),"serviceName":"聚灵",
         "keyLabel":key.label,"status":state,"models":models,
         "modelCatalog":model_catalog,"catalogRevision":catalog_revision,"keyViewsVersion":1,
         "capabilities":{"responses":true,"images":!image_models.is_empty(),"imageEdits":!image_models.is_empty(),

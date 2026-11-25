@@ -8,6 +8,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.5.0] - 2026-11-25
+
+### Added
+
+- Manage local T3 Code accounts, defaults and quotas. View context usage for supported Antigravity and Codex sessions.
+- Add separate, encrypted Qoder CN account storage and CLI commands for account switching, quotas, and API service membership.
+- Filter Codex usage by model, project, and instance. Configured SSH connections can use the local API and model catalog and restore their previous settings when disabled.
+- Add provider presets, expiring credit details, and a compact two-line macOS quota layout.
+
+### Changed
+
+- Show all selected platforms in the sidebar and improve account filtering, export previews, and client path selection.
+- Bound Codex network recovery and preserve Juling's full-history validation, complete tool results, and original total request deadline.
+
+### Fixed
+
+- Improve Windows client detection and proxy settings and macOS window recovery on external monitors.
+- Improve ChatGPT startup, Codex account reauthorization, and compressed history repair.
+
 ## [1.4.2] - 2026-11-18
 
 ### Added

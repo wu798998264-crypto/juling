@@ -50,6 +50,8 @@ async function main() {
   assert.match(version ?? '', /^\d+\.\d+\.\d+$/);
   const source = api(`commits/${tag}`).sha;
   const notes = `docs/releases/${tag}.md`;
+  const heading = /^# (聚灵 S\d+\.\d+\.\d+ · \d+\.\d+\.\d+)\r?$/m.exec(fs.readFileSync(notes, 'utf8'));
+  assert.ok(heading && heading[1].endsWith(` · ${version}`), 'Release notes must identify the version');
   const config = readJson('src-tauri/tauri.conf.json');
   assert.equal(config.version, version);
   assert.equal(config.identifier, 'com.wu798998264.juling');
@@ -101,7 +103,7 @@ async function main() {
   const existing = prior.find(item => item.tagName === tag);
   const published = existing && !existing.isDraft;
   if (!existing) gh(['release', 'create', tag, '--repo', repo, '--verify-tag', '--draft',
-    '--title', `聚灵 S1.0.7 · ${version} · Windows / macOS`, '--notes-file', notes]);
+    '--title', `${heading[1]} · Windows / macOS`, '--notes-file', notes]);
   if (published) {
     console.log('Release already public. Running anonymous verification only.');
     return;

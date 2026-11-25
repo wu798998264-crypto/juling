@@ -4,6 +4,8 @@ use juling_core::modules::{codex_account, cursor_account, github_copilot_account
 use serde::Serialize;
 use tabled::{Table, Tabled};
 
+mod automation;
+
 #[derive(Parser)]
 #[command(author, version, about = "Juling CLI", long_about = None)]
 struct Cli {
@@ -51,6 +53,14 @@ enum Commands {
     Quota {
         #[arg(value_enum, ignore_case = true)]
         platform: Platform,
+    },
+    Account {
+        #[command(subcommand)]
+        command: automation::AccountCommand,
+    },
+    ApiService {
+        #[command(subcommand)]
+        command: automation::ApiServiceCommand,
     },
 }
 
@@ -192,6 +202,8 @@ async fn main() -> anyhow::Result<()> {
                 platform.name()
             );
         }
+        Some(Commands::Account { command }) => automation::run_account(command, cli.json).await?,
+        Some(Commands::ApiService { command }) => automation::run_api_service(command, cli.json).await?,
         None if cli.json => bail!("Specify a command for JSON output."),
         None => println!("Welcome to Juling CLI! Use --help for commands."),
     }

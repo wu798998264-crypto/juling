@@ -38,6 +38,7 @@ docs/plugin-architecture-design.md
 src-tauri/arms_cache/
 arms.biz.trace.*
 sidecars/sing-box/bin/
+sidecars/juling-cliproxy/bin/
 sidecars/juling-cliproxy/juling-cliproxy
 src-tauri/resources/electron/*
 !src-tauri/resources/electron/.gitkeep
