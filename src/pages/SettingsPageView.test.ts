@@ -80,11 +80,14 @@ test('quota layout selector edits the draft and leaves confirmation to the dialo
   const Section = () => null;
   const Dropdown = () => null;
   const h = loadHookModule(new URL('./SettingsPageView.tsx', import.meta.url), {
+    '../hooks/useEscClose': { useEscClose() {} },
     '../components/UnlockFireworksOverlay': { UnlockFireworksOverlay: Section },
     '../components/SettingsAccountTransferSection': { SettingsAccountTransferSection: Section },
     '../components/SettingsWebdavSyncSection': { SettingsWebdavSyncSection: Section },
     '../components/SettingsInstanceCleanupSection': { SettingsInstanceCleanupSection: Section },
     '../components/SingleSelectDropdown': { SingleSelectDropdown: Dropdown },
+    '../assets/branding/juling-sponsor-qrcode.png': { default: 'sponsor.png' },
+    '../assets/branding/juling-core-master.png': { default: 'juling.png' },
     './SettingsGeneralPanel': { SettingsGeneralPanel: Section },
   });
   const changes: string[] = [];
