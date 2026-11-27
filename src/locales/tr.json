@@ -9943,6 +9943,36 @@
       "searchAccountsPlaceholder": "{{platform}} hesaplarını ara...",
       "goAddSourceAccount": "{{platform}} İçinde Ekle",
       "emptyPoolDesc": "T3 Code içine bağlamak için önce {{platform}} sayfasında bir hesap ekleyin."
+    },
+    "desktopPrivacy": {
+      "title": "T3 Code gizlilik ayarları",
+      "enableAll": "Tümünü aç",
+      "disableAll": "Telemetriyi kapat",
+      "statusOn": "Açık",
+      "statusOff": "Kapalı",
+      "connection": "Telemetri kapalıyken telefon yine de bilgisayarla eşleşebilir ve gerçek zamanlı iletişim kurabilir.",
+      "launchScope": "Telemetri ayarları 聚灵 üzerinden başlatılan varsayılan örneğe uygulanır.",
+      "restartPending": "Ayarlar kaydedildi. Telemetri değişiklikleri için T3 Code’u yeniden başlatın.",
+      "environmentBlocked": "{{variable}} ortam değişkeniyle kapatıldı.",
+      "policyBlocked": "Sistem ilkesiyle kapatıldı.",
+      "linked": "Kullanım analizini kapatmak bağlantı izlemeyi de kapatır.",
+      "statusPending": "Etkin değil",
+      "doNotTrack": {
+        "label": "Takip etme",
+        "description": "DO_NOT_TRACK kullanım analizini ve bağlantı izlemeyi duraklatır. Seçimleriniz kaydedilir."
+      },
+      "analytics": {
+        "label": "Kullanım analizi",
+        "description": "Uygulama sürümünü, platformu ve kullanım istatistiklerini T3 Code’a gönderir."
+      },
+      "tracing": {
+        "label": "Bağlantı izleme",
+        "description": "Bağlantı sürelerini ve hata türlerini gönderir. OpenTelemetry dışa aktarımlarını da denetler."
+      },
+      "agentActivity": {
+        "label": "Aracı etkinliği bildirimleri",
+        "description": "Proje adlarını, konuşma başlıklarını, model adlarını ve görev durumunu T3 Connect’e gönderir. Kapatıldığında telefondaki canlı etkinlikler ve çevrimdışı bildirimler durur."
+      }
     }
   }
 }

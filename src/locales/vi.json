@@ -9943,6 +9943,36 @@
       "searchAccountsPlaceholder": "Tìm tài khoản {{platform}}...",
       "goAddSourceAccount": "Thêm tại {{platform}}",
       "emptyPoolDesc": "Hãy thêm tài khoản trên trang {{platform}} trước, sau đó chuyển vào T3 Code."
+    },
+    "desktopPrivacy": {
+      "title": "Quyền riêng tư của T3 Code",
+      "enableAll": "Bật tất cả",
+      "disableAll": "Bật chế độ riêng tư",
+      "statusOn": "Bật",
+      "statusOff": "Tắt",
+      "connection": "Khi tắt dữ liệu đo từ xa, điện thoại vẫn có thể ghép nối và liên lạc với máy tính theo thời gian thực.",
+      "launchScope": "Cài đặt đo từ xa áp dụng cho phiên bản mặc định khởi chạy từ 聚灵.",
+      "restartPending": "Đã lưu cài đặt. Khởi động lại T3 Code để áp dụng thay đổi đo từ xa.",
+      "environmentBlocked": "Đã tắt bởi biến môi trường {{variable}}.",
+      "policyBlocked": "Đã tắt bởi chính sách hệ thống.",
+      "linked": "Tắt phân tích sử dụng cũng tắt theo dõi kết nối.",
+      "statusPending": "Chưa áp dụng",
+      "doNotTrack": {
+        "label": "Không theo dõi",
+        "description": "DO_NOT_TRACK tạm dừng phân tích sử dụng và theo dõi kết nối. Lựa chọn của bạn vẫn được lưu."
+      },
+      "analytics": {
+        "label": "Phân tích sử dụng",
+        "description": "Gửi phiên bản ứng dụng, nền tảng và thống kê sử dụng đến T3 Code."
+      },
+      "tracing": {
+        "label": "Theo dõi kết nối máy tính",
+        "description": "Gửi thời gian kết nối và loại lỗi. Tùy chọn này cũng kiểm soát xuất dữ liệu OpenTelemetry."
+      },
+      "agentActivity": {
+        "label": "Thông báo hoạt động tác tử",
+        "description": "Gửi tên dự án, tiêu đề cuộc trò chuyện, tên mô hình và trạng thái tác vụ đến T3 Connect. Khi tắt, điện thoại sẽ dừng Hoạt động trực tiếp và thông báo ngoại tuyến."
+      }
     }
   }
 }

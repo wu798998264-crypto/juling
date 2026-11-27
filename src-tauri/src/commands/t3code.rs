@@ -321,3 +321,16 @@ pub async fn update_t3code_native_settings(
 ) -> Result<serde_json::Value, String> {
     crate::modules::t3code_native_settings::update(&field, value).await
 }
+
+#[tauri::command]
+pub async fn get_t3code_privacy_settings(
+) -> Result<crate::modules::t3code_privacy::PrivacyState, String> {
+    crate::modules::t3code_privacy::read().await
+}
+
+#[tauri::command]
+pub async fn update_t3code_privacy_settings(
+    patch: crate::modules::t3code_privacy::PrivacyPatch,
+) -> Result<crate::modules::t3code_privacy::PrivacyState, String> {
+    crate::modules::t3code_privacy::update(patch).await
+}

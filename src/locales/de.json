@@ -9943,6 +9943,36 @@
       "searchAccountsPlaceholder": "{{platform}}-Konten suchen...",
       "goAddSourceAccount": "In {{platform}} hinzufügen",
       "emptyPoolDesc": "Fügen Sie zuerst auf der Seite {{platform}} ein Konto hinzu, um es in T3 Code zu nutzen."
+    },
+    "desktopPrivacy": {
+      "title": "T3 Code Datenschutz",
+      "enableAll": "Alles einschalten",
+      "disableAll": "Telemetrie deaktivieren",
+      "statusOn": "Ein",
+      "statusOff": "Aus",
+      "connection": "Auch bei ausgeschalteter Telemetrie kann das Telefon gekoppelt werden und in Echtzeit mit dem Computer kommunizieren.",
+      "launchScope": "Die Telemetrie-Einstellungen gelten für die aus 聚灵 gestartete Standardinstanz.",
+      "restartPending": "Gespeichert. Telemetrie-Änderungen werden nach einem Neustart von T3 Code wirksam.",
+      "environmentBlocked": "Durch die Umgebungsvariable {{variable}} deaktiviert.",
+      "policyBlocked": "Durch die Systemrichtlinie deaktiviert.",
+      "linked": "Das Abschalten der Nutzungsanalyse schaltet auch die Verbindungsdiagnose ab.",
+      "statusPending": "Noch nicht aktiv",
+      "doNotTrack": {
+        "label": "Nicht verfolgen",
+        "description": "DO_NOT_TRACK pausiert Nutzungsanalyse und Verbindungsverfolgung. Ihre Einstellungen bleiben gespeichert."
+      },
+      "analytics": {
+        "label": "Nutzungsanalyse",
+        "description": "Sendet App-Version, Plattform und Nutzungsstatistiken an T3 Code."
+      },
+      "tracing": {
+        "label": "Verbindungsdiagnose",
+        "description": "Sendet Verbindungszeiten und Fehlertypen. Der Schalter steuert auch OpenTelemetry-Exporte."
+      },
+      "agentActivity": {
+        "label": "Agentenaktivität melden",
+        "description": "Sendet Projekt- und Modellnamen, Unterhaltungstitel und Aufgabenstatus an T3 Connect. Beim Abschalten entfallen Live-Aktivitäten und Offline-Mitteilungen am Smartphone."
+      }
     }
   }
 }

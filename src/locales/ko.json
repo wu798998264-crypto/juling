@@ -9943,6 +9943,36 @@
       "searchAccountsPlaceholder": "{{platform}} 계정 검색...",
       "goAddSourceAccount": "{{platform}}에서 추가",
       "emptyPoolDesc": "먼저 {{platform}} 페이지에서 계정을 추가한 뒤 T3 Code로 전환하세요."
+    },
+    "desktopPrivacy": {
+      "title": "T3 Code 개인정보 설정",
+      "enableAll": "모두 켜기",
+      "disableAll": "개인정보 보호 모드 켜기",
+      "statusOn": "켜짐",
+      "statusOff": "꺼짐",
+      "connection": "원격 분석을 꺼도 휴대폰을 페어링하고 컴퓨터와 실시간으로 통신할 수 있습니다.",
+      "launchScope": "원격 측정 설정은 聚灵에서 시작한 기본 인스턴스에 적용됩니다.",
+      "restartPending": "설정을 저장했습니다. T3 Code를 다시 시작하면 적용됩니다.",
+      "environmentBlocked": "환경 변수 {{variable}}로 꺼져 있습니다.",
+      "policyBlocked": "시스템 정책으로 꺼져 있습니다.",
+      "linked": "사용 분석을 끄면 연결 추적도 꺼집니다.",
+      "statusPending": "미적용",
+      "doNotTrack": {
+        "label": "추적 금지",
+        "description": "DO_NOT_TRACK은 사용 분석과 연결 추적을 일시 중지합니다. 설정은 그대로 저장됩니다."
+      },
+      "analytics": {
+        "label": "사용 분석",
+        "description": "앱 버전, 플랫폼, 사용 통계를 T3 Code로 보냅니다."
+      },
+      "tracing": {
+        "label": "데스크톱 연결 추적",
+        "description": "연결 시간과 오류 유형을 보냅니다. OpenTelemetry 내보내기도 함께 제어합니다."
+      },
+      "agentActivity": {
+        "label": "에이전트 활동 알림",
+        "description": "프로젝트 이름, 대화 제목, 모델 이름, 작업 상태를 T3 Connect로 보냅니다. 끄면 휴대폰의 실시간 현황과 오프라인 알림이 중지됩니다."
+      }
     }
   }
 }

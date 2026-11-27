@@ -9943,6 +9943,36 @@
       "searchAccountsPlaceholder": "Hledat účty {{platform}}...",
       "goAddSourceAccount": "Přidat v {{platform}}",
       "emptyPoolDesc": "Nejprve přidejte účet na stránce {{platform}} a poté jej připojte do T3 Code."
+    },
+    "desktopPrivacy": {
+      "title": "Soukromí T3 Code",
+      "enableAll": "Zapnout vše",
+      "disableAll": "Zapnout režim soukromí",
+      "statusOn": "Zapnuto",
+      "statusOff": "Vypnuto",
+      "connection": "Po vypnutí telemetrie se telefon může dál spárovat a komunikovat s počítačem v reálném čase.",
+      "launchScope": "Telemetrie platí pro výchozí instanci spuštěnou z 聚灵.",
+      "restartPending": "Nastavení uloženo. Změny telemetrie se projeví po restartu T3 Code.",
+      "environmentBlocked": "Vypnuto proměnnou prostředí {{variable}}.",
+      "policyBlocked": "Vypnuto zásadami systému.",
+      "linked": "Vypnutí analýzy využití vypne i trasování připojení.",
+      "statusPending": "Zatím neaktivní",
+      "doNotTrack": {
+        "label": "Nesledovat",
+        "description": "DO_NOT_TRACK pozastaví analytiku používání a sledování připojení. Vaše volby zůstanou uložené."
+      },
+      "analytics": {
+        "label": "Analýza využití",
+        "description": "Odesílá verzi aplikace, platformu a statistiky využití do T3 Code."
+      },
+      "tracing": {
+        "label": "Trasování připojení",
+        "description": "Odesílá časy připojení a typy chyb. Přepínač řídí i export OpenTelemetry."
+      },
+      "agentActivity": {
+        "label": "Oznámení o aktivitě agenta",
+        "description": "Odesílá názvy projektů, konverzací a modelů a stav úloh do T3 Connect. Vypnutí zastaví živé aktivity a oznámení při odpojení telefonu."
+      }
     }
   }
 }

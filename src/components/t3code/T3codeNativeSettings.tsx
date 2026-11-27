@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { SingleSelectDropdown } from '../SingleSelectDropdown';
 import { getT3codeNativeSettings, updateT3codeNativeSettings } from '../../services/t3codeService';
 import type { T3CodeNativeModel, T3CodeNativeSettings } from '../../types/t3code';
+import { T3codePrivacySettingsButton } from './T3codePrivacySettings';
 import './T3codeNativeSettings.css';
 
 const LANGUAGES = [
@@ -214,6 +215,9 @@ export function T3codeNativeSettingsPanel({ compact = false }: { compact?: boole
           </SettingRow>
         </>
       )}
+      <SettingRow compact={compact} label={t('t3code.desktopPrivacy.title')}>
+        <T3codePrivacySettingsButton compact={compact} />
+      </SettingRow>
       {feedback && (
         <div
           className={`t3-native-settings-feedback${compact ? ' is-compact qs-hint' : ' settings-row'}${error ? ' is-error' : ''}`}

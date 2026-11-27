@@ -9943,6 +9943,36 @@
       "searchAccountsPlaceholder": "搜索 {{platform}} 账号...",
       "goAddSourceAccount": "去 {{platform}} 添加账号",
       "emptyPoolDesc": "请先在 {{platform}} 页面添加可用账号，随后即可一键切入 T3 Code。"
+    },
+    "desktopPrivacy": {
+      "title": "T3 Code 隐私设置",
+      "enableAll": "一键开启遥测",
+      "disableAll": "一键关闭遥测",
+      "statusOn": "已开启",
+      "statusOff": "已关闭",
+      "connection": "关闭遥测后，手机仍可配对并与电脑实时通信。",
+      "launchScope": "遥测设置适用于由 聚灵 启动的 T3 Code 默认实例。",
+      "restartPending": "设置已保存。重启 T3 Code 后，遥测设置生效。",
+      "environmentBlocked": "已由环境变量 {{variable}} 关闭。",
+      "policyBlocked": "已由系统策略关闭。",
+      "linked": "产品使用分析关闭时，连接追踪也会关闭。",
+      "statusPending": "暂未生效",
+      "doNotTrack": {
+        "label": "禁止追踪",
+        "description": "DO_NOT_TRACK 开启时暂停产品使用分析和桌面连接追踪。各项开关的选择会保留。"
+      },
+      "analytics": {
+        "label": "产品使用分析",
+        "description": "向 T3 Code 发送应用版本、平台和使用统计。"
+      },
+      "tracing": {
+        "label": "桌面连接追踪",
+        "description": "发送连接耗时和错误类型。此开关也控制 OpenTelemetry 导出。"
+      },
+      "agentActivity": {
+        "label": "Agent 活动推送",
+        "description": "向 T3 Connect 中继发送项目名、对话标题、模型名和任务状态。关闭后，手机锁屏动态和离线通知会停用。"
+      }
     }
   }
 }

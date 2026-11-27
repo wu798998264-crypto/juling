@@ -9943,6 +9943,36 @@
       "searchAccountsPlaceholder": "Cerca account {{platform}}...",
       "goAddSourceAccount": "Aggiungi in {{platform}}",
       "emptyPoolDesc": "Aggiungi prima un account nella pagina {{platform}} per collegarlo a T3 Code."
+    },
+    "desktopPrivacy": {
+      "title": "Privacy di T3 Code",
+      "enableAll": "Attiva tutto",
+      "disableAll": "Disattiva telemetria",
+      "statusOn": "Attivo",
+      "statusOff": "Disattivo",
+      "connection": "Con la telemetria disattivata, il telefono può ancora essere associato e comunicare con il computer in tempo reale.",
+      "launchScope": "La telemetria si applica all’istanza predefinita avviata da 聚灵.",
+      "restartPending": "Impostazioni salvate. Riavvia T3 Code per applicare le modifiche alla telemetria.",
+      "environmentBlocked": "Disattivato dalla variabile d’ambiente {{variable}}.",
+      "policyBlocked": "Disattivato dai criteri di sistema.",
+      "linked": "Disattivare le statistiche d’uso disattiva anche il tracciamento delle connessioni.",
+      "statusPending": "Non attivo",
+      "doNotTrack": {
+        "label": "Non tracciare",
+        "description": "DO_NOT_TRACK sospende l’analisi dell’utilizzo e il tracciamento delle connessioni. Le tue scelte restano salvate."
+      },
+      "analytics": {
+        "label": "Statistiche d’uso",
+        "description": "Invia a T3 Code versione dell’app, piattaforma e statistiche d’uso."
+      },
+      "tracing": {
+        "label": "Tracciamento connessioni",
+        "description": "Invia i tempi di connessione e i tipi di errore. Controlla anche le esportazioni di OpenTelemetry."
+      },
+      "agentActivity": {
+        "label": "Notifiche attività agente",
+        "description": "Invia nomi di progetti e modelli, titoli delle conversazioni e stato delle attività a T3 Connect. Disattivandolo si spengono le attività in tempo reale e le notifiche offline sul telefono."
+      }
     }
   }
 }

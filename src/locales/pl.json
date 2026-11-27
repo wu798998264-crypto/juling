@@ -9943,6 +9943,36 @@
       "searchAccountsPlaceholder": "Szukaj kont {{platform}}...",
       "goAddSourceAccount": "Dodaj w {{platform}}",
       "emptyPoolDesc": "Najpierw dodaj konto na stronie {{platform}}, aby przełączyć je do T3 Code."
+    },
+    "desktopPrivacy": {
+      "title": "Prywatność T3 Code",
+      "enableAll": "Włącz wszystko",
+      "disableAll": "Włącz tryb prywatności",
+      "statusOn": "Włączone",
+      "statusOff": "Wyłączone",
+      "connection": "Po wyłączeniu telemetrii telefon nadal można sparować i połączyć z komputerem w czasie rzeczywistym.",
+      "launchScope": "Telemetria dotyczy domyślnej instancji uruchamianej z 聚灵.",
+      "restartPending": "Zapisano ustawienia. Uruchom ponownie T3 Code, aby zastosować zmiany telemetrii.",
+      "environmentBlocked": "Wyłączone przez zmienną środowiskową {{variable}}.",
+      "policyBlocked": "Wyłączone przez zasady systemowe.",
+      "linked": "Wyłączenie analizy użycia wyłącza także śledzenie połączeń.",
+      "statusPending": "Nieaktywne",
+      "doNotTrack": {
+        "label": "Nie śledź",
+        "description": "DO_NOT_TRACK wstrzymuje analizę użycia i śledzenie połączeń. Wybrane ustawienia pozostają zapisane."
+      },
+      "analytics": {
+        "label": "Analiza użycia",
+        "description": "Wysyła do T3 Code wersję aplikacji, platformę i statystyki użycia."
+      },
+      "tracing": {
+        "label": "Śledzenie połączeń",
+        "description": "Wysyła czasy połączeń i typy błędów. Steruje również eksportem OpenTelemetry."
+      },
+      "agentActivity": {
+        "label": "Powiadomienia o aktywności agenta",
+        "description": "Wysyła nazwy projektów i modeli, tytuły konwersacji i stany zadań do T3 Connect. Wyłączenie zatrzymuje aktywności na żywo i powiadomienia offline w telefonie."
+      }
     }
   }
 }

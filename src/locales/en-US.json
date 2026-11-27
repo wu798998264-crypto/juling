@@ -9943,6 +9943,36 @@
       "searchAccountsPlaceholder": "Search {{platform}} accounts...",
       "goAddSourceAccount": "Add in {{platform}}",
       "emptyPoolDesc": "Add an available account on the {{platform}} page first, then switch it into T3 Code."
+    },
+    "desktopPrivacy": {
+      "title": "T3 Code privacy settings",
+      "enableAll": "Enable all telemetry",
+      "disableAll": "Disable all telemetry",
+      "statusOn": "On",
+      "statusOff": "Off",
+      "connection": "Phones can still pair and communicate with the computer in real time when telemetry is off.",
+      "launchScope": "Telemetry settings apply to the default instance launched from 聚灵.",
+      "restartPending": "Settings saved. Restart T3 Code to apply the telemetry changes.",
+      "environmentBlocked": "Disabled by {{variable}}.",
+      "policyBlocked": "Disabled by system policy.",
+      "linked": "Turning off usage analytics also turns off connection tracing.",
+      "statusPending": "Inactive",
+      "doNotTrack": {
+        "label": "Do Not Track",
+        "description": "DO_NOT_TRACK pauses usage analytics and connection tracing. Your choices stay saved."
+      },
+      "analytics": {
+        "label": "Usage analytics",
+        "description": "Sends app version, platform and usage statistics to T3 Code."
+      },
+      "tracing": {
+        "label": "Desktop connection tracing",
+        "description": "Sends connection timings and error types. This switch also controls OpenTelemetry exports."
+      },
+      "agentActivity": {
+        "label": "Agent activity notifications",
+        "description": "Sends project names, conversation titles, model names and task status to T3 Connect. Turning it off disables phone Live Activities and offline notifications."
+      }
     }
   }
 }

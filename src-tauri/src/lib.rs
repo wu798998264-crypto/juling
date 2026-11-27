@@ -1779,6 +1779,8 @@ pub fn run() {
             commands::t3code::get_t3code_accounts_index_path,
             commands::t3code::get_t3code_native_settings,
             commands::t3code::update_t3code_native_settings,
+            commands::t3code::get_t3code_privacy_settings,
+            commands::t3code::update_t3code_privacy_settings,
             commands::t3code::get_t3code_provider_workspace,
             commands::t3code::t3code_sync_provider_launch_paths,
             commands::t3code::t3code_install_antigravity_runtime,

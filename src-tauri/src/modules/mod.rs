@@ -201,6 +201,7 @@ pub mod sync_settings;
 pub mod t3code_account;
 pub mod t3code_app_injection;
 pub mod t3code_native_settings;
+pub mod t3code_privacy;
 pub mod t3code_instance;
 pub mod t3code_provider_bindings;
 #[cfg(test)]

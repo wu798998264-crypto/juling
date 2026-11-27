@@ -9943,6 +9943,36 @@
       "searchAccountsPlaceholder": "Cari akun {{platform}}...",
       "goAddSourceAccount": "Tambah di {{platform}}",
       "emptyPoolDesc": "Tambahkan akun di halaman {{platform}} terlebih dahulu sebelum mengalihkannya ke T3 Code."
+    },
+    "desktopPrivacy": {
+      "title": "Privasi T3 Code",
+      "enableAll": "Aktifkan semua",
+      "disableAll": "Nonaktifkan telemetri",
+      "statusOn": "Aktif",
+      "statusOff": "Nonaktif",
+      "connection": "Saat telemetri nonaktif, ponsel tetap dapat dipasangkan dan berkomunikasi dengan komputer secara langsung.",
+      "launchScope": "Telemetri berlaku untuk instans bawaan yang dijalankan dari 聚灵.",
+      "restartPending": "Setelan disimpan. Mulai ulang T3 Code untuk menerapkan perubahan telemetri.",
+      "environmentBlocked": "Dinonaktifkan oleh variabel lingkungan {{variable}}.",
+      "policyBlocked": "Dinonaktifkan oleh kebijakan sistem.",
+      "linked": "Mematikan analitik penggunaan juga mematikan pelacakan koneksi.",
+      "statusPending": "Belum aktif",
+      "doNotTrack": {
+        "label": "Jangan lacak",
+        "description": "DO_NOT_TRACK menjeda analitik penggunaan dan pelacakan koneksi. Pilihan Anda tetap tersimpan."
+      },
+      "analytics": {
+        "label": "Analitik penggunaan",
+        "description": "Mengirim versi aplikasi, platform, dan statistik penggunaan ke T3 Code."
+      },
+      "tracing": {
+        "label": "Pelacakan koneksi desktop",
+        "description": "Mengirim durasi koneksi dan jenis kesalahan. Opsi ini juga mengatur ekspor OpenTelemetry."
+      },
+      "agentActivity": {
+        "label": "Notifikasi aktivitas agen",
+        "description": "Mengirim nama proyek, judul percakapan, nama model, dan status tugas ke T3 Connect. Menonaktifkannya akan mematikan Aktivitas Langsung dan notifikasi luring di ponsel."
+      }
     }
   }
 }

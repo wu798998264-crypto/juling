@@ -9943,6 +9943,36 @@
       "searchAccountsPlaceholder": "搜尋 {{platform}} 帳號...",
       "goAddSourceAccount": "前往 {{platform}} 新增帳號",
       "emptyPoolDesc": "請先在 {{platform}} 頁面新增可用帳號，隨後即可一鍵切入 T3 Code。"
+    },
+    "desktopPrivacy": {
+      "title": "T3 Code 隱私設定",
+      "enableAll": "一鍵開啟遙測",
+      "disableAll": "一鍵關閉遙測",
+      "statusOn": "已開啟",
+      "statusOff": "已關閉",
+      "connection": "關閉遙測後，手機仍可配對並與電腦即時通訊。",
+      "launchScope": "遙測設定適用於由 聚灵 啟動的 T3 Code 預設執行個體。",
+      "restartPending": "設定已儲存。重新啟動 T3 Code 後，遙測設定生效。",
+      "environmentBlocked": "已由環境變數 {{variable}} 關閉。",
+      "policyBlocked": "已由系統原則關閉。",
+      "linked": "關閉產品使用分析時，連線追蹤也會關閉。",
+      "statusPending": "暫未生效",
+      "doNotTrack": {
+        "label": "禁止追蹤",
+        "description": "DO_NOT_TRACK 開啟時暫停產品使用分析和桌面連線追蹤。各項開關的選擇會保留。"
+      },
+      "analytics": {
+        "label": "產品使用分析",
+        "description": "向 T3 Code 傳送應用程式版本、平台和使用統計。"
+      },
+      "tracing": {
+        "label": "桌面連線追蹤",
+        "description": "傳送連線耗時和錯誤類型。此開關也控制 OpenTelemetry 匯出。"
+      },
+      "agentActivity": {
+        "label": "Agent 活動推播",
+        "description": "向 T3 Connect 中繼傳送專案名稱、對話標題、模型名稱和工作狀態。關閉後，手機鎖定畫面即時動態和離線通知會停用。"
+      }
     }
   }
 }
