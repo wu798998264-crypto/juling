@@ -1,0 +1,28 @@
+name: Verify 1.5.3 integration
+on:
+  push:
+    branches: [codex/juling-1-5-3-uptake]
+permissions:
+  contents: read
+jobs:
+  regressions:
+    runs-on: windows-latest
+    timeout-minutes: 100
+    env:
+      CARGO_BUILD_JOBS: '2'
+      CARGO_PROFILE_TEST_DEBUG: '0'
+      CARGO_PROFILE_TEST_INCREMENTAL: 'false'
+      CARGO_PROFILE_TEST_CODEGEN_UNITS: '256'
+      RUST_MIN_STACK: '8388608'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: ./.github/actions/host-build-cache
+        with:
+          target: windows
+      - run: npm run test:juling-cooldown
+      - run: npm run test:codex-parity
+      - run: cargo test --locked -p juling --lib images_http_tests -- --test-threads=1
+      - run: cargo test --locked -p juling --lib modules::codex_session_usage -- --test-threads=1
