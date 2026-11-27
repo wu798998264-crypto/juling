@@ -46,11 +46,37 @@ test('missing Antigravity plans use the neutral badge and remain filterable', ()
     assert.equal(filter?.label, '未知 (1)');
   }
 
-  const fixture = account([]);
-  fixture.quota!.subscription_tier = 'g1-pro-tier';
-  const presentation = buildAntigravityAccountPresentation(fixture, [], t);
-  assert.equal(presentation.planLabel, 'g1-pro-tier');
-  assert.equal(presentation.planClass, 'pro');
+  const cases: Array<[string, string, string, boolean]> = [
+    ['g1-pro-tier', 'PRO', 'pro', true],
+    ['g1-ultra-tier', 'ULTRA', 'ultra', true],
+    ['g1-ultra-lite-tier', 'ULTRA LITE', 'ultra', true],
+    ['g1-plus-tier', 'PLUS', 'plus', true],
+    ['free-tier', 'FREE', 'free', false],
+    ['standard-tier', 'FREE', 'free', false],
+    ['legacy-tier', 'FREE', 'free', false],
+    ['gcp-ge-ultra-tier', 'ULTRA', 'ultra', true],
+    ['gcp-ge-plus-tier', 'PLUS', 'plus', true],
+    ['gcp-ge-standard-tier', 'FREE', 'free', false],
+    ['gcp-enterprise-tier', 'ENTERPRISE', 'enterprise', true],
+    ['ge-business-tier', 'BUSINESS', 'business', true],
+    ['agy-business-paygo-tier', 'PAYGO', 'business', true],
+    ['gcp-ge-edu-pro-tier', 'EDU PRO', 'pro', true],
+    ['gcp-ge-edu-tier', 'EDU', 'individual', true],
+    ['g1-unrecognized-tier', 'g1-unrecognized-tier', 'unknown', true],
+  ];
+  for (const [subscriptionTier, expectedLabel, expectedClass, expectsShortWindow] of cases) {
+    const fixture = account([model('gemini-5h', 80), model('gemini-weekly', 90)]);
+    fixture.quota!.subscription_tier = subscriptionTier;
+    const presentation = buildAntigravityAccountPresentation(fixture, [], t);
+    assert.equal(presentation.planLabel, expectedLabel, subscriptionTier);
+    assert.equal(presentation.planClass, expectedClass, subscriptionTier);
+    assert.equal(presentation.planTitle, subscriptionTier, subscriptionTier);
+    assert.equal(
+      presentation.quotaItems.some((item) => item.key === 'gemini:5h'),
+      expectsShortWindow,
+      subscriptionTier,
+    );
+  }
 });
 
 test('list disclosure shows each real model and keeps account-wide windows separate', () => {
@@ -73,8 +99,9 @@ test('list disclosure shows each real model and keeps account-wide windows separ
   const [windows, detail] = html.split('<details');
   assert.match(windows, /Claude · 5h.*?100%/);
   assert.match(windows, /Claude · Weekly.*?0%/);
+  assert.doesNotMatch(windows, /Gemini 4 Argon/);
   assert.match(detail, /Claude Sonnet.*0%.*Gemini Pro High.*60%.*Gemini Pro Low.*90%/);
-  assert.doesNotMatch(detail, /Weekly|3p-5h/);
+  assert.doesNotMatch(detail, /Weekly|3p-5h|gemini-argon-wtu-weekly/);
   assert.match(renderToStaticMarkup(createElement(AntigravityQuotaSection, { items: [], modelItems, t })), /Gemini Pro Low/);
 });
 
@@ -82,18 +109,20 @@ test('explicit quota buckets keep percentages and distant reset times unchanged'
   const items = getAntigravityQuotaDisplayItems(account([
     model('3p-5h', 0), model('3p-weekly', 42),
     model('gemini-5h', 100), model('gemini-weekly', 0),
-    model('gemini-argon-wtu-weekly', 91),
+    model('gemini-carbon-wtu-weekly', 91),
+    model('gemini-argon-wtu-weekly', 77),
   ]), []);
   assert.deepEqual(items.map(({ key, label, percentage, resetTime }) => ({ key, label, percentage, resetTime })), [
     { key: 'claude:5h', label: 'Claude (5h)', percentage: 0, resetTime: futureReset },
     { key: 'claude:weekly', label: 'Claude (Weekly)', percentage: 42, resetTime: futureReset },
     { key: 'gemini:5h', label: 'Gemini (5h)', percentage: 100, resetTime: futureReset },
     { key: 'gemini:weekly', label: 'Gemini (Weekly)', percentage: 0, resetTime: futureReset },
-    { key: 'argon:weekly', label: 'Gemini 4 Argon (Weekly)', percentage: 91, resetTime: futureReset },
+    { key: 'carbon:weekly', label: 'Gemini 4 Carbon (Weekly)', percentage: 91, resetTime: futureReset },
   ]);
   const html = renderToStaticMarkup(createElement(AntigravityQuotaSection, { items, t }));
   assert.equal((html.match(/class="ag-quota-cell /g) || []).length, 5);
-  assert.match(html, /Gemini 4 Argon \(Weekly\)/);
+  assert.match(html, /Gemini 4 Carbon \(Weekly\)/);
+  assert.doesNotMatch(html, /Gemini 4 Argon \(Weekly\)/);
   assert.match(html, /91%/);
   const otherAccount = account([model('gemini-5h', 0), model('gemini-weekly', 35)]);
   assert.deepEqual(getAntigravityQuotaDisplayItems(otherAccount, []).map(({ key, percentage }) => [key, percentage]), [
@@ -173,15 +202,17 @@ test('free tier accounts show weekly quota without 5h rows', () => {
   const freeAccount = account([
     model('gemini-weekly', 100),
     model('claude-sonnet', 80),
+    model('carbon:weekly', 95),
     model('argon:weekly', 95),
   ]);
   freeAccount.quota!.subscription_tier = 'FREE';
   const items = getAntigravityQuotaDisplayItems(freeAccount, []);
-  assert.deepEqual(items.map((i) => i.key), ['claude:weekly', 'gemini:weekly', 'argon:weekly']);
+  assert.deepEqual(items.map((i) => i.key), ['claude:weekly', 'gemini:weekly', 'carbon:weekly']);
   assert.equal(items.some((i) => i.key.endsWith(':5h')), false);
   const html = renderToStaticMarkup(createElement(AntigravityQuotaSection, { items, t }));
   assert.match(html, /Weekly/);
   assert.doesNotMatch(html, /· 5h/);
+  assert.doesNotMatch(html, /Gemini 4 Argon/);
 });
 
 test('free accounts show cached weekly buckets separately from current model percentages', () => {
@@ -199,10 +230,12 @@ test('free accounts show cached weekly buckets separately from current model per
   assert.doesNotMatch(html, /100%/);
 });
 
-test('Ultra model quota and short Argon windows never fill the Argon weekly row', () => {
+test('removed Argon quota pool and legacy Argon buckets never render a weekly row or model row', () => {
   const models = [
     model('gemini-4-argon-high', 91),
     model('gemini-argon-5h', 88),
+    model('gemini-argon-wtu-weekly', 77),
+    model('argon:weekly', 66),
     model('gemini-3.1-pro-high', 25),
     model('gemini-3.1-pro-low', 60),
     model('claude-sonnet', 0),
@@ -215,11 +248,15 @@ test('Ultra model quota and short Argon windows never fill the Argon weekly row'
     ['gemini:5h', 25],
     ['gemini:weekly', 60],
   ]);
+  const modelItems = getAntigravityModelQuotaDisplayItems(ultra);
+  assert.deepEqual(modelItems.map(({ key }) => key), [
+    'gemini-4-argon-high', 'gemini-3.1-pro-high', 'gemini-3.1-pro-low', 'claude-sonnet',
+  ]);
   const html = renderToStaticMarkup(createElement(AntigravityQuotaSection, { items, t }));
   assert.match(html, /25%/);
   assert.match(html, /60%/);
   assert.match(html, /0%/);
-  assert.doesNotMatch(html, /Gemini 4 Argon \(Weekly\)|91%|88%/);
+  assert.doesNotMatch(html, /Gemini 4 Argon \(Weekly\)|91%|88%|77%|66%/);
   assert.doesNotMatch(html, /quota-empty/);
 });
 
@@ -341,4 +378,38 @@ test('Antigravity card time picker can show the quota refresh time without selec
   rendered.props.onClick({ stopPropagation: () => { stopped += 1; } });
   assert.equal(stopped, 1);
   h.unmount();
+});
+
+test('dynamic summary groups render unknown pools and keep their bucket IDs out of model rows', () => {
+  const fixture = account([
+    model('gemini-5h', 54),
+    model('gemini-weekly', 72),
+    model('neon-weekly', 42),
+    { ...model('gemini-4-neon-high', 54), display_name: 'Gemini 4 Neon (High)' },
+  ]);
+  fixture.quota!.quota_summary_groups = [
+    {
+      id: 'gemini',
+      name: 'Gemini Models',
+      windows: [
+        { id: 'gemini-5h', period: '5h', percentage: 54 },
+        { id: 'gemini-weekly', period: 'weekly', percentage: 72 },
+      ],
+    },
+    {
+      id: 'neon',
+      name: 'Neon Preview',
+      windows: [
+        { id: 'neon-weekly', period: 'weekly', percentage: 42, reset_time: futureReset },
+      ],
+    },
+  ];
+  const items = getAntigravityQuotaDisplayItems(fixture, []);
+  assert.deepEqual(items.map(({ key, label, percentage }) => [key, label, percentage]), [
+    ['gemini:5h', 'Gemini (5h)', 54],
+    ['gemini:weekly', 'Gemini (Weekly)', 72],
+    ['neon:weekly', 'Neon Preview (Weekly)', 42],
+  ]);
+  const modelItems = getAntigravityModelQuotaDisplayItems(fixture);
+  assert.deepEqual(modelItems.map(({ key }) => key), ['gemini-4-neon-high']);
 });

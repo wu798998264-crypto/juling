@@ -9599,6 +9599,15 @@
     "saved": "Zapisano. Dotyczy nowych żądań."
   },
   "antigravityTokenUsage": {
+    "context": {
+      "requestContext": "Kontekst żądania",
+      "coverage": "{{reported}} zmierzonych · {{estimated}} szacowanych · {{missing}} bez danych",
+      "largestGrowth": "Największy wzrost {{total}} w kroku #{{step}}",
+      "growthParts": "Wejście {{input}} · Odczyt z pamięci {{read}} · Zapis do pamięci {{write}}",
+      "method": "Kontekst sumuje tokeny wejścia i pamięci podręcznej. Zmiany porównują kolejne żądania z pomiarami. Podział na wiadomości, narzędzia i załączniki jest niedostępny.",
+      "unplacedCompactions": "Kompresje bez numeru kroku {{count}}",
+      "compactionStep": "Kompresja kontekstu"
+    },
     "tab": "Zużycie sesji",
     "subtitle": "Lokalne zużycie tokenów w sesjach Antigravity",
     "title": "Zużycie tokenów sesji Antigravity",
@@ -9677,7 +9686,9 @@
       "conversations": "Rozmowy",
       "turns": "Tury odpowiedzi",
       "coverage": "Dokładne pokrycie",
-      "avgPerDay": "Śred. / aktywny dzień"
+      "avgPerDay": "Śred. / aktywny dzień",
+      "refCost": "Równowartość API",
+      "cacheSavingsHint": "Cache zaoszczędził ~{{savings}}"
     },
     "estimated": {
       "notice": "{{turns}} tur bez surowych danych API oszacowano osobno (nie są wliczane do dokładnej sumy):"
@@ -9716,6 +9727,32 @@
     "errors": {
       "loadFailed": "Nie udało się wczytać zużycia tokenów: {{error}}",
       "syncFailed": "Skanowanie zużycia tokenów nie powiodło się: {{error}}"
+    },
+    "heatmap": {
+      "title": "Mapa aktywności (365 dni)",
+      "activeDays": "{{count}} aktywnych dni",
+      "peak": "Szczyt {{date}} ({{tokens}})",
+      "less": "Mniej",
+      "more": "Więcej"
+    },
+    "rehydrate": {
+      "title": "Hook przywracania pamięci po kompakcji",
+      "enabledBadge": "Włączony",
+      "disabledBadge": "Wyłączony",
+      "desc": "Automatycznie wstrzykuje oś czasu żądań, edytowane pliki i kluczowe ustalenia po kompakcji kontekstu (CHECKPOINT).",
+      "noPython": "Brak python3",
+      "enableBtn": "Włącz hook",
+      "disableBtn": "Wyłącz hook"
+    },
+    "audit": {
+      "title": "Audyt kontekstu i wykonania",
+      "peakContext": "Szczytowy kontekst kroku",
+      "compactions": "{{count}} kompakcji",
+      "userPrompts": "Zapytania",
+      "toolCalls": "Narzędzia",
+      "fileOps": "Pliki O/Z",
+      "commands": "Polecenia",
+      "subagents": "Subagenci"
     }
   },
   "t3code": {

@@ -24,5 +24,11 @@ jobs:
           target: windows
       - run: npm run test:juling-cooldown
       - run: npm run test:codex-parity
-      - run: cargo test --locked -p juling --lib images_http_tests -- --test-threads=1
-      - run: cargo test --locked -p juling --lib modules::codex_session_usage -- --test-threads=1
+      - name: Check image batches and session usage
+        shell: bash
+        run: |
+          set -euo pipefail
+          for suite in codex_native_api::images::http_tests modules::codex_session_usage modules::antigravity_token_usage large_compression_tests; do
+            cargo test --locked -p juling --lib "$suite" -- --test-threads=1 | tee suite.log
+            grep -Eq 'test result: ok\. [1-9][0-9]* passed' suite.log
+          done

@@ -9599,6 +9599,15 @@
     "saved": "Guardado. Se aplicará a las nuevas solicitudes."
   },
   "antigravityTokenUsage": {
+    "context": {
+      "requestContext": "Contexto de la solicitud",
+      "coverage": "{{reported}} registrados · {{estimated}} estimados · {{missing}} sin datos",
+      "largestGrowth": "Mayor aumento {{total}} en el paso #{{step}}",
+      "growthParts": "Entrada {{input}} · Lectura de caché {{read}} · Escritura de caché {{write}}",
+      "method": "El contexto suma los tokens de entrada y de caché. Los cambios comparan solicitudes consecutivas con mediciones registradas. No hay desglose por mensajes, herramientas ni adjuntos.",
+      "unplacedCompactions": "Compresiones sin número de paso {{count}}",
+      "compactionStep": "Compresión del contexto"
+    },
     "tab": "Uso de sesiones",
     "subtitle": "Consumo local de tokens en sesiones de Antigravity",
     "title": "Uso de tokens por sesión (Antigravity)",
@@ -9677,7 +9686,9 @@
       "conversations": "Conversaciones",
       "turns": "Turnos",
       "coverage": "Cobertura exacta",
-      "avgPerDay": "Prom. / día activo"
+      "avgPerDay": "Prom. / día activo",
+      "refCost": "Costo equiv. API",
+      "cacheSavingsHint": "Caché ahorró ~{{savings}}"
     },
     "estimated": {
       "notice": "{{turns}} turnos sin métricas crudas de API se estimaron por separado (nunca sumados al total exacto):"
@@ -9716,6 +9727,32 @@
     "errors": {
       "loadFailed": "Error al cargar el uso de tokens: {{error}}",
       "syncFailed": "Error al escanear el uso de tokens: {{error}}"
+    },
+    "heatmap": {
+      "title": "Mapa de actividad (365 días)",
+      "activeDays": "{{count}} días activos",
+      "peak": "Pico {{date}} ({{tokens}})",
+      "less": "Menos",
+      "more": "Más"
+    },
+    "rehydrate": {
+      "title": "Hook de rehidratación post-compactación",
+      "enabledBadge": "Activo",
+      "disabledBadge": "Inactivo",
+      "desc": "Reinyecta automáticamente el historial de solicitudes, archivos editados y decisiones clave tras una compactación de contexto (CHECKPOINT).",
+      "noPython": "python3 no hallado",
+      "enableBtn": "Activar hook",
+      "disableBtn": "Desactivar hook"
+    },
+    "audit": {
+      "title": "Auditoría de contexto y ejecución",
+      "peakContext": "Contexto pico por paso",
+      "compactions": "{{count}} compactaciones",
+      "userPrompts": "Consultas",
+      "toolCalls": "Herramientas",
+      "fileOps": "Archivos L/E",
+      "commands": "Comandos",
+      "subagents": "Subagentes"
     }
   },
   "t3code": {

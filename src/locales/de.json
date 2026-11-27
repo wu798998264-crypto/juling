@@ -9599,6 +9599,15 @@
     "saved": "Gespeichert. Gilt für neue Anfragen."
   },
   "antigravityTokenUsage": {
+    "context": {
+      "requestContext": "Anfragekontext",
+      "coverage": "{{reported}} erfasst · {{estimated}} geschätzt · {{missing}} fehlen",
+      "largestGrowth": "Größter Anstieg {{total}} bei Schritt #{{step}}",
+      "growthParts": "Eingabe {{input}} · Cache-Lesen {{read}} · Cache-Schreiben {{write}}",
+      "method": "Der Anfragekontext summiert Eingabe- und Cache-Tokens. Änderungen vergleichen aufeinanderfolgende Anfragen mit Messwerten. Anteile für Nachrichten, Werkzeuge und Anhänge fehlen.",
+      "unplacedCompactions": "Komprimierungen ohne Schrittnummer {{count}}",
+      "compactionStep": "Kontextkomprimierung"
+    },
     "tab": "Sitzungsnutzung",
     "subtitle": "Lokaler Token-Verbrauch aus Antigravity-Sitzungen",
     "title": "Antigravity-Sitzungs-Token-Nutzung",
@@ -9677,7 +9686,9 @@
       "conversations": "Unterhaltungen",
       "turns": "Antwortrunden",
       "coverage": "Exakte Abdeckung",
-      "avgPerDay": "Ø / aktiver Tag"
+      "avgPerDay": "Ø / aktiver Tag",
+      "refCost": "API-Referenzkosten",
+      "cacheSavingsHint": "Cache sparte ~{{savings}}"
     },
     "estimated": {
       "notice": "{{turns}} Runden ohne direkte API-Messwerte wurden separat geschätzt (nicht zur exakten Summe addiert):"
@@ -9716,6 +9727,32 @@
     "errors": {
       "loadFailed": "Token-Nutzung konnte nicht geladen werden: {{error}}",
       "syncFailed": "Scan der Token-Nutzung fehlgeschlagen: {{error}}"
+    },
+    "heatmap": {
+      "title": "365-Tage-Aktivitätskarte",
+      "activeDays": "{{count}} aktive Tage",
+      "peak": "Spitze {{date}} ({{tokens}})",
+      "less": "Weniger",
+      "more": "Mehr"
+    },
+    "rehydrate": {
+      "title": "Gedächtnis-Hook nach Komprimierung",
+      "enabledBadge": "Aktiv",
+      "disabledBadge": "Inaktiv",
+      "desc": "Fügt nach einer Kontextkomprimierung (CHECKPOINT) automatisch Anfrageverlauf, bearbeitete Dateien und Entscheidungen wieder ein.",
+      "noPython": "python3 fehlt",
+      "enableBtn": "Hook aktivieren",
+      "disableBtn": "Hook deaktivieren"
+    },
+    "audit": {
+      "title": "Kontext- & Ausführungsaudit",
+      "peakContext": "Spitzenkontext pro Schritt",
+      "compactions": "{{count}} Komprimierungen",
+      "userPrompts": "Anfragen",
+      "toolCalls": "Werkzeuge",
+      "fileOps": "Dateien L/S",
+      "commands": "Befehle",
+      "subagents": "Subagenten"
     }
   },
   "t3code": {

@@ -9599,6 +9599,15 @@
     "saved": "Salvato. Si applica alle nuove richieste."
   },
   "antigravityTokenUsage": {
+    "context": {
+      "requestContext": "Contesto richiesta",
+      "coverage": "{{reported}} misurate · {{estimated}} stimate · {{missing}} senza dati",
+      "largestGrowth": "Aumento maggiore {{total}} al passaggio #{{step}}",
+      "growthParts": "Input {{input}} · Lettura cache {{read}} · Scrittura cache {{write}}",
+      "method": "Il contesto somma i token in ingresso e quelli della cache. Le variazioni confrontano richieste consecutive con misurazioni. Le quote di messaggi, strumenti e allegati non sono disponibili.",
+      "unplacedCompactions": "Compressioni senza numero di passaggio {{count}}",
+      "compactionStep": "Compressione del contesto"
+    },
     "tab": "Utilizzo sessioni",
     "subtitle": "Consumo locale di token delle sessioni Antigravity",
     "title": "Utilizzo token sessioni Antigravity",
@@ -9677,7 +9686,9 @@
       "conversations": "Conversazioni",
       "turns": "Turni di risposta",
       "coverage": "Copertura esatta",
-      "avgPerDay": "Media / giorno attivo"
+      "avgPerDay": "Media / giorno attivo",
+      "refCost": "Costo equiv. API",
+      "cacheSavingsHint": "Cache risparmiato ~{{savings}}"
     },
     "estimated": {
       "notice": "{{turns}} turni privi di metriche API grezze sono stati stimati separatamente (mai sommati al totale esatto):"
@@ -9716,6 +9727,32 @@
     "errors": {
       "loadFailed": "Impossibile caricare l’utilizzo token: {{error}}",
       "syncFailed": "Scansione utilizzo token non riuscita: {{error}}"
+    },
+    "heatmap": {
+      "title": "Mappa attività 365 giorni",
+      "activeDays": "{{count}} giorni attivi",
+      "peak": "Picco {{date}} ({{tokens}})",
+      "less": "Meno",
+      "more": "Più"
+    },
+    "rehydrate": {
+      "title": "Hook di reidratazione post-compattazione",
+      "enabledBadge": "Attivo",
+      "disabledBadge": "Inattivo",
+      "desc": "Reinietta automaticamente cronologia richieste, file modificati e decisioni chiave dopo la compattazione del contesto (CHECKPOINT).",
+      "noPython": "python3 assente",
+      "enableBtn": "Attiva hook",
+      "disableBtn": "Disattiva hook"
+    },
+    "audit": {
+      "title": "Audit contesto ed esecuzione",
+      "peakContext": "Contesto di picco",
+      "compactions": "{{count}} compattazioni",
+      "userPrompts": "Richieste",
+      "toolCalls": "Strumenti",
+      "fileOps": "File L/S",
+      "commands": "Comandi",
+      "subagents": "Subagenti"
     }
   },
   "t3code": {

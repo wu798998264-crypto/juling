@@ -9599,6 +9599,15 @@
     "saved": "Đã lưu. Áp dụng cho yêu cầu mới."
   },
   "antigravityTokenUsage": {
+    "context": {
+      "requestContext": "Ngữ cảnh yêu cầu",
+      "coverage": "{{reported}} lượt ghi nhận · {{estimated}} lượt ước tính · {{missing}} lượt thiếu dữ liệu",
+      "largestGrowth": "Tăng nhiều nhất {{total}} tại bước #{{step}}",
+      "growthParts": "Đầu vào {{input}} · Đọc bộ đệm {{read}} · Ghi bộ đệm {{write}}",
+      "method": "Ngữ cảnh yêu cầu là tổng token đầu vào và bộ nhớ đệm. Mức thay đổi so sánh các yêu cầu liên tiếp có số đo. Không có số liệu riêng cho tin nhắn, công cụ và tệp đính kèm.",
+      "unplacedCompactions": "Số lần nén thiếu số bước {{count}}",
+      "compactionStep": "Nén ngữ cảnh"
+    },
     "tab": "Mức dùng phiên",
     "subtitle": "Thống kê token cục bộ từ phiên Antigravity",
     "title": "Thống kê Token sử dụng (Antigravity)",
@@ -9677,7 +9686,9 @@
       "conversations": "Phiên hội thoại",
       "turns": "Lượt phản hồi",
       "coverage": "Độ phủ chính xác",
-      "avgPerDay": "TB / ngày hoạt động"
+      "avgPerDay": "TB / ngày hoạt động",
+      "refCost": "Chi phí API quy đổi",
+      "cacheSavingsHint": "Bộ đệm tiết kiệm ~{{savings}}"
     },
     "estimated": {
       "notice": "Có {{turns}} lượt thiếu số liệu API gốc được ước tính riêng (không cộng vào Tổng chính xác):"
@@ -9716,6 +9727,32 @@
     "errors": {
       "loadFailed": "Không thể tải thống kê token: {{error}}",
       "syncFailed": "Quét dữ liệu token thất bại: {{error}}"
+    },
+    "heatmap": {
+      "title": "Biểu đồ hoạt động 365 ngày",
+      "activeDays": "{{count}} ngày hoạt động",
+      "peak": "Đỉnh {{date}} ({{tokens}})",
+      "less": "Ít",
+      "more": "Nhiều"
+    },
+    "rehydrate": {
+      "title": "Hook khôi phục trí nhớ sau nén",
+      "enabledBadge": "Đã bật",
+      "disabledBadge": "Đã tắt",
+      "desc": "Tự động nạp lại dòng thời gian yêu cầu, tệp đã sửa và quyết định quan trọng ngay sau khi nén ngữ cảnh (CHECKPOINT).",
+      "noPython": "Thiếu python3",
+      "enableBtn": "Bật Hook",
+      "disableBtn": "Tắt Hook"
+    },
+    "audit": {
+      "title": "Kiểm toán ngữ cảnh & công cụ",
+      "peakContext": "Ngữ cảnh đỉnh mỗi bước",
+      "compactions": "Nén {{count}} lần",
+      "userPrompts": "Câu hỏi",
+      "toolCalls": "Gọi công cụ",
+      "fileOps": "Tệp Đọc/Ghi",
+      "commands": "Lệnh chạy",
+      "subagents": "Tác tử phụ"
     }
   },
   "t3code": {

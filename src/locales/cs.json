@@ -9599,6 +9599,15 @@
     "saved": "Uloženo. Platí pro nové požadavky."
   },
   "antigravityTokenUsage": {
+    "context": {
+      "requestContext": "Kontext požadavku",
+      "coverage": "{{reported}} zaznamenáno · {{estimated}} odhadnuto · {{missing}} chybí",
+      "largestGrowth": "Největší nárůst {{total}} v kroku č. {{step}}",
+      "growthParts": "Vstup {{input}} · Čtení z mezipaměti {{read}} · Zápis do mezipaměti {{write}}",
+      "method": "Kontext požadavku sčítá tokeny vstupu a mezipaměti. Změny porovnávají sousední požadavky s naměřenými údaji. Podíly zpráv, nástrojů a příloh nejsou k dispozici.",
+      "unplacedCompactions": "Komprese bez čísla kroku {{count}}",
+      "compactionStep": "Komprese kontextu"
+    },
     "tab": "Využití relací",
     "subtitle": "Místní spotřeba tokenů z relací Antigravity",
     "title": "Spotřeba tokenů relací Antigravity",
@@ -9677,7 +9686,9 @@
       "conversations": "Konverzace",
       "turns": "Kola odpovědí",
       "coverage": "Přesné pokrytí",
-      "avgPerDay": "Prům. / aktivní den"
+      "avgPerDay": "Prům. / aktivní den",
+      "refCost": "Ekviv. cena API",
+      "cacheSavingsHint": "Mezipaměť ušetřila ~{{savings}}"
     },
     "estimated": {
       "notice": "{{turns}} kol bez surových metrik API bylo odhadnuto samostatně (nikdy se nepřičítá k přesnému součtu):"
@@ -9716,6 +9727,32 @@
     "errors": {
       "loadFailed": "Nepodařilo se načíst spotřebu tokenů: {{error}}",
       "syncFailed": "Prohledání spotřeby tokenů selhalo: {{error}}"
+    },
+    "heatmap": {
+      "title": "Mapa aktivity za 365 dní",
+      "activeDays": "{{count}} aktivních dní",
+      "peak": "Maximum {{date}} ({{tokens}})",
+      "less": "Méně",
+      "more": "Více"
+    },
+    "rehydrate": {
+      "title": "Hook obnovy paměti po kompakci",
+      "enabledBadge": "Zapnuto",
+      "disabledBadge": "Vypnuto",
+      "desc": "Po kompakci kontextu (CHECKPOINT) automaticky znovu vloží historii požadavků, upravené soubory a klíčová rozhodnutí.",
+      "noPython": "python3 chybí",
+      "enableBtn": "Zapnout hook",
+      "disableBtn": "Vypnout hook"
+    },
+    "audit": {
+      "title": "Audit kontextu a nástrojů",
+      "peakContext": "Špičkový kontext kroku",
+      "compactions": "{{count}} kompakcí",
+      "userPrompts": "Dotazy",
+      "toolCalls": "Volání nástrojů",
+      "fileOps": "Soubory Č/Z",
+      "commands": "Příkazy",
+      "subagents": "Podagenti"
     }
   },
   "t3code": {

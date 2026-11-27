@@ -9599,6 +9599,15 @@
     "saved": "Saved. New requests use these settings."
   },
   "antigravityTokenUsage": {
+    "context": {
+      "requestContext": "Request context",
+      "coverage": "{{reported}} reported · {{estimated}} estimated · {{missing}} unavailable",
+      "largestGrowth": "Largest increase {{total}} at step #{{step}}",
+      "growthParts": "Input {{input}} · Cache read {{read}} · Cache write {{write}}",
+      "method": "Request context sums input and cache tokens. Changes compare consecutive reported requests. Message, tool and attachment shares are unavailable.",
+      "unplacedCompactions": "Compactions with no recorded step {{count}}",
+      "compactionStep": "Context compaction"
+    },
     "tab": "Session Usage",
     "subtitle": "Local token usage from Antigravity sessions",
     "title": "Antigravity Session Token Usage",
@@ -9677,7 +9686,9 @@
       "conversations": "Conversations",
       "turns": "Turns",
       "coverage": "Exact Coverage",
-      "avgPerDay": "Avg / Active Day"
+      "avgPerDay": "Avg / Active Day",
+      "refCost": "API Equiv. Cost",
+      "cacheSavingsHint": "Prompt cache saved ~{{savings}}"
     },
     "estimated": {
       "notice": "{{turns}} turns lacked raw API usage and were estimated separately (never added to Exact Total):"
@@ -9716,6 +9727,32 @@
     "errors": {
       "loadFailed": "Failed to load token usage: {{error}}",
       "syncFailed": "Failed to scan token usage: {{error}}"
+    },
+    "heatmap": {
+      "title": "365-Day Activity Heatmap",
+      "activeDays": "{{count}} active days",
+      "peak": "Peak {{date}} ({{tokens}})",
+      "less": "Less",
+      "more": "More"
+    },
+    "rehydrate": {
+      "title": "Post-Compact Rehydration Hook",
+      "enabledBadge": "Enabled",
+      "disabledBadge": "Disabled",
+      "desc": "Automatically re-injects user request timeline, edited files, and key decisions on the first turn after context compaction (CHECKPOINT).",
+      "noPython": "python3 not found",
+      "enableBtn": "Enable Hook",
+      "disableBtn": "Disable Hook"
+    },
+    "audit": {
+      "title": "Context & Execution Audit",
+      "peakContext": "Peak Step Context",
+      "compactions": "{{count}} compactions",
+      "userPrompts": "User Prompts",
+      "toolCalls": "Tool Calls",
+      "fileOps": "File R / W",
+      "commands": "Commands",
+      "subagents": "Subagents"
     }
   },
   "t3code": {

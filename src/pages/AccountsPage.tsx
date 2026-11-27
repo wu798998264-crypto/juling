@@ -2833,7 +2833,7 @@ export function useAccountsPageController({ onNavigate }: AccountsPageProps) {
                 {t('accounts.status.forbidden')}
               </span>
             )}
-            <span className={`tier-badge ${tierBadge.className}`}>
+            <span className={`tier-badge ${tierBadge.className}`} title={tierBadge.rawTier || tierBadge.label}>
               {tierBadge.label}
             </span>
             <AntigravityGcpTosBadge account={account} />
@@ -3197,7 +3197,7 @@ export function useAccountsPageController({ onNavigate }: AccountsPageProps) {
                 {maskAccountText(account.email)}
               </span>
             </span>
-            <span className={`tier-badge ${tierBadge.className}`}>
+            <span className={`tier-badge ${tierBadge.className}`} title={tierBadge.rawTier || tierBadge.label}>
               {tierBadge.label}
             </span>
             <div className={styles.quotas}>
@@ -3531,7 +3531,7 @@ export function useAccountsPageController({ onNavigate }: AccountsPageProps) {
                 </div>
               )}
               <div className="account-sub-line">
-                <span className={`tier-badge ${tierBadge.className}`}>
+                <span className={`tier-badge ${tierBadge.className}`} title={tierBadge.rawTier || tierBadge.label}>
                   {tierBadge.label}
                 </span>
                 <AntigravityGcpTosBadge account={account} />

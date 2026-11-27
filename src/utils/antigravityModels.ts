@@ -33,7 +33,17 @@ const CANONICAL_MODELS: CanonicalModel[] = [
   { id: 'gemini-4-hydrogen-low', displayName: 'Gemini 4 Hydrogen (Low)', modelConstant: 'MODEL_PLACEHOLDER_M527', aliases: [] },
   { id: 'gemini-4-hydrogen-medium', displayName: 'Gemini 4 Hydrogen (Medium)', modelConstant: 'MODEL_PLACEHOLDER_M526', aliases: [] },
   { id: 'gemini-4-hydrogen-high', displayName: 'Gemini 4 Hydrogen (High)', modelConstant: 'MODEL_PLACEHOLDER_M525', aliases: [] },
-  { id: 'gemini-4-hydrogen-xhigh', displayName: 'Gemini 4 Hydrogen (XHigh)', modelConstant: 'MODEL_PLACEHOLDER_M528', aliases: [] },
+  {
+    id: 'gemini-4-hydrogen-xhigh',
+    displayName: 'Gemini 4 Hydrogen (XHigh)',
+    modelConstant: 'MODEL_PLACEHOLDER_M528',
+    aliases: [
+      'gemini-4-hydrogen-extra-high',
+      'Gemini 4 Hydrogen (Extra High)',
+      'Gemini 4 Hydrogen Extra High',
+      'MODEL_PLACEHOLDER_M531',
+    ],
+  },
   { id: 'gemini-3.8-flash', displayName: 'Gemini 3.8 Flash', modelConstant: null, aliases: [] },
   { id: 'gemini-3.8-flash-low', displayName: 'Gemini 3.8 Flash (Low)', modelConstant: 'MODEL_PLACEHOLDER_M320', aliases: [] },
   { id: 'gemini-3.8-flash-medium', displayName: 'Gemini 3.8 Flash (Medium)', modelConstant: 'MODEL_PLACEHOLDER_M319', aliases: [] },
@@ -220,4 +230,42 @@ export const getAntigravityDisplayModelsFromQuota = (quota?: QuotaData): ModelQu
     return [];
   }
   return sortAntigravityQuotaModels(quota.models);
+};
+
+export const isRetiredArgonSummaryGroup = (groupId: string): boolean => {
+  const normalized = groupId.trim().toLowerCase();
+  return normalized === 'argon' || normalized === 'gemini-argon' || normalized === 'gemini-argon-wtu';
+};
+
+export const isRetiredArgonSummaryWindow = (windowId: string): boolean => {
+  const normalized = windowId.trim().toLowerCase();
+  return (
+    normalized === 'argon:weekly'
+    || normalized === 'argon:5h'
+    || normalized === 'gemini-argon-5h'
+    || /^gemini-argon-.*-(weekly|5h)$/.test(normalized)
+  );
+};
+
+export const resolveSummaryWindowPeriod = (rawId: string, period?: string | null): string => {
+  const explicit = (period || '').trim().toLowerCase();
+  if (explicit) return explicit;
+  const lower = rawId.trim().toLowerCase();
+  if (lower.endsWith('weekly')) return 'weekly';
+  if (lower.endsWith('5h')) return '5h';
+  return '';
+};
+
+export const canonicalSummaryWindowKey = (rawId: string, period: string): string => {
+  const stripped = period && rawId.toLowerCase().endsWith(period)
+    ? rawId.slice(0, rawId.length - period.length).replace(/[:-]+$/, '')
+    : '';
+  const base = stripped || rawId;
+  const mapped =
+    base === '3p'
+      ? 'claude'
+      : base === 'gemini-carbon-wtu' || base === 'gemini-carbon'
+        ? 'carbon'
+        : base;
+  return period ? `${mapped}:${period}` : rawId;
 };

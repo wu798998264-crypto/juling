@@ -9599,6 +9599,15 @@
     "saved": "已保存，后续请求使用新设置。"
   },
   "antigravityTokenUsage": {
+    "context": {
+      "requestContext": "请求上下文",
+      "coverage": "{{reported}} 轮有记录 · {{estimated}} 轮估算 · {{missing}} 轮缺失",
+      "largestGrowth": "第 #{{step}} 步增幅最大 {{total}}",
+      "growthParts": "输入 {{input}} · 缓存读取 {{read}} · 缓存写入 {{write}}",
+      "method": "请求上下文由输入和缓存 Token 相加。变化量比较相邻两轮有实测数据的请求。日志未提供消息、工具输出和附件各自的占用。",
+      "unplacedCompactions": "有 {{count}} 次压缩缺少步骤编号",
+      "compactionStep": "上下文压缩"
+    },
     "tab": "会话用量",
     "subtitle": "Antigravity 本地会话 Token 用量统计",
     "title": "Antigravity 会话 Token 用量",
@@ -9677,7 +9686,9 @@
       "conversations": "会话数",
       "turns": "响应轮次",
       "coverage": "精确覆盖率",
-      "avgPerDay": "活跃日均"
+      "avgPerDay": "活跃日均",
+      "refCost": "API 等价参考",
+      "cacheSavingsHint": "Prompt 缓存约节省 {{savings}}"
     },
     "estimated": {
       "notice": "另有 {{turns}} 轮缺少原始 API 用量，已单独估算（不计入精确合计）："
@@ -9716,6 +9727,32 @@
     "errors": {
       "loadFailed": "读取 Token 用量失败：{{error}}",
       "syncFailed": "扫描 Token 用量失败：{{error}}"
+    },
+    "heatmap": {
+      "title": "365 天活跃热力图",
+      "activeDays": "{{count}} 活跃天",
+      "peak": "峰值 {{date}} ({{tokens}})",
+      "less": "少",
+      "more": "多"
+    },
+    "rehydrate": {
+      "title": "压缩后记忆回灌 (Rehydrate Hook)",
+      "enabledBadge": "已启用",
+      "disabledBadge": "未启用",
+      "desc": "当会话触发上下文压缩 (CHECKPOINT) 后，自动在下一次调用前注入用户请求时间线、最近编辑文件与关键结论，防止 AI 失忆或重做已完成工作。",
+      "noPython": "未检测到 python3",
+      "enableBtn": "一键启用",
+      "disableBtn": "停用钩子"
+    },
+    "audit": {
+      "title": "上下文与工具执行审计",
+      "peakContext": "单步峰值上下文",
+      "compactions": "压缩 {{count}} 次",
+      "userPrompts": "用户提问",
+      "toolCalls": "工具调用",
+      "fileOps": "文件读 / 写",
+      "commands": "命令执行",
+      "subagents": "子代理调用"
     }
   },
   "t3code": {

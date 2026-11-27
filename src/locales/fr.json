@@ -9599,6 +9599,15 @@
     "saved": "Enregistré. Appliqué aux prochaines requêtes."
   },
   "antigravityTokenUsage": {
+    "context": {
+      "requestContext": "Contexte de la requête",
+      "coverage": "{{reported}} mesurées · {{estimated}} estimées · {{missing}} sans données",
+      "largestGrowth": "Plus forte hausse {{total}} à l’étape #{{step}}",
+      "growthParts": "Entrée {{input}} · Lecture du cache {{read}} · Écriture du cache {{write}}",
+      "method": "Le contexte additionne les jetons d’entrée et de cache. Les écarts comparent les requêtes mesurées consécutives. Les parts des messages, des outils et des pièces jointes sont indisponibles.",
+      "unplacedCompactions": "Compressions sans numéro d’étape {{count}}",
+      "compactionStep": "Compression du contexte"
+    },
     "tab": "Utilisation sessions",
     "subtitle": "Consommation locale de jetons des sessions Antigravity",
     "title": "Utilisation des jetons Antigravity",
@@ -9677,7 +9686,9 @@
       "conversations": "Discussions",
       "turns": "Tours de réponse",
       "coverage": "Couverture exacte",
-      "avgPerDay": "Moy. / jour actif"
+      "avgPerDay": "Moy. / jour actif",
+      "refCost": "Coût équiv. API",
+      "cacheSavingsHint": "Cache : ~{{savings}} économisés"
     },
     "estimated": {
       "notice": "{{turns}} tours sans mesures API brutes ont été estimés séparément (jamais ajoutés au cumul exact) :"
@@ -9716,6 +9727,32 @@
     "errors": {
       "loadFailed": "Impossible de charger la consommation : {{error}}",
       "syncFailed": "Échec de l’analyse des jetons : {{error}}"
+    },
+    "heatmap": {
+      "title": "Carte d'activité sur 365 jours",
+      "activeDays": "{{count}} jours actifs",
+      "peak": "Pic {{date}} ({{tokens}})",
+      "less": "Moins",
+      "more": "Plus"
+    },
+    "rehydrate": {
+      "title": "Hook de réhydratation post-compaction",
+      "enabledBadge": "Activé",
+      "disabledBadge": "Désactivé",
+      "desc": "Réinjecte automatiquement la chronologie des demandes, les fichiers modifiés et les décisions clés après une compaction de contexte (CHECKPOINT).",
+      "noPython": "python3 introuvable",
+      "enableBtn": "Activer le hook",
+      "disableBtn": "Désactiver le hook"
+    },
+    "audit": {
+      "title": "Audit du contexte et d'exécution",
+      "peakContext": "Contexte pic par étape",
+      "compactions": "{{count}} compactions",
+      "userPrompts": "Requêtes",
+      "toolCalls": "Outils",
+      "fileOps": "Fichiers L/É",
+      "commands": "Commandes",
+      "subagents": "Sous-agents"
     }
   },
   "t3code": {

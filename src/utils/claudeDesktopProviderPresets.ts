@@ -749,6 +749,21 @@ export const CLAUDE_DESKTOP_GATEWAY_PROVIDER_PRESETS: readonly ClaudeDesktopGate
     ),
   },
   {
+    id: 'teamorouter',
+    name: 'TeamoRouter',
+    baseUrls: ['https://api.teamorouter.com'],
+    authScheme: 'bearer',
+    connectionMode: 'local_mapping',
+    website: 'https://teamorouter.com',
+    apiKeyUrl: 'https://teamorouter.com/dashboard?tab=api-keys',
+    modelMappings: roleMappedRoutes(
+      'claude-sonnet-5-5',
+      'claude-opus-5-5',
+      'claude-haiku-5-5',
+      { supports1m: true },
+    ),
+  },
+  {
     id: 'pipellm',
     name: 'PIPELLM',
     baseUrls: ['https://cc-api.pipellm.ai'],
@@ -801,6 +816,20 @@ export const CLAUDE_DESKTOP_GATEWAY_PROVIDER_PRESETS: readonly ClaudeDesktopGate
       'claude-opus-5-5',
       'claude-haiku-5-5',
       { supports1m: true },
+    ),
+  },
+  {
+    id: 'onomeo',
+    name: 'onomeo',
+    baseUrls: ['https://onomeo.com'],
+    authScheme: 'bearer',
+    connectionMode: 'local_mapping',
+    website: 'https://onomeo.com',
+    apiKeyUrl: 'https://onomeo.com/dashboard',
+    modelMappings: roleMappedRoutes(
+      'claude-sonnet-5.5',
+      'claude-opus-5.5',
+      'claude-haiku-5.5',
     ),
   },
 ] satisfies ClaudeDesktopGatewayProviderPreset[]).map(localProviderPresentation);

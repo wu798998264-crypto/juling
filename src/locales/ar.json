@@ -9599,6 +9599,15 @@
     "saved": "تم الحفظ. تُطبّق الإعدادات على الطلبات الجديدة."
   },
   "antigravityTokenUsage": {
+    "context": {
+      "requestContext": "سياق الطلب",
+      "coverage": "مسجّل {{reported}} · تقديري {{estimated}} · غير متاح {{missing}}",
+      "largestGrowth": "أكبر زيادة {{total}} في الخطوة #{{step}}",
+      "growthParts": "إدخال {{input}} · قراءة ذاكرة مؤقتة {{read}} · كتابة ذاكرة مؤقتة {{write}}",
+      "method": "يجمع سياق الطلب رموز الإدخال والذاكرة المؤقتة. تُحسب التغيرات بين الطلبات المتتالية ذات القياسات المسجّلة. لا تتوفر حصص الرسائل والأدوات والمرفقات.",
+      "unplacedCompactions": "عمليات ضغط بلا رقم خطوة {{count}}",
+      "compactionStep": "ضغط السياق"
+    },
     "tab": "استهلاك الجلسات",
     "subtitle": "استهلاك الرموز المحلي من جلسات Antigravity",
     "title": "استهلاك رموز جلسات Antigravity",
@@ -9677,7 +9686,9 @@
       "conversations": "المحادثات",
       "turns": "الأدوار",
       "coverage": "التغطية الدقيقة",
-      "avgPerDay": "المتوسط / يوم نشط"
+      "avgPerDay": "المتوسط / يوم نشط",
+      "refCost": "التكلفة المكافئة لـ API",
+      "cacheSavingsHint": "وفّر التخزين المؤقت ~{{savings}}"
     },
     "estimated": {
       "notice": "تم تقدير {{turns}} دور يفتقر لبيانات API الخام بشكل منفصل (لا يُضاف للإجمالي الدقيق):"
@@ -9716,6 +9727,32 @@
     "errors": {
       "loadFailed": "تعذر تحميل إحصاءات الرموز: {{error}}",
       "syncFailed": "فشل فحص استهلاك الرموز: {{error}}"
+    },
+    "heatmap": {
+      "title": "خريطة النشاط لـ 365 يوماً",
+      "activeDays": "{{count}} يوم نشط",
+      "peak": "الذروة {{date}} ({{tokens}})",
+      "less": "أقل",
+      "more": "أكثر"
+    },
+    "rehydrate": {
+      "title": "خطاف استعادة الذاكرة بعد الضغط",
+      "enabledBadge": "مفعّل",
+      "disabledBadge": "معطّل",
+      "desc": "يعيد حقن التسلسل الزمني للطلبات والملفات المعدلة والقرارات الرئيسية تلقائياً بعد ضغط السياق (CHECKPOINT).",
+      "noPython": "python3 غير موجود",
+      "enableBtn": "تفعيل الخطاف",
+      "disableBtn": "تعطيل الخطاف"
+    },
+    "audit": {
+      "title": "تدقيق السياق وتنفيذ الأدوات",
+      "peakContext": "ذروة سياق الخطوة",
+      "compactions": "{{count}} عمليات ضغط",
+      "userPrompts": "طلبات المستخدم",
+      "toolCalls": "استدعاء الأدوات",
+      "fileOps": "ملفات ق/ك",
+      "commands": "الأوامر",
+      "subagents": "الوكلاء الفرعيون"
     }
   },
   "t3code": {

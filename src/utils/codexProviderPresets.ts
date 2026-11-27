@@ -222,6 +222,14 @@ export const CODEX_API_PROVIDER_PRESETS: readonly CodexApiProviderPreset[] = [
     apiKeyUrl: "https://app.requesty.ai/api-keys",
   },
   {
+    id: "teamorouter",
+    name: "TeamoRouter",
+    baseUrls: ["https://api.teamorouter.com/v1"],
+    modelCatalog: ["gpt-6.2-astra", "gpt-6.2-sol"],
+    website: "https://teamorouter.com/",
+    apiKeyUrl: "https://teamorouter.com/dashboard?tab=api-keys",
+  },
+  {
     id: "aicodemirror",
     name: "AICodeMirror",
     baseUrls: [
@@ -434,6 +442,14 @@ export const CODEX_API_PROVIDER_PRESETS: readonly CodexApiProviderPreset[] = [
     apiKeyUrl: "https://console.atlascloud.ai/api-keys",
   },
   {
+    id: "trustedrouter",
+    name: "TrustedRouter",
+    baseUrls: ["https://api.trustedrouter.com/v1"],
+    modelCatalog: ["openai/gpt-6.1-terra", "deepseek/deepseek-v4-flash"],
+    website: "https://trustedrouter.com/",
+    apiKeyUrl: "https://trustedrouter.com/console/api-keys",
+  },
+  {
     id: "aigrow",
     name: "AIGROW",
     baseUrls: ["https://aigrow.gg/v1"],
@@ -463,6 +479,14 @@ export const CODEX_API_PROVIDER_PRESETS: readonly CodexApiProviderPreset[] = [
     modelCatalog: ["gpt-5.4", "gpt-6.2-astra"],
     website: "https://www.worldrouter.ai/",
     apiKeyUrl: "https://www.worldrouter.ai/dashboard/api-keys",
+  },
+  {
+    id: "onomeo",
+    name: "onomeo",
+    baseUrls: ["https://onomeo.com/v1"],
+    modelCatalog: ["gpt-6.2-sol", "gpt-6.2-astra"],
+    website: "https://onomeo.com/",
+    apiKeyUrl: "https://onomeo.com/dashboard",
   },
 ].map(localProviderPresentation);
 
