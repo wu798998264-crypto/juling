@@ -66,3 +66,18 @@ fn removed_fields_are_not_removed_twice() {
     assert!(repair.apply(&mut repaired));
     assert!(!repair.apply(&mut repaired));
 }
+
+#[test]
+fn chat_hint_retry_requires_one_standalone_validation_error() {
+    let body = json!({"messages": [], "verbosity": "low"});
+    let error = google_error(GOOGLE_MESSAGE)[0].clone();
+    assert!(chat_hint_repair(&body, &error).is_some());
+    assert!(chat_hint_repair(&body, &json!([error])).is_some());
+    for mixed in [
+        json!([error, {"type":"response.output_item.done"}]),
+        json!({"error":error["error"], "choices":[{"message":{"tool_calls":[]}}]}),
+        json!([{"error":{"message":GOOGLE_MESSAGE,"output_text":"started"}}]),
+    ] {
+        assert!(chat_hint_repair(&body, &mixed).is_none());
+    }
+}

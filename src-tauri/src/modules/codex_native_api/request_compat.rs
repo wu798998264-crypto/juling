@@ -197,6 +197,22 @@ fn unknown_name_repair(body: &Value, message: &str) -> Option<Repair> {
     (!pointers.is_empty()).then_some(Repair::RemoveAll(pointers))
 }
 
+fn chat_hint_repair(body: &Value, event: &Value) -> Option<Repair> {
+    let envelope = match event.as_array().map(Vec::as_slice) {
+        Some([error]) => error,
+        Some(_) => return None,
+        None => event,
+    };
+    // The retry is safe only for a standalone field-validation error. Never
+    // replay a mixed response containing choices, tool calls or output.
+    let object = envelope.as_object()?;
+    let error = object.get("error")?.as_object()?;
+    if object.len() != 1 || !error.keys().all(|key| matches!(key.as_str(), "message" | "code" | "status" | "type")) {
+        return None;
+    }
+    unknown_name_repair(body, error.get("message")?.as_str()?)
+}
+
 fn named_null_schema_repair(body: &Value, message: &str) -> Option<Repair> {
     let (name, detail) = message
         .strip_prefix("Invalid schema for function '")?
@@ -222,8 +238,9 @@ fn named_null_schema_repair(body: &Value, message: &str) -> Option<Repair> {
 }
 
 fn repair(body: &Value, error: &Value) -> Option<Repair> {
-    // Google wraps its error envelope in a one-element array.
-    let error = error.as_array().and_then(|errors| errors.first()).unwrap_or(error);
+    if error.is_array() {
+        return chat_hint_repair(body, error);
+    }
     let error = super::diagnostics::error_object(error);
     let code = error["code"].as_str().unwrap_or_default();
     let message = error["message"].as_str().unwrap_or_default();
@@ -347,7 +364,13 @@ impl Budget {
         self.last_reasoning = false;
         let reasoning = (allow_reasoning && !self.reasoning_repaired && route.wire_api == super::contract::WireApi::Responses && !route.chatgpt_plan)
             .then(|| super::encrypted_reasoning::Repair::rejected(body, event)).flatten();
-        let Some(repair) = reasoning.map(Repair::Reasoning).or_else(||repair(body, event)) else {
+        let repair = if route.wire_api == super::contract::WireApi::Chat {
+            if self.attempts > 0 { return false; }
+            chat_hint_repair(body, event)
+        } else {
+            reasoning.map(Repair::Reasoning).or_else(|| repair(body, event))
+        };
+        let Some(repair) = repair else {
             return false;
         };
         let key = (route.account_id.clone(), route.model.clone(), repair);
