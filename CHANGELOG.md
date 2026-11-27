@@ -8,6 +8,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [1.5.3] - 2026-11-28
+
+- Complete partial image batches, combine usage, and keep follow-up operations within the original deadline.
+- Show hourly Codex usage and, where matching local gateway data exists, first-response latency and output speed.
+- Show per-turn Antigravity context, cache reads and writes, compaction events, reference costs, activity history, and current plan labels.
+- Preview and apply Gemini CLI configuration for a selected key using the confirmed relay address. Add Codex and Claude provider presets.
+- Expose T3 Code telemetry, tracing and activity controls for the default instance.
+- Wrap account groups in narrow windows, keep sidebar items readable, reduce large-request compression memory, and improve strict Chat endpoint compatibility.
+
 ## [1.5.0] - 2026-11-25
 
 ### Added

@@ -8862,7 +8862,10 @@
       "deploySuccess": "Diterapkan ke Codex: {{count}} model",
       "deployFailed": "Deployment gagal: {{error}}",
       "useKey": "Gunakan kunci",
-      "deleteConfirm": "Hapus kunci tersimpan \"{{name}}\"? Tindakan ini tidak dapat dibatalkan."
+      "deleteConfirm": "Hapus kunci tersimpan \"{{name}}\"? Tindakan ini tidak dapat dibatalkan.",
+      "addToGeminiCliFailed": "Gagal tambah ke Gemini CLI: {{error}}",
+      "geminiCliAdded": "Gemini CLI ditambahkan",
+      "addToGeminiCli": "Tambah ke Gemini CLI"
     },
     "prefill": {
       "claudeDesktopReady": "Pengaturan layanan pilihan Anda telah dimuat. Konfirmasikan sebelum menambahkannya ke Claude.",
@@ -8884,7 +8887,7 @@
       "title": "Gunakan kunci API",
       "family": "Grup",
       "platform": "Sistem saat ini",
-      "unsupportedGroup": "聚灵 belum memiliki templat konfigurasi klien untuk antarmuka {{family}} dari APIKEY.FUN. Anda dapat mengaturnya secara manual pada klien yang mendukung antarmuka ini."
+      "unsupportedGroup": "聚灵 belum memiliki templat konfigurasi klien untuk antarmuka {{family}} dari JIULING.FUN. Anda dapat mengaturnya secara manual pada klien yang mendukung antarmuka ini."
     }
   },
   "grok": {

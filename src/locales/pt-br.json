@@ -8862,7 +8862,10 @@
       "deploySuccess": "Implantado no Codex: {{count}} modelos",
       "deployFailed": "Falha na implantação: {{error}}",
       "useKey": "Usar chave",
-      "deleteConfirm": "Excluir a chave salva \"{{name}}\"? Esta ação não pode ser desfeita."
+      "deleteConfirm": "Excluir a chave salva \"{{name}}\"? Esta ação não pode ser desfeita.",
+      "addToGeminiCliFailed": "Falha ao adicionar ao Gemini CLI: {{error}}",
+      "geminiCliAdded": "Gemini CLI adicionado",
+      "addToGeminiCli": "Adicionar ao Gemini CLI"
     },
     "prefill": {
       "claudeDesktopReady": "As configurações do serviço escolhido foram carregadas. Confirme antes de adicioná-las ao Claude.",
@@ -8884,7 +8887,7 @@
       "title": "Usar chave de API",
       "family": "Grupo",
       "platform": "Sistema atual",
-      "unsupportedGroup": "O 聚灵 ainda não tem um modelo de configuração para a interface {{family}} do APIKEY.FUN. Você pode configurá-la manualmente em um cliente compatível."
+      "unsupportedGroup": "O 聚灵 ainda não tem um modelo de configuração para a interface {{family}} do JIULING.FUN. Você pode configurá-la manualmente em um cliente compatível."
     }
   },
   "grok": {

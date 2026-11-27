@@ -1061,6 +1061,7 @@ pub fn run() {
             commands::system::import_mfa_vault_batch,
             commands::system::change_mfa_vault,
             commands::system::load_apikey_fun_vault,
+            commands::system::apply_apikey_fun_gemini_cli_env,
             commands::system::write_apikey_fun_vault,
             commands::system::schedule_apikey_fun_recovery_checkpoint,
             commands::system::restore_apikey_fun_vault,

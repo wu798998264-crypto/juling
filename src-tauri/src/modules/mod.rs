@@ -20,6 +20,7 @@ pub(crate) mod checkin_state_store;
 pub(crate) mod usage_rollup;
 pub mod announcement;
 pub mod apikey_fun_links;
+pub(crate) mod apikey_fun_gemini_cli;
 pub(crate) mod apikey_fun_vault;
 pub(crate) mod antigravity_composer_status;
 pub mod antigravity_credential;

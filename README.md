@@ -22,7 +22,7 @@
 
 **验证范围**：构建、自动化回归、安装及第三方服务的验收边界见对应发行说明。
 
-聚灵界面版本 S1.0.8，功能基线 1.5.0。新增 T3 Code 账号管理、Qoder CN、CLI 账号操作和 Codex 会话用量筛选。Windows 与 macOS 下载及兼容说明见 [发行说明](docs/releases/v1.5.0.md)，来源与许可见 [NOTICE.txt](NOTICE.txt)。
+聚灵 S1.0.9 的功能更新选自上游 1.5.3，包含批量生图、会话用量、额度显示、Gemini CLI 配置和 T3 Code 隐私选项。详见[本版变更](docs/releases/v1.5.3.md)和[来源与许可](NOTICE.txt)。
 
 ---
 

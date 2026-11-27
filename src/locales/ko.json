@@ -8862,7 +8862,10 @@
       "deploySuccess": "Codex에 배포됨: 모델 {{count}}개",
       "deployFailed": "배포 실패: {{error}}",
       "useKey": "키 사용",
-      "deleteConfirm": "저장된 키 \"{{name}}\"을(를) 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+      "deleteConfirm": "저장된 키 \"{{name}}\"을(를) 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+      "addToGeminiCliFailed": "Gemini CLI 추가 실패: {{error}}",
+      "geminiCliAdded": "Gemini CLI 추가됨",
+      "addToGeminiCli": "Gemini CLI에 추가"
     },
     "prefill": {
       "claudeDesktopReady": "선택한 서비스의 설정을 불러왔습니다. 확인한 후 Claude에 추가하세요.",
@@ -8884,7 +8887,7 @@
       "title": "API 키 사용",
       "family": "그룹",
       "platform": "현재 시스템",
-      "unsupportedGroup": "聚灵에는 아직 APIKEY.FUN의 {{family}} 엔드포인트에 맞는 클라이언트 설정 템플릿이 없습니다. 이 엔드포인트를 지원하는 클라이언트에서 직접 설정할 수 있습니다."
+      "unsupportedGroup": "聚灵에는 아직 JIULING.FUN의 {{family}} 엔드포인트에 맞는 클라이언트 설정 템플릿이 없습니다. 이 엔드포인트를 지원하는 클라이언트에서 직접 설정할 수 있습니다."
     }
   },
   "grok": {

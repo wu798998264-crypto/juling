@@ -8862,7 +8862,10 @@
       "deploySuccess": "Desplegado en Codex: {{count}} modelos",
       "deployFailed": "Error de despliegue: {{error}}",
       "useKey": "Usar clave",
-      "deleteConfirm": "¿Eliminar la clave guardada «{{name}}»? Esta acción no se puede deshacer."
+      "deleteConfirm": "¿Eliminar la clave guardada «{{name}}»? Esta acción no se puede deshacer.",
+      "addToGeminiCliFailed": "Error al añadir a Gemini CLI: {{error}}",
+      "geminiCliAdded": "Gemini CLI añadido",
+      "addToGeminiCli": "Añadir a Gemini CLI"
     },
     "prefill": {
       "claudeDesktopReady": "Se cargó la configuración del servicio elegido. Confírmala antes de añadirla a Claude.",
@@ -8884,7 +8887,7 @@
       "title": "Usar clave de API",
       "family": "Grupo",
       "platform": "Sistema actual",
-      "unsupportedGroup": "聚灵 aún no tiene una plantilla de configuración para la interfaz {{family}} de APIKEY.FUN. Puedes configurarla manualmente en un cliente compatible."
+      "unsupportedGroup": "聚灵 aún no tiene una plantilla de configuración para la interfaz {{family}} de JIULING.FUN. Puedes configurarla manualmente en un cliente compatible."
     }
   },
   "grok": {

@@ -21,7 +21,10 @@ function setup() {
     '../services/modelProviderUsageService': {},
     '../utils/apikeyFunLinks': { buildApiKeyFunProviderBaseUrl: () => 'https://example.test/v1' },
     '../utils/apiKeyFunPrefill': {},
-    '../utils/apikeyFunClientConfigs': { resolveApiKeyFunGrokModel: () => null },
+    '../utils/apikeyFunClientConfigs': {
+      isApiKeyFunGeminiModel: () => false,
+      resolveApiKeyFunGrokModel: () => null,
+    },
     '../assets/branding/juling-core-master.png': 'juling-fixture.png',
     '../utils/localRelayConfig': { LOCAL_RELAY_ENDPOINT_KEY: 'fixture.relay', normalizeLocalRelayUrl: (value: string) => value },
     '../components/apiKeyFun/ApiKeyFunKeyConfigModal': { ApiKeyFunKeyConfigModal: 'KeyConfig' },

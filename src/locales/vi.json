@@ -8862,7 +8862,10 @@
       "deploySuccess": "Đã triển khai tới Codex: {{count}} mô hình",
       "deployFailed": "Triển khai thất bại: {{error}}",
       "useKey": "Dùng khóa",
-      "deleteConfirm": "Xóa khóa đã lưu \"{{name}}\"? Hành động này không thể hoàn tác."
+      "deleteConfirm": "Xóa khóa đã lưu \"{{name}}\"? Hành động này không thể hoàn tác.",
+      "addToGeminiCliFailed": "Thêm vào Gemini CLI lỗi: {{error}}",
+      "geminiCliAdded": "Đã thêm Gemini CLI",
+      "addToGeminiCli": "Thêm vào Gemini CLI"
     },
     "prefill": {
       "claudeDesktopReady": "Đã tải cấu hình dịch vụ bạn chọn. Hãy xác nhận trước khi thêm vào Claude.",
@@ -8884,7 +8887,7 @@
       "title": "Dùng khóa API",
       "family": "Nhóm",
       "platform": "Hệ thống hiện tại",
-      "unsupportedGroup": "聚灵 chưa có mẫu cấu hình ứng dụng khách cho điểm cuối {{family}} của APIKEY.FUN. Bạn có thể cấu hình thủ công trong ứng dụng khách hỗ trợ điểm cuối này."
+      "unsupportedGroup": "聚灵 chưa có mẫu cấu hình ứng dụng khách cho điểm cuối {{family}} của JIULING.FUN. Bạn có thể cấu hình thủ công trong ứng dụng khách hỗ trợ điểm cuối này."
     }
   },
   "grok": {

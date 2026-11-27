@@ -8862,7 +8862,10 @@
       "deploySuccess": "Codex に展開しました：モデル {{count}} 件",
       "deployFailed": "展開に失敗しました：{{error}}",
       "useKey": "キーを使用",
-      "deleteConfirm": "保存済みキー「{{name}}」を削除しますか？この操作は元に戻せません。"
+      "deleteConfirm": "保存済みキー「{{name}}」を削除しますか？この操作は元に戻せません。",
+      "addToGeminiCliFailed": "Gemini CLI への追加に失敗: {{error}}",
+      "geminiCliAdded": "Gemini CLI 追加済み",
+      "addToGeminiCli": "Gemini CLI に追加"
     },
     "prefill": {
       "claudeDesktopReady": "選択したサービスの設定を読み込みました。確認してから Claude に追加してください。",
@@ -8884,7 +8887,7 @@
       "title": "API キーを使用",
       "family": "グループ",
       "platform": "現在のシステム",
-      "unsupportedGroup": "聚灵 には、APIKEY.FUN の {{family}} 接続先に対応するクライアント設定テンプレートがまだありません。この接続先に対応するクライアントで手動設定できます。"
+      "unsupportedGroup": "聚灵 には、JIULING.FUN の {{family}} 接続先に対応するクライアント設定テンプレートがまだありません。この接続先に対応するクライアントで手動設定できます。"
     }
   },
   "grok": {

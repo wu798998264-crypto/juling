@@ -1050,7 +1050,10 @@
       "deploySuccess": "Deployed to Codex: {{count}} models",
       "deployFailed": "Deployment failed: {{error}}",
       "useKey": "Use key",
-      "deleteConfirm": "Delete saved key \"{{name}}\"? This cannot be undone."
+      "deleteConfirm": "Delete saved key \"{{name}}\"? This cannot be undone.",
+      "addToGeminiCliFailed": "Failed to add to Gemini CLI: {{error}}",
+      "geminiCliAdded": "Gemini CLI added",
+      "addToGeminiCli": "Add to Gemini CLI"
     },
     "prefill": {
       "claudeDesktopReady": "Your selected service settings are loaded. Confirm before adding them to Claude.",
@@ -1070,7 +1073,7 @@
       "title": "Use API key",
       "family": "Group",
       "platform": "Current system",
-      "unsupportedGroup": "聚灵 does not yet have a client configuration template for APIKEY.FUN’s {{family}} endpoint. You can configure it manually in a client that supports this endpoint."
+      "unsupportedGroup": "聚灵 does not yet have a client configuration template for JIULING.FUN’s {{family}} endpoint. You can configure it manually in a client that supports this endpoint."
     }
   },
   "platformLayout": {

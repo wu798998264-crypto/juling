@@ -1050,7 +1050,10 @@
       "deploySuccess": "已部署到 Codex：{{count}} 个模型",
       "deployFailed": "部署失败：{{error}}",
       "useKey": "使用密钥",
-      "deleteConfirm": "确定删除已保存密钥“{{name}}”吗？此操作无法撤销。"
+      "deleteConfirm": "确定删除已保存密钥“{{name}}”吗？此操作无法撤销。",
+      "addToGeminiCliFailed": "添加到 Gemini CLI 失败：{{error}}",
+      "geminiCliAdded": "Gemini CLI 已添加",
+      "addToGeminiCli": "添加到 Gemini CLI"
     },
     "prefill": {
       "claudeDesktopReady": "已带入你选择的服务配置，请确认后添加到 Claude。",
@@ -1070,7 +1073,7 @@
       "title": "使用 API 密钥",
       "family": "分组",
       "platform": "当前系统",
-      "unsupportedGroup": "聚灵 暂无适用于 APIKEY.FUN {{family}} 接口的客户端配置模板。可以在支持该接口的客户端里手动配置。"
+      "unsupportedGroup": "{{family}} 暂无配置模板，可在客户端手动填写服务地址和模型。"
     }
   },
   "platformLayout": {

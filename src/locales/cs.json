@@ -8862,7 +8862,10 @@
       "deploySuccess": "Nasazeno do Codexu: {{count}} modelů",
       "deployFailed": "Nasazení se nezdařilo: {{error}}",
       "useKey": "Použít klíč",
-      "deleteConfirm": "Smazat uložený klíč „{{name}}“? Tuto akci nelze vrátit zpět."
+      "deleteConfirm": "Smazat uložený klíč „{{name}}“? Tuto akci nelze vrátit zpět.",
+      "addToGeminiCliFailed": "Přidání do Gemini CLI selhalo: {{error}}",
+      "geminiCliAdded": "Gemini CLI přidán",
+      "addToGeminiCli": "Přidat do Gemini CLI"
     },
     "prefill": {
       "claudeDesktopReady": "Nastavení vybrané služby bylo načteno. Před přidáním do Claude je potvrďte.",
@@ -8884,7 +8887,7 @@
       "title": "Použít klíč API",
       "family": "Skupina",
       "platform": "Aktuální systém",
-      "unsupportedGroup": "聚灵 zatím nemá šablonu nastavení klienta pro rozhraní APIKEY.FUN {{family}}. Klienta, který toto rozhraní podporuje, můžete nastavit ručně."
+      "unsupportedGroup": "聚灵 zatím nemá šablonu nastavení klienta pro rozhraní JIULING.FUN {{family}}. Klienta, který toto rozhraní podporuje, můžete nastavit ručně."
     }
   },
   "grok": {

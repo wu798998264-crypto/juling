@@ -28,7 +28,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          for suite in codex_native_api::images::http_tests modules::codex_session_usage modules::antigravity_token_usage large_compression_tests t3code_privacy new_antigravity_model_tests chat_unknown_field_http_tests request_compat::tests codex_native_api::chat::tests; do
+          for suite in codex_native_api::images::http_tests modules::codex_session_usage modules::antigravity_token_usage large_compression_tests t3code_privacy new_antigravity_model_tests chat_unknown_field_http_tests request_compat::tests codex_native_api::chat::tests apikey_fun_gemini_cli; do
             cargo test --locked -p juling --lib "$suite" -- --test-threads=1 | tee suite.log
             grep -Eq 'test result: ok\. [1-9][0-9]* passed' suite.log
           done

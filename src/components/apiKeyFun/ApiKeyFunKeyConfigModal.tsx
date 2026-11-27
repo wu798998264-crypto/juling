@@ -9,10 +9,14 @@ import {
   detectApiKeyFunPlatform,
   resolveApiKeyFunFamily,
   resolveDefaultModel,
+  isApiKeyFunGeminiModel,
+  resolveApiKeyFunGeminiModel,
   type ApiKeyFunClientId,
   type ApiKeyFunFamily,
   type ApiKeyFunFamilyPreset,
 } from '../../utils/apikeyFunClientConfigs';
+import { applyApiKeyFunGeminiCliEnv } from '../../services/apiKeyFunGeminiCli';
+import { ModalErrorMessage, useModalErrorState } from '../ModalErrorMessage';
 import './ApiKeyFunKeyConfigModal.css';
 
 export interface ApiKeyFunKeyConfigModalProps {
@@ -68,13 +72,15 @@ export function ApiKeyFunKeyConfigModal({
   const [model, setModel] = useState('');
   useEffect(() => {
     if (!family) return;
-    setModel(resolveDefaultModel(family, models));
+    setModel(family.id === 'gemini'
+      ? resolveApiKeyFunGeminiModel(models) ?? family.fallbackModel
+      : resolveDefaultModel(family, models));
   }, [family, models]);
 
   const [copiedLabel, setCopiedLabel] = useState<string | null>(null);
 
   const preview = useMemo(() => {
-    if (!family) return null;
+    if (!family || !baseUrl) return null;
     return buildApiKeyFunClientPreview({
       family,
       client,
@@ -89,10 +95,33 @@ export function ApiKeyFunKeyConfigModal({
     () =>
       [...models]
         .map((item) => item.trim())
-        .filter(Boolean)
+        .filter((id) => id && (family?.id !== 'gemini' || isApiKeyFunGeminiModel(id)))
         .map((item) => ({ value: item, label: item })),
-    [models],
+    [family, models],
   );
+
+  const [writing, setWriting] = useState(false);
+  const [appliedModel, setAppliedModel] = useState('');
+  const error = useModalErrorState();
+  const canApplyGemini = family?.id === 'gemini' && client === 'gemini_cli'
+    && modelOptions.some((option) => option.value === model);
+
+  const applyGemini = async () => {
+    if (!canApplyGemini || writing) return;
+    setWriting(true);
+    error.clear();
+    setAppliedModel('');
+    try {
+      await applyApiKeyFunGeminiCliEnv({ apiKey, model, baseUrl });
+      setAppliedModel(model);
+    } catch (cause) {
+      error.report(t('apiKeyFun.keyManager.addToGeminiCliFailed', {
+        error: cause instanceof Error ? cause.message : String(cause),
+      }));
+    } finally {
+      setWriting(false);
+    }
+  };
 
   const handleCopy = async (label: string, text: string) => {
     try {
@@ -157,7 +186,8 @@ export function ApiKeyFunKeyConfigModal({
                   value={model}
                   options={modelOptions}
                   placeholder={t('apiKeyFun.models.title', '可用模型')}
-                  onChange={setModel}
+                  disabled={writing}
+                  onChange={(value) => { error.clear(); setAppliedModel(''); setModel(value); }}
                 />
               ) : (
                 <span className="apikey-fun-config-detected">
@@ -172,7 +202,7 @@ export function ApiKeyFunKeyConfigModal({
           {family && availableClients.length === 0 ? (
             <div className="apikey-fun-config-empty">
               {t('apiKeyFun.config.unsupportedGroup', {
-                defaultValue: '聚灵 暂无适用于 APIKEY.FUN {{family}} 接口的客户端配置模板。可以在支持该接口的客户端里手动配置。',
+                defaultValue: '{{family}} 暂无配置模板，可在客户端手动填写服务地址和模型。',
                 family: family.label,
               })}
             </div>
@@ -217,10 +247,18 @@ export function ApiKeyFunKeyConfigModal({
         </div>
 
         <footer className="apikey-fun-config-foot">
+          <ModalErrorMessage message={error.message} scrollKey={error.scrollKey} position="bottom" />
+          {canApplyGemini && (
+            <button type="button" className="btn btn-primary" disabled={writing || appliedModel === model}
+              onClick={() => void applyGemini()}>
+              {writing ? t('apiKeyFun.apply.applying') : appliedModel === model
+                ? t('apiKeyFun.keyManager.geminiCliAdded') : t('apiKeyFun.keyManager.addToGeminiCli')}
+            </button>
+          )}
           <button type="button" className="btn btn-secondary" onClick={onClose}>
             {t('common.close', '关闭')}
           </button>
-</footer>
+        </footer>
       </div>
     </div>
   );

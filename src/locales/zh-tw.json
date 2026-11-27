@@ -8862,7 +8862,10 @@
       "deploySuccess": "已部署到 Codex：{{count}} 個模型",
       "deployFailed": "部署失敗：{{error}}",
       "useKey": "使用密鑰",
-      "deleteConfirm": "確定刪除已儲存的金鑰「{{name}}」嗎？此操作無法復原。"
+      "deleteConfirm": "確定刪除已儲存的金鑰「{{name}}」嗎？此操作無法復原。",
+      "addToGeminiCliFailed": "加入 Gemini CLI 失敗：{{error}}",
+      "geminiCliAdded": "Gemini CLI 已加入",
+      "addToGeminiCli": "加入 Gemini CLI"
     },
     "prefill": {
       "claudeDesktopReady": "已帶入你選擇的服務設定，請確認後新增至 Claude。",
@@ -8884,7 +8887,7 @@
       "title": "使用 API 密鑰",
       "family": "分組",
       "platform": "目前系統",
-      "unsupportedGroup": "聚灵 目前沒有適用於 APIKEY.FUN {{family}} 介面的用戶端設定範本。可以在支援此介面的用戶端手動設定。"
+      "unsupportedGroup": "聚灵 目前沒有適用於 JIULING.FUN {{family}} 介面的用戶端設定範本。可以在支援此介面的用戶端手動設定。"
     }
   },
   "grok": {

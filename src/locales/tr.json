@@ -8862,7 +8862,10 @@
       "deploySuccess": "Codex'e kuruldu: {{count}} model",
       "deployFailed": "Kurulum başarısız: {{error}}",
       "useKey": "Anahtarı kullan",
-      "deleteConfirm": "Kayıtlı \"{{name}}\" anahtarı silinsin mi? Bu işlem geri alınamaz."
+      "deleteConfirm": "Kayıtlı \"{{name}}\" anahtarı silinsin mi? Bu işlem geri alınamaz.",
+      "addToGeminiCliFailed": "Gemini CLI'ye eklenemedi: {{error}}",
+      "geminiCliAdded": "Gemini CLI eklendi",
+      "addToGeminiCli": "Gemini CLI'ye ekle"
     },
     "prefill": {
       "claudeDesktopReady": "Seçtiğiniz hizmetin ayarları yüklendi. Claude’a eklemeden önce doğrulayın.",
@@ -8884,7 +8887,7 @@
       "title": "API anahtarını kullan",
       "family": "Grup",
       "platform": "Geçerli sistem",
-      "unsupportedGroup": "聚灵’ta APIKEY.FUN {{family}} uç noktası için henüz bir istemci yapılandırma şablonu yok. Bu uç noktayı destekleyen bir istemciyi elle yapılandırabilirsiniz."
+      "unsupportedGroup": "聚灵’ta JIULING.FUN {{family}} uç noktası için henüz bir istemci yapılandırma şablonu yok. Bu uç noktayı destekleyen bir istemciyi elle yapılandırabilirsiniz."
     }
   },
   "grok": {

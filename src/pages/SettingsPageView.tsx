@@ -437,7 +437,7 @@ export function SettingsPageView(props: SettingsPageViewProps) {
               <div className="app-info">
                 <h2>{t('settings.about.appName')}</h2>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <div className="version-tag" title={`内部构建 ${appVersion}`}>S1.0.8</div>
+                  <div className="version-tag" title={`内部构建 ${appVersion}`}>S1.0.9</div>
                   <button 
                     className="btn btn-sm btn-ghost"
                     onClick={handleCheckUpdate}
@@ -744,7 +744,7 @@ export function SettingsPageView(props: SettingsPageViewProps) {
                     className="settings-release-history-item"
                   >
                     <div className="settings-release-history-item-head">
-                      <span className="settings-release-history-version">{itemIndex === 0 ? 'S1.0.8' : `v${item.version}`}</span>
+                      <span className="settings-release-history-version">{itemIndex === 0 ? 'S1.0.9' : `v${item.version}`}</span>
                       <div className="settings-release-history-item-meta">
                         {item.date ? (
                           <span className="settings-release-history-date">{item.date}</span>

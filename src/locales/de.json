@@ -8862,7 +8862,10 @@
       "deploySuccess": "In Codex bereitgestellt: {{count}} Modelle",
       "deployFailed": "Bereitstellung fehlgeschlagen: {{error}}",
       "useKey": "Schlüssel verwenden",
-      "deleteConfirm": "Gespeicherten Schlüssel \"{{name}}\" löschen? Dieser Vorgang kann nicht rückgängig gemacht werden."
+      "deleteConfirm": "Gespeicherten Schlüssel \"{{name}}\" löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.",
+      "addToGeminiCliFailed": "Gemini-CLI-Import fehlgeschlagen: {{error}}",
+      "geminiCliAdded": "Gemini CLI hinzugefügt",
+      "addToGeminiCli": "Zu Gemini CLI"
     },
     "prefill": {
       "claudeDesktopReady": "Die Einstellungen Ihres gewählten Dienstes sind geladen. Bestätigen Sie sie vor dem Hinzufügen zu Claude.",
@@ -8884,7 +8887,7 @@
       "title": "API-Schlüssel verwenden",
       "family": "Gruppe",
       "platform": "Aktuelles System",
-      "unsupportedGroup": "聚灵 bietet derzeit keine Client-Konfigurationsvorlage für die {{family}}-Schnittstelle von APIKEY.FUN. Sie können einen Client, der diese Schnittstelle unterstützt, manuell konfigurieren."
+      "unsupportedGroup": "聚灵 bietet derzeit keine Client-Konfigurationsvorlage für die {{family}}-Schnittstelle von JIULING.FUN. Sie können einen Client, der diese Schnittstelle unterstützt, manuell konfigurieren."
     }
   },
   "grok": {

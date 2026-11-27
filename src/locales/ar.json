@@ -8862,7 +8862,10 @@
       "deploySuccess": "تم النشر إلى Codex: {{count}} طراز",
       "deployFailed": "فشل النشر: {{error}}",
       "useKey": "استخدام المفتاح",
-      "deleteConfirm": "هل تريد حذف المفتاح المحفوظ \"{{name}}\"؟ لا يمكن التراجع عن هذا الإجراء."
+      "deleteConfirm": "هل تريد حذف المفتاح المحفوظ \"{{name}}\"؟ لا يمكن التراجع عن هذا الإجراء.",
+      "addToGeminiCliFailed": "فشل الإضافة إلى Gemini CLI: {{error}}",
+      "geminiCliAdded": "تمت إضافة Gemini CLI",
+      "addToGeminiCli": "إضافة إلى Gemini CLI"
     },
     "prefill": {
       "claudeDesktopReady": "تم تحميل إعدادات الخدمة التي اخترتها. أكدها قبل إضافتها إلى Claude.",
@@ -8884,7 +8887,7 @@
       "title": "استخدام مفتاح API",
       "family": "المجموعة",
       "platform": "النظام الحالي",
-      "unsupportedGroup": "لا يتوفر في 聚灵 حاليًا قالب إعداد للعميل يدعم واجهة APIKEY.FUN ‏{{family}}. يمكنك الإعداد يدويًا في عميل يدعم هذه الواجهة."
+      "unsupportedGroup": "لا يتوفر في 聚灵 حاليًا قالب إعداد للعميل يدعم واجهة JIULING.FUN ‏{{family}}. يمكنك الإعداد يدويًا في عميل يدعم هذه الواجهة."
     }
   },
   "grok": {

@@ -8862,7 +8862,10 @@
       "deploySuccess": "Wdrożono do Codex: {{count}} modeli",
       "deployFailed": "Wdrożenie nie powiodło się: {{error}}",
       "useKey": "Użyj klucza",
-      "deleteConfirm": "Usunąć zapisany klucz „{{name}}”? Tej operacji nie można cofnąć."
+      "deleteConfirm": "Usunąć zapisany klucz „{{name}}”? Tej operacji nie można cofnąć.",
+      "addToGeminiCliFailed": "Nie dodano do Gemini CLI: {{error}}",
+      "geminiCliAdded": "Gemini CLI dodany",
+      "addToGeminiCli": "Dodaj do Gemini CLI"
     },
     "prefill": {
       "claudeDesktopReady": "Wczytano ustawienia wybranej usługi. Potwierdź je przed dodaniem do Claude.",
@@ -8884,7 +8887,7 @@
       "title": "Użyj klucza API",
       "family": "Grupa",
       "platform": "Bieżący system",
-      "unsupportedGroup": "聚灵 nie ma jeszcze szablonu konfiguracji klienta dla interfejsu {{family}} usługi APIKEY.FUN. Możesz skonfigurować go ręcznie w zgodnym kliencie."
+      "unsupportedGroup": "聚灵 nie ma jeszcze szablonu konfiguracji klienta dla interfejsu {{family}} usługi JIULING.FUN. Możesz skonfigurować go ręcznie w zgodnym kliencie."
     }
   },
   "grok": {

@@ -8862,7 +8862,10 @@
       "deploySuccess": "Déployé vers Codex : {{count}} modèles",
       "deployFailed": "Échec du déploiement : {{error}}",
       "useKey": "Utiliser la clé",
-      "deleteConfirm": "Supprimer la clé enregistrée « {{name}} » ? Cette action est irréversible."
+      "deleteConfirm": "Supprimer la clé enregistrée « {{name}} » ? Cette action est irréversible.",
+      "addToGeminiCliFailed": "Échec ajout Gemini CLI : {{error}}",
+      "geminiCliAdded": "Gemini CLI ajouté",
+      "addToGeminiCli": "Ajouter à Gemini CLI"
     },
     "prefill": {
       "claudeDesktopReady": "La configuration du service choisi est chargée. Confirmez-la avant de l’ajouter à Claude.",
@@ -8884,7 +8887,7 @@
       "title": "Utiliser la clé API",
       "family": "Groupe",
       "platform": "Système actuel",
-      "unsupportedGroup": "聚灵 ne propose pas encore de modèle de configuration pour l’interface {{family}} d’APIKEY.FUN. Vous pouvez la configurer manuellement dans un client compatible."
+      "unsupportedGroup": "聚灵 ne propose pas encore de modèle de configuration pour l’interface {{family}} d’JIULING.FUN. Vous pouvez la configurer manuellement dans un client compatible."
     }
   },
   "grok": {
