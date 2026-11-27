@@ -1297,6 +1297,7 @@ fn new_empty_local_access_collection() -> Result<CodexLocalAccessCollection, Str
         custom_routing_rules: Vec::new(),
         account_model_rules: Vec::new(),
         account_quota_floors: HashMap::new(),
+        account_concurrency_limits: HashMap::new(),
         model_aliases: Vec::new(),
         suppress_oauth_model_alias: false,
         model_pricing_version: DEFAULT_MODEL_PRICING_VERSION,

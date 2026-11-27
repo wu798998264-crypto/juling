@@ -5345,7 +5345,12 @@
         "maxConcurrentImageRequests": "طلبات الصور لكل حساب",
         "maxAccountConcurrency": "تزامن الحساب",
         "accountConcurrencyWait": "انتظار التزامن (ث)",
-        "optionsSaved": "تم حفظ خيارات التوجيه"
+        "optionsSaved": "تم حفظ خيارات التوجيه",
+        "accountConcurrencyLimit": "حد التزامن",
+        "accountConcurrencyUnlimited": "غير محدود",
+        "accountConcurrencyHint": "يُخصص حد التزامن لهذا الحساب (0 يعني غير محدود، والحد الأقصى 64). اتركه فارغًا لاستخدام الحد العام.",
+        "accountConcurrencyInvalid": "أدخل عددًا صحيحًا من 0 إلى 64.",
+        "accountConcurrencySaveFailed": "تعذر حفظ حد التزامن للحساب."
       },
       "validation": {
         "numberRange": "أدخل رقما بين {{min}} و {{max}}"

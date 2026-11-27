@@ -250,6 +250,10 @@ fn save_collection_to_path(
                         .map(serde_json::from_value).transpose().map_err(|error| error.to_string())?
                         .unwrap_or_default();
                     prune_account_quota_floors(&mut next);
+                    next.account_concurrency_limits = current.get("accountConcurrencyLimits").cloned()
+                        .map(serde_json::from_value).transpose().map_err(|error| error.to_string())?
+                        .unwrap_or_default();
+                    prune_account_concurrency_limits(&mut next);
                     if let Some(updated_at) = current.get("updatedAt").and_then(Value::as_i64) {
                         next.updated_at = next.updated_at.max(updated_at);
                     }
@@ -1744,6 +1748,7 @@ fn sanitize_collection_structure(
     changed |= normalize_bound_oauth_quota_reserve(&mut collection.bound_oauth_quota_reserve, has_bound_oauth_account);
 
     changed |= prune_account_quota_floors(collection);
+    changed |= prune_account_concurrency_limits(collection);
 
     let original_custom_routing_rules = std::mem::take(&mut collection.custom_routing_rules);
     let normalized_custom_routing_rules = normalize_custom_routing_rules(
@@ -2108,6 +2113,7 @@ async fn ensure_runtime_loaded_without_start_with_profile_restore(
                 custom_routing_rules: Vec::new(),
                 account_model_rules: Vec::new(),
                 account_quota_floors: HashMap::new(),
+                account_concurrency_limits: HashMap::new(),
                 model_aliases: Vec::new(),
                 suppress_oauth_model_alias: false,
                 model_pricing_version: DEFAULT_MODEL_PRICING_VERSION,

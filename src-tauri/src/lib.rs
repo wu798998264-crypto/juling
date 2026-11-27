@@ -1436,6 +1436,7 @@ pub fn run() {
             commands::codex::codex_local_access_update_custom_routing,
             commands::codex::codex_local_access_update_account_model_rules,
             commands::codex::codex_local_access_update_account_quota_floor,
+            commands::codex::codex_local_access_update_account_concurrency_limit,
             commands::codex::codex_local_access_update_model_rules,
             commands::codex::codex_local_access_update_model_pricings,
             commands::codex::codex_local_access_reprice_request_logs,

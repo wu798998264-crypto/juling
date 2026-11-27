@@ -791,6 +791,9 @@ pub struct CodexLocalAccessCollection {
     /// Minimum included quota to retain for individual OAuth pool members.
     #[serde(default, skip_serializing_if = "HashMap::is_empty")]
     pub account_quota_floors: HashMap<String, i32>,
+    /// Optional per-account concurrency limit overrides (0 = unlimited, clamped to 64).
+    #[serde(default, skip_serializing_if = "HashMap::is_empty")]
+    pub account_concurrency_limits: HashMap<String, u16>,
     #[serde(default)]
     pub model_aliases: Vec<CodexLocalAccessModelAlias>,
     /// 仅实例供应商网关使用：不把模型别名写进 sidecar 的 `oauth-model-alias`。

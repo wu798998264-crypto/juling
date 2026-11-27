@@ -5298,7 +5298,12 @@
         "maxConcurrentImageRequests": "Bildanfragen pro Konto",
         "maxAccountConcurrency": "Konten-Parallelität",
         "accountConcurrencyWait": "Wartezeit (s)",
-        "optionsSaved": "Routingoptionen gespeichert"
+        "optionsSaved": "Routingoptionen gespeichert",
+        "accountConcurrencyLimit": "Parallelitätslimit",
+        "accountConcurrencyUnlimited": "Unbegrenzt",
+        "accountConcurrencyHint": "Überschreibt das Parallelitätslimit für dieses Konto (0 = unbegrenzt, max. 64). Leer lassen, um den globalen Wert zu übernehmen.",
+        "accountConcurrencyInvalid": "Gib eine ganze Zahl von 0 bis 64 ein.",
+        "accountConcurrencySaveFailed": "Das Parallelitätslimit des Kontos konnte nicht gespeichert werden."
       },
       "validation": {
         "numberRange": "Zahl von {{min}} bis {{max}} eingeben"

@@ -12,6 +12,7 @@ import { countCodexServiceSourceAccounts } from "../utils/codexServiceMemberView
 import { aggregateCodexServiceAccountStats, codexServiceAccountSources } from "../utils/codexServiceAccountStats";
 import { summarizeAccountPoolHealth } from "../components/codex/codexLocalAccessModalModel";
 import { CodexServiceMemberAuthorization } from "../components/codex/CodexServiceMemberAuthorization";
+import { CodexPoolAccountConcurrency } from "../components/codex/CodexPoolAccountConcurrency";
 import { CodexPoolQuotaFloor } from "../components/codex/CodexPoolQuotaFloor";
 import { CodexServiceEmptyMembers } from "../components/codex/CodexServiceEmptyMembers";
 import { CodexApiRequestLogs } from "./CodexApiRequestLogs";
@@ -1832,6 +1833,10 @@ export function CodexApiServiceView(props: CodexApiServiceViewProps) {
                           && !isCodexWebSessionAccount(account) && !isCodexChatgptPlanAccount(account) && (
                           <CodexPoolQuotaFloor disabled={busy} value={collection.accountQuotaFloors?.[account.id] ?? null}
                             onSave={async (value) => setState(await codexLocalAccessService.updateCodexLocalAccessAccountQuotaFloor(account.id, value))} />
+                        )}
+                        {collection && collection.accountIds.includes(account.id) && (
+                          <CodexPoolAccountConcurrency disabled={busy} value={collection.accountConcurrencyLimits?.[account.id] ?? null}
+                            onSave={async (value) => setState(await codexLocalAccessService.updateCodexLocalAccessAccountConcurrencyLimit(account.id, value))} />
                         )}
                         <CodexServiceMemberAuthorization account={account} accounts={localAccessAccounts} grants={planGrants.accounts} memberIds={collection?.accountIds ?? []} pausedAccountIds={collection?.pausedAccountIds} />
                         <button

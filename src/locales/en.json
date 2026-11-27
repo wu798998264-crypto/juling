@@ -5581,7 +5581,12 @@
         "maxConcurrentImageRequests": "Image requests per account",
         "maxAccountConcurrency": "Account concurrency",
         "accountConcurrencyWait": "Concurrency wait (s)",
-        "optionsSaved": "Routing options saved"
+        "optionsSaved": "Routing options saved",
+        "accountConcurrencyLimit": "Concurrency limit",
+        "accountConcurrencyUnlimited": "Unlimited",
+        "accountConcurrencyHint": "Override concurrency for this account (0 for unlimited, 1–64 max). Leave blank to inherit the global limit.",
+        "accountConcurrencyInvalid": "Enter a whole number from 0 to 64.",
+        "accountConcurrencySaveFailed": "Could not save the account concurrency limit."
       },
       "timeouts": {
         "retryTitle": "Send and account retries",

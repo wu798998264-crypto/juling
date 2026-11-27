@@ -5298,7 +5298,12 @@
         "maxConcurrentImageRequests": "Yêu cầu ảnh mỗi tài khoản",
         "maxAccountConcurrency": "Đồng thời mỗi tài khoản",
         "accountConcurrencyWait": "Chờ (giây)",
-        "optionsSaved": "Đã lưu tùy chọn định tuyến"
+        "optionsSaved": "Đã lưu tùy chọn định tuyến",
+        "accountConcurrencyLimit": "Giới hạn đồng thời",
+        "accountConcurrencyUnlimited": "Không giới hạn",
+        "accountConcurrencyHint": "Ghi đè mức đồng thời cho tài khoản này (0 là không giới hạn, tối đa 64). Để trống để dùng giới hạn chung.",
+        "accountConcurrencyInvalid": "Nhập số nguyên từ 0 đến 64.",
+        "accountConcurrencySaveFailed": "Không thể lưu giới hạn đồng thời của tài khoản."
       },
       "validation": {
         "numberRange": "Nhập số từ {{min}} đến {{max}}"

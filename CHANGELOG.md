@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [1.5.3] - 2026-11-28
 
 - Complete partial image batches, combine usage, and keep follow-up operations within the original deadline.
+- Set a concurrency limit for each Codex pool member. Leave the field blank to inherit the global limit, enter 1–64 to cap simultaneous requests, or enter 0 for unlimited.
 - Show hourly Codex usage and, where matching local gateway data exists, first-response latency and output speed.
 - Show per-turn Antigravity context, cache reads and writes, compaction events, reference costs, activity history, and current plan labels.
 - Preview and apply Gemini CLI configuration for a selected key using the confirmed relay address. Add Codex and Claude provider presets.

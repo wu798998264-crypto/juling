@@ -5345,7 +5345,12 @@
         "maxConcurrentImageRequests": "Permintaan gambar per akun",
         "maxAccountConcurrency": "Konkurensi akun",
         "accountConcurrencyWait": "Tunggu (dtk)",
-        "optionsSaved": "Opsi routing tersimpan"
+        "optionsSaved": "Opsi routing tersimpan",
+        "accountConcurrencyLimit": "Batas konkurensi",
+        "accountConcurrencyUnlimited": "Tanpa batas",
+        "accountConcurrencyHint": "Timpa batas konkurensi untuk akun ini (0 tanpa batas, maks. 64). Kosongkan untuk mengikuti batas global.",
+        "accountConcurrencyInvalid": "Masukkan bilangan bulat dari 0 hingga 64.",
+        "accountConcurrencySaveFailed": "Gagal menyimpan batas konkurensi akun."
       },
       "validation": {
         "numberRange": "Masukkan angka dari {{min}} hingga {{max}}"

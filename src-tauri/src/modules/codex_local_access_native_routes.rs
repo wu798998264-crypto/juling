@@ -2071,32 +2071,46 @@ async fn native_acquire_account_concurrency_permit(
             "No compatible account is available for this model",
         ));
     }
-    if !reserve_permit || collection.max_account_concurrency == 0 {
+    if !reserve_permit {
         return Ok((0, None));
     }
-    let gates: Vec<_> = {
+    let limits: Vec<u16> = accounts
+        .iter()
+        .map(|account| effective_account_concurrency_limit(collection, &account.id))
+        .collect();
+    if limits.iter().all(|limit| *limit == 0) {
+        return Ok((0, None));
+    }
+    let gates: Vec<Option<Arc<Semaphore>>> = {
         let mut gates = host.gates.lock().map_err(|_| {
             native_error(503, "service_unavailable", "Account limiter is unavailable")
         })?;
         gates.retain(|_, gate| Arc::strong_count(gate) > 1);
         accounts
             .iter()
-            .map(|account| {
-                gates
-                    .entry(format!(
-                        "{}:{}",
-                        account.id, collection.max_account_concurrency
-                    ))
-                    .or_insert_with(|| {
-                        Arc::new(Semaphore::new(collection.max_account_concurrency as usize))
-                    })
-                    .clone()
+            .zip(limits.iter().copied())
+            .map(|(account, limit)| {
+                if limit == 0 {
+                    None
+                } else {
+                    Some(
+                        gates
+                            .entry(format!("{}:{}", account.id, limit))
+                            .or_insert_with(|| Arc::new(Semaphore::new(limit as usize)))
+                            .clone(),
+                    )
+                }
             })
             .collect()
     };
     for (index, gate) in gates.iter().enumerate() {
-        if let Ok(permit) = gate.clone().try_acquire_owned() {
-            return Ok((index, Some(Arc::new(permit))));
+        match gate {
+            None => return Ok((index, None)),
+            Some(gate) => {
+                if let Ok(permit) = gate.clone().try_acquire_owned() {
+                    return Ok((index, Some(Arc::new(permit))));
+                }
+            }
         }
     }
     if collection.account_concurrency_wait_ms == 0 {
@@ -2112,7 +2126,9 @@ async fn native_acquire_account_concurrency_permit(
     let mut waiting: futures_util::stream::FuturesUnordered<_> = gates
         .into_iter()
         .enumerate()
-        .map(|(index, gate)| async move { (index, gate.acquire_owned().await) })
+        .filter_map(|(index, gate)| {
+            gate.map(|gate| async move { (index, gate.acquire_owned().await) })
+        })
         .collect();
     let (index, acquired) = timeout(native_account_concurrency_wait(collection), waiting.next())
         .await

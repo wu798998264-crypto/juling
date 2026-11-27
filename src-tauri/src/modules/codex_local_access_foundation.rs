@@ -1728,6 +1728,8 @@ fn preserve_runtime_collection_fields(
     collection.multi_agent = current.multi_agent.clone();
     collection.account_quota_floors = current.account_quota_floors.clone();
     prune_account_quota_floors(collection);
+    collection.account_concurrency_limits = current.account_concurrency_limits.clone();
+    prune_account_concurrency_limits(collection);
     prune_multi_agent_references(collection);
     prune_capability_fallback_references(collection);
     // Image main-model choices use their own field transaction, like the catalog.

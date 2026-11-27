@@ -5298,7 +5298,12 @@
         "maxConcurrentImageRequests": "Requêtes d'images par compte",
         "maxAccountConcurrency": "Concurrence par compte",
         "accountConcurrencyWait": "Attente (s)",
-        "optionsSaved": "Options de routage enregistrées"
+        "optionsSaved": "Options de routage enregistrées",
+        "accountConcurrencyLimit": "Limite de concurrence",
+        "accountConcurrencyUnlimited": "Illimité",
+        "accountConcurrencyHint": "Remplace la concurrence de ce compte (0 pour illimité, 64 max.). Laissez vide pour hériter de la limite globale.",
+        "accountConcurrencyInvalid": "Saisissez un entier compris entre 0 et 64.",
+        "accountConcurrencySaveFailed": "Impossible d’enregistrer la limite de concurrence du compte."
       },
       "validation": {
         "numberRange": "Saisissez un nombre de {{min}} à {{max}}"

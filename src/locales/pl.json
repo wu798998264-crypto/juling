@@ -5298,7 +5298,12 @@
         "maxConcurrentImageRequests": "Żądania obrazów na konto",
         "maxAccountConcurrency": "Współbieżność konta",
         "accountConcurrencyWait": "Oczekiwanie (s)",
-        "optionsSaved": "Opcje routingu zapisane"
+        "optionsSaved": "Opcje routingu zapisane",
+        "accountConcurrencyLimit": "Limit współbieżności",
+        "accountConcurrencyUnlimited": "Bez limitu",
+        "accountConcurrencyHint": "Nadpisuje limit współbieżności dla tego konta (0 = bez limitu, maks. 64). Pozostaw puste, aby odziedziczyć limit globalny.",
+        "accountConcurrencyInvalid": "Wpisz liczbę całkowitą od 0 do 64.",
+        "accountConcurrencySaveFailed": "Nie udało się zapisać limitu współbieżności konta."
       },
       "validation": {
         "numberRange": "Wpisz liczbę od {{min}} do {{max}}"

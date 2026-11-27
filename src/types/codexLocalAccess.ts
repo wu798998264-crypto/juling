@@ -192,6 +192,7 @@ export interface CodexLocalAccessCollection {
   customRoutingRules: CodexLocalAccessCustomRoutingRule[];
   accountModelRules: CodexLocalAccessAccountModelRule[];
   accountQuotaFloors?: Record<string, number>;
+  accountConcurrencyLimits?: Record<string, number>;
   modelAliases: CodexLocalAccessModelAlias[];
   modelPricingVersion: number;
   modelPricings: CodexLocalAccessModelPricing[];
