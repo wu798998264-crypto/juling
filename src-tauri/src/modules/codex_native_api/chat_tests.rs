@@ -184,6 +184,27 @@ fn native_chat_completed_only_stream_flushes_text() {
     ));
 }
 #[test]
+fn native_chat_stream_keeps_distinct_ids_when_output_indices_are_missing() {
+    let mut edge = ChatStreamAdapter::new(ctx());
+    let items = [("msg_first", "first"), ("msg_second", "second")];
+    let mut chunks = Vec::new();
+    for (id, text) in items {
+        chunks.extend(edge.push(&json!({"type":"response.output_text.delta",
+            "item_id":id,"content_index":0,"delta":text})).unwrap());
+        chunks.extend(edge.push(&json!({"type":"response.output_text.done",
+            "item_id":id,"content_index":0,"text":text})).unwrap());
+    }
+    let output: Vec<_> = items.into_iter().map(|(id, text)| json!({"type":"message","id":id,
+        "content":[{"type":"output_text","text":text}]})).collect();
+    chunks.extend(edge.push(&json!({"type":"response.completed","response":{"id":"r","output":output}})).unwrap());
+    let text: String = chunks.iter().filter_map(|part| match part {
+        StreamOutput::Event(value) => value.pointer("/choices/0/delta/content").and_then(Value::as_str),
+        StreamOutput::Done => None,
+    }).collect();
+    assert_eq!(text, "firstsecond");
+    assert_eq!(chunks.last(), Some(&StreamOutput::Done));
+}
+#[test]
 fn native_chat_upstream_rejects_opaque_state() {
     assert!(
         chat_upstream::responses_to_chat(&json!({"input":[],"previous_response_id":"other"}))
@@ -222,4 +243,22 @@ fn chat_compaction_omits_tool_choice_when_no_tools_remain() {
         assert_eq!(wire["tool_choice"], "auto");
         assert_eq!(wire["tools"].as_array().unwrap().len(), 1);
     }
+}
+
+#[test]
+fn chat_conversion_drops_codex_client_metadata_but_native_chat_keeps_client_fields() {
+    let request = json!({
+        "model": "fixture",
+        "input": "hi",
+        "client_metadata": {"session_id": "s", "thread_id": "t"},
+        "prompt_cache_key": "cache",
+        "text": {"verbosity": "low"}
+    });
+    let wire = chat_upstream::responses_to_chat(&request).unwrap();
+    assert!(wire.get("client_metadata").is_none());
+    // These are valid Chat Completions fields; an explicit upstream rejection removes them.
+    assert_eq!(wire["prompt_cache_key"], "cache");
+    assert_eq!(wire["verbosity"], "low");
+    let native = chat_upstream::responses_to_native_chat(&request).unwrap();
+    assert_eq!(native["client_metadata"]["session_id"], "s");
 }

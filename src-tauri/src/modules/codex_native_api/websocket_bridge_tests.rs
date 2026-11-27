@@ -454,3 +454,6 @@ include!("websocket_recoverable_control_tests.rs");
 include!("websocket_natural_incomplete_tests.rs");
 
 include!("websocket_output_parity_tests.rs");
+
+#[path = "chat_unknown_field_http_tests.rs"]
+mod chat_unknown_field_http_tests;

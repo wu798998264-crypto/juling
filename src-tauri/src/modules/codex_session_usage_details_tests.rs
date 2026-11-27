@@ -235,5 +235,6 @@ fn request_page_attaches_first_response_and_tps_from_gateway_summaries_and_build
     let unmatched = page.rows.iter().find(|row| row.request_id == "r2").unwrap();
     assert_eq!(unmatched.first_response_ms, None);
     assert_eq!(unmatched.tokens_per_second, None);
+    drop(conn);
     fs::remove_dir_all(dir).unwrap();
 }
